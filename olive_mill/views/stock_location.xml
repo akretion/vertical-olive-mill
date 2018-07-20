@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="view_location_form" model="ir.ui.view">
+    <field name="name">olive.mill.stock.location.form</field>
+    <field name="model">stock.location</field>
+    <field name="inherit_id" ref="stock.view_location_form"/>
+    <field name="arch" type="xml">
+        <field name="usage" position="after">
+            <field name="olive_type" attrs="{'invisible': [('usage', 'not in', ('internal', 'supplier'))]}"/>
+        </field>
+        <field name="partner_id" position="attributes">
+            <attribute name="attrs">{'required': [('olive_type', '=', 'ochard')]}</attribute>
+        </field>
+        <group groups="stock.group_adv_location" position="after">
+            <group name="olive" string="Olive">
+                <field name="olive_borrower_partner_id" attrs="{'invisible': [('olive_type', '!=', 'palox')]}"/>
+                <field name="olive_borrowed_date" attrs="{'invisible': ['|', ('olive_type', '!=', 'palox'), ('olive_borrower_partner_id', '=', False)]}"/>
+                <field name="olive_zip_id" attrs="{'invisible': [('olive_type', '!=', 'ochard')]}"/>
+                <field name="olive_city" attrs="{'invisible': [('olive_type', '!=', 'ochard')]}"/>
+                <field name="olive_tree_total" attrs="{'invisible': [('olive_type', '!=', 'ochard')]}"/>
+                <label for="olive_area_total" attrs="{'invisible': [('olive_type', '!=', 'ochard')]}"/>
+                <div name="olive_area" attrs="{'invisible': [('olive_type', '!=', 'ochard')]}">
+                    <field name="olive_area_total" class="oe_inline"/>
+                    <label string=" ha" class="oe_inline"/>
+                </div>
+            </group>
+        </group>
+        <field name="comment" position="after">
+            <group name="parcel" string="Parcels" attrs="{'invisible': [('olive_type', '!=', 'ochard')]}">
+                <field name="olive_parcel_ids" nolabel="1"/>
+            </group>
+            <group name="cultivation" string="Cultivation Methods" attrs="{'invisible': [('olive_type', '!=', 'ochard')]}">
+                <field name="olive_cultivation_ids" nolabel="1"/>
+            </group>
+        </field>
+    </field>
+</record>
+
+<record id="view_location_search" model="ir.ui.view">
+    <field name="name">olive.mill.stock.location.search</field>
+    <field name="model">stock.location</field>
+    <field name="inherit_id" ref="stock.view_location_search"/>
+    <field name="arch" type="xml">
+        <filter name="supplier" position="after">
+            <separator/>
+            <filter name="palox" string="Palox" domain="[('olive_type', '=', 'palox')]"/>
+            <filter name="tank" string="Tank" domain="[('olive_type', '=', 'tank')]"/>
+            <filter name="ochard" string="Ochard" domain="[('olive_type', '=', 'ochard')]"/>
+            <separator/>
+            <filter name="lended_palox" string="Lended Palox" domain="[('olive_type', '=', 'palox'), ('olive_borrower_partner_id', '!=', False)]}"/>
+        </filter>
+    </field>
+</record>
+
+<record id="view_location_tree2" model="ir.ui.view">
+    <field name="name">palox.stock.location.tree</field>
+    <field name="model">stock.location</field>
+    <field name="inherit_id" ref="stock.view_location_tree2"/>
+    <field name="arch" type="xml">
+        <field name="usage" position="after">
+            <field name="olive_borrower_partner_id" invisible="not context.get('show_palox')"/>
+            <field name="olive_borrowed_date" invisible="not context.get('show_palox')"/>
+        </field>
+    </field>
+</record>
+
+<record id="palox_stock_location_action" model="ir.actions.act_window">
+    <field name="name">Palox</field>
+    <field name="res_model">stock.location</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[('olive_type', '=', 'palox')]</field>
+    <field name="context">{'default_olive_type': 'palox', 'default_usage': 'supplier', 'show_palox': True}</field>
+</record>
+
+<menuitem id="palox_stock_location_menu" action="palox_stock_location_action" parent="olive_config_menu" sequence="70"/>
+
+<record id="ochard_stock_location_action" model="ir.actions.act_window">
+    <field name="name">Ochard</field>
+    <field name="res_model">stock.location</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[('olive_type', '=', 'ochard')]</field>
+    <field name="context">{'default_olive_type': 'ochard', 'default_usage': 'supplier'}</field>
+</record>
+
+<menuitem id="ochard_stock_location_menu" action="ochard_stock_location_action" parent="olive_config_menu" sequence="60"/>
+
+<record id="tank_stock_location_action" model="ir.actions.act_window">
+    <field name="name">Tank</field>
+    <field name="res_model">stock.location</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[('olive_type', '=', 'tank')]</field>
+    <field name="context">{'default_olive_type': 'tank', 'default_usage': 'internal'}</field>
+</record>
+
+<menuitem id="tank_stock_location_menu" action="tank_stock_location_action" parent="olive_config_menu" sequence="60"/>
+
+
+
+</odoo>

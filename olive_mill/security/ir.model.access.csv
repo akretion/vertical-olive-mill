@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_olive_parcel_manager,Full access on olive.parcel,model_olive_parcel,stock.group_stock_manager,1,1,1,1
+access_olive_parcel_user,Read access on olive.parcel,model_olive_parcel,base.group_user,1,0,0,0
+access_olive_season_manager,Full access on olive.season,model_olive_season,stock.group_stock_manager,1,1,1,1
+access_olive_season_user,Read access on olive.season,model_olive_season,base.group_user,1,0,0,0
+access_olive_treatment_manager,Full access on olive.treatment,model_olive_treatment,stock.group_stock_manager,1,1,1,1
+access_olive_season_user,Read+create access on olive.treatment,model_olive_treatment,stock.group_stock_user,1,0,1,0
+access_olive_cultivation_user,Full access on olive.cultivation,model_olive_cultivation,stock.group_stock_user,1,1,1,1

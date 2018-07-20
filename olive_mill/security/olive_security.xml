@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+<data noupdate="1">
+
+<!-- RULES -->
+<record id="olive_parcel_multicompany_rule" model="ir.rule">
+    <field name="name">Olive parcel multi-company</field>
+    <field name="model_id" ref="model_olive_parcel"/>
+    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
+</record>
+
+<record id="olive_season_multicompany_rule" model="ir.rule">
+    <field name="name">Olive season multi-company</field>
+    <field name="model_id" ref="model_olive_season"/>
+    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
+</record>
+
+<record id="olive_cultivation_multicompany_rule" model="ir.rule">
+    <field name="name">Olive cultivation multi-company</field>
+    <field name="model_id" ref="model_olive_cultivation"/>
+    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
+</record>
+
+
+
+</data>
+</odoo>

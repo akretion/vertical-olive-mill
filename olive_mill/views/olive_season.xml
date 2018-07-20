@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="olive_season_form" model="ir.ui.view">
+    <field name="name">olive.season.form</field>
+    <field name="model">olive.season</field>
+    <field name="arch" type="xml">
+        <form string="Olive Season">
+            <group name="main">
+                <field name="name"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+            </group>
+        </form>
+    </field>
+</record>
+
+<record id="olive_season_tree" model="ir.ui.view">
+    <field name="name">olive.season.tree</field>
+    <field name="model">olive.season</field>
+    <field name="arch" type="xml">
+        <tree string="Olive Seasons">
+            <field name="name"/>
+            <field name="start_date"/>
+            <field name="end_date"/>
+        </tree>
+    </field>
+</record>
+
+<record id="olive_season_search" model="ir.ui.view">
+    <field name="name">olive.season.search</field>
+    <field name="model">olive.season</field>
+    <field name="arch" type="xml">
+        <search string="Search Olive Seasons">
+            <field name="name"/>
+        </search>
+    </field>
+</record>
+
+<record id="olive_season_action" model="ir.actions.act_window">
+    <field name="name">Seasons</field>
+    <field name="res_model">olive.season</field>
+    <field name="view_mode">tree,form</field>
+</record>
+
+<menuitem id="olive_season_menu" action="olive_season_action" parent="olive_config_menu" sequence="40"/>
+
+</odoo>

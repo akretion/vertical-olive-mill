@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl)
+-->
+
+<odoo>
+
+<record id="view_production_lot_form" model="ir.ui.view">
+    <field name="name">oil_mill_stock_production_lot_form</field>
+    <field name="model">stock.production.lot</field>
+    <field name="inherit_id" ref="stock.view_production_lot_form"/>
+    <field name="arch" type="xml">
+        <field name="product_id" position="after">
+            <field name="oil_merge_lot"/>
+        </field>
+    </field>
+</record>
+
+<record id="view_production_lot_tree" model="ir.ui.view">
+    <field name="name">oil_mill_stock_production_lot_tree</field>
+    <field name="model">stock.production.lot</field>
+    <field name="inherit_id" ref="stock.view_production_lot_tree"/>
+    <field name="arch" type="xml">
+        <field name="name" position="after">
+            <field name="oil_merge_lot"/>
+        </field>
+    </field>
+</record>
+
+<record id="search_product_lot_filter" model="ir.ui.view">
+    <field name="name">oil_mill_stock_production_lot_search</field>
+    <field name="model">stock.production.lot</field>
+    <field name="inherit_id" ref="product_expiry_simple.search_product_lot_filter"/>
+    <field name="arch" type="xml">
+        <filter name="no-expired" position="after">
+            <separator/>
+            <filter name="oil_merge_lot" string="Oil Merge Lots" domain="[('oil_merge_lot', '=', True)]"/>
+            <filter name="no_oil_merge_lot" string="No Oil Merge Lots" domain="[('oil_merge_lot', '=', False)]"/>
+        </filter>
+    </field>
+</record>
+
+</odoo>
+

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo noupdate="0">  <!-- TODO set to 0 once finished -->
+
+<record id="ochard1" model="stock.location">
+    <field name="name">Big Farm Ochard1</field>
+    <field name="usage">supplier</field>
+    <field name="olive_type">ochard</field>
+    <field name="location_id" ref="stock.stock_location_suppliers"/>
+    <field name="partner_id" ref="base.res_partner_12"/>
+    <field name="ochard_city">84 330 Le Barroux</field>
+</record>
+
+<record id="ochard2" model="stock.location">
+    <field name="name">Big Farm Ochard2</field>
+    <field name="usage">supplier</field>
+    <field name="olive_type">ochard</field>
+    <field name="location_id" ref="stock.stock_location_suppliers"/>
+    <field name="partner_id" ref="base.res_partner_12"/>
+    <field name="ochard_city">84 330 Le Barroux</field>
+</record>
+
+<record id="ochard3" model="stock.location">
+    <field name="name">Big Farm Ochard3</field>
+    <field name="usage">supplier</field>
+    <field name="olive_type">ochard</field>
+    <field name="location_id" ref="stock.stock_location_suppliers"/>
+    <field name="partner_id" ref="base.res_partner_12"/>
+    <field name="ochard_city">Caromb</field>
+</record>
+
+<record id="ochard4" model="stock.location">
+    <field name="name">Small Farm Ochard1</field>
+    <field name="usage">supplier</field>
+    <field name="olive_type">ochard</field>
+    <field name="location_id" ref="stock.stock_location_suppliers"/>
+    <field name="partner_id" ref="base.res_partner_1"/>
+    <field name="ochard_city">84 330 Le Barroux</field>
+</record>
+
+<record id="ochard5" model="stock.location">
+    <field name="name">Small Farm Ochard2</field>
+    <field name="usage">supplier</field>
+    <field name="olive_type">ochard</field>
+    <field name="location_id" ref="stock.stock_location_suppliers"/>
+    <field name="partner_id" ref="base.res_partner_1"/>
+    <field name="ochard_city">84 330 Le Barroux</field>
+</record>
+
+<record id="palox1" model="stock.location">
+    <field name="name">Palox 001</field>
+    <field name="usage">internal</field>
+    <field name="olive_type">palox</field>
+    <field name="location_id" ref="stock.stock_location_stock"/>
+</record>
+
+<record id="palox2" model="stock.location">
+    <field name="name">Palox 002</field>
+    <field name="usage">internal</field>
+    <field name="olive_type">palox</field>
+    <field name="location_id" ref="stock.stock_location_stock"/>
+</record>
+
+<record id="palox3" model="stock.location">
+    <field name="name">Palox 003</field>
+    <field name="usage">internal</field>
+    <field name="olive_type">palox</field>
+    <field name="location_id" ref="stock.stock_location_stock"/>
+</record>
+
+<record id="palox4" model="stock.location">
+    <field name="name">Palox 004</field>
+    <field name="usage">internal</field>
+    <field name="olive_type">palox</field>
+    <field name="location_id" ref="stock.stock_location_stock"/>
+</record>
+
+<record id="tank1" model="stock.location">
+    <field name="name">Tank 1</field>
+    <field name="usage">internal</field>
+    <field name="olive_type">tank</field>
+    <field name="location_id" ref="stock.stock_location_stock"/>
+</record>
+
+<record id="tank2" model="stock.location">
+    <field name="name">Tank 2</field>
+    <field name="usage">internal</field>
+    <field name="olive_type">tank</field>
+    <field name="location_id" ref="stock.stock_location_stock"/>
+</record>
+
+<record id="tank3" model="stock.location">
+    <field name="name">Tank 3</field>
+    <field name="usage">internal</field>
+    <field name="olive_type">tank</field>
+    <field name="location_id" ref="stock.stock_location_stock"/>
+</record>
+
+
+</odoo>

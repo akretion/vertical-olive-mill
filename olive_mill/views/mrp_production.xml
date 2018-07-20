@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  © 2017 Barroux Abbey (Alexis de Lattre <alexis.delattre@akretion.com>)
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="mrp_production_form_view" model="ir.ui.view">
+    <field name="name">oil_mill_mrp_production_form</field>
+    <field name="model">mrp.production</field>
+    <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+    <field name="arch" type="xml">
+        <field name="workorder_ids" position="after">
+            <field name="green" invisible="1"/>
+        </field>
+        <button name="action_assign" position="after">
+            <button name="stock_move_lots_copy_todo2done" type="object"
+                string="Tout Vert"
+                attrs="{'invisible': ['|', '|', ('green', '=', True), ('state', '!=', 'confirmed'), ('availability', '!=', 'assigned')]}"
+                class="oe_highlight" groups="mrp.group_mrp_user"
+                help="Ce bouton va copier la quantité 'A Faire' sur la quantité 'Fait' pour toutes les matières premières suivies par lot."/>
+        </button>
+    </field>
+</record>
+
+</odoo>
+

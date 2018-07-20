@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo noupdate="0">
+
+
+<!-- OLIVE -->
+<record id="olive" model="product.product">
+    <field name="name">Olive</field>
+    <field name="default_code">OLIVE</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="True"/>
+    <field name="type">product</field>
+    <field name="olive_type">olive</field>
+    <field name="olive_culture_type">regular</field>
+    <field name="uom_id" ref="product.product_uom_kgm"/>
+    <field name="uom_po_id" ref="product.product_uom_kgm"/>
+</record>
+
+<record id="olive_organic" model="product.product">
+    <field name="name">Organic Olive</field>
+    <field name="default_code">ORG_OLIVE</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="True"/>
+    <field name="type">product</field>
+    <field name="olive_type">olive</field>
+    <field name="olive_culture_type">organic</field>
+    <field name="uom_id" ref="product.product_uom_kgm"/>
+    <field name="uom_po_id" ref="product.product_uom_kgm"/>
+</record>
+
+<record id="olive_conversion" model="product.product">
+    <field name="name">Organic Conversion Olive</field>
+    <field name="default_code">CONV_OLIVE</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="True"/>
+    <field name="type">product</field>
+    <field name="olive_type">olive</field>
+    <field name="olive_culture_type">conversion</field>
+    <field name="uom_id" ref="product.product_uom_kgm"/>
+    <field name="uom_po_id" ref="product.product_uom_kgm"/>
+</record>
+
+<!-- OIL -->
+<record id="oil" model="product.product">
+    <field name="name">Olive Oil</field>
+    <field name="default_code">OLIVEOIL</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="True"/>
+    <field name="type">product</field>
+    <field name="olive_type">oil</field>
+    <field name="olive_culture_type">regular</field>
+    <field name="uom_id" ref="product.product_uom_kgm"/>
+    <field name="uom_po_id" ref="product.product_uom_kgm"/>
+</record>
+
+<record id="oil_organic" model="product.product">
+    <field name="name">Organic Olive Oil</field>
+    <field name="default_code">ORG_OLIVEOIL</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="True"/>
+    <field name="type">product</field>
+    <field name="olive_type">oil</field>
+    <field name="olive_culture_type">organic</field>
+    <field name="uom_id" ref="product.product_uom_kgm"/>
+    <field name="uom_po_id" ref="product.product_uom_kgm"/>
+</record>
+
+<record id="oil_conversion" model="product.product">
+    <field name="name">Organic Conversion Oil</field>
+    <field name="default_code">CONV_OLIVEOIL</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="True"/>
+    <field name="type">product</field>
+    <field name="olive_type">oil</field>
+    <field name="olive_culture_type">conversion</field>
+    <field name="uom_id" ref="product.product_uom_kgm"/>
+    <field name="uom_po_id" ref="product.product_uom_kgm"/>
+</record>
+
+
+<!-- BOTTLE -->
+<record id="bottle" model="product.product">
+    <field name="name">Olive Oil Bottle</field>
+    <field name="default_code">BOTTLE</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="True"/>
+    <field name="type">product</field>
+    <field name="olive_type">bottle</field>
+    <field name="olive_culture_type">regular</field>
+    <field name="uom_id" ref="product.product_uom_unit"/>
+    <field name="uom_po_id" ref="product.product_uom_unit"/>
+</record>
+
+<record id="bottle_organic" model="product.product">
+    <field name="name">Organic Olive Oil Bottle</field>
+    <field name="default_code">ORG_BOTTLE</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="True"/>
+    <field name="type">product</field>
+    <field name="olive_type">bottle</field>
+    <field name="olive_culture_type">organic</field>
+    <field name="uom_id" ref="product.product_uom_unit"/>
+    <field name="uom_po_id" ref="product.product_uom_unit"/>
+</record>
+
+<record id="bottle_conversion" model="product.product">
+    <field name="name">Conversion Organic Olive Oil Bottle</field>
+    <field name="default_code">CONV_BOTTLE</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="True"/>
+    <field name="type">product</field>
+    <field name="olive_type">bottle</field>
+    <field name="olive_culture_type">conversion</field>
+    <field name="uom_id" ref="product.product_uom_unit"/>
+    <field name="uom_po_id" ref="product.product_uom_unit"/>
+</record>
+
+
+
+</odoo>

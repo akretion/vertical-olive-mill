@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="olive_parcel_form" model="ir.ui.view">
+    <field name="name">olive.parcel.form</field>
+    <field name="model">olive.parcel</field>
+    <field name="arch" type="xml">
+        <form string="Olive Parcel">
+            <group name="main">
+                <field name="location_id" invisible="not context.get('olive_parcel_main_view')"/>
+                <field name="partner_id" invisible="not context.get('olive_parcel_main_view')"/>
+                <field name="land_registry_ref"/>
+                <label for="area"/>
+                <div name="area">
+                    <field name="area" class="oe_inline"/>
+                    <label string=" ha" class="oe_inline"/>
+                </div>
+                <field name="tree_qty"/>
+                <field name="product_ids" widget="many2many_tags"/>
+                <field name="density"/>
+                <field name="planted_year"/>
+                <field name="irrigation"/>
+                <field name="cultivation_method"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="notes"/>
+            </group>
+        </form>
+    </field>
+</record>
+
+<record id="olive_parcel_tree" model="ir.ui.view">
+    <field name="name">olive.parcel.tree</field>
+    <field name="model">olive.parcel</field>
+    <field name="arch" type="xml">
+        <tree string="Olive Parcels">
+            <field name="location_id" invisible="not context.get('olive_parcel_main_view')"/>
+            <field name="partner_id" invisible="not context.get('olive_parcel_main_view')"/>
+            <field name="land_registry_ref"/>
+            <field name="area" sum="1"/>
+            <field name="tree_qty" sum="1"/>
+            <field name="product_ids"/>
+            <field name="density"/>
+            <field name="planted_year"/>
+            <field name="irrigation"/>
+            <field name="cultivation_method"/>
+        </tree>
+    </field>
+</record>
+
+<record id="olive_parcel_search" model="ir.ui.view">
+    <field name="name">olive.parcel.search</field>
+    <field name="model">olive.parcel</field>
+    <field name="arch" type="xml">
+        <search string="Search Olive Parcels">
+            <field name="location_id"/>
+            <group string="Group By" name="groupby">
+                <filter name="location_groupby" string="Ochard" context="{'group_by': 'location_id'}"/>
+                <filter name="partner_groupby" string="Farmer" context="{'group_by': 'partner_id'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<record id="olive_parcel_action" model="ir.actions.act_window">
+    <field name="name">Parcels</field>
+    <field name="res_model">olive.parcel</field>
+    <field name="view_mode">tree,form</field>
+    <field name="context">{'olive_parcel_main_view': True}</field>
+</record>
+
+<menuitem id="olive_parcel_menu" action="olive_parcel_action" parent="olive_config_menu" sequence="30"/>
+
+</odoo>

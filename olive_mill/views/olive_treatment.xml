@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="olive_treatment_tree" model="ir.ui.view">
+    <field name="name">olive.treatment.tree</field>
+    <field name="model">olive.treatment</field>
+    <field name="arch" type="xml">
+        <tree string="Olive Treatments" editable="bottom">
+            <field name="name"/>
+        </tree>
+    </field>
+</record>
+
+<record id="olive_treatment_search" model="ir.ui.view">
+    <field name="name">olive.treatment.search</field>
+    <field name="model">olive.treatment</field>
+    <field name="arch" type="xml">
+        <search string="Search Olive Treatments">
+            <field name="name"/>
+        </search>
+    </field>
+</record>
+
+<record id="olive_treatment_action" model="ir.actions.act_window">
+    <field name="name">Treatments</field>
+    <field name="res_model">olive.treatment</field>
+    <field name="view_mode">tree</field>
+</record>
+
+<menuitem id="olive_treatment_menu" action="olive_treatment_action" parent="olive_config_menu" sequence="90"/>
+
+</odoo>

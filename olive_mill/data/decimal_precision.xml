@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+
+<record forcecreate="True" id="area" model="decimal.precision">
+    <field name="name">Area</field>
+    <field name="digits">4</field>
+</record>
+
+
+</odoo>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="product_template_form_view" model="ir.ui.view">
+    <field name="name">olive.mill.product.template.form</field>
+    <field name="model">product.template</field>
+    <field name="inherit_id" ref="product.product_template_form_view"/>
+    <field name="priority">1000</field>  <!-- to have olive_type right after type -->
+    <field name="arch" type="xml">
+        <field name="type" position="after">
+            <field name="olive_type" attrs="{'invisible': [('type', '!=', 'product')]}"/>
+            <field name="olive_culture_type" attrs="{'invisible': [('olive_type', '=', 'False')], 'required': [('olive_type', '!=', False)]}"/>
+        </field>
+    </field>
+</record>
+
+
+</odoo>

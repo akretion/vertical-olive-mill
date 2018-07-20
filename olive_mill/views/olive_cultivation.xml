@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="olive_cultivation_form" model="ir.ui.view">
+    <field name="name">olive.cultivation.form</field>
+    <field name="model">olive.cultivation</field>
+    <field name="arch" type="xml">
+        <form string="Cultivation Method">
+            <group name="main">
+                <field name="location_id" invisible="not context.get('olive_cultivation_main_view')"/>
+                <field name="partner_id" invisible="not context.get('olive_cultivation_main_view')"/>
+                <field name="season_id"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="treatment_type"/>
+                <field name="treatment_id"/>
+                <field name="quantity"/>
+                <field name="notes"/>
+            </group>
+        </form>
+    </field>
+</record>
+
+<record id="olive_cultivation_tree" model="ir.ui.view">
+    <field name="name">olive.cultivation.tree</field>
+    <field name="model">olive.cultivation</field>
+    <field name="arch" type="xml">
+        <tree string="Cultivation Methods">
+            <field name="location_id" invisible="not context.get('olive_cultivation_main_view')"/>
+            <field name="partner_id" invisible="not context.get('olive_cultivation_main_view')"/>
+            <field name="season_id"/>
+            <field name="treatment_type"/>
+            <field name="treatment_id"/>
+            <field name="quantity"/>
+        </tree>
+    </field>
+</record>
+
+<record id="olive_cultivation_search" model="ir.ui.view">
+    <field name="name">olive.cultivation.search</field>
+    <field name="model">olive.cultivation</field>
+    <field name="arch" type="xml">
+        <search string="Search Cultivation Methods">
+            <field name="location_id"/>
+            <group string="Group By" name="groupby">
+                <filter name="location_groupby" string="Ochard" context="{'group_by': 'location_id'}"/>
+                <filter name="partner_groupby" string="Farmer" context="{'group_by': 'partner_id'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<record id="olive_cultivation_action" model="ir.actions.act_window">
+    <field name="name">Cultivation Methods</field>
+    <field name="res_model">olive.cultivation</field>
+    <field name="view_mode">tree,form</field>
+    <field name="context">{'olive_cultivation_main_view': True}</field>
+</record>
+
+<menuitem id="olive_cultivation_menu" action="olive_cultivation_action" parent="olive_config_menu" sequence="40"/>
+
+</odoo>

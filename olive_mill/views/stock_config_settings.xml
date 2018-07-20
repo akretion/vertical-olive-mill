@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  © 2017 Barroux Abbey (Alexis de Lattre <alexis.delattre@akretion.com>)
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="view_stock_config_settings" model="ir.ui.view">
+    <field name="name">oil_mill_stock_config_settings_form</field>
+    <field name="model">stock.config.settings</field>
+    <field name="inherit_id" ref="stock.view_stock_config_settings"/>
+    <field name="arch" type="xml">
+        <group name="traceability" position="after">
+            <group name="oil_mill" string="Oil Mill">
+                <field name="oil_default_expiry_date"/>
+            </group>
+        </group>
+    </field>
+</record>
+
+
+
+</odoo>
+
