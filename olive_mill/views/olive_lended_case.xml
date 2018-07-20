@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="olive_lended_case_form" model="ir.ui.view">
+    <field name="name">olive.lended.case.form</field>
+    <field name="model">olive.lended.case</field>
+    <field name="arch" type="xml">
+        <form string="Olive Lended Case">
+            <group name="main">
+                <field name="partner_id" invisible="not context.get('olive_lended_case_main_view')"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="date"/>
+                <field name="qty"/>
+                <field name="notes"/>
+            </group>
+        </form>
+    </field>
+</record>
+
+<record id="olive_lended_case_tree" model="ir.ui.view">
+    <field name="name">olive.lended.case.tree</field>
+    <field name="model">olive.lended.case</field>
+    <field name="arch" type="xml">
+        <tree string="Olive Lended Cases">
+            <field name="partner_id" invisible="not context.get('olive_lended_case_main_view')"/>
+            <field name="date"/>
+            <field name="qty" sum="1"/>
+            <field name="notes"/>
+            <field name="company_id" groups="base.group_multi_company"/>
+        </tree>
+    </field>
+</record>
+
+<record id="olive_lended_case_search" model="ir.ui.view">
+    <field name="name">olive.lended.case.search</field>
+    <field name="model">olive.lended.case</field>
+    <field name="arch" type="xml">
+        <search string="Search Olive Lended Cases">
+            <field name="partner_id"/>
+            <group string="Group By" name="groupby">
+                <filter name="partner_groupby" string="Partner" context="{'group_by': 'partner_id'}"/>
+                <filter name="date_groupby" string="Date" context="{'group_by': 'date'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<record id="olive_lended_case_action" model="ir.actions.act_window">
+    <field name="name">Lended Cases</field>
+    <field name="res_model">olive.lended.case</field>
+    <field name="view_mode">tree,form</field>
+    <field name="context">{'olive_lended_case_main_view': True}</field>
+</record>
+
+<menuitem id="olive_lended_case_menu" action="olive_lended_case_action" parent="olive_operations_menu" sequence="100"/>
+
+</odoo>

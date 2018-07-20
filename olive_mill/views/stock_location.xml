@@ -55,7 +55,17 @@
             <filter name="ochard" string="Ochard" domain="[('olive_type', '=', 'ochard')]"/>
             <separator/>
             <filter name="lended_palox" string="Lended Palox" domain="[('olive_type', '=', 'palox'), ('olive_borrower_partner_id', '!=', False)]}"/>
+            <field name="olive_borrower_partner_id"/>
         </filter>
+        <field name="name" position="after">
+            <field name="partner_id"/>
+        </field>
+        <search position="inside">
+            <group string="Group By" name="groupby">
+                <filter name="partner_groupby" string="Owner" context="{'group_by': 'partner_id'}"/>
+                <filter name="olive_borrower_partner_id_groupby" string="Palox Borrower" context="{'group_by': 'olive_borrower_partner_id'}"/>
+            </group>
+        </search>
     </field>
 </record>
 
@@ -67,6 +77,8 @@
         <field name="usage" position="after">
             <field name="olive_borrower_partner_id" invisible="not context.get('show_palox')"/>
             <field name="olive_borrowed_date" invisible="not context.get('show_palox')"/>
+            <field name="olive_tree_total" invisible="not context.get('show_ochard')" sum="1"/>
+            <field name="olive_area_total" invisible="not context.get('show_ochard')" string="Total Area (ha)" sum="1"/>
         </field>
     </field>
 </record>
@@ -86,7 +98,7 @@
     <field name="res_model">stock.location</field>
     <field name="view_mode">tree,form</field>
     <field name="domain">[('olive_type', '=', 'ochard')]</field>
-    <field name="context">{'default_olive_type': 'ochard', 'default_usage': 'supplier'}</field>
+    <field name="context">{'default_olive_type': 'ochard', 'default_usage': 'supplier', 'show_ochard': True}</field>
 </record>
 
 <menuitem id="ochard_stock_location_menu" action="ochard_stock_location_action" parent="olive_config_menu" sequence="60"/>

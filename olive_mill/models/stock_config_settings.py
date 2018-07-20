@@ -10,6 +10,3 @@ from odoo.exceptions import UserError
 
 class StockConfigSettings(models.TransientModel):
     _inherit = 'stock.config.settings'
-
-#    oil_default_expiry_date = fields.Date(
-#        related='company_id.oil_default_expiry_date')

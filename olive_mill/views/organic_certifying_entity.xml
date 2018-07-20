@@ -7,11 +7,11 @@
 
 <odoo>
 
-<record id="olive_treatment_form" model="ir.ui.view">
-    <field name="name">olive.treatment.form</field>
-    <field name="model">olive.treatment</field>
+<record id="organic_certifying_entity_form" model="ir.ui.view">
+    <field name="name">organic.certifying.entity.form</field>
+    <field name="model">organic.certifying.entity</field>
     <field name="arch" type="xml">
-        <form string="Olive Treatment">
+        <form string="Organic Certifying Entity">
             <sheet>
                 <div class="oe_button_box" name="button_box">
                     <button name="toggle_active" type="object"
@@ -28,21 +28,21 @@
     </field>
 </record>
 
-<record id="olive_treatment_tree" model="ir.ui.view">
-    <field name="name">olive.treatment.tree</field>
-    <field name="model">olive.treatment</field>
+<record id="organic_certifying_entity_tree" model="ir.ui.view">
+    <field name="name">organic.certifying.entity.tree</field>
+    <field name="model">organic.certifying.entity</field>
     <field name="arch" type="xml">
-        <tree string="Olive Treatments">
+        <tree string="Organic Certifying Entities">
             <field name="name"/>
         </tree>
     </field>
 </record>
 
-<record id="olive_treatment_search" model="ir.ui.view">
-    <field name="name">olive.treatment.search</field>
-    <field name="model">olive.treatment</field>
+<record id="organic_certifying_entity_search" model="ir.ui.view">
+    <field name="name">organic.certifying.entity.search</field>
+    <field name="model">organic.certifying.entity</field>
     <field name="arch" type="xml">
-        <search string="Search Olive Treatments">
+        <search string="Search Organic Certifying Entities">
             <field name="name"/>
             <separator/>
             <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
@@ -50,12 +50,12 @@
     </field>
 </record>
 
-<record id="olive_treatment_action" model="ir.actions.act_window">
-    <field name="name">Treatments</field>
-    <field name="res_model">olive.treatment</field>
+<record id="organic_certifying_entity_action" model="ir.actions.act_window">
+    <field name="name">Organic Cert. Entities</field>
+    <field name="res_model">organic.certifying.entity</field>
     <field name="view_mode">tree,form</field>
 </record>
 
-<menuitem id="olive_treatment_menu" action="olive_treatment_action" parent="olive_config_menu" sequence="90"/>
+<menuitem id="organic_certifying_entity_menu" action="organic_certifying_entity_action" parent="olive_config_menu" sequence="100"/>
 
 </odoo>

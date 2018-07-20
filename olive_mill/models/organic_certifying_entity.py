@@ -6,9 +6,9 @@
 from odoo import models, fields
 
 
-class OliveTreatment(models.Model):
-    _name = 'olive.treatment'
-    _description = 'Olive Treatment'
+class OrganicCertifyingEntity(models.Model):
+    _name = 'organic.certifying.entity'
+    _description = 'Organic Certifying Entity'
 
     name = fields.Char(string='Name', required=True)
     active = fields.Boolean(default=True)
@@ -16,4 +16,4 @@ class OliveTreatment(models.Model):
     _sql_constraints = [(
         'name_unique',
         'unique(name)',
-        'This treatment product already exists.')]
+        'This organic certifying entity already exists.')]

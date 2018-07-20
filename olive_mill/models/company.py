@@ -11,6 +11,3 @@ from odoo.exceptions import UserError
 class ResCompany(models.Model):
     _inherit = 'res.company'
 
-# Move to campaign
-#    oil_default_expiry_date = fields.Date(
-#        string='Default Oil Products Expiry Date')

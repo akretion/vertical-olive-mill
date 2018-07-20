@@ -16,6 +16,7 @@
                 <field name="location_id" invisible="not context.get('olive_cultivation_main_view')"/>
                 <field name="partner_id" invisible="not context.get('olive_cultivation_main_view')"/>
                 <field name="season_id"/>
+                <field name="date"/>
                 <field name="company_id" groups="base.group_multi_company"/>
                 <field name="treatment_type"/>
                 <field name="treatment_id"/>
@@ -33,7 +34,7 @@
         <tree string="Cultivation Methods">
             <field name="location_id" invisible="not context.get('olive_cultivation_main_view')"/>
             <field name="partner_id" invisible="not context.get('olive_cultivation_main_view')"/>
-            <field name="season_id"/>
+            <field name="date"/>
             <field name="treatment_type"/>
             <field name="treatment_id"/>
             <field name="quantity"/>
@@ -50,6 +51,7 @@
             <group string="Group By" name="groupby">
                 <filter name="location_groupby" string="Ochard" context="{'group_by': 'location_id'}"/>
                 <filter name="partner_groupby" string="Farmer" context="{'group_by': 'partner_id'}"/>
+                <filter name="date_groupby" string="Date" context="{'group_by': 'date'}"/>
             </group>
         </search>
     </field>

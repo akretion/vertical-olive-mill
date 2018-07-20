@@ -18,7 +18,7 @@ class StockLocation(models.Model):
         ], string='Olive Mill Type')
     olive_borrower_partner_id = fields.Many2one(
         'res.partner', string='Borrower', ondelete='restrict', copy=False,
-        domain=[('parent_id', '=', False)])
+        domain=[('parent_id', '=', False), ('olive_farmer', '=', True)])
     olive_borrowed_date = fields.Date('Borrowed Date')
     olive_zip_id = fields.Many2one('res.better.zip', 'City/Zip Shortcut')
     olive_city = fields.Char('City')

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="ochard_stock_location_partner_action" model="ir.actions.act_window">
+    <field name="name">Ochard</field>
+    <field name="res_model">stock.location</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[('olive_type', '=', 'ochard')]</field>
+    <field name="context">{'search_default_partner_id': active_id, 'default_partner_id': active_id, 'default_olive_type': 'ochard', 'default_usage': 'supplier', 'show_ochard': True}</field>
+</record>
+
+<record id="olive_lended_palox_partner_action" model="ir.actions.act_window">
+    <field name="name">Lended Palox</field>
+    <field name="res_model">stock.location</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[('olive_type', '=', 'palox')]</field>
+    <field name="context">{'search_default_olive_borrower_partner_id': active_id, 'default_olive_type': 'palox', 'show_palox': True, 'no_create': True}</field>
+</record>
+
+<record id="olive_lended_case_partner_action" model="ir.actions.act_window">
+    <field name="name">Lended Cases</field>
+    <field name="res_model">olive.lended.case</field>
+    <field name="view_mode">tree,form</field>
+    <field name="context">{'search_default_partner_id': active_id, 'default_partner_id': active_id, 'olive_lended_case_main_view': True}</field>
+</record>
+
+<record id="partner_organic_certification_partner_action" model="ir.actions.act_window">
+    <field name="name">Partner Organic Certif.</field>
+    <field name="res_model">partner.organic.certification</field>
+    <field name="view_mode">tree,form</field>
+    <field name="context">{'partner_organic_certification_main_view': True, 'search_default_partner_id': active_id, 'default_partner_id': active_id}</field>
+</record>
+
+<record id="view_partner_form" model="ir.ui.view">
+    <field name="name">olive.mill.partner.form</field>
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="base.view_partner_form"/>
+    <field name="arch" type="xml">
+        <xpath expr="//page[@name='sales_purchases']//field[@name='customer']" position="after">
+            <field name="olive_farmer" attrs="{'invisible': [('parent_id', '!=', False)]}"/>
+        </xpath>
+        <page name="sales_purchases" position="after">
+            <page name="olive" string="Olive" attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}">
+                <group name="olive_main">
+                    <group name="left">
+                        <field name="olive_organic_certified" invisible="1"/>
+                        <label for="olive_area_total"/>
+                        <div name="olive_area_total">
+                            <field name="olive_area_total" class="oe_inline"/>
+                            <label string=" ha" class="oe_inline"/>
+                        </div>
+                    </group>
+                    <group name="olive_organic_certification" string="Organic Certifications" col="1">
+                        <field name="olive_organic_certification_ids" nolabel="1" readonly="1"/>
+                        <button name="%(partner_organic_certification_partner_action)d" string="Update Organic Certifications" type="action"/>
+                    </group>
+                </group>
+            </page>
+        </page>
+        <!--        <field name="image" class="oe_avatar" position="after">
+            <img src="/olive_mill/static/image/organic_logo.png" attrs="{'invisible': [('olive_organic_certified', '=', False)]}"/>
+        </field> -->
+        <div name="button_box" position="after">
+            <div name="organic_logo" class="oe_inline oe_right" attrs="{'invisible': [('olive_organic_certified', '=', False)]}">
+                <img src="/olive_mill/static/image/organic_logo.png"/>
+
+            </div>
+        </div>
+        <div name="button_box" position="inside">
+            <button class="oe_stat_button" type="action"
+                name="%(olive_mill.ochard_stock_location_partner_action)d"
+                attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}"
+                icon="fa-pagelines">
+                <field string="Olive Trees" name="olive_tree_total" widget="statinfo"/>
+            </button>
+            <button class="oe_stat_button" type="action"
+                name="%(olive_mill.olive_lended_palox_partner_action)d"
+                attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}"
+                icon="fa-inbox">  <!-- use fa-pallet when we'll have access to FA 5.0.7, which is not the case in v10 -->
+                <field string="Lended Palox" name="olive_lended_palox" widget="statinfo"/>
+            </button>
+            <button class="oe_stat_button" type="action"
+                name="%(olive_mill.olive_lended_case_partner_action)d"
+                attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}"
+                icon="fa-codepen">
+                <field string="Lended Cases" name="olive_lended_case" widget="statinfo"/>
+            </button>
+        </div>
+    </field>
+</record>
+
+<record id="view_res_partner_filter" model="ir.ui.view">
+    <field name="name">olive.mill.partner.search</field>
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="base.view_res_partner_filter"/>
+    <field name="arch" type="xml">
+        <filter name="supplier" position="after">
+            <filter string="Olive Farmer" name="olive_farmer" domain="[('olive_farmer', '=', True), ('parent_id', '=', False)]"/>
+        </filter>
+    </field>
+</record>
+
+<record id="olive_farmer_partner_action" model="ir.actions.act_window">
+    <field name="name">Farmers</field>
+    <field name="res_model">res.partner</field>
+    <field name="view_mode">tree,form,kanban</field>
+    <field name="context">{'search_default_olive_farmer': True, 'default_olive_farmer': True}</field>
+</record>
+
+<menuitem id="olive_farmer_partner_menu" action="olive_farmer_partner_action" parent="olive_operations_menu" sequence="60"/>
+
+</odoo>
