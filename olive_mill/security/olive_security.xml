@@ -39,6 +39,12 @@
     <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
 </record>
 
+<record id="olive_appointment_multicompany_rule" model="ir.rule">
+    <field name="name">Olive Appointment multi-company</field>
+    <field name="model_id" ref="model_olive_appointment"/>
+    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
+</record>
+
 
 
 </data>

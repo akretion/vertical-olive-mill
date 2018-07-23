@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+
+<record id="olive_config_settings_form" model="ir.ui.view">
+    <field name="name">olive_config_settings_form</field>
+    <field name="model">olive.config.settings</field>
+    <field name="arch" type="xml">
+        <form string="Configure Warehouse" class="oe_form_configuration">
+            <header>
+                <button string="Apply" type="object" name="execute" class="btn-primary"/>
+                <button string="Cancel" type="object" name="cancel" class="btn-default" special="cancel"/>
+            </header>
+            <group name="variables" string="Variables">
+                <field name="company_id" invisible="1"/>
+                <label for="olive_qty_per_palox"/>
+                <div name="olive_qty_per_palox">
+                    <field name="olive_qty_per_palox" class="oe_inline"/>
+                    <label string=" kg" class="oe_inline"/>
+                </div>
+            </group>
+        </form>
+    </field>
+</record>
+
+<record id="olive_config_settings_action" model="ir.actions.act_window">
+    <field name="name">Settings</field>
+    <field name="res_model">olive.config.settings</field>
+    <field name="view_mode">form</field>
+    <field name="target">inline</field>
+</record>
+
+<menuitem id="olive_config_settings_menu"
+        action="olive_config_settings_action"
+        parent="olive_config_menu"
+        sequence="10"/>
+
+
+</odoo>
