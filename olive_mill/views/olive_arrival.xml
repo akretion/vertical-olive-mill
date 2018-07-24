@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="olive_arrival_form" model="ir.ui.view">
+    <field name="name">olive.arrival.form</field>
+    <field name="model">olive.arrival</field>
+    <field name="arch" type="xml">
+        <form string="Olive Arrival">
+            <header>
+                <button name="validate" string="Validate" class="btn-primary" states="draft" type="object"/>
+                <button name="cancel" string="Cancel" class="btn-default" states="draft" confirm="Are you sure you want to cancel this arrival ?" type="object"/>
+                <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+            </header>
+            <sheet>
+                <div class="oe_title">
+                    <label for="name"/>
+                    <h1>
+                        <field name="name" readonly="1"/>
+                    </h1>
+                </div>
+                <group name="main">
+                    <group name="left">
+                        <field name="partner_id"/>
+                        <field name="default_product_id"/>
+                        <field name="default_src_location_id" domain="[('partner_id', '=', partner_id), ('olive_type', '=', 'ochard')]"/>
+                        <field name="leaf_removal"/>
+                        <field name="returned_case"/>
+                        <field name="returned_organic_case"/>
+                        <label for="qty"/>
+                        <div name="qty">
+                            <field name="qty" class="oe_inline"/>
+                            <label string=" kg"/>
+                        </div>
+                    </group>
+                    <group name="right">
+                        <field name="default_oil_destination"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                </group>
+                <group name="lines">
+                    <field name="line_ids" nolabel="1" context="{'default_product_id': default_product_id, 'default_src_location_id': default_src_location_id, 'default_partner_id': partner_id, 'default_oil_destination': default_oil_destination}">
+                        <tree editable="bottom">
+                            <field name="partner_id" invisible="1"/>
+                            <field name="product_id"/>
+                            <field name="qty" sum="1" string="Olive Qty (kg)"/>
+                            <field name="src_location_id" domain="[('partner_id', '=', partner_id), ('olive_type', '=', 'ochard')]"/>
+                            <field name="dest_location_id"/>
+                            <field name="oil_destination"/>
+                            <field name="sale_qty" string="Sale Qty (kg)"/>
+                        </tree>
+                    </field>
+                </group>
+            </sheet>
+            <div class="oe_chatter">
+                <field name="message_follower_ids" widget="mail_followers"/>
+                <field name="message_ids" widget="mail_thread"/>
+            </div>
+        </form>
+    </field>
+</record>
+
+<record id="olive_arrival_tree" model="ir.ui.view">
+    <field name="name">olive.arrival.tree</field>
+    <field name="model">olive.arrival</field>
+    <field name="arch" type="xml">
+        <tree string="Olive Arrivals" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
+            <field name="name"/>
+            <field name="partner_id"/>
+            <field name="qty"/>
+            <field name="leaf_removal"/>
+            <field name="state"/>
+        </tree>
+    </field>
+</record>
+
+<record id="olive_arrival_search" model="ir.ui.view">
+    <field name="name">olive.arrival.search</field>
+    <field name="model">olive.arrival</field>
+    <field name="arch" type="xml">
+        <search string="Search Olive Arrivals">
+            <field name="name"/>
+            <field name="partner_id"/>
+            <separator/>
+            <filter string="Draft" domain="[('state', '=', 'draft')]" name="draft"/>
+            <filter string="Done" domain="[('state', '=', 'done')]" name="done"/>
+            <group string="Group By" name="groupby">
+                <filter name="partner_groupby" string="Farmer" context="{'group_by': 'partner_id'}"/>
+                <filter name="state_groupby" string="State" context="{'group_by': 'state'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<record id="olive_arrival_action" model="ir.actions.act_window">
+    <field name="name">Olive Arrivals</field>
+    <field name="res_model">olive.arrival</field>
+    <field name="view_mode">tree,form</field>
+</record>
+
+<menuitem id="olive_arrival_menu" action="olive_arrival_action" parent="olive_operations_menu" sequence="20"/>
+
+</odoo>

@@ -39,7 +39,7 @@ class OliveParcel(models.Model):
     _sql_constraints = [(
         'area_positive',
         'CHECK(area >= 0)',
-        'The area must be positive of 0.'), (
+        'The area must be positive or 0.'), (
         'tree_qty_positive',
         'CHECK(tree_qty >= 0)',
         "The number of tree must be positive or 0."), (

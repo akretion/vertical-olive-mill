@@ -15,19 +15,16 @@ class OliveLendedCase(models.Model):
     partner_id = fields.Many2one(
         'res.partner', string='Olive Farmer',
         domain=[('parent_id', '=', False), ('olive_farmer', '=', True)],
-        ondelete='restrict')
+        ondelete='restrict', index=True)
     company_id = fields.Many2one(
-        'res.company', string='Company',
+        'res.company', string='Company', index=True,
         default=lambda self: self.env['res.company']._company_default_get(
-            'olive.season'))
+            'olive.lended.case'))
     date = fields.Date(string='Date', required=True, default=fields.Date.context_today)
-    qty = fields.Integer(
-        string='Quantity', required=True,
+    regular_qty = fields.Integer(
+        string='Case Quantity',
+        help="The quantity is positive when the case is lended, negative when the case is returned.")
+    organic_qty = fields.Integer(
+        string='Organic Case Quantity',
         help="The quantity is positive when the case is lended, negative when the case is returned.")
     notes = fields.Char(string='Notes')
-    # M2O to incoming or origin field
-
-    _sql_constrains = [(
-        'qty_not_null',
-        'CHECK(qty <> 0)',
-        'The quantity must be not null.')]

@@ -17,3 +17,15 @@ class OliveConfigSettings(models.TransientModel):
         default=lambda self: self.env.user.company_id, required=True)
     olive_qty_per_palox = fields.Integer(
         related='company_id.olive_qty_per_palox')
+    olive_appointment_leaf_removal_minutes = fields.Integer(
+        related='company_id.olive_appointment_leaf_removal_minutes')
+    olive_appointment_no_leaf_removal_minutes = fields.Integer(
+        related='company_id.olive_appointment_no_leaf_removal_minutes')
+    olive_organic_case_stock = fields.Integer(
+        related='company_id.olive_organic_case_stock')
+    olive_organic_case_total = fields.Integer(
+        related='company_id.olive_organic_case_total')
+    olive_regular_case_stock = fields.Integer(
+        related='company_id.olive_regular_case_stock')
+    olive_regular_case_total = fields.Integer(
+        related='company_id.olive_regular_case_total')

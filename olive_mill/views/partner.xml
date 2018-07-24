@@ -23,11 +23,11 @@
     <field name="context">{'search_default_olive_borrower_partner_id': active_id, 'default_olive_type': 'palox', 'show_palox': True, 'no_create': True}</field>
 </record>
 
-<record id="olive_lended_case_partner_action" model="ir.actions.act_window">
+<record id="olive_lended_regular_case_partner_action" model="ir.actions.act_window">
     <field name="name">Lended Cases</field>
     <field name="res_model">olive.lended.case</field>
     <field name="view_mode">tree,form</field>
-    <field name="context">{'search_default_partner_id': active_id, 'default_partner_id': active_id, 'olive_lended_case_main_view': True}</field>
+    <field name="context">{'search_default_partner_id': active_id, 'default_partner_id': active_id, 'olive_lended_regular_case_main_view': True}</field>
 </record>
 
 <record id="partner_organic_certification_partner_action" model="ir.actions.act_window">
@@ -63,12 +63,9 @@
                 </group>
             </page>
         </page>
-        <!--        <field name="image" class="oe_avatar" position="after">
-            <img src="/olive_mill/static/image/organic_logo.png" attrs="{'invisible': [('olive_organic_certified', '=', False)]}"/>
-        </field> -->
         <div name="button_box" position="after">
             <div name="organic_logo" class="oe_inline oe_right" attrs="{'invisible': [('olive_organic_certified', '=', False)]}">
-                <img src="/olive_mill/static/image/organic_logo.png"/>
+                <field name="olive_organic_certified_logo" widget="image"/>
 
             </div>
         </div>
@@ -86,10 +83,17 @@
                 <field string="Lended Palox" name="olive_lended_palox" widget="statinfo"/>
             </button>
             <button class="oe_stat_button" type="action"
-                name="%(olive_mill.olive_lended_case_partner_action)d"
+                name="%(olive_mill.olive_lended_regular_case_partner_action)d"
                 attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}"
                 icon="fa-codepen">
-                <field string="Lended Cases" name="olive_lended_case" widget="statinfo"/>
+                <div class="o_form_field o_stat_info">
+                    <span class="o_stat_value">
+                        <field name="olive_lended_regular_case" widget="statinfo" nolabel="1"/>
+                        + <field name="olive_lended_organic_case" widget="statinfo" nolabel="1"/>
+                        organic
+                    </span>
+                    <span class="o_stat_text">Lended Cases</span>
+                </div>
             </button>
         </div>
     </field>

@@ -12,6 +12,7 @@ from . import organic_certifying_entity
 from . import partner_organic_certification
 from . import olive_cultivation
 from . import olive_appointment
+from . import olive_arrival
 from . import stock_location
 from . import stock_production_lot
 from . import stock_quant

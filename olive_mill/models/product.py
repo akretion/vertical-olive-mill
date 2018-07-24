@@ -19,7 +19,7 @@ class ProductTemplate(models.Model):
         ('regular', 'Regular'),
         ('organic', 'Organic'),
         ('conversion', 'Conversion'),
-        ], string='culture Type')
+        ], string='Culture Type')
 
     @api.onchange('olive_type')
     def olive_type_change(self):

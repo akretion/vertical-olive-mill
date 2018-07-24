@@ -19,12 +19,22 @@ class ResPartner(models.Model):
         digits=dp.get_precision('Area'))
     olive_lended_palox = fields.Integer(
         compute='_compute_olive_total', string='Lended Palox', readonly=True)
-    olive_lended_case = fields.Integer(
-        compute='_compute_olive_total', string='Lended Case', readonly=True)
+    olive_lended_regular_case = fields.Integer(
+        compute='_compute_olive_total', string='Lended Regular Case', readonly=True)
+    olive_lended_organic_case = fields.Integer(
+        compute='_compute_olive_total', string='Lended Organic Case', readonly=True)
     olive_organic_certification_ids = fields.One2many(
         'partner.organic.certification', 'partner_id', 'Organic Certifications')
-    olive_organic_certified = fields.Boolean(
-        compute='_compute_olive_organic_certified', string='Is Organic Certified', readonly=True)
+    olive_organic_certified = fields.Selection([
+        ('organic', 'Organic'),
+        ('organic-draft', 'Organic (to confirm)'),
+        ('convert', 'Convert'),
+        ('convert-draft', 'Convert (to confirm)'),
+        ], compute='_compute_olive_organic_certified',
+        string='Organic Certified', readonly=True)
+    olive_organic_certified_logo = fields.Binary(
+        compute='_compute_olive_organic_certified',
+        string='Organic Certified Logo', readonly=True)
 
     @api.onchange('olive_farmer')
     def olive_farmer_change(self):
@@ -39,7 +49,7 @@ class ResPartner(models.Model):
             cases_rg = self.env['olive.lended.case'].read_group([
                 ('company_id', '=', self.env.user.company_id.id),
                 ('partner_id', 'in', self.ids)],
-                ['partner_id', 'qty'], ['partner_id'])
+                ['partner_id', 'regular_qty', 'organic_qty'], ['partner_id'])
         except Exception:
             pass
         try:
@@ -54,7 +64,8 @@ class ResPartner(models.Model):
             tree = 0
             area = 0.0
             palox = 0
-            case = 0
+            regular_case = 0
+            organic_case = 0
 
             if partner.olive_farmer and not partner.parent_id:
                 for parcel_rg in parcels_rg:
@@ -71,24 +82,47 @@ class ResPartner(models.Model):
                     pass
                 for case_rg in cases_rg:
                     if case_rg.get('partner_id') and case_rg['partner_id'][0] == partner.id:
-                        case = case_rg.get('qty')
+                        regular_case = case_rg.get('regular_qty')
+                        organic_case = case_rg.get('organic_qty')
                         break
 
             partner.olive_tree_total = tree
             partner.olive_area_total = area
             partner.olive_lended_palox = palox
-            partner.olive_lended_case = case
+            partner.olive_lended_regular_case = regular_case
+            partner.olive_lended_organic_case = organic_case
 
     def _compute_olive_organic_certified(self):
         season = self.env['olive.season'].get_current_season()
         for partner in self:
-            cert = False
+            certified = False
+            filename = False
+            logo = False
             if season and partner.olive_farmer and not partner.parent_id:
-                certs = self.env['partner.organic.certification'].search([
+                cert = self.env['partner.organic.certification'].search([
                     ('partner_id', '=', partner.id),
                     ('season_id', '=', season.id),
-                    ('state', '=', 'done'),
-                    ])
-                if certs:
-                    cert = True
-            partner.olive_organic_certified = cert
+                    ], limit=1)
+                if cert:
+                    if cert.state == 'done':
+                        if cert.convert:
+                            certified = 'convert'
+                            filename = 'organic_logo_convert_done.png'
+                        else:
+                            certified = 'organic'
+                            filename = 'organic_logo_done.png'
+                    elif cert.state == 'draft':
+                        if cert.convert:
+                            certified = 'convert-draft'
+                            filename = 'organic_logo_convert_draft.png'
+                        else:
+                            certified = 'organic-draft'
+                            filename = 'organic_logo_draft.png'
+            if filename:
+                fname_path = 'olive_mill/static/image/%s' % filename
+                f = tools.file_open(fname_path, 'rb')
+                f_binary = f.read()
+                if f_binary:
+                    logo = f_binary.encode('base64')
+            partner.olive_organic_certified = certified
+            partner.olive_organic_certified_logo = logo

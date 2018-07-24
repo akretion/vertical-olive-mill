@@ -12,6 +12,9 @@
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
         <form string="Olive Appointment">
+            <header>
+                <button name="create_arrival" class="btn-primary" attrs="{'invisible': [('arrival_id', '!=', False)]}" string="Create Arrival" type="object"/>
+            </header>
             <sheet>
                 <group name="main">
                     <group name="left">
@@ -25,15 +28,16 @@
                         <field name="palox_qty"/>
                         <field name="leaf_removal"/>
                         <field name="oil_destination"/>
-                        <label for="purchase_qty" attrs="{'invisible': [('oil_destination', 'not in', ('purchase', 'mix'))]}"/>
-                        <div name="purchase_qty" attrs="{'invisible': [('oil_destination', 'not in', ('purchase', 'mix'))]}">
-                            <field name="purchase_qty" class="oe_inline"/>
+                        <label for="sale_qty" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}"/>
+                        <div name="sale_qty" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}">
+                            <field name="sale_qty" class="oe_inline"/>
                             <label string=" kg" class="oe_inline"/>
                         </div>
                     </group>
                     <group name="right">
                         <field name="start_datetime"/>
                         <field name="end_datetime"/>
+                        <field name="arrival_id"/>
                         <field name="company_id" groups="base.group_multi_company"/>
                     </group>
                 </group>
@@ -51,13 +55,13 @@
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
         <tree string="Olive Appointments">
+            <field name="start_datetime"/>
             <field name="partner_id"/>
             <field name="product_id"/>
             <field name="qty" sum="1"/>
             <field name="palox_qty" sum="1"/>
             <field name="leaf_removal"/>
             <field name="oil_destination"/>
-            <field name="start_datetime"/>
         </tree>
     </field>
 </record>
@@ -66,7 +70,7 @@
     <field name="name">olive.appointment.calendar</field>
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
-        <calendar string="Appointments" color="partner_id" date_start="start_datetime" date_stop="end_datetime" mode="week">
+        <calendar string="Appointments" color="leaf_removal" date_start="start_datetime" date_stop="end_datetime" mode="week">
             <field name="partner_id"/>
             <field name="qty"/>
         </calendar>

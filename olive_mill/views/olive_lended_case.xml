@@ -16,7 +16,8 @@
                 <field name="partner_id" invisible="not context.get('olive_lended_case_main_view')"/>
                 <field name="company_id" groups="base.group_multi_company"/>
                 <field name="date"/>
-                <field name="qty"/>
+                <field name="regular_qty"/>
+                <field name="organic_qty"/>
                 <field name="notes"/>
             </group>
         </form>
@@ -30,7 +31,8 @@
         <tree string="Olive Lended Cases">
             <field name="partner_id" invisible="not context.get('olive_lended_case_main_view')"/>
             <field name="date"/>
-            <field name="qty" sum="1"/>
+            <field name="regular_qty" sum="1"/>
+            <field name="organic_qty" sum="1"/>
             <field name="notes"/>
             <field name="company_id" groups="base.group_multi_company"/>
         </tree>
