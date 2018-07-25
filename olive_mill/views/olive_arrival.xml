@@ -28,31 +28,44 @@
                     <group name="left">
                         <field name="partner_id"/>
                         <field name="default_product_id"/>
-                        <field name="default_src_location_id" domain="[('partner_id', '=', partner_id), ('olive_type', '=', 'ochard')]"/>
+                        <field name="default_src_location_id"
+                            domain="[('partner_id', '=', partner_id), ('olive_type', '=', 'ochard')]"/>
+                        <field name="default_oil_destination"/>
                         <field name="leaf_removal"/>
                         <field name="returned_case"/>
                         <field name="returned_organic_case"/>
+                    </group>
+                    <group name="right">
                         <label for="qty"/>
                         <div name="qty">
                             <field name="qty" class="oe_inline"/>
                             <label string=" kg"/>
                         </div>
-                    </group>
-                    <group name="right">
-                        <field name="default_oil_destination"/>
+                        <field name="warehouse_id"/>
+                        <field name="season_id"/>
+                        <field name="picking_id" states="done"/>
+                        <field name="done_datetime" states="done"/>
                         <field name="company_id" groups="base.group_multi_company"/>
                     </group>
                 </group>
                 <group name="lines">
-                    <field name="line_ids" nolabel="1" context="{'default_product_id': default_product_id, 'default_src_location_id': default_src_location_id, 'default_partner_id': partner_id, 'default_oil_destination': default_oil_destination}">
+                    <field name="line_ids" nolabel="1"
+                        context="{'default_product_id': default_product_id, 'default_src_location_id': default_src_location_id, 'default_partner_id': partner_id, 'default_oil_destination': default_oil_destination}">
                         <tree editable="bottom">
                             <field name="partner_id" invisible="1"/>
                             <field name="product_id"/>
+                            <field name="product_olive_culture_type" invisible="1"/>
                             <field name="qty" sum="1" string="Olive Qty (kg)"/>
-                            <field name="src_location_id" domain="[('partner_id', '=', partner_id), ('olive_type', '=', 'ochard')]"/>
+                            <field name="ripeness"/>
+                            <field name="sanitary_state"/>
+                            <field name="oil_product_id"
+                                domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', product_olive_culture_type)]"/>
+                            <field name="src_location_id"
+                                domain="[('partner_id', '=', partner_id), ('olive_type', '=', 'ochard')]"/>
                             <field name="dest_location_id"/>
                             <field name="oil_destination"/>
-                            <field name="sale_qty" string="Sale Qty (kg)"/>
+                            <field name="sale_qty" string="Sale Qty (kg)"
+                                attrs="{'readonly': [('oil_destination', '=', 'withdrawal')]}"/>
                         </tree>
                     </field>
                 </group>
@@ -91,6 +104,7 @@
             <filter string="Done" domain="[('state', '=', 'done')]" name="done"/>
             <group string="Group By" name="groupby">
                 <filter name="partner_groupby" string="Farmer" context="{'group_by': 'partner_id'}"/>
+                <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>
                 <filter name="state_groupby" string="State" context="{'group_by': 'state'}"/>
             </group>
         </search>

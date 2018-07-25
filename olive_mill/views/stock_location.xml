@@ -101,7 +101,7 @@
     <field name="context">{'default_olive_type': 'ochard', 'default_usage': 'supplier', 'show_ochard': True}</field>
 </record>
 
-<menuitem id="ochard_stock_location_menu" action="ochard_stock_location_action" parent="olive_config_menu" sequence="60"/>
+<menuitem id="ochard_stock_location_menu" action="ochard_stock_location_action" parent="olive_data_menu" sequence="50"/>
 
 <record id="tank_stock_location_action" model="ir.actions.act_window">
     <field name="name">Tank</field>

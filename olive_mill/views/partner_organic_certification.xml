@@ -21,7 +21,7 @@
                 <field name="season_id"/>
                 <field name="company_id" groups="base.group_multi_company"/>
                 <field name="certifying_entity_id"/>
-                <field name="convert"/>
+                <field name="conversion"/>
                 <field name="validation_user_id"/>
                 <field name="validation_datetime"/>
             </group>
@@ -37,7 +37,7 @@
             <field name="partner_id" invisible="not context.get('partner_organic_certification_main_view')"/>
             <field name="season_id"/>
             <field name="certifying_entity_id"/>
-            <field name="convert"/>
+            <field name="conversion"/>
             <field name="company_id" groups="base.group_multi_company"/>
             <field name="state"/>
         </tree>
@@ -53,8 +53,8 @@
             <filter name="draft" domain="[('state', '=', 'draft')]" string="Draft"/>
             <filter name="done" domain="[('state', '=', 'done')]" string="Valid"/>
             <separator/>
-            <filter name="regular" domain="[('convert', '=', False)]" string="Regular"/>
-            <filter name="convert" domain="[('convert', '=', True)]" string="Convert"/>
+            <filter name="regular" domain="[('conversion', '=', False)]" string="Regular"/>
+            <filter name="conversion" domain="[('conversion', '=', True)]" string="Conversion"/>
             <group string="Group By" name="groupby">
                 <filter name="partner_groupby" string="Farmer" context="{'group_by': 'partner_id'}"/>
                 <filter name="certifying_entity_groupby" string="Certifying Entity" context="{'group_by': 'certifying_entity_id'}"/>
@@ -71,6 +71,6 @@
     <field name="context">{'partner_organic_certification_main_view': True}</field>
 </record>
 
-<menuitem id="partner_organic_certification_menu" action="partner_organic_certification_action" parent="olive_operations_menu" sequence="30"/>
+<menuitem id="partner_organic_certification_menu" action="partner_organic_certification_action" parent="olive_data_menu" sequence="90"/>
 
 </odoo>

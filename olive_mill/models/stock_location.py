@@ -71,3 +71,13 @@ class StockLocation(models.Model):
         if self.olive_type == 'ochard':
             res = {'domain': {'partner_id': [('parent_id', '=', False), ('olive_farmer', '=', True)]}}
             return res
+
+    def get_total_qty_kg(self):
+        self.ensure_one()
+        # I can't group by on product_uom_id to check that it is kg
+        # because it's a related non stored field...
+        quant_rg = self.env['stock.quant'].read_group(
+            [('location_id', '=', self.id)], ['qty'], [])
+        print "quant_rg=", quant_rg
+        qty = quant_rg[0].get('qty')
+        return qty

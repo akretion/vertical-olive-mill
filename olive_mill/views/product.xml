@@ -20,5 +20,14 @@
     </field>
 </record>
 
+<record id="olive_product_action" model="ir.actions.act_window">
+    <field name="name">Products</field>
+    <field name="res_model">product.product</field>
+    <field name="view_mode">tree,form,kanban</field>
+    <field name="domain">[('olive_type', '!=', False)]</field>
+    <field name="context">{'default_type': 'product'}</field>
+</record>
+
+<menuitem id="olive_product_menu" action="olive_product_action" parent="olive_data_menu" sequence="100"/>
 
 </odoo>

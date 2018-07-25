@@ -79,6 +79,8 @@ class OliveAppointment(models.Model):
                 else:
                     duration_coef = app.company_id.olive_appointment_no_leaf_removal_minutes
                 minutes = duration_coef * app.qty / 100.0
+                if minutes < app.company_id.olive_appointment_min_minutes:
+                    minutes = app.company_id.olive_appointment_min_minutes
                 end_dt = start_dt + relativedelta(minutes=minutes)
                 app.end_datetime = fields.Datetime.to_string(end_dt)
             else:

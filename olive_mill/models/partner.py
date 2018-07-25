@@ -28,8 +28,8 @@ class ResPartner(models.Model):
     olive_organic_certified = fields.Selection([
         ('organic', 'Organic'),
         ('organic-draft', 'Organic (to confirm)'),
-        ('convert', 'Convert'),
-        ('convert-draft', 'Convert (to confirm)'),
+        ('conversion', 'Conversion'),
+        ('conversion-draft', 'Conversion (to confirm)'),
         ], compute='_compute_olive_organic_certified',
         string='Organic Certified', readonly=True)
     olive_organic_certified_logo = fields.Binary(
@@ -105,16 +105,16 @@ class ResPartner(models.Model):
                     ], limit=1)
                 if cert:
                     if cert.state == 'done':
-                        if cert.convert:
-                            certified = 'convert'
-                            filename = 'organic_logo_convert_done.png'
+                        if cert.conversion:
+                            certified = 'conversion'
+                            filename = 'organic_logo_conversion_done.png'
                         else:
                             certified = 'organic'
                             filename = 'organic_logo_done.png'
                     elif cert.state == 'draft':
-                        if cert.convert:
-                            certified = 'convert-draft'
-                            filename = 'organic_logo_convert_draft.png'
+                        if cert.conversion:
+                            certified = 'conversion-draft'
+                            filename = 'organic_logo_conversion_draft.png'
                         else:
                             certified = 'organic-draft'
                             filename = 'organic_logo_draft.png'

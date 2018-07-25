@@ -17,3 +17,4 @@ access_partner_organic_certification_viewer,Read access on partner.organic.certi
 access_olive_appointment_user,Full access on olive.appointment,model_olive_appointment,stock.group_stock_user,1,1,1,1
 access_olive_arrival_user,Full access on olive.arrival,model_olive_arrival,stock.group_stock_user,1,1,1,1
 access_olive_arrival_line_user,Full access on olive.arrival.line,model_olive_arrival_line,stock.group_stock_user,1,1,1,1
+access_olive_oil_production_user,Full access on olive.oil.production,model_olive_oil_production,stock.group_stock_user,1,1,1,1

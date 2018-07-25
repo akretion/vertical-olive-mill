@@ -17,7 +17,7 @@
         'product_expiry_simple',
         'base_location',
         #'stock_no_negative',  # ??
-        #'date_range',  # for campaigns
+        'stock_pack_operation_auto_fill',
         ],
     'data': [
         'security/olive_security.xml',
@@ -34,6 +34,7 @@
         'views/olive_cultivation.xml',
         'views/olive_treatment.xml',
         'views/olive_arrival.xml',
+        'views/olive_oil_production.xml',
         'views/partner.xml',
         'views/product.xml',
         'views/olive_appointment.xml',

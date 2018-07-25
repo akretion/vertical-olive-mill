@@ -26,8 +26,8 @@ class PartnerOrganicCertification(models.Model):
         'organic.certifying.entity', string='Certifying Entity', required=True,
         ondelete='restrict', states={'done': [('readonly', True)]},
         help="Default value: same as previous season.")
-    convert = fields.Boolean(
-        string='Convert', states={'done': [('readonly', True)]})
+    conversion = fields.Boolean(
+        string='Conversion', states={'done': [('readonly', True)]})
     state = fields.Selection([
         ('draft', 'Draft'),
         ('done', 'Valid'),
@@ -46,7 +46,7 @@ class PartnerOrganicCertification(models.Model):
                 ], order='season_id desc', limit=1)
             if previous_cert:
                 res['certifying_entity_id'] = previous_cert.certifying_entity_id.id
-                res['convert'] = previous_cert.convert
+                res['conversion'] = previous_cert.conversion
         return res
 
     def validate(self):

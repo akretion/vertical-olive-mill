@@ -7,5 +7,21 @@
     <field name="digits">4</field>
 </record>
 
+<record forcecreate="True" id="olive_weight" model="decimal.precision">
+    <field name="name">Olive Weight</field>
+    <field name="digits">2</field>
+</record>
+
+<record forcecreate="True" id="oil_shrinkage_ratio" model="decimal.precision">
+    <field name="name">Oil Shrinkage Ratio</field>
+    <field name="digits">1</field>
+</record>
+
+<record forcecreate="True" id="oil_density" model="decimal.precision">
+    <field name="name">Oil Density</field>
+    <field name="digits">3</field>
+</record>
+
+
 
 </odoo>

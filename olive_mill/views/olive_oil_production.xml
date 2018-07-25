@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="olive_oil_production_form" model="ir.ui.view">
+    <field name="name">olive.oil.production.form</field>
+    <field name="model">olive.oil.production</field>
+    <field name="arch" type="xml">
+        <form string="Oil Production">
+            <header>
+                <button name="validate" string="Validate" class="btn-primary" states="draft" type="object"/>
+                <button name="cancel" string="Cancel" class="btn-default" states="draft" confirm="Are you sure you want to cancel this oil production ?" type="object"/>
+                <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+            </header>
+            <sheet>
+                <div class="oe_title">
+                    <label for="name"/>
+                    <h1>
+                        <field name="name" readonly="1"/>
+                    </h1>
+                </div>
+                <group name="main">
+                    <group name="left">
+                        <field name="src_location_id"/>
+                        <label for="olive_qty_compute" states="draft,cancel"/>
+                        <div name="olive_qty_compute" states="draft,cancel">
+                            <field name="olive_qty_compute" class="oe_inline"/>
+                            <label string=" kg" class="oe_inline"/>
+                        </div>
+                        <field name="olive_qty_done" states="done"/>
+                        <field name="dest_location_id"/>
+                    </group>
+                    <group name="right">
+                        <!--
+                        <label for="qty"/>
+                        <div name="qty">
+                            <field name="qty" class="oe_inline"/>
+                            <label string=" kg"/>
+                        </div> -->
+                        <field name="warehouse_id"/>
+                        <field name="season_id"/>
+                        <field name="picking_id" states="done"/>
+                        <field name="done_datetime" states="done"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                </group>
+            </sheet>
+            <div class="oe_chatter">
+                <field name="message_follower_ids" widget="mail_followers"/>
+                <field name="message_ids" widget="mail_thread"/>
+            </div>
+        </form>
+    </field>
+</record>
+
+<record id="olive_oil_production_tree" model="ir.ui.view">
+    <field name="name">olive.oil.production.tree</field>
+    <field name="model">olive.oil.production</field>
+    <field name="arch" type="xml">
+        <tree string="Oil Productions" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
+            <field name="name"/>
+            <field name="src_location_id"/>
+            <field name="dest_location_id"/>
+            <field name="state"/>
+        </tree>
+    </field>
+</record>
+
+<record id="olive_oil_production_search" model="ir.ui.view">
+    <field name="name">olive.oil.production.search</field>
+    <field name="model">olive.oil.production</field>
+    <field name="arch" type="xml">
+        <search string="Search Oil Productions">
+            <field name="name"/>
+            <separator/>
+            <filter string="Draft" domain="[('state', '=', 'draft')]" name="draft"/>
+            <filter string="Done" domain="[('state', '=', 'done')]" name="done"/>
+            <group string="Group By" name="groupby">
+                <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>
+                <filter name="state_groupby" string="State" context="{'group_by': 'state'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<record id="olive_oil_production_action" model="ir.actions.act_window">
+    <field name="name">Oil Productions</field>
+    <field name="res_model">olive.oil.production</field>
+    <field name="view_mode">tree,form</field>
+</record>
+
+<menuitem id="olive_oil_production_menu" action="olive_oil_production_action" parent="olive_operations_menu" sequence="30"/>
+
+</odoo>
