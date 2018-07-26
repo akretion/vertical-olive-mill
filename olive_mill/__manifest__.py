@@ -26,6 +26,7 @@
         'data/sequence.xml',
         'views/menu.xml',
         'wizard/mrp_product_produce_view.xml',
+        'wizard/olive_palox_case_lend_view.xml',
         'views/olive_config_settings.xml',
         'views/stock_location.xml',
         'views/olive_variant.xml',

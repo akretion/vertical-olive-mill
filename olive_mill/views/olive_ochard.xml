@@ -13,6 +13,12 @@
     <field name="arch" type="xml">
         <form string="Olive Ochard">
             <sheet>
+                <div class="oe_title">
+                    <label for="name" string="Ochard Name"/>
+                    <h1>
+                        <field name="name"/>
+                    </h1>
+                </div>
                 <group name="main">
                     <field name="partner_id" invisible="not context.get('olive_ochard_main_view')"/>
                     <field name="zip_id"/>
@@ -45,6 +51,7 @@
     <field name="arch" type="xml">
         <tree string="Olive Ochards">
             <field name="partner_id" invisible="not context.get('olive_ochard_main_view')"/>
+            <field name="name"/>
             <field name="city"/>
             <field name="tree_total" sum="1"/>
             <field name="area_total" sum="1"/>

@@ -44,7 +44,7 @@ class ResPartner(models.Model):
 
     def _compute_olive_total(self):
         cases_rg = []
-        parels_rg = []
+        parcels_rg = []
         try:
             cases_rg = self.env['olive.lended.case'].read_group([
                 ('company_id', '=', self.env.user.company_id.id),
@@ -54,7 +54,6 @@ class ResPartner(models.Model):
             pass
         try:
             parcels_rg = self.env['olive.parcel'].read_group([
-                ('company_id', '=', self.env.user.company_id.id),
                 ('partner_id', 'in', self.ids)],
                 ['partner_id', 'tree_qty', 'area'], ['partner_id'])
         except Exception:
@@ -74,9 +73,8 @@ class ResPartner(models.Model):
                         area = parcel_rg.get('area')
                         break
                 try:
-                    palox = self.env['stock.location'].search([
-                        ('olive_type', '=', 'palox'),
-                        ('olive_borrower_partner_id', '=', partner.id),
+                    palox = self.env['olive.palox'].search([
+                        ('borrower_partner_id', '=', partner.id),
                         ], count=True)
                 except Exception:
                     pass

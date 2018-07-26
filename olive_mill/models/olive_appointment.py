@@ -50,8 +50,8 @@ class OliveAppointment(models.Model):
         'qty_positive',
         'CHECK(qty >= 0)',
         'The quantity must be positive or 0.'), (
-        'purchase_qty_positive',
-        'CHECK(purchase_qty >= 0)',
+        'sale_qty_positive',
+        'CHECK(sale_qty >= 0)',
         'The purchase quantity must be positive or 0.'),
         ]
 
