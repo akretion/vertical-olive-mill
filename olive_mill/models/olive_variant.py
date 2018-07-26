@@ -6,16 +6,21 @@
 from odoo import models, fields
 
 
-class OliveTreatment(models.Model):
-    _name = 'olive.treatment'
-    _description = 'Olive Treatment'
+class OliveVariant(models.Model):
+    _name = 'olive.variant'
+    _description = 'Olive Variant'
     _order = 'sequence'
 
     name = fields.Char(string='Name', required=True)
     sequence = fields.Integer()
     active = fields.Boolean(default=True)
+    # olive_culture_type = fields.Selection([
+    #    ('regular', 'Regular'),
+    #    ('organic', 'Organic'),
+    #    ('conversion', 'Conversion'),
+    #    ], string='Culture Type')
 
     _sql_constraints = [(
         'name_unique',
         'unique(name)',
-        'This treatment product already exists.')]
+        'This olive variant already exists.')]

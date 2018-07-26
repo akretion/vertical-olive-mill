@@ -8,7 +8,7 @@
 <odoo noupdate="0">  <!-- TODO set to 0 once finished -->
 
 <record id="ochard1_parcel1" model="olive.parcel">
-    <field name="location_id" ref="ochard1"/>
+    <field name="ochard_id" ref="ochard1"/>
     <field name="land_registry_ref">BZ00012</field>
     <field name="area">1.5</field>
     <field name="tree_qty">100</field>
@@ -18,7 +18,7 @@
 </record>
 
 <record id="ochard1_parcel2" model="olive.parcel">
-    <field name="location_id" ref="ochard1"/>
+    <field name="ochard_id" ref="ochard1"/>
     <field name="land_registry_ref">AZ00042</field>
     <field name="area">1.2</field>
     <field name="tree_qty">90</field>
@@ -28,7 +28,7 @@
 </record>
 
 <record id="ochard1_parcel3" model="olive.parcel">
-    <field name="location_id" ref="ochard1"/>
+    <field name="ochard_id" ref="ochard1"/>
     <field name="land_registry_ref">CZ00015</field>
     <field name="area">2.9</field>
     <field name="tree_qty">230</field>
@@ -38,7 +38,7 @@
 </record>
 
 <record id="ochard2_parcel1" model="olive.parcel">
-    <field name="location_id" ref="ochard2"/>
+    <field name="ochard_id" ref="ochard2"/>
     <field name="land_registry_ref">XZ00012</field>
     <field name="area">0.2</field>
     <field name="tree_qty">6</field>
@@ -48,7 +48,7 @@
 </record>
 
 <record id="ochard3_parcel1" model="olive.parcel">
-    <field name="location_id" ref="ochard3"/>
+    <field name="ochard_id" ref="ochard3"/>
     <field name="land_registry_ref">TZ00042</field>
     <field name="area">1.1</field>
     <field name="tree_qty">50</field>
@@ -58,7 +58,7 @@
 </record>
 
 <record id="ochard4_parcel1" model="olive.parcel">
-    <field name="location_id" ref="ochard4"/>
+    <field name="ochard_id" ref="ochard4"/>
     <field name="land_registry_ref">BZ00019</field>
     <field name="area">2.5</field>
     <field name="tree_qty">150</field>
@@ -68,7 +68,7 @@
 </record>
 
 <record id="ochard5_parcel1" model="olive.parcel">
-    <field name="location_id" ref="ochard5"/>
+    <field name="ochard_id" ref="ochard5"/>
     <field name="land_registry_ref">RI00012</field>
     <field name="area">1.5</field>
     <field name="tree_qty">90</field>

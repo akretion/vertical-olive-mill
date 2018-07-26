@@ -4,8 +4,11 @@ from . import partner
 from . import product
 from . import company
 from . import olive_config_settings
+from . import olive_variant
 from . import olive_treatment
 from . import olive_season
+from . import olive_ochard
+from . import olive_palox
 from . import olive_parcel
 from . import olive_lended_case
 from . import organic_certifying_entity

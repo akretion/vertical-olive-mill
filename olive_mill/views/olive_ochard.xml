@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="olive_ochard_form" model="ir.ui.view">
+    <field name="name">olive.ochard.form</field>
+    <field name="model">olive.ochard</field>
+    <field name="arch" type="xml">
+        <form string="Olive Ochard">
+            <sheet>
+                <group name="main">
+                    <field name="partner_id" invisible="not context.get('olive_ochard_main_view')"/>
+                    <field name="zip_id"/>
+                    <field name="city"/>
+                    <field name="tree_total"/>
+                    <label for="area_total"/>
+                    <div name="area_total">
+                        <field name="area_total" class="oe_inline"/>
+                        <label string=" ha" class="oe_inline"/>
+                    </div>
+                </group>
+                <group name="parcel" string="Parcels">
+                    <field name="parcel_ids" nolabel="1"/>
+                </group>
+                <group name="cultivation" string="Cultivation Methods">
+                    <field name="cultivation_ids" nolabel="1"/>
+                </group>
+            </sheet>
+            <div class="oe_chatter">
+                <field name="message_follower_ids" widget="mail_followers"/>
+                <field name="message_ids" widget="mail_thread"/>
+            </div>
+        </form>
+    </field>
+</record>
+
+<record id="olive_ochard_tree" model="ir.ui.view">
+    <field name="name">olive.ochard.tree</field>
+    <field name="model">olive.ochard</field>
+    <field name="arch" type="xml">
+        <tree string="Olive Ochards">
+            <field name="partner_id" invisible="not context.get('olive_ochard_main_view')"/>
+            <field name="city"/>
+            <field name="tree_total" sum="1"/>
+            <field name="area_total" sum="1"/>
+        </tree>
+    </field>
+</record>
+
+<record id="olive_ochard_pivot" model="ir.ui.view">
+    <field name="name">olive.ochard.pivot</field>
+    <field name="model">olive.ochard</field>
+    <field name="arch" type="xml">
+        <pivot string="Olive Ochards">
+            <field name="partner_id" type="row"/>
+            <field name="tree_total" type="measure"/>
+            <field name="area_total" type="measure"/>
+        </pivot>
+    </field>
+</record>
+
+<record id="olive_ochard_search" model="ir.ui.view">
+    <field name="name">olive.ochard.search</field>
+    <field name="model">olive.ochard</field>
+    <field name="arch" type="xml">
+        <search string="Search Olive Ochards">
+            <field name="name"/>
+            <field name="partner_id"/>
+            <field name="city"/>
+            <group string="Group By" name="groupby">
+                <filter name="partner_groupby" string="Farmer" context="{'group_by': 'partner_id'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<record id="olive_ochard_action" model="ir.actions.act_window">
+    <field name="name">Ochards</field>
+    <field name="res_model">olive.ochard</field>
+    <field name="view_mode">tree,form,pivot</field>
+    <field name="context">{'olive_ochard_main_view': True}</field>
+</record>
+
+<menuitem id="olive_ochard_menu" action="olive_ochard_action" parent="olive_config_menu" sequence="30"/>
+
+</odoo>

@@ -9,6 +9,7 @@
 
 
 <!-- OLIVE -->
+<!--
 <record id="olive" model="product.product">
     <field name="name">Olive</field>
     <field name="default_code">OLIVE</field>
@@ -47,6 +48,7 @@
     <field name="uom_id" ref="product.product_uom_kgm"/>
     <field name="uom_po_id" ref="product.product_uom_kgm"/>
 </record>
+-->
 
 <!-- OIL -->
 <record id="oil" model="product.product">
@@ -58,8 +60,8 @@
     <field name="type">product</field>
     <field name="olive_type">oil</field>
     <field name="olive_culture_type">regular</field>
-    <field name="uom_id" ref="product.product_uom_kgm"/>
-    <field name="uom_po_id" ref="product.product_uom_kgm"/>
+    <field name="uom_id" ref="product.product_uom_litre"/>
+    <field name="uom_po_id" ref="product.product_uom_litre"/>
 </record>
 
 <record id="oil_organic" model="product.product">
@@ -71,8 +73,8 @@
     <field name="type">product</field>
     <field name="olive_type">oil</field>
     <field name="olive_culture_type">organic</field>
-    <field name="uom_id" ref="product.product_uom_kgm"/>
-    <field name="uom_po_id" ref="product.product_uom_kgm"/>
+    <field name="uom_id" ref="product.product_uom_litre"/>
+    <field name="uom_po_id" ref="product.product_uom_litre"/>
 </record>
 
 <record id="oil_conversion" model="product.product">
@@ -84,8 +86,8 @@
     <field name="type">product</field>
     <field name="olive_type">oil</field>
     <field name="olive_culture_type">conversion</field>
-    <field name="uom_id" ref="product.product_uom_kgm"/>
-    <field name="uom_po_id" ref="product.product_uom_kgm"/>
+    <field name="uom_id" ref="product.product_uom_litre"/>
+    <field name="uom_po_id" ref="product.product_uom_litre"/>
 </record>
 
 

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo noupdate="0">  <!-- TODO set to 0 once finished -->
+
+
+<record id="base.main_company" model="res.company">
+    <field name="olive_default_warehouse_id" ref="stock.warehouse0"/>
+    <field name="olive_regular_case_total">1000</field>
+    <field name="olive_organic_case_total">500</field>
+</record>
+
+
+</odoo>

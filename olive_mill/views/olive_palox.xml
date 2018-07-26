@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="olive_palox_form" model="ir.ui.view">
+    <field name="name">olive.palox.form</field>
+    <field name="model">olive.palox</field>
+    <field name="arch" type="xml">
+        <form string="Olive Palox">
+            <sheet>
+                <div class="oe_button_box" name="button_box">
+                    <button name="toggle_active" type="object"
+                        class="oe_stat_button" icon="fa-archive">
+                        <field name="active" widget="boolean_button"
+                            options='{"terminology": "archive"}'/>
+                    </button>
+                </div>
+                <div class="oe_title">
+                    <label for="number" string="Palox Number"/>
+                    <h1>
+                        <field name="number" placeholder="Write here the number of the palox..."/>
+                    </h1>
+                </div>
+                <group name="main">
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="organic"/>
+                    <field name="borrower_partner_id"/>
+                    <field name="borrowed_date"/>
+                </group>
+            </sheet>
+            <div class="oe_chatter">
+                <field name="message_follower_ids" widget="mail_followers"/>
+                <field name="message_ids" widget="mail_thread"/>
+            </div>
+        </form>
+    </field>
+</record>
+
+<record id="olive_palox_tree" model="ir.ui.view">
+    <field name="name">olive.palox.tree</field>
+    <field name="model">olive.palox</field>
+    <field name="arch" type="xml">
+        <tree string="Olive Palox">
+            <field name="number"/>
+            <field name="organic"/>
+            <field name="borrower_partner_id"/>
+            <field name="borrowed_date"/>
+        </tree>
+    </field>
+</record>
+
+<record id="olive_palox_search" model="ir.ui.view">
+    <field name="name">olive.palox.search</field>
+    <field name="model">olive.palox</field>
+    <field name="arch" type="xml">
+        <search string="Search Olive Palox">
+            <field name="number"/>
+            <field name="borrower_partner_id"/>
+            <separator/>
+            <filter name="organic" domain="[('organic', '=', True)]" string="Organic"/>
+            <filter name="not_organic" domain="[('organic', '=', False)]" string="Regular"/>
+            <separator/>
+            <filter name="lended" domain="[('borrower_partner_id', '!=', False)]" string="Lended"/>
+            <filter name="not_lended" domain="[('borrower_partner_id', '=', False)]" string="Not Lended"/>
+            <group string="Group By" name="groupby">
+                <filter name="borrower_partner_groupby" string="Borrower" context="{'group_by': 'borrower_partner_id'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<record id="olive_palox_action" model="ir.actions.act_window">
+    <field name="name">Palox</field>
+    <field name="res_model">olive.palox</field>
+    <field name="view_mode">tree,form</field>
+</record>
+
+<menuitem id="olive_palox_menu" action="olive_palox_action" parent="olive_config_menu" sequence="40"/>
+
+</odoo>

@@ -13,7 +13,7 @@
     <field name="arch" type="xml">
         <form string="Cultivation Method">
             <group name="main">
-                <field name="location_id" invisible="not context.get('olive_cultivation_main_view')"/>
+                <field name="ochard_id" invisible="not context.get('olive_cultivation_main_view')"/>
                 <field name="partner_id" invisible="not context.get('olive_cultivation_main_view')"/>
                 <field name="season_id"/>
                 <field name="date"/>
@@ -32,7 +32,7 @@
     <field name="model">olive.cultivation</field>
     <field name="arch" type="xml">
         <tree string="Cultivation Methods">
-            <field name="location_id" invisible="not context.get('olive_cultivation_main_view')"/>
+            <field name="ochard_id" invisible="not context.get('olive_cultivation_main_view')"/>
             <field name="partner_id" invisible="not context.get('olive_cultivation_main_view')"/>
             <field name="date"/>
             <field name="treatment_type"/>
@@ -47,9 +47,9 @@
     <field name="model">olive.cultivation</field>
     <field name="arch" type="xml">
         <search string="Search Cultivation Methods">
-            <field name="location_id"/>
+            <field name="ochard_id"/>
             <group string="Group By" name="groupby">
-                <filter name="location_groupby" string="Ochard" context="{'group_by': 'location_id'}"/>
+                <filter name="ochard_groupby" string="Ochard" context="{'group_by': 'ochard_id'}"/>
                 <filter name="partner_groupby" string="Farmer" context="{'group_by': 'partner_id'}"/>
                 <filter name="date_groupby" string="Date" context="{'group_by': 'date'}"/>
             </group>

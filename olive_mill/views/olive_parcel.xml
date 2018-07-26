@@ -13,7 +13,7 @@
     <field name="arch" type="xml">
         <form string="Olive Parcel">
             <group name="main">
-                <field name="location_id" invisible="not context.get('olive_parcel_main_view')"/>
+                <field name="ochard_id" invisible="not context.get('olive_parcel_main_view')"/>
                 <field name="partner_id" invisible="not context.get('olive_parcel_main_view')"/>
                 <field name="land_registry_ref"/>
                 <label for="area"/>
@@ -27,7 +27,6 @@
                 <field name="planted_year"/>
                 <field name="irrigation"/>
                 <field name="cultivation_method"/>
-                <field name="company_id" groups="base.group_multi_company"/>
                 <field name="notes"/>
             </group>
         </form>
@@ -39,7 +38,7 @@
     <field name="model">olive.parcel</field>
     <field name="arch" type="xml">
         <tree string="Olive Parcels">
-            <field name="location_id" invisible="not context.get('olive_parcel_main_view')"/>
+            <field name="ochard_id" invisible="not context.get('olive_parcel_main_view')"/>
             <field name="partner_id" invisible="not context.get('olive_parcel_main_view')"/>
             <field name="land_registry_ref"/>
             <field name="area" sum="1"/>
@@ -58,9 +57,9 @@
     <field name="model">olive.parcel</field>
     <field name="arch" type="xml">
         <search string="Search Olive Parcels">
-            <field name="location_id"/>
+            <field name="ochard_id"/>
             <group string="Group By" name="groupby">
-                <filter name="location_groupby" string="Ochard" context="{'group_by': 'location_id'}"/>
+                <filter name="ochard_groupby" string="Ochard" context="{'group_by': 'ochard_id'}"/>
                 <filter name="partner_groupby" string="Farmer" context="{'group_by': 'partner_id'}"/>
             </group>
         </search>

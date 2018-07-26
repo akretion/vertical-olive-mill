@@ -22,9 +22,8 @@ class OliveAppointment(models.Model):
         'res.partner', string='Olive Farmer', required=True, copy=False,
         domain=[('parent_id', '=', False), ('olive_farmer', '=', True)],
         track_visibility='onchange')
-    product_id = fields.Many2one(
-        'product.product', string='Olive Type',
-        domain=[('olive_type', '=', 'olive')], track_visibility='onchange')
+    variant_id = fields.Many2one(
+        'olive.variant', string='Olive Variant', track_visibility='onchange')
     leaf_removal = fields.Boolean(
         string='Leaf Removal', track_visibility='onchange')
     qty = fields.Integer(
@@ -100,16 +99,14 @@ class OliveAppointment(models.Model):
         vals = {
             'partner_id': self.partner_id.id,
             'company_id': self.company_id.id,
-            'default_product_id': self.product_id.id or False,
+            'default_variant_id': self.variant_id.id or False,
             'default_oil_destination': self.oil_destination,
             'leaf_removal': self.leaf_removal,
             }
-        ochards = self.env['stock.location'].search([
-            ('partner_id', '=', self.partner_id.id),
-            ('olive_type', '=', 'ochard'),
-            ])
+        ochards = self.env['olive.ochard'].search([
+            ('partner_id', '=', self.partner_id.id)])
         if len(ochards) == 1:
-            vals['default_src_location_id'] = ochards[0].id
+            vals['default_ochard_id'] = ochards[0].id
         arrival = self.env['olive.arrival'].create(vals)
         self.arrival_id = arrival.id
         action = self.env['ir.actions.act_window'].for_xml_id(

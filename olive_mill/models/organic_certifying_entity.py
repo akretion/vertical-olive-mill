@@ -9,8 +9,10 @@ from odoo import models, fields
 class OrganicCertifyingEntity(models.Model):
     _name = 'organic.certifying.entity'
     _description = 'Organic Certifying Entity'
+    _order = 'sequence'
 
     name = fields.Char(string='Name', required=True)
+    sequence = fields.Integer()
     active = fields.Boolean(default=True)
 
     _sql_constraints = [(

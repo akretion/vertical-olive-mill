@@ -19,7 +19,7 @@
                 <group name="main">
                     <group name="left">
                         <field name="partner_id"/>
-                        <field name="product_id"/>
+                        <field name="variant_id" widget="selection"/>
                         <label for="qty"/>
                         <div name="qty">
                             <field name="qty" class="oe_inline"/>
@@ -57,7 +57,7 @@
         <tree string="Olive Appointments">
             <field name="start_datetime"/>
             <field name="partner_id"/>
-            <field name="product_id"/>
+            <field name="variant_id"/>
             <field name="qty" sum="1"/>
             <field name="palox_qty" sum="1"/>
             <field name="leaf_removal"/>
@@ -86,7 +86,7 @@
             <group string="Group By" name="groupby">
                 <filter name="start_groupby" string="Day" context="{'group_by': 'start_datetime:day'}"/>
                 <filter name="partner_groupby" string="Partner" context="{'group_by': 'partner_id'}"/>
-                <filter name="product_groupby" string="Olive Type" context="{'group_by': 'product_id'}"/>
+                <filter name="variant_groupby" string="Olive Variant" context="{'group_by': 'variant_id'}"/>
             </group>
         </search>
     </field>

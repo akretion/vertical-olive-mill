@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo noupdate="0">  <!-- TODO set to 0 once finished -->
+
+<record id="ochard1" model="olive.ochard">
+    <field name="name">Big Farm Ochard1</field>
+    <field name="partner_id" ref="base.res_partner_12"/>
+    <field name="city">84 330 Le Barroux</field>
+</record>
+
+<record id="ochard2" model="olive.ochard">
+    <field name="name">Big Farm Ochard2</field>
+    <field name="partner_id" ref="base.res_partner_12"/>
+    <field name="city">84 330 Le Barroux</field>
+</record>
+
+<record id="ochard3" model="olive.ochard">
+    <field name="name">Big Farm Ochard3</field>
+    <field name="partner_id" ref="base.res_partner_12"/>
+    <field name="city">Caromb</field>
+</record>
+
+<record id="ochard4" model="olive.ochard">
+    <field name="name">Small Farm Ochard1</field>
+    <field name="partner_id" ref="base.res_partner_1"/>
+    <field name="city">84 330 Le Barroux</field>
+</record>
+
+<record id="ochard5" model="olive.ochard">
+    <field name="name">Small Farm Ochard2</field>
+    <field name="partner_id" ref="base.res_partner_1"/>
+    <field name="city">84 330 Le Barroux</field>
+</record>
+
+
+</odoo>

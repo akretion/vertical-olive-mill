@@ -33,6 +33,7 @@
     <field name="model">organic.certifying.entity</field>
     <field name="arch" type="xml">
         <tree string="Organic Certifying Entities">
+            <field name="sequence" widget="handle"/>
             <field name="name"/>
         </tree>
     </field>

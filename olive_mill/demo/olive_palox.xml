@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo noupdate="0">  <!-- TODO set to 0 once finished -->
+
+
+<record id="palox1" model="olive.palox">
+    <field name="number">001</field>
+</record>
+
+<record id="palox2" model="olive.palox">
+    <field name="number">002</field>
+</record>
+
+<record id="palox3" model="olive.palox">
+    <field name="number">003</field>
+</record>
+
+<record id="palox4" model="olive.palox">
+    <field name="number">004</field>
+</record>
+
+<record id="palox5" model="olive.palox">
+    <field name="number">B005</field>
+    <field name="organic" eval="True"/>
+</record>
+
+<record id="palox6" model="olive.palox">
+    <field name="number">B006</field>
+    <field name="organic" eval="True"/>
+</record>
+
+
+</odoo>

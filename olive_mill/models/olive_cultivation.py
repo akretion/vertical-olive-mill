@@ -12,10 +12,10 @@ class OliveCultivation(models.Model):
     _name = 'olive.cultivation'
     _description = 'Olive Cultivation'
 
-    location_id = fields.Many2one(
-        'stock.location', string='Ochard', domain=[('olive_type', '=', 'ochard')], ondelete='restrict')
+    ochard_id = fields.Many2one(
+        'olive.ochard', string='Ochard', ondelete='restrict')
     partner_id = fields.Many2one(
-        related='location_id.partner_id', string='Farmer',
+        related='ochard_id.partner_id', string='Farmer',
         store=True, readonly=True, compute_sudo=True)
     season_id = fields.Many2one(
         'olive.season', string='Season', required=True,
@@ -42,8 +42,8 @@ class OliveCultivation(models.Model):
                 raise ValidationError(_(
                     "On the cultivation method of ochard '%s', the date (%s) is after the "
                     "end of the season (%s)")
-                    % (cult.location_id.display_name, cult.date, cult.season_id.end_date))
+                    % (cult.ochard_id.display_name, cult.date, cult.season_id.end_date))
             if cult.date > today:
                 raise ValidationError(_(
                     "On the cultivation method of ochard '%s', the date (%s) is in the future!")
-                    % (cult.location_id.display_name, cult.date))
+                    % (cult.ochard_id.display_name, cult.date))

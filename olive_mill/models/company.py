@@ -27,9 +27,9 @@ class ResCompany(models.Model):
     olive_appointment_min_minutes = fields.Integer(
         string='Appointment Minimum Duration', default=5,
         help="Appointment minimum duration in minutes")
+    olive_regular_case_total = fields.Integer(string='Regular Cases Total')
     olive_regular_case_stock = fields.Integer(
         compute='_compute_cases', string='Regular Cases in Stock', readonly=True)
-    olive_regular_case_total = fields.Integer(string='Regular Cases Total')
     olive_organic_case_total = fields.Integer(string='Organic Cases Total')
     olive_organic_case_stock = fields.Integer(
         compute='_compute_cases', string='Organic Cases in Stock', readonly=True)

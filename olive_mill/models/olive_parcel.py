@@ -12,18 +12,16 @@ class OliveParcel(models.Model):
     _name = 'olive.parcel'
     _description = 'Olive Tree Parcel'
 
-    location_id = fields.Many2one(
-        'stock.location', string='Ochard', domain=[('olive_type', '=', 'ochard')], ondelete='cascade')
-    company_id = fields.Many2one(
-        related='location_id.company_id', store=True, readonly=True, string='Company',
-        compute_sudo=True)
+    ochard_id = fields.Many2one(
+        'olive.ochard', string='Ochard', ondelete='cascade')
     partner_id = fields.Many2one(
-        related='location_id.partner_id', string='Farmer',
+        related='ochard_id.partner_id', string='Farmer',
         store=True, readonly=True, compute_sudo=True)
     land_registry_ref = fields.Char(string='Land Registry Ref')
-    area = fields.Float(string='Area', digits=dp.get_precision('Area'), help="Area in hectare")
+    area = fields.Float(
+        string='Area', digits=dp.get_precision('Area'), help="Area in hectare")
     tree_qty = fields.Integer(string='Number of trees')
-    product_ids = fields.Many2many(
+    product_ids = fields.Many2many(  # TODO
         'product.product', string='Olive Types', domain=[('olive_type', '=', 'olive')])
     density = fields.Char('Density', size=64)
     planted_year = fields.Integer('Planted Year')

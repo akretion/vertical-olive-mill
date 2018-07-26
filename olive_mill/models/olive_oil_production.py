@@ -16,8 +16,7 @@ class OliveOilProduction(models.Model):
 
     name = fields.Char(string='Production Number', required=True, default='/')
     company_id = fields.Many2one(
-        'res.company', string='Company',
-        ondelete='cascade', required=True,
+        'res.company', string='Company', ondelete='cascade', required=True,
         states={'done': [('readonly', True)]},
         default=lambda self: self.env['res.company']._company_default_get(
             'olive.arrival'))
@@ -29,18 +28,16 @@ class OliveOilProduction(models.Model):
         'stock.warehouse', string='Warehouse', required=True,
         default=lambda self: self._default_warehouse(),
         track_visibility='onchange')
-    src_location_id = fields.Many2one(
-        'stock.location', string='Palox', required=True,
-        states={'done': [('readonly', True)]},
-        domain=[('olive_type', '=', 'palox')],
-        track_visibility='onchange')
+    palox_id = fields.Many2one(
+        'olive.palox', string='Palox', required=True,
+        states={'done': [('readonly', True)]}, track_visibility='onchange')
     dest_location_id = fields.Many2one(
         'stock.location', string='Output Tank', required=True,
         states={'done': [('readonly', True)]},
-        domain=[('olive_type', '=', 'tank')],
+        domain=[('olive_tank', '=', True)],
         track_visibility='onchange')
     olive_qty_compute = fields.Float(
-        compute='_compute_olive_qty', readonly=True,
+        #compute='_compute_olive_qty', readonly=True,
         string='Olive Quantity',
         digits=dp.get_precision('Olive Weight'),
         help="Total olive quantity in kg")
@@ -69,7 +66,7 @@ class OliveOilProduction(models.Model):
         'The compensation quantity must be positive or 0.'),
         ]
 
-    @api.depends('src_location_id')
+    @api.depends('palox_id')
     def _compute_olive_qty(self):
         for production in self:
             qty = production.src_location_id.get_total_qty_kg()

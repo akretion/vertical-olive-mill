@@ -34,14 +34,12 @@ class OliveArrival(models.Model):
         'stock.warehouse', string='Warehouse', required=True,
         default=lambda self: self._default_warehouse(),
         track_visibility='onchange')
-    default_product_id = fields.Many2one(
-        'product.product', string='Default Olive Type',
-        states={'done': [('readonly', True)]},
-        domain=[('olive_type', '=', 'olive')], track_visibility='onchange')
-    default_src_location_id = fields.Many2one(
-        'stock.location', string='Default Ochard',
-        states={'done': [('readonly', True)]},
-        domain=[('olive_type', '=', 'ochard')])
+    default_variant_id = fields.Many2one(
+        'olive.variant', string='Default Olive Variant',
+        states={'done': [('readonly', True)]})
+    default_ochard_id = fields.Many2one(
+        'olive.ochard', string='Default Ochard',
+        states={'done': [('readonly', True)]})
     leaf_removal = fields.Boolean(
         string='Leaf Removal', track_visibility='onchange',
         states={'done': [('readonly', True)]})
@@ -70,8 +68,6 @@ class OliveArrival(models.Model):
     returned_organic_case = fields.Integer(string='Returned Organic Cases')
     lended_case_id = fields.Many2one(
         'olive.lended.case', string='Lended Case Move', readonly=True)
-    picking_id = fields.Many2one(
-        'stock.picking', string='Picking', readonly=True, copy=False)
     # TODO returned palox that are not re-used
 
     _sql_constraints = [(
@@ -156,17 +152,7 @@ class OliveArrival(models.Model):
                 'company_id': self.company_id.id,
                 })
             lended_case_id = lended_case.id
-        returned_palox = self.env['stock.location']
-        pvals = {
-            'partner_id': self.partner_id.id,
-            'company_id': self.company_id.id,
-            'picking_type_id': self.warehouse_id.in_type_id.id,
-            'origin': self.name,
-            'move_type': 'one',
-            'location_id': self.line_ids[0].src_location_id.id,
-            'location_dest_id': self.line_ids[0].dest_location_id.id,
-            'move_lines': [],
-            }
+        returned_palox = self.env['olive.palox']
         partner_organic_cert = self.partner_id.olive_organic_certified
         for line in self.line_ids:
             if float_is_zero(line.qty, precision_digits=prec):
@@ -175,36 +161,26 @@ class OliveArrival(models.Model):
                     % self.name)
             if line.dest_location_id.olive_borrower_partner_id:
                 returned_palox |= line.dest_location_id
-            if line.product_id.olive_culture_type in ('organic', 'conversion'):
+            if line.oil_product_id.olive_culture_type in ('organic', 'conversion'):
                 if not partner_organic_cert:
                     raise UserError(_(
-                        "For the arrival %s, the olives '%s' are '%s' "
+                        "For the arrival %s, the destination oil '%s' is '%s' "
                         "but the farmer '%s' has no organic certification.") % (
                             self.name,
-                            line.product_id.name,
-                            line.product_id.olive_culture_type,
+                            line.oil_product_id.name,
+                            line.oil_product_id.olive_culture_type,
                             self.partner_id.display_name))
                 elif not partner_organic_cert.startswith(
-                        line.product_id.olive_culture_type):
+                        line.oil_product_id.olive_culture_type):
                     raise UserError(_(
-                        "For the arrival %s, the olives '%s' are '%s' "
+                        "For the arrival %s, the destination oil '%s' is '%s' "
                         "but the farmer '%s' has a certification status '%s'.") % (
                             self.name,
-                            line.product_id.name,
-                            line.product_id.olive_culture_type,
+                            line.oil_product_id.name,
+                            line.oil_product_id.olive_culture_type,
                             self.partner_id.display_name,
                             partner_organic_cert.split('-')[0],
                             ))
-            pvals['move_lines'].append((0, 0, {
-                'name': line.product_id.display_name,
-                'product_id': line.product_id.id,
-                'product_uom': line.product_id.uom_id.id,
-                'company_id': self.company_id.id,
-                'product_uom_qty': line.qty,
-                'location_id': line.src_location_id.id,
-                'location_dest_id': line.dest_location_id.id,
-                'origin': self.name,
-                }))
         # Mark palox as returned
         returned_palox.write({
             'olive_borrower_partner_id': False,
@@ -212,24 +188,10 @@ class OliveArrival(models.Model):
             })
         # TODO : if palox already has some olives in, check that the new olives are "compatible"
         # also check that we don't overload a palox
-        pick = self.env['stock.picking'].create(pvals)
-        # mark as todo
-        pick.action_confirm()
-        if pick.state != 'assigned':
-            raise UserError(_(
-                "Houston, we have a problem! Picking state is %s "
-                "(should be assigned). ") % pick.state)
-        pick.action_pack_operation_auto_fill()
-        pick.do_new_transfer()
-        if pick.state != 'done':
-            raise UserError(_(
-                "Houston, we have a problem! Picking state is %s "
-                "(should be available). ") % pick.state)
         self.write({
             'state': 'done',
             'done_datetime': fields.Datetime.now(),
             'lended_case_id': lended_case_id,
-            'picking_id': pick.id,
             })
 
     def unlink(self):
@@ -253,20 +215,15 @@ class OliveArrivalLine(models.Model):
         'olive.arrival', string='Arrival', ondelete='cascade')
     partner_id = fields.Many2one(
         related='arrival_id.partner_id', string='Olive Farmer', readonly=True)
-    product_id = fields.Many2one(
-        'product.product', string='Olive Type', required=True,
-        domain=[('olive_type', '=', 'olive')])
-    product_olive_culture_type = fields.Selection(
-        related='product_id.olive_culture_type', store=True, readonly=True)
+    variant_id = fields.Many2one(
+        'olive.variant', string='Olive Variant', required=True)
     qty = fields.Float(
         string='Olive Qty', help="Olive Quantity in Kg", required=True,
         digits=dp.get_precision('Olive Weight'))
-    src_location_id = fields.Many2one(
-        'stock.location', string='Ochard', required=True,
-        domain=[('olive_type', '=', 'ochard')])
-    dest_location_id = fields.Many2one(
-        'stock.location', string='Palox', required=True,
-        domain=[('olive_type', '=', 'palox')])
+    ochard_id = fields.Many2one(
+        'olive.ochard', string='Ochard', required=True)
+    palox_id = fields.Many2one(
+        'olive.palox', string='Palox', required=True)
     oil_destination = fields.Selection([
         ('withdrawal', 'Withdrawal'),
         ('sale', 'Sale'),
@@ -298,19 +255,10 @@ class OliveArrivalLine(models.Model):
         'The sale quantity must be positive or 0.'),
         ]
 
-    @api.constrains('product_id', 'oil_product_id', 'oil_destination', 'sale_qty')
+    @api.constrains('oil_destination', 'sale_qty')
     def check_arrival_line(self):
         prec = self.env['decimal.precision'].precision_get('Olive Weight')
         for line in self:
-            if line.product_id.olive_culture_type != line.oil_product_id.olive_culture_type:
-                raise ValidationError(_(
-                    "On one of the lines of arrival %s, the olives '%s' have "
-                    "a culture type '%s', but the selected oil '%s' have "
-                    "a culture type '%s'.")
-                    % (line.arrival_id.name, line.product_id.name,
-                       line.product_id.olive_culture_type,
-                       line.oil_product_id.name,
-                       line.oil_product_id.olive_culture_type))
             if (
                     line.oil_destination in ('sale', 'mix') and
                     float_is_zero(line.sale_qty, precision_digits=prec)):
