@@ -15,8 +15,6 @@ class OliveConfigSettings(models.TransientModel):
     company_id = fields.Many2one(
         'res.company', string='Company',
         default=lambda self: self.env.user.company_id, required=True)
-    olive_default_warehouse_id = fields.Many2one(
-        related='company_id.olive_default_warehouse_id')
     olive_qty_per_palox = fields.Integer(
         related='company_id.olive_qty_per_palox')
     olive_max_qty_per_palox = fields.Integer(
@@ -41,3 +39,5 @@ class OliveConfigSettings(models.TransientModel):
         related='company_id.olive_filter_shrinkage_ratio')
     olive_oil_density = fields.Float(
         related='company_id.olive_oil_density')
+    olive_oil_average_ratio = fields.Float(
+        related='company_id.olive_oil_average_ratio')

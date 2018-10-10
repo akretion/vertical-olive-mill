@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Akretion France (http://www.akretion.com/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="olive_culture_report" model="ir.actions.report.xml">
+    <field name="name">Olive Culture Form</field>
+    <field name="model">res.partner</field>
+    <field name="report_name">res.partner.olive.culture</field>
+    <field name="report_type">py3o</field>
+    <field name="py3o_filetype">odt</field>
+    <field name="module">olive_mill</field>
+    <field name="py3o_template_fallback">report/olive_culture_form.odt</field>
+    <field name="print_report_name">'Olive_culture_' + (object.commercial_partner_id.ref or (object.commercial_partner_id.name and object.commercial_partner_id.name.replace(' ', '_') or 'no-name')) + '.pdf'</field>
+</record>
+
+<record id="button_olive_culture_report" model="ir.values">
+    <field name="key2">client_print_multi</field>
+    <field name="model">res.partner</field>
+    <field name="name">Olive Culture Form</field>
+    <field name="value" eval="'ir.actions.report.xml,%d'%olive_culture_report" />
+</record>
+
+</odoo>

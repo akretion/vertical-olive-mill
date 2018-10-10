@@ -38,8 +38,8 @@ class OliveAppointment(models.Model):
         ('sale', 'Sale'),
         ('mix', 'Mix'),
         ], string='Oil Destination', track_visibility='onchange')
-    sale_qty = fields.Integer(
-        string='Sale Quantity', track_visibility='onchange')
+    withdrawal_oil_qty = fields.Integer(
+        string='Withdrawal Oil Quantity', track_visibility='onchange')
     palox_qty = fields.Float(
         compute='_compute_palox_qty', string='Estimated Palox Qty', readonly=True,
         store=True)
@@ -50,9 +50,9 @@ class OliveAppointment(models.Model):
         'qty_positive',
         'CHECK(qty >= 0)',
         'The quantity must be positive or 0.'), (
-        'sale_qty_positive',
-        'CHECK(sale_qty >= 0)',
-        'The purchase quantity must be positive or 0.'),
+        'withdrawal_oil_qty_positive',
+        'CHECK(withdrawal_oil_qty >= 0)',
+        'The quantity of oil withdrawn must be positive or 0.'),
         ]
 
     @api.depends('partner_id', 'start_datetime')

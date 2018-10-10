@@ -28,5 +28,19 @@
     <field name="location_id" ref="stock.stock_location_stock"/>
 </record>
 
+<record id="shrinkage" model="stock.location">
+    <field name="name">Shrinkage Tank</field>
+    <field name="usage">internal</field>
+    <field name="olive_tank" eval="True"/>
+    <field name="location_id" ref="stock.stock_location_stock"/>
+</record>
+
+<record id="withdrawal" model="stock.location">
+    <field name="name">Withdrawal</field>
+    <field name="usage">internal</field>
+    <field name="olive_tank" eval="False"/>
+    <field name="location_id" ref="stock.stock_location_stock"/>
+</record>
+
 
 </odoo>

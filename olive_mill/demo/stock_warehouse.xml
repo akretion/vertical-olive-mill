@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo noupdate="0">  <!-- TODO set to 0 once finished -->
+
+
+<record id="stock.warehouse0" model="stock.warehouse">
+    <field name="olive_mill">1</field>
+    <field name="olive_shrinkage_loc_id" ref="shrinkage"/>
+    <!--    <field name="olive_withdrawal_loc_id" ref="withdrawal"/> -->
+</record>
+
+
+</odoo>

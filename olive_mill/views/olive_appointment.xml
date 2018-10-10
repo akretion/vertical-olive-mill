@@ -28,10 +28,10 @@
                         <field name="palox_qty"/>
                         <field name="leaf_removal"/>
                         <field name="oil_destination"/>
-                        <label for="sale_qty" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}"/>
-                        <div name="sale_qty" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}">
-                            <field name="sale_qty" class="oe_inline"/>
-                            <label string=" kg" class="oe_inline"/>
+                        <label for="withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}"/>
+                        <div name="withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}">
+                            <field name="withdrawal_oil_qty" class="oe_inline"/>
+                            <label string=" L" class="oe_inline"/>
                         </div>
                     </group>
                     <group name="right">

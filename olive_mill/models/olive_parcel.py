@@ -19,7 +19,8 @@ class OliveParcel(models.Model):
         store=True, readonly=True, compute_sudo=True)
     land_registry_ref = fields.Char(string='Land Registry Ref')
     area = fields.Float(
-        string='Area', digits=dp.get_precision('Area'), help="Area in hectare")
+        string='Area', digits=dp.get_precision('Olive Parcel Area'),
+        help="Area in hectare")
     tree_qty = fields.Integer(string='Number of trees')
     product_ids = fields.Many2many(  # TODO
         'product.product', string='Olive Types', domain=[('olive_type', '=', 'olive')])

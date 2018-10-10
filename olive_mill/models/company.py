@@ -12,8 +12,6 @@ import odoo.addons.decimal_precision as dp
 class ResCompany(models.Model):
     _inherit = 'res.company'
 
-    olive_default_warehouse_id = fields.Many2one(
-        'stock.warehouse', string='Warehouse')
     olive_qty_per_palox = fields.Integer(
         string='Quantity of Olives per Palox', default=380)
     olive_max_qty_per_palox = fields.Integer(
@@ -35,16 +33,19 @@ class ResCompany(models.Model):
         compute='_compute_cases', string='Organic Cases in Stock', readonly=True)
     olive_production_shrinkage_ratio = fields.Float(
         string='Production Shrinkage', default=0.4,
-        digits=dp.get_precision('Oil Shrinkage Ratio'),
+        digits=dp.get_precision('Olive Oil Ratio'),
         help='Production Shrinkage in percentage')
     olive_filter_shrinkage_ratio = fields.Float(
         string='Filter Shrinkage', default=1.0,
-        digits=dp.get_precision('Oil Shrinkage Ratio'),
+        digits=dp.get_precision('Olive Oil Ratio'),
         help='Filter shrinkage in percentage')
     olive_oil_density = fields.Float(
         string='Olive Oil Density', default=0.916,
-        digits=dp.get_precision('Oil Density'),
+        digits=dp.get_precision('Olive Oil Density'),
         help='Olive oil density in kg per liter')
+    olive_oil_average_ratio = fields.Float(
+        string='Oil Average Ratio', digits=dp.get_precision('Olive Oil Ratio'),
+        default=15)
 
     _sql_constraints = [(
         'olive_oil_density_positive',
@@ -55,7 +56,10 @@ class ResCompany(models.Model):
         'Filter shrinkage ratio must be positive'), (
         'olive_production_shrinkage_ratio_positive',
         'CHECK(olive_production_shrinkage_ratio >= 0)',
-        'Production shrinkage ratio must be positive')]
+        'Production shrinkage ratio must be positive'), (
+        'olive_oil_average_ratio_positive',
+        'CHECK(olive_oil_average_ratio >= 0)',
+        'Oil Average Ratio must be positive or 0')]
 
     @api.depends('olive_organic_case_total', 'olive_regular_case_total')
     def _compute_cases(self):

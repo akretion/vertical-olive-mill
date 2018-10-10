@@ -2,23 +2,28 @@
 <odoo noupdate="1">
 
 
-<record forcecreate="True" id="area" model="decimal.precision">
-    <field name="name">Area</field>
+<record forcecreate="True" id="olive_parcel_area" model="decimal.precision">
+    <field name="name">Olive Parcel Area</field>
     <field name="digits">4</field>
 </record>
 
 <record forcecreate="True" id="olive_weight" model="decimal.precision">
-    <field name="name">Olive Weight</field>
-    <field name="digits">2</field>
-</record>
-
-<record forcecreate="True" id="oil_shrinkage_ratio" model="decimal.precision">
-    <field name="name">Oil Shrinkage Ratio</field>
+    <field name="name">Olive Weight</field>  <!-- Also used for Olive Oil at the moment -->
     <field name="digits">1</field>
 </record>
 
-<record forcecreate="True" id="oil_density" model="decimal.precision">
-    <field name="name">Oil Density</field>
+<record forcecreate="True" id="olive_oil_volume" model="decimal.precision">
+    <field name="name">Olive Oil Volume</field>
+    <field name="digits">1</field>
+</record>
+
+<record forcecreate="True" id="olive_oil_ratio" model="decimal.precision">
+    <field name="name">Olive Oil Ratio</field>
+    <field name="digits">1</field>
+</record>
+
+<record forcecreate="True" id="olive_oil_density" model="decimal.precision">
+    <field name="name">Olive Oil Density</field>
     <field name="digits">3</field>
 </record>
 

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+
+<record id="view_warehouse" model="ir.ui.view">
+    <field name="name">olive.mill.stock.warehouse.form</field>
+    <field name="model">stock.warehouse</field>
+    <field name="inherit_id" ref="stock.view_warehouse"/>
+    <field name="arch" type="xml">
+        <xpath expr="//field[@name='default_resupply_wh_id']" position="before">
+            <field name="olive_mill" />
+        </xpath>
+        <xpath expr="//field[@name='wh_output_stock_loc_id']/.." position="after">
+            <group name="olive_tank" string="Olive Mill" attrs="{'invisible': [('olive_mill', '=', False)]}">
+                <field name="olive_shrinkage_loc_id" attrs="{'required': [('olive_mill', '=', True)]}"/>
+                <field name="olive_withdrawal_loc_id" attrs="{'required': [('olive_mill', '=', True)]}"/>
+            </group>
+        </xpath>
+    </field>
+</record>
+
+
+</odoo>

@@ -16,7 +16,7 @@ class ResPartner(models.Model):
         compute='_compute_olive_total', string='Total Trees', readonly=True)
     olive_area_total = fields.Float(
         compute='_compute_olive_total', string='Total Area', readonly=True,
-        digits=dp.get_precision('Area'))
+        digits=dp.get_precision('Olive Parcel Area'))
     olive_lended_palox = fields.Integer(
         compute='_compute_olive_total', string='Lended Palox', readonly=True)
     olive_lended_regular_case = fields.Integer(
@@ -25,13 +25,12 @@ class ResPartner(models.Model):
         compute='_compute_olive_total', string='Lended Organic Case', readonly=True)
     olive_organic_certification_ids = fields.One2many(
         'partner.organic.certification', 'partner_id', 'Organic Certifications')
-    olive_organic_certified = fields.Selection([
+    olive_culture_type = fields.Selection([
+        ('regular', 'Regular'),
         ('organic', 'Organic'),
-        ('organic-draft', 'Organic (to confirm)'),
         ('conversion', 'Conversion'),
-        ('conversion-draft', 'Conversion (to confirm)'),
         ], compute='_compute_olive_organic_certified',
-        string='Organic Certified', readonly=True)
+        string='Olive Culture Type', readonly=True)
     olive_organic_certified_logo = fields.Binary(
         compute='_compute_olive_organic_certified',
         string='Organic Certified Logo', readonly=True)
@@ -93,7 +92,7 @@ class ResPartner(models.Model):
     def _compute_olive_organic_certified(self):
         season = self.env['olive.season'].get_current_season()
         for partner in self:
-            certified = False
+            culture_type = 'regular'
             filename = False
             logo = False
             if season and partner.olive_farmer and not partner.parent_id:
@@ -102,19 +101,15 @@ class ResPartner(models.Model):
                     ('season_id', '=', season.id),
                     ], limit=1)
                 if cert:
-                    if cert.state == 'done':
-                        if cert.conversion:
-                            certified = 'conversion'
-                            filename = 'organic_logo_conversion_done.png'
-                        else:
-                            certified = 'organic'
-                            filename = 'organic_logo_done.png'
-                    elif cert.state == 'draft':
-                        if cert.conversion:
-                            certified = 'conversion-draft'
+                    if cert.conversion:
+                        culture_type = 'conversion'
+                        filename = 'organic_logo_conversion_done.png'
+                        if cert.state == 'draft':
                             filename = 'organic_logo_conversion_draft.png'
-                        else:
-                            certified = 'organic-draft'
+                    else:
+                        culture_type = 'organic'
+                        filename = 'organic_logo_done.png'
+                        if cert.state == 'draft':
                             filename = 'organic_logo_draft.png'
             if filename:
                 fname_path = 'olive_mill/static/image/%s' % filename
@@ -122,5 +117,5 @@ class ResPartner(models.Model):
                 f_binary = f.read()
                 if f_binary:
                     logo = f_binary.encode('base64')
-            partner.olive_organic_certified = certified
+            partner.olive_culture_type = culture_type
             partner.olive_organic_certified_logo = logo

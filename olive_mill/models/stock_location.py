@@ -11,11 +11,11 @@ import odoo.addons.decimal_precision as dp
 class StockLocation(models.Model):
     _inherit = 'stock.location'
 
-    olive_tank = fields.Boolean(string='Olive Tank')
+    olive_tank = fields.Boolean(string='Olive Oil Tank')
 
-    def get_total_qty_kg(self):
+    def get_total_liter_kg(self):
         self.ensure_one()
-        # I can't group by on product_uom_id to check that it is kg
+        # I can't group by on product_uom_id to check that it is L
         # because it's a related non stored field...
         quant_rg = self.env['stock.quant'].read_group(
             [('location_id', '=', self.id)], ['qty'], [])

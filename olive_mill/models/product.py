@@ -11,7 +11,7 @@ class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
     olive_type = fields.Selection([
-        #('olive', 'Olive'),
+        # Olives are not handled as products
         ('oil', 'Olive Oil'),
         ('bottle', 'Oil Bottle'),
         ], string='Olive Type')
@@ -52,3 +52,12 @@ class ProductTemplate(models.Model):
                     "unit of measure that belong to the 'Unit' category "
                     "(current unit of measure: %s).")
                     % (pt.display_name, pt.uom_id.display_name))
+
+
+class ProductProduct(models.Model):
+    _inherit = 'product.product'
+
+    shrinkage_prodlot_id = fields.Many2one(
+        'stock.production.lot', string='Shrinkage Production Lot',
+        help="Select the generic production lot that will be used for all "
+        "moves of this olive oil product to the shrinkage tank.")

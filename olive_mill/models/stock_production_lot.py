@@ -10,6 +10,10 @@ from odoo.exceptions import UserError, ValidationError
 class StockProductionLot(models.Model):
     _inherit = 'stock.production.lot'
 
+
+    arrival_line_id = fields.Many2one(
+        'olive.arrival.line', 'Arrival Line', ondelete='restrict',
+        readonly=True)
     oil_merge_lot = fields.Boolean(string='Oil Merge Lot', readonly=False)
 
     @api.depends('name', 'expiry_date', 'oil_merge_lot')

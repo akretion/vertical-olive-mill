@@ -47,7 +47,7 @@
             <page name="olive" string="Olive" attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}">
                 <group name="olive_main">
                     <group name="left">
-                        <field name="olive_organic_certified" invisible="1"/>
+                        <field name="olive_culture_type" invisible="1"/>
                         <label for="olive_area_total"/>
                         <div name="olive_area_total">
                             <field name="olive_area_total" class="oe_inline"/>
@@ -63,7 +63,7 @@
             </page>
         </page>
         <div name="button_box" position="after">
-            <div name="organic_logo" class="oe_inline oe_right" attrs="{'invisible': [('olive_organic_certified', '=', False)]}">
+            <div name="organic_logo" class="oe_inline oe_right" attrs="{'invisible': [('olive_culture_type', '=', 'regular')]}">
                 <field name="olive_organic_certified_logo" widget="image"/>
 
             </div>

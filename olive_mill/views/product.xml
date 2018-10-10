@@ -20,6 +20,18 @@
     </field>
 </record>
 
+<record id="product_normal_form_view" model="ir.ui.view">
+    <field name="name">olive.mill.product.product.form</field>
+    <field name="model">product.product</field>
+    <field name="inherit_id" ref="product.product_normal_form_view"/>
+    <field name="arch" type="xml">
+        <field name="default_code" position="before">
+            <field name="shrinkage_prodlot_id" attrs="{'invisible': [('olive_type', '!=', 'oil')]}" context="{'default_product_id': active_id}" domain="[('product_id', '=', active_id)]"/>
+        </field>
+    </field>
+</record>
+
+
 <record id="olive_product_action" model="ir.actions.act_window">
     <field name="name">Products</field>
     <field name="res_model">product.product</field>

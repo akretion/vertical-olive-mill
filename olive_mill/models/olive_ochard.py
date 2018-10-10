@@ -26,7 +26,7 @@ class OliveOchard(models.Model):
         compute='_compute_totals', string='Total Trees', readonly=True, store=True)
     area_total = fields.Float(
         compute='_compute_totals', string='Total Area', readonly=True, store=True,
-        digits=dp.get_precision('Area'))
+        digits=dp.get_precision('Olive Parcel Area'))
     cultivation_ids = fields.One2many(
         'olive.cultivation', 'ochard_id', string='Cultivation Methods')
 
