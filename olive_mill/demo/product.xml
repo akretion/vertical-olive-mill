@@ -95,6 +95,45 @@
     <field name="tracking">lot</field>
 </record>
 
+<record id="can20l" model="product.product">
+    <field name="name">Can 20L</field>
+    <field name="default_code">CAN20L</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="True"/>
+    <field name="type">product</field>
+    <field name="olive_type">bottle</field>
+    <field name="olive_culture_type">regular</field>
+    <field name="uom_id" ref="product.product_uom_unit"/>
+    <field name="uom_po_id" ref="product.product_uom_unit"/>
+</record>
+
+<record id="can10l" model="product.product">
+    <field name="name">Can 10L</field>
+    <field name="default_code">CAN10L</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="True"/>
+    <field name="type">product</field>
+    <field name="olive_type">bottle</field>
+    <field name="olive_culture_type">regular</field>
+    <field name="uom_id" ref="product.product_uom_unit"/>
+    <field name="uom_po_id" ref="product.product_uom_unit"/>
+</record>
+
+<record id="can5l" model="product.product">
+    <field name="name">Can 5L</field>
+    <field name="default_code">CAN5L</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="True"/>
+    <field name="type">product</field>
+    <field name="olive_type">bottle</field>
+    <field name="olive_culture_type">regular</field>
+    <field name="uom_id" ref="product.product_uom_unit"/>
+    <field name="uom_po_id" ref="product.product_uom_unit"/>
+</record>
+
 
 
 </odoo>

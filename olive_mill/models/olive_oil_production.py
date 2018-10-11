@@ -45,7 +45,7 @@ class OliveOilProduction(models.Model):
     withdrawal_location_id = fields.Many2one(
         'stock.location', string='Withdrawal Location', required=True,
         states={'done': [('readonly', True)]},
-        domain=[('olive_tank', '=', False)])
+        domain=[('olive_tank', '=', False), ('usage', '=', 'internal')])
     shrinkage_location_id = fields.Many2one(
         'stock.location', string='Shrinkage Tank',
         states={'done': [('readonly', True)]},
@@ -53,11 +53,11 @@ class OliveOilProduction(models.Model):
         track_visibility='onchange')
     olive_qty_compute = fields.Float(
         compute='_compute_lines', readonly=True, store=True,
-        string='Olive Quantity',
+        string='Olive Quantity (kg)',
         digits=dp.get_precision('Olive Weight'),
         help="Total olive quantity in kg")
     olive_qty_done = fields.Float(
-        string='Olive Quantity', readonly=True,
+        string='Olive Quantity (kg)', readonly=True,
         digits=dp.get_precision('Olive Weight'),
         help="Total olive quantity in kg")
     olive_compensation_qty = fields.Float(
@@ -66,7 +66,7 @@ class OliveOilProduction(models.Model):
         readonly=True, states={'ratio': [('readonly', False)]},
         track_visibility='onchange', help="Olive compensation in kg")
     olive_qty_total = fields.Float(
-        string='Olive Compensation', compute='_compute_lines',
+        string='Olive Compensation????', compute='_compute_lines',
         digits=dp.get_precision('Olive Weight'), readonly=True, store=True)
     oil_destination = fields.Selection([
         ('withdrawal', 'Withdrawal'),
@@ -76,10 +76,10 @@ class OliveOilProduction(models.Model):
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Type', readonly=True)
     oil_qty_kg = fields.Float(
-        string='Oil Qty', digits=dp.get_precision('Olive Weight'),
+        string='Oil Quantity (kg)', digits=dp.get_precision('Olive Weight'),
         readonly=True)  # written ratio2force wizard
     oil_qty = fields.Float(
-        string='Oil Qty', digits=dp.get_precision('Olive Oil Volume'),
+        string='Oil Quantity (L)', digits=dp.get_precision('Olive Oil Volume'),
         compute='_compute_oil_qty', store=True, readonly=True)
     compensation_ratio = fields.Float(
         string='Compensation Ratio', digits=dp.get_precision('Olive Oil Ratio'),
@@ -105,13 +105,11 @@ class OliveOilProduction(models.Model):
         track_visibility='onchange')
     done_datetime = fields.Datetime(
         string='Date Done', readonly=True, copy=False)
-#    sale_picking_id = fields.Many2one(
-#        'stock.picking', string='Sale Picking', readonly=True, copy=False)
     shrinkage_move_id = fields.Many2one(
         'stock.move', string='Shrinkage Stock Move', readonly=True, copy=False)
     line_ids = fields.One2many(
         'olive.arrival.line', 'production_id', string='Arrival Lines',
-        states={'done': [('readonly', True)]})
+        readonly=True)
 
     _sql_constraints = [(
         'olive_compensation_qty_positive',
@@ -129,12 +127,11 @@ class OliveOilProduction(models.Model):
 
     @api.depends('line_ids.olive_qty', 'olive_compensation_qty')
     def _compute_lines(self):
-        for production in self:
-            qty = 0.0
-            for line in production.line_ids:
-                qty += line.olive_qty
-            production.olive_qty_compute = qty
-            production.olive_qty_total = qty + production.olive_compensation_qty
+        res = self.env['olive.arrival.line'].read_group([('production_id', 'in', self.ids)], ['production_id', 'olive_qty'], ['production_id'])
+        for re in res:
+            production = self.browse(re['production_id'][0])
+            production.olive_qty_compute = re['olive_qty']
+            production.olive_qty_total = re['olive_qty'] + production.olive_compensation_qty
 
     @api.depends('oil_qty', 'olive_qty_total')
     def _compute_ratio(self):
@@ -198,19 +195,19 @@ class OliveOilProduction(models.Model):
             raise UserError(_(
                 "The palox %s is empty.") % self.palox_id.display_name)
         oil_dests = []
-        oil_product_id = False
+        oil_product = False
         prec = self.env['decimal.precision'].precision_get(
             'Olive Weight')
         for l in lines:
             oil_dests.append(l.oil_destination)
-            if oil_product_id:
-                if oil_product_id != l.oil_product_id.id:
+            if oil_product:
+                if oil_product != l.oil_product_id:
                     raise UserError(_(
                         "The oil type is not the same "
                         "on all the lines of palox %s.") % self.palox_id.display_name)
                     # TODO improve error
             else:
-                oil_product_id = l.oil_product_id.id
+                oil_product = l.oil_product_id
             if float_compare(l.olive_qty, 0, precision_digits=prec) <= 0:
                 raise UserError(_(
                     "On line %s, the olive qty is null !") % l.name)
@@ -221,6 +218,23 @@ class OliveOilProduction(models.Model):
         else:
             oil_destination = 'mix'
 
+        if oil_destination in ('sale', 'mix'):
+            if not self.sale_location_id:
+                raise UserError(_(
+                    "Sale tank is not set on oil production %s.") % self.name)
+            if not self.sale_location_id.oil_product_id:
+                raise UserError(_(
+                    "Oil product not configured on stock location '%s'.")
+                    % self.sale_location_id.display_name)
+            if self.sale_location_id.oil_product_id != oil_product:
+                raise UserError(_(
+                    "The production %s is configured to produce "
+                    "oil product '%s', but the sale tank '%s' "
+                    "is configured with oil product '%s'.") % (
+                        self.name, oil_product.display_name,
+                        self.sale_location_id.display_name,
+                        self.sale_location_id.oil_product_id.display_name))
+
         lines.write({'production_id': self.id})
 
         compensation_ratio = self.company_id.olive_oil_average_ratio
@@ -230,7 +244,7 @@ class OliveOilProduction(models.Model):
                 % compensation_ratio)
         self.write({
             'state': 'ratio',
-            'oil_product_id': oil_product_id,
+            'oil_product_id': oil_product.id,
             'oil_destination': oil_destination,
             'compensation_ratio': self.company_id.olive_oil_average_ratio,
             })
@@ -241,6 +255,8 @@ class OliveOilProduction(models.Model):
         new_state = 'force'
         if len(self.line_ids) == 1:  # Skip force ratio step
             new_state = 'pack'
+            if self.oil_destination == 'sale':  # Skip pack
+                new_state = 'check'
         self.write({
             'state': new_state,
             })
@@ -249,8 +265,11 @@ class OliveOilProduction(models.Model):
     def force2pack(self):
         self.ensure_one()
         assert self.state == 'force'
+        new_state = 'pack'
+        if self.oil_destination == 'sale':  # Skip pack
+            new_state = 'check'
         self.write({
-            'state': 'pack',
+            'state': new_state,
             })
 
     def pack2check(self):
@@ -260,76 +279,35 @@ class OliveOilProduction(models.Model):
             'state': 'check',
             })
 
-    def oil_qty_compute_other_vals(self, oil_qty, ratio):
-        oil_prec = self.env['decimal.precision'].precision_get('Olive Oil Volume')
-        olive_prec = self.env['decimal.precision'].precision_get('Olive Weight')
-        density = self.company_id.olive_oil_density
-        shrinkage_ratio = self.company_id.olive_production_shrinkage_ratio
-        if not density:
-            raise UserError(_(
-                "Missing Olive Oil Density on company '%s'")
-                % self.company_id.display_name)
-        # oil_qty = float_round(oil_qty, precision_digits=oil_prec)
-        oil_qty_kg = float_round(
-            oil_qty * density, precision_digits=olive_prec)
-        shrinkage_tank_oil_qty = float_round(
-            oil_qty * shrinkage_ratio / 100, precision_digits=oil_prec)
-        shrinkage_tank_oil_qty_kg = float_round(
-            shrinkage_tank_oil_qty * density, precision_digits=olive_prec)
-        withdrawal_oil_qty = float_round(
-            oil_qty - shrinkage_tank_oil_qty, precision_digits=oil_prec)
-        withdrawal_oil_qty_kg = float_round(
-            oil_qty_kg - shrinkage_tank_oil_qty_kg, precision_digits=olive_prec)
-        vals = {
-            'oil_qty_kg': oil_qty_kg,
-            'oil_qty': oil_qty,
-            'oil_ratio': ratio,
-            'shrinkage_tank_oil_qty': shrinkage_tank_oil_qty,
-            'shrinkage_tank_oil_qty_kg': shrinkage_tank_oil_qty_kg,
-            'withdrawal_oil_qty_kg': withdrawal_oil_qty_kg,
-            'withdrawal_oil_qty': withdrawal_oil_qty,
-            }
-        return vals
-
     def set_qty_on_lines(self, force_ratio=False):
         """force_ratio=(line_to_force, ratio)"""
         self.ensure_one()
         oil_prec = self.env['decimal.precision'].precision_get('Olive Oil Volume')
         ratio_prec = self.env['decimal.precision'].precision_get('Olive Oil Ratio')
-        last_line_oil_qty = self.oil_qty
         if force_ratio:
             first_line_to_process = force_ratio[0]
             first_line_ratio = force_ratio[1]
+            first_line_oil_qty = first_line_to_process.olive_qty * first_line_ratio / 100,
+            total_oil_prorata = self.oil_qty - first_line_oil_qty
+            total_olive_prorata = self.olive_qty_compute - first_line_to_process.olive_qty
         else:
             first_line_to_process = self.line_ids[0]
             first_line_ratio = self.ratio
-        first_line_ratio = float_round(
-            first_line_ratio, precision_digits=ratio_prec)
-        first_line_oil_qty = float_round(
-            first_line_to_process.olive_qty * first_line_ratio / 100,
-            precision_digits=oil_prec)
-        first_line_vals = self.oil_qty_compute_other_vals(
+            first_line_oil_qty = first_line_to_process.olive_qty * self.oil_qty / self.olive_qty_compute
+            total_oil_prorata = self.oil_qty
+            total_olive_prorata = self.olive_qty_compute
+        first_line_oil_qty = float_round(first_line_oil_qty, precision_digits=oil_prec)
+        first_line_vals = first_line_to_process.oil_qty_compute_other_vals(
             first_line_oil_qty, first_line_ratio)
         first_line_to_process.write(first_line_vals)
-        last_line_oil_qty -= first_line_oil_qty
-        total_olive_qty_without_first_line = self.olive_qty_compute - first_line_to_process.olive_qty
-        total_oil_qty_without_first_line = self.oil_qty - first_line_oil_qty
         lines = [line for line in self.line_ids if line != first_line_to_process]
-        while lines:
-            line = lines.pop()
-            if lines:
-                # compute oil qty at the pro-rata of olive qty
-                oil_qty = float_round(
-                    line.olive_qty * total_oil_qty_without_first_line / total_olive_qty_without_first_line, precision_digits=oil_prec)
-                ratio = float_round(
-                    100 * oil_qty / line.olive_qty, precision_digits=ratio_prec)
-                last_line_oil_qty -= oil_qty
-            else:
-                # last line, use a substraction
-                oil_qty = last_line_oil_qty
-                ratio = float_round(
-                    100 * oil_qty / line.olive_qty, precision_digits=ratio_prec)
-            vals = self.oil_qty_compute_other_vals(oil_qty, ratio)
+        for line in lines:
+            # compute oil qty at the pro-rata of olive qty
+            oil_qty = line.olive_qty * total_oil_prorata / total_olive_prorata
+            ratio = float_round(
+                100 * oil_qty / line.olive_qty, precision_digits=ratio_prec)
+            oil_qty = float_round(oil_qty, precision_digits=oil_prec)
+            vals = line.oil_qty_compute_other_vals(oil_qty, ratio)
             line.write(vals)
 
 
@@ -338,11 +316,13 @@ class OliveOilProduction(models.Model):
         assert self.state == 'check'
         splo = self.env['stock.production.lot']
         smo = self.env['stock.move']
-        prec = self.env['decimal.precision'].precision_get('Olive Weight')
-        withdrawal_location_id = self.warehouse_id.olive_withdrawal_loc_id.id
+        pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
+        pr_oil = self.env['decimal.precision'].precision_get('Olive Oil Volume')
+        withdrawal_loc_id = self.warehouse_id.olive_withdrawal_loc_id.id
         stock_loc_id = self.warehouse_id.lot_stock_id.id
+        sale_loc_id = self.sale_location_id.id
         oil_product = self.oil_product_id
-        total_shrinkage_oil_qty = 0.0
+        to_shrinkage_tank_oil_qty = 0.0
         for line in self.line_ids:
             # TODO add if withdrawal !!!!
             # create prod lot
@@ -352,18 +332,32 @@ class OliveOilProduction(models.Model):
                 'name': line.name,
                 })
             # create move from virtual prod > Withdrawal loc
-            move = smo.create({
-                'product_id': oil_product.id,
-                'name': _('Olive Oil Production %s: Withdrawal related to arrival line %s') % (self.name, line.name),
-                'location_id': oil_product.property_stock_production.id,
-                'location_dest_id': withdrawal_location_id,
-                'product_uom': oil_product.uom_id.id,
-                'origin': self.name,
-                'product_uom_qty': line.withdrawal_oil_qty,
-                'restrict_lot_id': prodlot.id,
-                'restrict_partner_id': line.partner_id.id,
-                })
-            move.action_done()
+            if float_compare(line.withdrawal_oil_qty, 0, precision_digits=pr_oli) > 0:
+                move = smo.create({
+                    'product_id': oil_product.id,
+                    'name': _('Olive oil production %s: oil withdrawal related to arrival line %s') % (self.name, line.name),
+                    'location_id': oil_product.property_stock_production.id,
+                    'location_dest_id': withdrawal_loc_id,
+                    'product_uom': oil_product.uom_id.id,
+                    'origin': self.name,
+                    'product_uom_qty': line.withdrawal_oil_qty,
+                    'restrict_lot_id': prodlot.id,
+                    'restrict_partner_id': line.partner_id.id,
+                    })
+                move.action_done()
+            if float_compare(line.to_sale_tank_oil_qty, 0, precision_digits=pr_oli) > 0:
+                move = smo.create({
+                    'product_id': oil_product.id,
+                    'name': _('Olive oil production %s: sale related to arrival line %s') % (self.name, line.name),
+                    'location_id': oil_product.property_stock_production.id,
+                    'location_dest_id': sale_loc_id,
+                    'product_uom': oil_product.uom_id.id,
+                    'origin': self.name,
+                    'product_uom_qty': line.to_sale_tank_oil_qty,
+                    'restrict_lot_id': prodlot.id,
+                    })
+                move.action_done()
+
             for extra in line.extra_ids:
                 if extra.product_id.tracking and extra.product_id.tracking != 'none':
                     raise UserError(_(
@@ -372,9 +366,9 @@ class OliveOilProduction(models.Model):
                         % (extra.product_id.display_name, line.name))
                 extra_move = smo.create({
                     'product_id': extra.product_id.id,
-                    'name': _('Olive Oil Production %s: Extra Item Withdrawal related to arrival line %s') % (self.name, line.name),
+                    'name': _('Olive oil production %s: extra item withdrawal related to arrival line %s') % (self.name, line.name),
                     'location_id': stock_loc_id,
-                    'location_dest_id': withdrawal_location_id,
+                    'location_dest_id': withdrawal_loc_id,
                     'product_uom': extra.product_id.uom_id.id,
                     'origin': self.name,
                     'product_uom_qty': extra.qty,
@@ -383,29 +377,32 @@ class OliveOilProduction(models.Model):
                 extra_move.action_done()
                 assert extra_move.state == 'done'
             assert move.state == 'done'
-            total_shrinkage_oil_qty += line.shrinkage_tank_oil_qty
+            if line.oil_destination == 'withdrawal':
+                to_shrinkage_tank_oil_qty += line.shrinkage_oil_qty
         if not oil_product.shrinkage_prodlot_id:
             raise UserError(_(
                 "Missing shrinkage production lot on product '%s'.")
                 % oil_product.display_name)
-        shrinkage_move = smo.create({
-            'product_id': oil_product.id,
-            'name': _('Olive Oil Production %s: Shrinkage') % self.name,
-            'location_id': oil_product.property_stock_production.id,
-            'location_dest_id': self.warehouse_id.olive_shrinkage_loc_id.id,
-            'product_uom': oil_product.uom_id.id,
-            'origin': self.name,
-            'product_uom_qty': total_shrinkage_oil_qty,
-            'restrict_lot_id': oil_product.shrinkage_prodlot_id.id,
-            })
-        shrinkage_move.action_done()
-
-        self.write({
+        prod_vals = {
             'state': 'done',
             'done_datetime': fields.Datetime.now(),
             'olive_qty_done': self.olive_qty_compute,
-            'shrinkage_move_id': shrinkage_move.id,
-            })
+            }
+        if float_compare(to_shrinkage_tank_oil_qty, 0, precision_digits=pr_oil) > 0:
+            shrinkage_move = smo.create({
+                'product_id': oil_product.id,
+                'name': _('Olive Oil Production %s: Shrinkage') % self.name,
+                'location_id': oil_product.property_stock_production.id,
+                'location_dest_id': self.warehouse_id.olive_shrinkage_loc_id.id,
+                'product_uom': oil_product.uom_id.id,
+                'origin': self.name,
+                'product_uom_qty': to_shrinkage_tank_oil_qty,
+                'restrict_lot_id': oil_product.shrinkage_prodlot_id.id,
+                })
+            shrinkage_move.action_done()
+            prod_vals['shrinkage_move_id'] = shrinkage_move.id
+
+        self.write(prod_vals)
 
     def unlink(self):
         for production in self:

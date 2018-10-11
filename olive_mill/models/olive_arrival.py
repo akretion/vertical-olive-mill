@@ -5,7 +5,7 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
-from odoo.tools import float_compare, float_is_zero
+from odoo.tools import float_compare, float_is_zero, float_round
 import odoo.addons.decimal_precision as dp
 
 
@@ -48,7 +48,7 @@ class OliveArrival(models.Model):
         states={'done': [('readonly', True)]})
     olive_qty = fields.Float(
         compute='_compute_olive_qty', readonly=True, store=True,
-        track_visibility='onchange', string='Total Quantity',
+        track_visibility='onchange', string='Total Quantity (kg)',
         digits=dp.get_precision('Olive Weight'),
         help="Total olive quantity in kg")
     default_oil_destination = fields.Selection([
@@ -90,11 +90,9 @@ class OliveArrival(models.Model):
 
     @api.depends('line_ids.olive_qty')
     def _compute_olive_qty(self):
-        for arrival in self:
-            qty = 0.0
-            for line in arrival.line_ids:
-                qty += line.olive_qty
-            arrival.olive_qty = qty
+        res = self.env['olive.arrival.line'].read_group([('arrival_id', 'in', self.ids)], ['arrival_id', 'olive_qty'], ['arrival_id'])
+        for re in res:
+            self.browse(re['arrival_id'][0]).olive_qty = re['olive_qty']
 
     @api.onchange('partner_id')
     def partner_id_change(self):
@@ -115,11 +113,17 @@ class OliveArrival(models.Model):
 
     def cancel(self):
         for arrival in self:
-            if arrival.state == 'done':
+            if arrival.state == 'done' and any([line.production_id for line in arrival.line_ids]):
                 raise UserError(_(
-                    "Cannot cancel arrival %s which is in 'done' state.")
+                    "Cannot cancel arrival %s because it has lines already selected in a production.")
                     % arrival.name)
         self.write({'state': 'cancel'})
+
+    def back2draft(self):
+        for arrival in self:
+            assert arrival.state == 'cancel'
+        self.write({'state': 'draft'})
+
 
     def validate(self):
         self.ensure_one()
@@ -127,7 +131,9 @@ class OliveArrival(models.Model):
         if not self.line_ids:
             raise UserError(_(
                 "Missing lines on arrival '%s'.") % self.name)
-        prec = self.env['decimal.precision'].precision_get('Olive Weight')
+        oalo = self.env['olive.arrival.line']
+        pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
+        pr_oil = self.env['decimal.precision'].precision_get('Olive Oil Volume')
         lended_case_id = False
         if self.returned_case or self.returned_organic_case:
             if self.returned_case > self.partner_id.olive_lended_case:
@@ -160,9 +166,9 @@ class OliveArrival(models.Model):
             lended_case_id = lended_case.id
         returned_palox = self.env['olive.palox']
         partner_olive_culture_type = self.partner_id.olive_culture_type
-        oil_prec = self.env['decimal.precision'].precision_get('Oil Volume')
+        paloxs = {}
         for line in self.line_ids:
-            if float_is_zero(line.olive_qty, precision_digits=prec):
+            if float_is_zero(line.olive_qty, precision_digits=pr_oli):
                 raise UserError(_(
                     "On line %s, the olive quantity is null")
                     % line.name)
@@ -182,11 +188,21 @@ class OliveArrival(models.Model):
                         ))
             if (
                     line.oil_destination == 'mix' and
-                    float_is_zero(line.mix_withdrawal_oil_qty, precision_digits=prec)):
+                    float_is_zero(line.mix_withdrawal_oil_qty, precision_digits=pr_oil)):
                 raise UserError(_(
                     "On line %s, the oil destination is 'mix' so you must enter "
                     "the requested withdrawal qty") % line.name)
+            same_palox_different_variant = oalo.search([('palox_id', '=', line.palox_id.id), ('arrival_state', '=', 'done'), ('production_id', '=', False), ('variant_id', '!=', line.variant_id.id)])
+            if same_palox_different_variant:
+                msg = _('You are putting %s in palox %s but arrival line %s in the same palox has %s' % (line.variant_id.display_name, line.palox_id.number, same_palox_different_variant[0].display_name, same_palox_different_variant[0].variant_id.display_name))
+                self.env.user.notify_warning(msg)
+                self.message_post(msg)
 
+            same_palox_different_oil_destination = oalo.search([('palox_id', '=', line.palox_id.id), ('arrival_state', '=', 'done'), ('production_id', '=', False), ('oil_destination', '!=', line.oil_destination)])
+            if same_palox_different_oil_destination:
+                msg = _('You selected %s for palox %s but arrival line %s in the same palox has %s' % (line.oil_destination, line.palox_id.number, same_palox_different_oil_destination[0].display_name, same_palox_different_oil_destination[0].oil_destination))
+                self.env.user.notify_warning(msg)
+                self.message_post(msg)
         # Mark palox as returned
         returned_palox.write({
             'borrower_partner_id': False,
@@ -241,7 +257,7 @@ class OliveArrivalLine(models.Model):
         ('withdrawal', 'Withdrawal'),
         ('sale', 'Sale'),
         ('mix', 'Mix'),
-        ], string='Oil Destination')
+        ], string='Oil Destination', required=True)
     mix_withdrawal_oil_qty = fields.Float(
         string='Requested Withdrawal Qty (L)',
         digits=dp.get_precision('Olive Oil Volume'),
@@ -285,11 +301,10 @@ class OliveArrivalLine(models.Model):
         readonly=True, digits=dp.get_precision('Olive Oil Volume'))
     # END fields BEFORE shrinkage BEFORE filter_loss
 
-
-    shrinkage_tank_oil_qty_kg = fields.Float(
-        readonly=True, digits=dp.get_precision('Olive Weight'))
-    shrinkage_tank_oil_qty = fields.Float(
+    shrinkage_oil_qty = fields.Float(  # Sale and withdraw
         readonly=True, digits=dp.get_precision('Olive Oil Volume'))
+    shrinkage_oil_qty_kg = fields.Float(  # Withdraw only
+        readonly=True, digits=dp.get_precision('Olive Weight'))
 
     # START fields AFTER shrinkage
     withdrawal_oil_qty_kg = fields.Float(
@@ -309,6 +324,8 @@ class OliveArrivalLine(models.Model):
     # END fields AFTER shrinkage
 
     to_sale_tank_oil_qty = fields.Float(
+        readonly=True, digits=dp.get_precision('Olive Oil Volume'))
+    sale_oil_qty = fields.Float(
         readonly=True, digits=dp.get_precision('Olive Oil Volume'))
     filter_loss_oil_qty = fields.Float(
         readonly=True, digits=dp.get_precision('Olive Oil Volume'))
@@ -375,6 +392,64 @@ class OliveArrivalLine(models.Model):
             res.append((rec.id, name))
         return res
 
+    def oil_qty_compute_other_vals(self, oil_qty, ratio):
+        pr_oil = self.env['decimal.precision'].precision_get('Olive Oil Volume')
+        pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
+        company = self.production_id.company_id
+        density = company.olive_oil_density
+        shrinkage_ratio = company.olive_shrinkage_ratio
+        filter_ratio = company.olive_filter_ratio
+        oil_destination = self.oil_destination
+        if not density:
+            raise UserError(_(
+                "Missing Olive Oil Density on company '%s'")
+                % company.display_name)
+        # oil_qty = float_round(oil_qty, precision_digits=oil_prec)
+        oil_qty_kg = float_round(
+            oil_qty * density, precision_digits=pr_oli)
+        withdrawal_oil_qty = withdrawal_oil_qty_kg = filter_loss_oil_qty = sale_oil_qty = to_sale_tank_oil_qty = 0.0
+        shrinkage_oil_qty = float_round(
+            oil_qty * shrinkage_ratio / 100, precision_digits=pr_oil)
+        shrinkage_oil_qty_kg = float_round(
+            shrinkage_oil_qty * density, precision_digits=pr_oli)
+        oil_minus_shrinkage = oil_qty - shrinkage_oil_qty
+        if oil_destination == 'withdrawal':
+            withdrawal_oil_qty = float_round(
+                oil_minus_shrinkage, precision_digits=pr_oil)
+            withdrawal_oil_qty_kg = float_round(
+                oil_qty_kg - shrinkage_oil_qty_kg, precision_digits=pr_oli)
+        elif oil_destination == 'sale':
+            filter_loss_oil_qty = oil_qty * filter_ratio / 100
+            sale_oil_qty = oil_minus_shrinkage - filter_loss_oil_qty
+            to_sale_tank_oil_qty = oil_qty - filter_loss_oil_qty
+
+        elif oil_destination == 'mix':
+            if float_compare(oil_minus_shrinkage, self.mix_withdrawal_oil_qty, precision_digits=pr_oil) >= 0:
+                withdrawal_oil_qty = self.mix_withdrawal_oil_qty
+                oil_qty_minus_withdrawal = oil_qty - withdrawal_oil_qty
+                filter_loss_oil_qty = oil_qty_minus_withdrawal * filter_ratio / 100
+                sale_oil_qty = oil_qty_minus_withdrawal - shrinkage_oil_qty - filter_loss_oil_qty
+                to_sale_tank_oil_qty = oil_qty_minus_withdrawal - filter_loss_oil_qty
+            else:
+                withdrawal_oil_qty = oil_minus_shrinkage
+                oil_destination = 'withdrawal'  # rewrite oil destination, for shrinkage !
+            withdrawal_oil_qty_kg = withdrawal_oil_qty * density
+
+        vals = {
+            'oil_qty_kg': oil_qty_kg,
+            'oil_qty': oil_qty,
+            'oil_ratio': ratio,
+            'shrinkage_oil_qty': shrinkage_oil_qty,
+            'shrinkage_oil_qty_kg': shrinkage_oil_qty_kg,
+            'withdrawal_oil_qty_kg': withdrawal_oil_qty_kg,
+            'withdrawal_oil_qty': withdrawal_oil_qty,
+            'oil_destination': oil_destination,
+            'filter_loss_oil_qty': filter_loss_oil_qty,
+            'sale_oil_qty': sale_oil_qty,
+            'to_sale_tank_oil_qty': to_sale_tank_oil_qty,
+            }
+        return vals
+
 
 class OliveArrivalLineExtra(models.Model):
     _name = 'olive.arrival.line.extra'
@@ -384,7 +459,10 @@ class OliveArrivalLineExtra(models.Model):
         'olive.arrival.line', string='Arrival Line', ondelete='cascade')
     product_id = fields.Many2one(
         'product.product', string='Extra Product',
-        required=True, ondelete='restrict')
+        required=True, ondelete='restrict',
+        domain=[
+            ('type', 'in', ('product', 'consu')),
+            '|', ('tracking', '=', False), ('tracking', '=', 'none')])
     qty = fields.Float(
         string='Quantity',
         digits=dp.get_precision('Product Unit of Measure'), required=True)

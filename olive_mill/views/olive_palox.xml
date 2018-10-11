@@ -31,6 +31,11 @@
                     <field name="organic"/>
                     <field name="borrower_partner_id"/>
                     <field name="borrowed_date"/>
+                    <label for="weight" string="Current Weight"/>
+                    <div>
+                        <field name="weight" class="oe_inline"/>
+                        <label string=" kg" class="oe_inline"/>
+                    </div>
                 </group>
             </sheet>
             <div class="oe_chatter">
@@ -48,6 +53,7 @@
         <tree string="Olive Palox">
             <field name="number"/>
             <field name="organic"/>
+            <field name="weight"/>
             <field name="borrower_partner_id"/>
             <field name="borrowed_date"/>
         </tree>

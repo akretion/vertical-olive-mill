@@ -37,7 +37,7 @@ class OliveOilProductionForce2Pack(models.TransientModel):
         assert line.production_id == prod, 'Line not attached to production'
         if self.force_ratio > MAX_RATIO or self.force_ratio < MIN_RATIO:
             raise UserError(_(
-                "The ratio (%s) is not realistic.") % self.ratio)
+                "The ratio (%s %%) is not realistic.") % self.force_ratio)
         prod.set_qty_on_lines(
             force_ratio=(self.arrival_line_id, self.force_ratio))
         prod.force2pack()

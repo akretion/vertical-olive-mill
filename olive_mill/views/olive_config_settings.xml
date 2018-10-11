@@ -40,14 +40,14 @@
                     <field name="olive_max_qty_per_palox" class="oe_inline"/>
                     <label string=" kg" class="oe_inline"/>
                 </div>
-                <label for="olive_production_shrinkage_ratio"/>
-                <div name="olive_production_shrinkage_ratio">
-                    <field name="olive_production_shrinkage_ratio" class="oe_inline"/>
+                <label for="olive_shrinkage_ratio"/>
+                <div name="olive_shrinkage_ratio">
+                    <field name="olive_shrinkage_ratio" class="oe_inline"/>
                     <label string=" %" class="oe_inline"/>
                 </div>
-                <label for="olive_filter_shrinkage_ratio"/>
-                <div name="olive_filter_shrinkage_ratio">
-                    <field name="olive_filter_shrinkage_ratio" class="oe_inline"/>
+                <label for="olive_filter_ratio"/>
+                <div name="olive_filter_ratio">
+                    <field name="olive_filter_ratio" class="oe_inline"/>
                     <label string=" %" class="oe_inline"/>
                 </div>
                 <label for="olive_oil_average_ratio"/>

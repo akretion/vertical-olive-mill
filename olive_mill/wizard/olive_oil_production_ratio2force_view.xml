@@ -13,7 +13,7 @@
     <field name="arch" type="xml">
         <form string="Olive Oil Production Ratio2Force">
             <group name="main">
-                <field name="olive_oil_production_id"/>
+                <field name="olive_oil_production_id" invisible="1"/>
                 <field name="palox_id"/>
                 <field name="oil_product_id"/>
                 <label for="olive_qty"/>

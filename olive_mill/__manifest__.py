@@ -20,6 +20,7 @@
         'stock_pack_operation_auto_fill',
         'report_py3o',
         'base_usability',  # for reports
+        'web_notify',
         ],
     'data': [
         'security/olive_security.xml',

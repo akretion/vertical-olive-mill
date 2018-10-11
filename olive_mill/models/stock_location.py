@@ -12,6 +12,9 @@ class StockLocation(models.Model):
     _inherit = 'stock.location'
 
     olive_tank = fields.Boolean(string='Olive Oil Tank')
+    oil_product_id = fields.Many2one(
+        'product.product', string='Oil Product',
+        domain=[('olive_type', '=', 'oil')])
 
     def get_total_liter_kg(self):
         self.ensure_one()

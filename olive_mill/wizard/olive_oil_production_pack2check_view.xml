@@ -13,7 +13,7 @@
     <field name="arch" type="xml">
         <form string="Olive Oil Production pack2check">
             <group name="main">
-                <field name="olive_oil_production_id"/>
+                <field name="olive_oil_production_id" invisible="1"/>
                 <field name="palox_id"/>
                 <field name="oil_product_id"/>
                 <field name="todo_arrival_line_ids" invisible="1"/>
@@ -28,9 +28,9 @@
                     <field name="line_oil_ratio" class="oe_inline"/>
                     <label string=" %" class="oe_inline"/>
                 </div>
-                <label for="line_shrinkage_tank_oil_qty"/>
+                <label for="line_shrinkage_oil_qty"/>
                 <div>
-                    <field name="line_shrinkage_tank_oil_qty" class="oe_inline"/>
+                    <field name="line_shrinkage_oil_qty" class="oe_inline"/>
                     <label string=" L" class="oe_inline"/>
                 </div>
                 <label for="line_withdrawal_oil_qty"/>

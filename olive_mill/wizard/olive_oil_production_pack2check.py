@@ -26,8 +26,8 @@ class OliveOilProductionPack2Check(models.TransientModel):
         related='arrival_line_id.oil_qty', readonly=True)
     line_oil_ratio = fields.Float(
         related='arrival_line_id.oil_ratio', readonly=True)
-    line_shrinkage_tank_oil_qty = fields.Float(
-        related='arrival_line_id.shrinkage_tank_oil_qty', readonly=True)
+    line_shrinkage_oil_qty = fields.Float(
+        related='arrival_line_id.shrinkage_oil_qty', readonly=True)
     line_withdrawal_oil_qty = fields.Float(
         related='arrival_line_id.withdrawal_oil_qty', readonly=True)
     extra_ids = fields.One2many(
@@ -85,8 +85,10 @@ class OliveOilProductionPack2CheckLine(models.TransientModel):
         ondelete='cascade')
     product_id = fields.Many2one(
         'product.product', string='Extra Product',
-        domain=[('olive_type', '=', 'bottle')], required=True,
-        ondelete='restrict')
+        required=True, ondelete='restrict',
+        domain=[
+            ('olive_type', '=', 'bottle'),
+            '|', ('tracking', '=', False), ('tracking', '=', 'none')])
     qty = fields.Float(
         string='Quantity', default=1,
         digits=dp.get_precision('Product Unit of Measure'), required=True)

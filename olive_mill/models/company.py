@@ -31,14 +31,14 @@ class ResCompany(models.Model):
     olive_organic_case_total = fields.Integer(string='Organic Cases Total')
     olive_organic_case_stock = fields.Integer(
         compute='_compute_cases', string='Organic Cases in Stock', readonly=True)
-    olive_production_shrinkage_ratio = fields.Float(
-        string='Production Shrinkage', default=0.4,
+    olive_shrinkage_ratio = fields.Float(
+        string='Shrinkage Ratio', default=0.4,
         digits=dp.get_precision('Olive Oil Ratio'),
-        help='Production Shrinkage in percentage')
-    olive_filter_shrinkage_ratio = fields.Float(
-        string='Filter Shrinkage', default=1.0,
+        help='Shrinkage in percentage')
+    olive_filter_ratio = fields.Float(
+        string='Filter Loss Ratio', default=1.0,
         digits=dp.get_precision('Olive Oil Ratio'),
-        help='Filter shrinkage in percentage')
+        help='Filter loss in percentage')
     olive_oil_density = fields.Float(
         string='Olive Oil Density', default=0.916,
         digits=dp.get_precision('Olive Oil Density'),

@@ -33,10 +33,10 @@ class OliveConfigSettings(models.TransientModel):
         related='company_id.olive_regular_case_stock')
     olive_regular_case_total = fields.Integer(
         related='company_id.olive_regular_case_total')
-    olive_production_shrinkage_ratio = fields.Float(
-        related='company_id.olive_production_shrinkage_ratio')
-    olive_filter_shrinkage_ratio = fields.Float(
-        related='company_id.olive_filter_shrinkage_ratio')
+    olive_shrinkage_ratio = fields.Float(
+        related='company_id.olive_shrinkage_ratio')
+    olive_filter_ratio = fields.Float(
+        related='company_id.olive_filter_ratio')
     olive_oil_density = fields.Float(
         related='company_id.olive_oil_density')
     olive_oil_average_ratio = fields.Float(

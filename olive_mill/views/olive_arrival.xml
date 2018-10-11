@@ -14,7 +14,8 @@
         <form string="Olive Arrival">
             <header>
                 <button name="validate" string="Validate" class="btn-primary" states="draft" type="object"/>
-                <button name="cancel" string="Cancel" class="btn-default" states="draft" confirm="Are you sure you want to cancel this arrival ?" type="object"/>
+                <button name="cancel" string="Cancel" class="btn-default" states="draft,done" confirm="Are you sure you want to cancel this arrival ?" type="object"/>
+                <button name="back2draft" string="Back to Draft" class="btn-default" states="cancel" type="object"/>
                 <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
             </header>
             <sheet>
@@ -37,7 +38,7 @@
                     </group>
                     <group name="right">
                         <field name="date"/>
-                        <label for="olive_qty"/>
+                        <label for="olive_qty" string="Total Quantity"/>
                         <div name="olive_qty">
                             <field name="olive_qty" class="oe_inline"/>
                             <label string=" kg"/>
@@ -55,10 +56,10 @@
                         context="{'default_variant_id': default_variant_id, 'default_ochard_id': default_ochard_id, 'default_partner_id': partner_id, 'default_oil_destination': default_oil_destination, 'default_partner_olive_culture_type': partner_olive_culture_type}">
                         <tree editable="bottom">
                             <field name="name"/>
-                            <field name="partner_id" invisible="0"/>
-                            <field name="partner_olive_culture_type" invisible="0"/>
-                            <field name="variant_id" widget="selection"/>
+                            <field name="partner_id" invisible="1"/>
+                            <field name="partner_olive_culture_type" invisible="1"/>
                             <field name="olive_qty" sum="1" string="Olive Qty (kg)"/>
+                            <field name="variant_id" widget="selection"/>
                             <field name="ripeness"/>
                             <field name="sanitary_state"/>
                             <field name="oil_product_id"
@@ -67,7 +68,7 @@
                             <field name="palox_id"/>
                             <field name="oil_destination"/>
                             <field name="mix_withdrawal_oil_qty"
-                                attrs="{'readonly': [('oil_destination', '!=', 'mix')]}"/>
+                                attrs="{'readonly': [('oil_destination', '!=', 'mix')], 'required': [('oil_destination', '=', 'mix')]}" sum="1"/>
                         </tree>
                     </field>
                 </group>
@@ -153,12 +154,23 @@
     </field>
 </record>
 
-
+<record id="olive_arrival_line_pivot" model="ir.ui.view">
+    <field name="name">olive.arrival.line.pivot</field>
+    <field name="model">olive.arrival.line</field>
+    <field name="arch" type="xml">
+        <pivot string="Olive Arrival Lines">
+            <field name="arrival_date" interval="week" type="col"/>
+            <field name="oil_product_id" type="row"/>
+            <field name="olive_qty" type="measure"/>
+            <field name="oil_qty" type="measure"/>
+        </pivot>
+    </field>
+</record>
 
 <record id="olive_arrival_line_action" model="ir.actions.act_window">
     <field name="name">Olive Arrivals Lines</field>
     <field name="res_model">olive.arrival.line</field>
-    <field name="view_mode">tree,form</field>
+    <field name="view_mode">tree,form,pivot</field>
 </record>
 
 <menuitem id="olive_arrival_line_menu" action="olive_arrival_line_action" parent="olive_operations_menu" sequence="25" groups="stock.group_stock_manager"/>  <!-- maybe we will remove group once appropriate prodections are setup -->
