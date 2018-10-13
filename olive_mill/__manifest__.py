@@ -20,6 +20,7 @@
         'stock_pack_operation_auto_fill',
         'report_py3o',
         'base_usability',  # for reports
+        'onchange_helper',
         'web_notify',
         ],
     'data': [
@@ -27,11 +28,13 @@
         'security/ir.model.access.csv',
         'data/decimal_precision.xml',
         'data/sequence.xml',
+        'data/cron.xml',
         'report/report.xml',
         'views/menu.xml',
         'wizard/mrp_product_produce_view.xml',
         'wizard/olive_palox_case_lend_view.xml',
         'wizard/olive_withdrawal_view.xml',
+        'wizard/olive_invoice_create_view.xml',
         'wizard/olive_oil_production_ratio2force_view.xml',
         'wizard/olive_oil_production_force2pack_view.xml',
         'wizard/olive_oil_production_pack2check_view.xml',
@@ -57,8 +60,8 @@
 #        'views/mrp_production.xml',
     ],
     'demo': [
-        'demo/company.xml',
         'demo/product.xml',
+        'demo/company.xml',
         'demo/stock_production_lot.xml',
         'demo/stock_location.xml',
         'demo/stock_warehouse.xml',

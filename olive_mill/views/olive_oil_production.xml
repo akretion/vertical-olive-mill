@@ -33,7 +33,7 @@
                 <group name="main">
                     <group name="left">
                         <field name="palox_id"/>
-                        <field name="planned_date"/>
+                        <field name="date"/>
                         <field name="warehouse_id"/>
                         <field name="oil_product_id"/>
                         <label for="olive_qty_compute" states="draft,ratio,force,check,cancel" string="Olive Quantity"/>
@@ -64,10 +64,9 @@
                             <field name="ratio" class="oe_inline"/>
                             <label string=" %" class="oe_inline"/>
                         </div>
-                        <field name="sale_location_id" attrs="{'required': [('oil_destination', 'in', ('mix', 'sale'))], 'invisible': [('oil_destination', '=', 'withdrawal')]}"/>
+                        <field name="sale_location_id" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}"/>
                         <field name="shrinkage_location_id"/>
                         <field name="withdrawal_location_id"/>
-                        <field name="season_id"/>
                         <field name="oil_destination"/>
                     </group>
                 </group>
@@ -88,12 +87,14 @@
                                     <field name="filter_loss_oil_qty" sum="1"/>
                                     <field name="to_sale_tank_oil_qty" sum="1"/>
                                     <field name="sale_oil_qty" sum="1"/>
+                                    <field name="oil_ratio_net"/>
                                 </tree>
                             </field>
                         </group>
                     </page>
                     <page name="additional" string="Additional Info">
                         <group name="tech">
+                            <field name="season_id"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                             <field name="done_datetime" states="done"/>
                             <field name="shrinkage_move_id" states="done"/>
@@ -116,7 +117,7 @@
         <tree string="Oil Productions" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
             <field name="sequence" widget="handle"/>
             <field name="name"/>
-            <field name="planned_date"/>
+            <field name="date"/>
             <field name="palox_id"/>
             <field name="olive_qty_total" string="Total Olive Qty (kg)"/>
             <field name="oil_qty" string="Oil Qty (L)"/>
@@ -133,12 +134,14 @@
     <field name="arch" type="xml">
         <search string="Search Oil Productions">
             <field name="name"/>
+            <field name="date"/>
             <separator/>
             <filter string="Draft" domain="[('state', '=', 'draft')]" name="draft"/>
             <filter string="Done" domain="[('state', '=', 'done')]" name="done"/>
             <group string="Group By" name="groupby">
                 <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>
                 <filter name="state_groupby" string="State" context="{'group_by': 'state'}"/>
+                <filter name="date_groupby" string="Date" context="{'group_by': 'date'}"/>
             </group>
         </search>
     </field>

@@ -15,7 +15,7 @@ MAX_RATIO = 35
 class OliveOilProduction(models.Model):
     _name = 'olive.oil.production'
     _description = 'Olive Oil Production'
-    _order = 'planned_date desc, sequence'  # TODO Time and scheduling
+    _order = 'date desc, sequence'  # TODO Time and scheduling
     _inherit = ['mail.thread']
 
     name = fields.Char(string='Production Number', required=True, default='/')
@@ -72,7 +72,7 @@ class OliveOilProduction(models.Model):
         ('withdrawal', 'Withdrawal'),
         ('sale', 'Sale'),
         ('mix', 'Mix'),
-        ], string='Oil Destination', readonly=True)
+        ], string='Oil Destination', compute='_compute_oil_destination', readonly=True)
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Type', readonly=True)
     oil_qty_kg = fields.Float(
@@ -89,8 +89,8 @@ class OliveOilProduction(models.Model):
         digits=dp.get_precision('Olive Oil Ratio'), readonly=True, store=True,
         help="This ratio gives the number of liters of olive oil for "
         "100 Kg of olives.")  # Yes, it's a ratio between liters and kg !!!
-    planned_date = fields.Date(
-        string='Planned Date', default=fields.Date.context_today,
+    date = fields.Date(
+        string='Date', default=fields.Date.context_today,
         states={'done': [('readonly', True)]}, track_visibility='onchange')
     sequence = fields.Integer()
     state = fields.Selection([
@@ -147,6 +147,17 @@ class OliveOilProduction(models.Model):
             if production.company_id.olive_oil_density:
                 production.oil_qty = production.oil_qty_kg / production.company_id.olive_oil_density
 
+    @api.depends('line_ids.oil_destination')
+    def _compute_oil_destination(self):
+        for production in self:
+            dests = [line.oil_destination for line in production.line_ids]
+            if all([dest == 'sale' for dest in dests]):
+                oil_destination = 'sale'
+            elif all([dest == 'withdrawal' for dest in dests]):
+                oil_destination = 'withdrawal'
+            else:
+                oil_destination = 'mix'
+            production.oil_destination = oil_destination
 
     @api.model
     def create(self, vals):
@@ -189,6 +200,7 @@ class OliveOilProduction(models.Model):
                 "There shouldn't be any lines in production %s") % self.name)
         lines = self.env['olive.arrival.line'].search([
             ('palox_id', '=', self.palox_id.id),
+            ('warehouse_id', '=', self.warehouse_id.id),
             ('arrival_state', '=', 'done'),
             ('production_id', '=', False)])
         if not lines:
@@ -211,33 +223,9 @@ class OliveOilProduction(models.Model):
             if float_compare(l.olive_qty, 0, precision_digits=prec) <= 0:
                 raise UserError(_(
                     "On line %s, the olive qty is null !") % l.name)
-        if all([oil_dest == 'sale' for oil_dest in oil_dests]):
-            oil_destination = 'sale'
-        elif all([oil_dest == 'withdrawal' for oil_dest in oil_dests]):
-            oil_destination = 'withdrawal'
-        else:
-            oil_destination = 'mix'
-
-        if oil_destination in ('sale', 'mix'):
-            if not self.sale_location_id:
-                raise UserError(_(
-                    "Sale tank is not set on oil production %s.") % self.name)
-            if not self.sale_location_id.oil_product_id:
-                raise UserError(_(
-                    "Oil product not configured on stock location '%s'.")
-                    % self.sale_location_id.display_name)
-            if self.sale_location_id.oil_product_id != oil_product:
-                raise UserError(_(
-                    "The production %s is configured to produce "
-                    "oil product '%s', but the sale tank '%s' "
-                    "is configured with oil product '%s'.") % (
-                        self.name, oil_product.display_name,
-                        self.sale_location_id.display_name,
-                        self.sale_location_id.oil_product_id.display_name))
-
         lines.write({'production_id': self.id})
 
-        compensation_ratio = self.company_id.olive_oil_average_ratio
+        compensation_ratio = self.warehouse_id.olive_oil_compensation_ratio
         if compensation_ratio < MIN_RATIO or compensation_ratio > MAX_RATIO:
             raise UserError(_(
                 "The compensation ratio (%s) is not realistic")
@@ -245,8 +233,7 @@ class OliveOilProduction(models.Model):
         self.write({
             'state': 'ratio',
             'oil_product_id': oil_product.id,
-            'oil_destination': oil_destination,
-            'compensation_ratio': self.company_id.olive_oil_average_ratio,
+            'compensation_ratio': compensation_ratio,
             })
 
     def ratio2force(self):
@@ -323,6 +310,24 @@ class OliveOilProduction(models.Model):
         sale_loc_id = self.sale_location_id.id
         oil_product = self.oil_product_id
         to_shrinkage_tank_oil_qty = 0.0
+
+        if self.oil_destination in ('sale', 'mix'):
+            if not self.sale_location_id:
+                raise UserError(_(
+                    "Sale tank is not set on oil production %s.") % self.name)
+            if not self.sale_location_id.oil_product_id:
+                raise UserError(_(
+                    "Oil product not configured on stock location '%s'.")
+                    % self.sale_location_id.display_name)
+            if self.sale_location_id.oil_product_id != oil_product:
+                raise UserError(_(
+                    "The production %s is configured to produce "
+                    "oil product '%s', but the sale tank '%s' "
+                    "is configured with oil product '%s'.") % (
+                        self.name, oil_product.display_name,
+                        self.sale_location_id.display_name,
+                        self.sale_location_id.oil_product_id.display_name))
+
         for line in self.line_ids:
             # TODO add if withdrawal !!!!
             # create prod lot

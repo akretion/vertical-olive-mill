@@ -134,6 +134,57 @@
     <field name="uom_po_id" ref="product.product_uom_unit"/>
 </record>
 
+<!-- Customer Invoicing  -->
+<record id="leaf_remove_product" model="product.product">
+    <field name="name">Leaf Removal</field>
+    <field name="default_code">LEAF</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="False"/>
+    <field name="type">service</field>
+    <field name="list_price">0.04</field>
+    <field name="uom_id" ref="product.product_uom_kgm"/>
+    <field name="uom_po_id" ref="product.product_uom_kgm"/>
+</record>
+
+<record id="production_product" model="product.product">
+    <field name="name">Production</field>
+    <field name="default_code">OLIVEOILPROD</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="False"/>
+    <field name="type">service</field>
+    <field name="list_price">0.49</field>
+    <field name="uom_id" ref="product.product_uom_kgm"/>
+    <field name="uom_po_id" ref="product.product_uom_kgm"/>
+</record>
+
+<record id="tax_product" model="product.product">
+    <field name="name">AFIDOL Tax</field>
+    <field name="default_code">AFIDOLTAX</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="False"/>
+    <field name="type">service</field>
+    <field name="list_price">0.129</field>
+    <field name="uom_id" ref="product.product_uom_litre"/>
+    <field name="uom_po_id" ref="product.product_uom_litre"/>
+</record>
+
+<record id="early_bird_discount_product" model="product.product">
+    <field name="name">Early Bird Discount</field>
+    <field name="default_code">EARLYBIRD</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="False"/>
+    <field name="type">service</field>
+    <field name="list_price">0.04</field>
+    <field name="uom_id" ref="product.product_uom_kgm"/>
+    <field name="uom_po_id" ref="product.product_uom_kgm"/>
+</record>
+
+
+
 
 
 </odoo>

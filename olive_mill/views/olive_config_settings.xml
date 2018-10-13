@@ -50,11 +50,6 @@
                     <field name="olive_filter_ratio" class="oe_inline"/>
                     <label string=" %" class="oe_inline"/>
                 </div>
-                <label for="olive_oil_average_ratio"/>
-                <div name="olive_oil_average_ratio">
-                    <field name="olive_oil_average_ratio" class="oe_inline"/>
-                    <label string=" %" class="oe_inline"/>
-                </div>
             </group>
             <group name="appointment" string="Appointments">
                 <label for="olive_appointment_no_leaf_removal_minutes"/>
@@ -72,6 +67,12 @@
                     <field name="olive_appointment_min_minutes" class="oe_inline"/>
                     <label string=" minutes" class="oe_inline"/>
                 </div>
+            </group>
+            <group name="invoicing" string="Invoicing">
+                <field name="olive_oil_leaf_removal_product_id"/>
+                <field name="olive_oil_production_product_id"/>
+                <field name="olive_oil_tax_product_id"/>
+                <field name="olive_oil_early_bird_discount_product_id"/>
             </group>
         </form>
     </field>

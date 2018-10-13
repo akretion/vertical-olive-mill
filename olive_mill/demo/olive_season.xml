@@ -11,6 +11,7 @@
     <field name="name">Demo Current Season</field>
     <field name="company_id" ref="base.main_company"/>
     <field name="start_date" eval="(datetime.now() + relativedelta(months=-2)).strftime('%Y-%m-%d')"/>
+    <field name="early_bird_date" eval="(datetime.now() + relativedelta(days=15)).strftime('%Y-%m-%d')"/>
     <field name="end_date" eval="(datetime.now() + relativedelta(months=6)).strftime('%Y-%m-%d')"/>
 </record>
 

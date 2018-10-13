@@ -39,5 +39,11 @@ class OliveConfigSettings(models.TransientModel):
         related='company_id.olive_filter_ratio')
     olive_oil_density = fields.Float(
         related='company_id.olive_oil_density')
-    olive_oil_average_ratio = fields.Float(
-        related='company_id.olive_oil_average_ratio')
+    olive_oil_leaf_removal_product_id = fields.Many2one(
+        related='company_id.olive_oil_leaf_removal_product_id')
+    olive_oil_production_product_id = fields.Many2one(
+        related='company_id.olive_oil_production_product_id')
+    olive_oil_tax_product_id = fields.Many2one(
+        related='company_id.olive_oil_tax_product_id')
+    olive_oil_early_bird_discount_product_id = fields.Many2one(
+        related='company_id.olive_oil_early_bird_discount_product_id')

@@ -3,9 +3,9 @@
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
 import odoo.addons.decimal_precision as dp
-from odoo.exceptions import UserError
+# from odoo.exceptions import UserError
 
 
 class OliveOilProductionPack2Check(models.TransientModel):
@@ -36,11 +36,13 @@ class OliveOilProductionPack2Check(models.TransientModel):
 
     @api.model
     def default_get(self, fields_list):
-        res = super(OliveOilProductionPack2Check, self).default_get(fields_list)
-        print "default_get res=", res
+        res = super(OliveOilProductionPack2Check, self).default_get(
+            fields_list)
         prod = self.env['olive.oil.production'].browse(
             res.get('olive_oil_production_id'))
-        line_ids = [line.id for line in prod.line_ids if line.oil_destination in ('withdrawal', 'mix')]
+        line_ids = [
+            line.id for line in prod.line_ids
+            if line.oil_destination in ('withdrawal', 'mix')]
         if line_ids:
             res['arrival_line_id'] = line_ids.pop(0)
         if line_ids:
@@ -69,7 +71,6 @@ class OliveOilProductionPack2Check(models.TransientModel):
             action = self.env['ir.actions.act_window'].for_xml_id(
                 'olive_mill', 'olive_oil_production_pack2check_action')
             action['res_id'] = self.id
-            print "action=", action
             return action
         else:
             prod.pack2check()

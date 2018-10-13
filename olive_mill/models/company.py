@@ -4,8 +4,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 
-from odoo import models, fields, api, _
-from odoo.exceptions import UserError
+from odoo import models, fields, api
 import odoo.addons.decimal_precision as dp
 
 
@@ -25,12 +24,15 @@ class ResCompany(models.Model):
     olive_appointment_min_minutes = fields.Integer(
         string='Appointment Minimum Duration', default=5,
         help="Appointment minimum duration in minutes")
+    # TODO Move to WH ?
     olive_regular_case_total = fields.Integer(string='Regular Cases Total')
     olive_regular_case_stock = fields.Integer(
-        compute='_compute_cases', string='Regular Cases in Stock', readonly=True)
+        compute='_compute_cases', string='Regular Cases in Stock',
+        readonly=True)
     olive_organic_case_total = fields.Integer(string='Organic Cases Total')
     olive_organic_case_stock = fields.Integer(
-        compute='_compute_cases', string='Organic Cases in Stock', readonly=True)
+        compute='_compute_cases', string='Organic Cases in Stock',
+        readonly=True)
     olive_shrinkage_ratio = fields.Float(
         string='Shrinkage Ratio', default=0.4,
         digits=dp.get_precision('Olive Oil Ratio'),
@@ -43,9 +45,18 @@ class ResCompany(models.Model):
         string='Olive Oil Density', default=0.916,
         digits=dp.get_precision('Olive Oil Density'),
         help='Olive oil density in kg per liter')
-    olive_oil_average_ratio = fields.Float(
-        string='Oil Average Ratio', digits=dp.get_precision('Olive Oil Ratio'),
-        default=15)
+    olive_oil_leaf_removal_product_id = fields.Many2one(
+        'product.product', string='Leaf Removal Product',
+        domain=[('type', '=', 'service')])
+    olive_oil_production_product_id = fields.Many2one(
+        'product.product', string='Production Product',
+        domain=[('type', '=', 'service')])
+    olive_oil_tax_product_id = fields.Many2one(
+        'product.product', string='AFIDOL Tax Product',
+        domain=[('type', '=', 'service')])
+    olive_oil_early_bird_discount_product_id = fields.Many2one(
+        'product.product', string='Early Bird Discount Product',
+        domain=[('type', '=', 'service')])
 
     _sql_constraints = [(
         'olive_oil_density_positive',
@@ -56,10 +67,7 @@ class ResCompany(models.Model):
         'Filter shrinkage ratio must be positive'), (
         'olive_production_shrinkage_ratio_positive',
         'CHECK(olive_production_shrinkage_ratio >= 0)',
-        'Production shrinkage ratio must be positive'), (
-        'olive_oil_average_ratio_positive',
-        'CHECK(olive_oil_average_ratio >= 0)',
-        'Oil Average Ratio must be positive or 0')]
+        'Production shrinkage ratio must be positive')]
 
     @api.depends('olive_organic_case_total', 'olive_regular_case_total')
     def _compute_cases(self):
@@ -70,11 +78,15 @@ class ResCompany(models.Model):
             organic_qty = 0
             regular_qty = 0
             for case_rg in cases_rg:
-                if case_rg.get('company_id') and case_rg['company_id'][0] == company.id:
+                if (
+                        case_rg.get('company_id') and
+                        case_rg['company_id'][0] == company.id):
                     organic_qty = case_rg.get('organic_qty')
                     regular_qty = case_rg.get('regular_qty')
-            company.olive_organic_case_stock = company.olive_organic_case_total - organic_qty
-            company.olive_regular_case_stock = company.olive_regular_case_total - regular_qty
+            company.olive_organic_case_stock =\
+                company.olive_organic_case_total - organic_qty
+            company.olive_regular_case_stock =\
+                company.olive_regular_case_total - regular_qty
 
     @api.model
     def olive_oil_liter2kg(self, qty):

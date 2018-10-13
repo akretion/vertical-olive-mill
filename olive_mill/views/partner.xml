@@ -54,6 +54,8 @@
                             <label string=" ha" class="oe_inline"/>
                         </div>
                         <button type="action" name="%(olive_palox_lend_action)d" string="Lend Palox and/or Cases" context="{'default_partner_id': active_id}" colspan="2"/>
+                        <button type="action" name="%(olive_withdrawal_action)d" string="Olive Oil Withdrawal" context="{'default_partner_id': active_id}" colspan="2"/>
+                        <button type="action" name="%(olive_invoice_create_action)d" string="Create Invoice" context="{'default_partner_id': active_id}" colspan="2"/>
                     </group>
                     <group name="olive_organic_certification" string="Organic Certifications" col="1">
                         <field name="olive_organic_certification_ids" nolabel="1" readonly="1"/>

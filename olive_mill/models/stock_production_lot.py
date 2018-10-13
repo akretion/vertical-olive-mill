@@ -4,12 +4,11 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api, _
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import ValidationError
 
 
 class StockProductionLot(models.Model):
     _inherit = 'stock.production.lot'
-
 
     arrival_line_id = fields.Many2one(
         'olive.arrival.line', 'Arrival Line', ondelete='restrict',

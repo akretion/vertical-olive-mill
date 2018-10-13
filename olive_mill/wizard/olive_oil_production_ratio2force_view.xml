@@ -16,6 +16,8 @@
                 <field name="olive_oil_production_id" invisible="1"/>
                 <field name="palox_id"/>
                 <field name="oil_product_id"/>
+                <field name="oil_destination" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}"/>
+                <field name="sale_location_id" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}"/>
                 <label for="olive_qty"/>
                 <div name="olive_qty">
                     <field name="olive_qty" class="oe_inline"/>

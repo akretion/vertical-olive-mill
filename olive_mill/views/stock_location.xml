@@ -26,7 +26,7 @@
     <field name="arch" type="xml">
         <filter name="supplier" position="after">
             <separator/>
-            <filter name="tank" string="Tank" domain="[('olive_tank', '=', True)]"/>
+            <filter name="olive_tank" string="Olive Oil Tank" domain="[('olive_tank', '=', True)]"/>
         </filter>
     </field>
 </record>
@@ -35,8 +35,7 @@
     <field name="name">Tanks</field>
     <field name="res_model">stock.location</field>
     <field name="view_mode">tree,form</field>
-    <field name="domain">[('olive_tank', '=', True)]</field>
-    <field name="context">{'default_olive_tank': True, 'default_usage': 'internal'}</field>
+    <field name="context">{'default_olive_tank': True, 'search_default_olive_tank': True, 'default_usage': 'internal'}</field>
 </record>
 
 <menuitem id="tank_stock_location_menu" action="tank_stock_location_action" parent="olive_config_menu" sequence="60"/>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="olive_invoice_create_form" model="ir.ui.view">
+    <field name="name">olive.invoice.create.form</field>
+    <field name="model">olive.invoice.create</field>
+    <field name="arch" type="xml">
+        <form string="Olive Invoice Create">
+            <group name="main">
+                <field name="partner_id"/>
+                <field name="warehouse_id"/>
+                <field name="invoice_type"/>
+            </group>
+            <footer>
+                <button name="validate" type="object" string="Validate" class="btn-primary"/>
+                <button special="cancel" string="Cancel" class="btn-default"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+<record id="olive_invoice_create_action" model="ir.actions.act_window">
+    <field name="name">Create Invoice</field>
+    <field name="res_model">olive.invoice.create</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+</record>
+
+<menuitem id="olive_invoice_create_menu" action="olive_invoice_create_action" parent="olive_operations_menu" sequence="180"/>
+
+</odoo>

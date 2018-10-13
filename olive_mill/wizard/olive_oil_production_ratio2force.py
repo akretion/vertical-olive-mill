@@ -22,6 +22,8 @@ class OliveOilProductionRatio2force(models.TransientModel):
         related='olive_oil_production_id.palox_id', readonly=True)
     oil_product_id = fields.Many2one(
         related='olive_oil_production_id.oil_product_id', readonly=True)
+    oil_destination = fields.Selection(
+        related='olive_oil_production_id.oil_destination', readonly=True)
     olive_qty = fields.Float(
         related='olive_oil_production_id.olive_qty_compute', readonly=True)
     oil_qty_kg = fields.Float(
@@ -32,20 +34,26 @@ class OliveOilProductionRatio2force(models.TransientModel):
     ratio = fields.Float(
         string='Ratio', compute='_compute_all',
         digits=dp.get_precision('Olive Oil Ratio'), readonly=True)
+    sale_location_id = fields.Many2one(
+        'stock.location', string='Sale Tank',
+        domain=[('olive_tank', '=', True)])
 
     @api.depends('oil_qty_kg', 'olive_qty')
     def _compute_all(self):
-        oil_prec = self.env['decimal.precision'].precision_get('Olive Oil Volume')
-        ratio_prec = self.env['decimal.precision'].precision_get('Olive Oil Ratio')
+        pr_oil = self.env['decimal.precision'].precision_get(
+            'Olive Oil Volume')
+        pr_ratio = self.env['decimal.precision'].precision_get(
+            'Olive Oil Ratio')
+        company = self.env.user.company_id
         for wiz in self:
             oil_qty = 0.0
             ratio = 0.0
             if self.env.user.company_id.olive_oil_density:
-                oil_qty = wiz.oil_qty_kg / self.env.user.company_id.olive_oil_density
-                oil_qty = float_round(oil_qty, precision_digits=oil_prec)
+                oil_qty = wiz.oil_qty_kg / company.olive_oil_density
+                oil_qty = float_round(oil_qty, precision_digits=pr_oil)
             if wiz.olive_qty:
                 ratio = 100 * oil_qty / wiz.olive_qty
-                ratio = float_round(ratio, precision_digits=ratio_prec)
+                ratio = float_round(ratio, precision_digits=pr_ratio)
             wiz.ratio = ratio
             wiz.oil_qty = oil_qty
 
@@ -56,6 +64,9 @@ class OliveOilProductionRatio2force(models.TransientModel):
             raise UserError(_(
                 "The ratio (%s %%) of production %s is not realistic.")
                 % (self.ratio, prod.name))
-        prod.write({'oil_qty_kg': self.oil_qty_kg})
+        vals = {'oil_qty_kg': self.oil_qty_kg}
+        if prod.oil_destination in ('sale', 'mix') and self.sale_location_id:
+            vals['sale_location_id'] = self.sale_location_id.id
+        prod.write(vals)
         prod.ratio2force()
         return True
