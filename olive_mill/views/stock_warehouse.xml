@@ -24,6 +24,11 @@
                     <field name="olive_withdrawal_loc_id" attrs="{'required': [('olive_mill', '=', True)]}"/>
                 </group>
                 <group name="olive_mill_right">
+                    <label for="olive_oil_compensation_olive_qty"/>
+                    <div name="olive_oil_compensation_olive_qty">
+                        <field name="olive_oil_compensation_olive_qty" class="oe_inline"/>
+                        <label string=" kg"/>
+                    </div>
                     <label for="olive_oil_compensation_ratio"/>
                     <div name="olive_oil_compensation_ratio">
                         <field name="olive_oil_compensation_ratio" class="oe_inline"/>

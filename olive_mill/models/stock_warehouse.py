@@ -20,6 +20,9 @@ class StockWarehouse(models.Model):
     olive_withdrawal_loc_id = fields.Many2one(
         'stock.location', string='Olive Oil Withdrawal Location',
         domain=[('olive_tank', '=', False), ('usage', '=', 'internal')])
+    olive_oil_compensation_olive_qty = fields.Float(
+        string='Olive Compensation Quantity', default=45.0,
+        digits=dp.get_precision('Olive Weight'))
     olive_oil_compensation_ratio = fields.Float(
         string='Compensation Ratio',
         digits=dp.get_precision('Olive Oil Ratio'), default=17)
@@ -31,7 +34,10 @@ class StockWarehouse(models.Model):
     _sql_constraints = [(
         'olive_oil_compensation_ratio_positive',
         'CHECK(olive_oil_compensation_ratio >= 0)',
-        'Oil compensation ratio must be positive or 0')]
+        'Oil compensation ratio must be positive or 0'),
+        ('olive_oil_compensation_olive_qty',
+         'CHECK(olive_oil_compensation_olive_qty) >= 0)',
+         'Olive Compensation Quantity must be positive or 0')]
 
     @api.model
     def olive_oil_compensation_ratio_update_cron(self):

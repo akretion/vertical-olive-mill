@@ -40,13 +40,7 @@
                 </div>
             </group>
             <group name="lines" string="Extra Items">
-                <field name="extra_ids" nolabel="1" colspan="2">
-                    <tree editable="bottom">
-                        <field name="product_id"/>
-                        <field name="qty"/>
-                        <field name="uom_id"/>
-                    </tree>
-                </field>
+                <field name="extra_ids" nolabel="1" colspan="2"/>
             </group>
             <footer>
                 <button name="validate" type="object" string="Validate" class="btn-primary"/>

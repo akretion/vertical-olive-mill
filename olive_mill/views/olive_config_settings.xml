@@ -18,9 +18,15 @@
                 <button string="Cancel" type="object" name="cancel" class="btn-default" special="cancel"/>
             </header>
             <group name="cases" string="Cases">
-                <field name="olive_regular_case_total"/>
+                <label for="olive_regular_case_total"/>
+                <div name="olive_regular_case_total">
+                    <field name="olive_regular_case_total" class="oe_inline"/>
+                </div>
                 <field name="olive_regular_case_stock"/>
-                <field name="olive_organic_case_total"/>
+                <label for="olive_organic_case_total"/>
+                <div name="olive_organic_case_total">
+                    <field name="olive_organic_case_total" class="oe_inline"/>
+                </div>
                 <field name="olive_organic_case_stock"/>
             </group>
             <group name="variables" string="Variables">
@@ -69,10 +75,27 @@
                 </div>
             </group>
             <group name="invoicing" string="Invoicing">
-                <field name="olive_oil_leaf_removal_product_id"/>
-                <field name="olive_oil_production_product_id"/>
-                <field name="olive_oil_tax_product_id"/>
-                <field name="olive_oil_early_bird_discount_product_id"/>
+                <label for="olive_oil_leaf_removal_product_id"/>
+                <div name="olive_oil_leaf_removal_product_id">
+                    <field name="olive_oil_leaf_removal_product_id" class="oe_inline"/>
+                </div>
+                <label for="olive_oil_production_product_id"/>
+                <div name="olive_oil_production_product_id">
+                    <field name="olive_oil_production_product_id" class="oe_inline"/>
+                </div>
+                <label for="olive_oil_early_bird_discount_product_id"/>
+                <div name="olive_oil_early_bird_discount_product_id">
+                    <field name="olive_oil_early_bird_discount_product_id" class="oe_inline"/>
+                </div>
+                <label for="olive_oil_tax_product_id"/>
+                <div name="olive_oil_tax_product_id">
+                    <field name="olive_oil_tax_product_id" class="oe_inline"/>
+                </div>
+                <label for="olive_oil_tax_price_unit"/>
+                <div name="olive_oil_tax_price_unit">
+                    <field name="olive_oil_tax_price_unit" class="oe_inline"/>
+                    <label string=" / L" class="oe_inline"/>
+                </div>
             </group>
         </form>
     </field>

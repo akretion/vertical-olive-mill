@@ -7,6 +7,8 @@ from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
 import odoo.addons.decimal_precision as dp
 from odoo.tools import float_compare, float_is_zero, float_round
+from dateutil.relativedelta import relativedelta
+
 
 MIN_RATIO = 5
 MAX_RATIO = 35
@@ -60,11 +62,20 @@ class OliveOilProduction(models.Model):
         string='Olive Quantity (kg)', readonly=True,
         digits=dp.get_precision('Olive Weight'),
         help="Total olive quantity in kg")
-    olive_compensation_qty = fields.Float(
+    compensation_type = fields.Selection([
+        ('none', 'No Compensation'),
+        ('negative', 'First of the Day'),
+        ('positive', 'Last of the Day'),
+        ], string='Compensation Type', default='none',
+        readonly=True, states={'draft': [('readonly', False)], 'ratio': [('readonly', False)]})
+    compensation_olive_qty = fields.Float(
         string='Olive Compensation',
         digits=dp.get_precision('Olive Weight'),
-        readonly=True, states={'ratio': [('readonly', False)]},
+        readonly=True, states={'draft': [('readonly', False)], 'ratio': [('readonly', False)]},
         track_visibility='onchange', help="Olive compensation in kg")
+    compensation_ratio = fields.Float(
+        string='Compensation Ratio', digits=dp.get_precision('Olive Oil Ratio'),
+        readonly=True, states={'draft': [('readonly', False)], 'ratio': [('readonly', False)]})
     olive_qty_total = fields.Float(
         string='Olive Compensation????', compute='_compute_lines',
         digits=dp.get_precision('Olive Weight'), readonly=True, store=True)
@@ -81,9 +92,6 @@ class OliveOilProduction(models.Model):
     oil_qty = fields.Float(
         string='Oil Quantity (L)', digits=dp.get_precision('Olive Oil Volume'),
         compute='_compute_oil_qty', store=True, readonly=True)
-    compensation_ratio = fields.Float(
-        string='Compensation Ratio', digits=dp.get_precision('Olive Oil Ratio'),
-        readonly=True, states={'ratio': [('readonly', False)]})
     ratio = fields.Float(
         string='Ratio', compute='_compute_ratio',
         digits=dp.get_precision('Olive Oil Ratio'), readonly=True, store=True,
@@ -111,11 +119,11 @@ class OliveOilProduction(models.Model):
         'olive.arrival.line', 'production_id', string='Arrival Lines',
         readonly=True)
 
-    _sql_constraints = [(
-        'olive_compensation_qty_positive',
-        'CHECK(olive_compensation_qty >= 0)',
-        'The compensation quantity must be positive or 0.'),
-        ]
+#    _sql_constraints = [(
+#        'olive_compensation_qty_positive',
+#        'CHECK(olive_compensation_qty >= 0)',
+#        'The compensation quantity must be positive or 0.'),
+#        ]
 
     @api.onchange('warehouse_id')
     def warehouse_change(self):
@@ -125,13 +133,41 @@ class OliveOilProduction(models.Model):
             if self.warehouse_id.olive_withdrawal_loc_id:
                 self.withdrawal_location_id = self.warehouse_id.olive_withdrawal_loc_id
 
-    @api.depends('line_ids.olive_qty', 'olive_compensation_qty')
+    @api.onchange('compensation_type')
+    def compensation_type_change(self):
+        cqty = 0
+        ratio = 0
+        res = {'warning': {}}
+        if self.compensation_type in ('positive', 'negative'):
+            sign = self.compensation_type == 'negative' and -1 or 1
+            ratio = self.warehouse_id.olive_oil_compensation_ratio
+            cqty = self.warehouse_id.olive_oil_compensation_olive_qty * sign
+            today_dt = fields.Date.from_string(fields.Date.context_today(self))
+            yesterday = fields.Date.to_string(today_dt - relativedelta(days=1))
+            last_update = self.warehouse_id.olive_oil_compensation_ratio_update_date
+            if last_update:
+                if last_update < yesterday:
+                    res['warning']['message'] = _(
+                        "The last update of the compensation ratio for the "
+                        "warehouse '%s' took place on %s. You should update "
+                        "the compensation ratio on that warehouse.") % (
+                            self.warehouse_id.display_name,
+                            last_update)
+            else:
+                res['warning']['message'] = _(
+                    "The field 'Last update of the compensation ratio' is "
+                    "empty on the warehouse '%s'.") % self.warehouse_id.display_name
+        self.compensation_olive_qty = cqty
+        self.compensation_ratio = ratio
+        return res
+
+    @api.depends('line_ids.olive_qty', 'compensation_olive_qty')
     def _compute_lines(self):
         res = self.env['olive.arrival.line'].read_group([('production_id', 'in', self.ids)], ['production_id', 'olive_qty'], ['production_id'])
         for re in res:
             production = self.browse(re['production_id'][0])
             production.olive_qty_compute = re['olive_qty']
-            production.olive_qty_total = re['olive_qty'] + production.olive_compensation_qty
+            production.olive_qty_total = re['olive_qty'] + production.compensation_olive_qty
 
     @api.depends('oil_qty', 'olive_qty_total')
     def _compute_ratio(self):
@@ -172,11 +208,8 @@ class OliveOilProduction(models.Model):
                 raise UserError(_(
                     "Cannot cancel production %s which is in 'done' state.")
                     % production.name)
-            #if arrival.picking_id:
-            #    raise UserError(_(
-            #        "Cannot cancel arrival %s which is linked to picking %s.")
-            #        % (arrival.name, arrival.picking_id.name))
             production.line_ids.write({'production_id': False})
+            production.palox_id.oil_product_id = False
         self.write({
             'state': 'cancel',
             'oil_qty_kg': 0,
@@ -205,7 +238,8 @@ class OliveOilProduction(models.Model):
             ('production_id', '=', False)])
         if not lines:
             raise UserError(_(
-                "The palox %s is empty.") % self.palox_id.display_name)
+                "The palox %s is empty or currently in production.")
+                % self.palox_id.display_name)
         oil_dests = []
         oil_product = False
         prec = self.env['decimal.precision'].precision_get(
@@ -408,6 +442,8 @@ class OliveOilProduction(models.Model):
             prod_vals['shrinkage_move_id'] = shrinkage_move.id
 
         self.write(prod_vals)
+        # Free the palox
+        self.palox_id.oil_product_id = False
 
     def unlink(self):
         for production in self:

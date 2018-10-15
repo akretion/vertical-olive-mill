@@ -31,8 +31,7 @@ class OliveOilProductionPack2Check(models.TransientModel):
     line_withdrawal_oil_qty = fields.Float(
         related='arrival_line_id.withdrawal_oil_qty', readonly=True)
     extra_ids = fields.One2many(
-        'olive.oil.production.pack2check.line', 'wizard_id',
-        string='Extra')
+        related='arrival_line_id.extra_ids', readonly=False)
 
     @api.model
     def default_get(self, fields_list):
@@ -53,21 +52,12 @@ class OliveOilProductionPack2Check(models.TransientModel):
         self.ensure_one()
         prod = self.olive_oil_production_id
         line = self.arrival_line_id
-        line.extra_ids.unlink()
-        for extra in self.extra_ids:
-            self.env['olive.arrival.line.extra'].create({
-                'product_id': extra.product_id.id,
-                'qty': extra.qty,
-                'line_id': line.id,
-                })
-        print "self.todo_arrival_line_ids=", self.todo_arrival_line_ids
         if self.todo_arrival_line_ids:
             new_line_id = self.todo_arrival_line_ids[0].id
             self.write({
                 'arrival_line_id': new_line_id,
                 'todo_arrival_line_ids': [(3, new_line_id)],
                 })
-            self.extra_ids.unlink()
             action = self.env['ir.actions.act_window'].for_xml_id(
                 'olive_mill', 'olive_oil_production_pack2check_action')
             action['res_id'] = self.id

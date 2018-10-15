@@ -34,7 +34,6 @@
                     <group name="left">
                         <field name="palox_id"/>
                         <field name="date"/>
-                        <field name="warehouse_id"/>
                         <field name="oil_product_id"/>
                         <label for="olive_qty_compute" states="draft,ratio,force,check,cancel" string="Olive Quantity"/>
                         <div name="olive_qty_compute" states="draft,ratio,force,check,cancel">
@@ -46,7 +45,17 @@
                             <field name="olive_qty_done" class="oe_inline"/>
                             <label string=" kg" class="oe_inline"/>
                         </div>
-                        <field name="olive_compensation_qty"/>
+                        <field name="compensation_type"/>
+                        <label for="compensation_olive_qty" attrs="{'invisible': [('compensation_type', 'not in', ('positive', 'negative'))]}"/>
+                        <div name="compensation_olive_qty" attrs="{'invisible': [('compensation_type', 'not in', ('positive', 'negative'))]}">
+                            <field name="compensation_olive_qty" class="oe_inline" attrs="{'required': [('compensation_type', 'in', ('positive', 'negative'))]}"/>
+                            <label string=" kg"/>
+                        </div>
+                        <label for="compensation_ratio" attrs="{'invisible': [('compensation_type', 'not in', ('positive', 'negative'))]}"/>
+                        <div name="compensation_ratio" attrs="{'invisible': [('compensation_type', 'not in', ('positive', 'negative'))]}">
+                            <field name="compensation_ratio" class="oe_inline" attrs="{'required': [('compensation_type', 'in', ('positive', 'negative'))]}"/>
+                            <label string=" %"/>
+                        </div>
                     </group>
                     <group name="right">
                         <label for="oil_qty_kg" string="Oil Quantity"/>
@@ -94,6 +103,7 @@
                     </page>
                     <page name="additional" string="Additional Info">
                         <group name="tech">
+                            <field name="warehouse_id"/>
                             <field name="season_id"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                             <field name="done_datetime" states="done"/>
@@ -119,6 +129,7 @@
             <field name="name"/>
             <field name="date"/>
             <field name="palox_id"/>
+            <field name="compensation_type"/>
             <field name="olive_qty_total" string="Total Olive Qty (kg)"/>
             <field name="oil_qty" string="Oil Qty (L)"/>
             <field name="ratio" string="Ratio (%)"/>

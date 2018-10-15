@@ -27,6 +27,11 @@
     <field name="digits">3</field>
 </record>
 
+<record forcecreate="True" id="olive_oil_tax_price_unit" model="decimal.precision">
+    <field name="name">Olive Oil Tax Price Unit</field>
+    <field name="digits">3</field>
+</record>
+
 
 
 </odoo>

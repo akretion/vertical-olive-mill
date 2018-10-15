@@ -134,6 +134,34 @@
     <field name="uom_po_id" ref="product.product_uom_unit"/>
 </record>
 
+<!-- Analysis -->
+<record id="acidity_analysis" model="product.product">
+    <field name="name">Acidity Analysis</field>
+    <field name="default_code">ANAACIDITY</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="False"/>
+    <field name="type">consu</field>
+    <field name="olive_type">analysis</field>
+    <field name="uom_id" ref="product.product_uom_unit"/>
+    <field name="uom_po_id" ref="product.product_uom_unit"/>
+    <field name="list_price">25</field>
+</record>
+
+<record id="peroxide_analysis" model="product.product">
+    <field name="name">Peroxide Analysis</field>
+    <field name="default_code">ANAPEROXIDE</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="False"/>
+    <field name="type">consu</field>
+    <field name="olive_type">analysis</field>
+    <field name="uom_id" ref="product.product_uom_unit"/>
+    <field name="uom_po_id" ref="product.product_uom_unit"/>
+    <field name="list_price">30</field>
+</record>
+
+
 <!-- Customer Invoicing  -->
 <record id="leaf_remove_product" model="product.product">
     <field name="name">Leaf Removal</field>

@@ -11,10 +11,9 @@ class OlivePalox(models.Model):
     _name = 'olive.palox'
     _description = 'Olive Palox'
     _inherit = ['mail.thread']
-    _rec_name = 'number'
-    _order = 'number'
+    _order = 'name'
 
-    number = fields.Char(
+    name = fields.Char(
         string='Number', required=True, track_visibility='onchange')
     company_id = fields.Many2one(
         'res.company', string='Company', ondelete='cascade', required=True,
@@ -32,11 +31,13 @@ class OlivePalox(models.Model):
     arrival_line_ids = fields.One2many(
         'olive.arrival.line', 'palox_id', string='Arrival Lines')
     fillup_ok = fields.Boolean(compute='_compute_weight')
+    oil_product_id = fields.Many2one(
+        'product.product', string='Current Oil Product')
     weight = fields.Float(
-        compute='_compute_weight', string='Current Weight (kg)',
+        compute='_compute_current', string='Current Weight (kg)',
         digits=dp.get_precision('Olive Weight'), readonly=True)
 
-    def _compute_weight(self):
+    def _compute_current(self):
         res = self.env['olive.arrival.line'].read_group([
             ('palox_id', 'in', self.ids),
             ('arrival_state', '=', 'done'),
@@ -48,11 +49,11 @@ class OlivePalox(models.Model):
     def name_get(self):
         res = []
         for rec in self:
-            name = _('%s (Current: %s kg)') % (rec.number, rec.weight)
+            name = _('%s (Current: %s kg%s)') % (rec.name, rec.weight, rec.oil_product_id and ' ' + rec.oil_product_id.name or '')
             res.append((rec.id, name))
         return res
 
     _sql_constraints = [(
-        'number_company_unique',
-        'unique(number, company_id)',
+        'name_company_unique',
+        'unique(name, company_id)',
         'This palox number already exists in this company.')]

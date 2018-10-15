@@ -7,6 +7,7 @@
 
 <odoo>
 
+
 <record id="olive_arrival_form" model="ir.ui.view">
     <field name="name">olive.arrival.form</field>
     <field name="model">olive.arrival</field>
@@ -29,10 +30,11 @@
                     <group name="left">
                         <field name="partner_id"/>
                         <field name="partner_olive_culture_type" invisible="0"/>
+                        <field name="organic_palox_required" invisible="1"/>
                         <field name="default_variant_id" widget="selection"/>
                         <field name="default_ochard_id" domain="[('partner_id', '=', partner_id)]" context="{'default_partner_id': partner_id}"/>
                         <field name="default_oil_destination"/>
-                        <field name="leaf_removal"/>
+                        <field name="default_leaf_removal"/>
                         <field name="returned_case"/>
                         <field name="returned_organic_case"/>
                     </group>
@@ -53,22 +55,20 @@
                 </group>
                 <group name="lines">
                     <field name="line_ids" nolabel="1"
-                        context="{'default_variant_id': default_variant_id, 'default_ochard_id': default_ochard_id, 'default_partner_id': partner_id, 'default_oil_destination': default_oil_destination, 'default_partner_olive_culture_type': partner_olive_culture_type}">
-                        <tree editable="bottom">
+                        context="{'default_leaf_removal': default_leaf_removal, 'default_variant_id': default_variant_id, 'default_ochard_id': default_ochard_id, 'default_partner_id': partner_id, 'default_oil_destination': default_oil_destination, 'default_partner_olive_culture_type': partner_olive_culture_type, 'default_organic_palox_required': organic_palox_required, 'form_view_ref': 'olive_mill.olive_arrival_line_arrival_form'}">
+                        <tree>
                             <field name="name"/>
-                            <field name="partner_id" invisible="1"/>
-                            <field name="partner_olive_culture_type" invisible="1"/>
-                            <field name="olive_qty" sum="1" string="Olive Qty (kg)"/>
+                            <field name="olive_qty" sum="1"/>
+                            <field name="leaf_removal"/>
                             <field name="variant_id" widget="selection"/>
                             <field name="ripeness"/>
                             <field name="sanitary_state"/>
-                            <field name="oil_product_id"
-                                domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', partner_olive_culture_type)]"/>
-                            <field name="ochard_id" domain="[('partner_id', '=', partner_id)]"/>
+                            <field name="oil_product_id"/>
+                            <field name="ochard_id"/>
                             <field name="palox_id"/>
                             <field name="oil_destination"/>
-                            <field name="mix_withdrawal_oil_qty"
-                                attrs="{'readonly': [('oil_destination', '!=', 'mix')], 'required': [('oil_destination', '=', 'mix')]}" sum="1"/>
+                            <field name="mix_withdrawal_oil_qty" string="Withdrawal (L)" sum="1"/>
+                            <field name="extra_count" string="Extras"/>
                         </tree>
                     </field>
                 </group>
@@ -87,10 +87,11 @@
     <field name="arch" type="xml">
         <tree string="Olive Arrivals" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
             <field name="name"/>
+            <field name="date"/>
             <field name="partner_id"/>
-            <field name="olive_qty" string="Olive Quantity (kg)"/>
-            <field name="leaf_removal"/>
+            <field name="olive_qty"/>
             <field name="state"/>
+            <field name="company_id" groups="base.group_multi_company"/>
         </tree>
     </field>
 </record>
@@ -133,6 +134,46 @@
 </record>
 
 <menuitem id="olive_arrival_menu" action="olive_arrival_action" parent="olive_operations_menu" sequence="20"/>
+
+<record id="olive_arrival_line_arrival_form" model="ir.ui.view">
+    <field name="name">olive.arrival.line.extra_only.form</field>
+    <field name="model">olive.arrival.line</field>
+    <field name="priority">1000</field>
+    <field name="arch" type="xml">
+        <form string="Olive Arrival Lines Extra">
+            <group name="main">
+                <field name="name"/>
+                <field name="partner_id" invisible="1"/>
+                <field name="partner_olive_culture_type" invisible="1"/>
+                <field name="organic_palox_required" invisible="1"/>
+                <label for="olive_qty" string="Olive Qty"/>
+                <div name="olive_qty">
+                    <field name="olive_qty" class="oe_inline"/>
+                    <label string=" kg"/>
+                </div>
+                <field name="leaf_removal"/>
+                <field name="variant_id" widget="selection"/>
+                <field name="ripeness"/>
+                <field name="sanitary_state"/>
+                <field name="oil_product_id"
+                   domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', partner_olive_culture_type)]"/>
+                <field name="ochard_id" domain="[('partner_id', '=', partner_id)]"/>
+                <field name="palox_id" domain="['|', ('oil_product_id', '=', False), ('oil_product_id', '=', oil_product_id), ('organic', '=', organic_palox_required)]"/>
+                <field name="oil_destination"/>
+                <label for="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}" string="Requested Withdrawal Qty"/>
+                <div name="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}">
+                    <field name="mix_withdrawal_oil_qty"
+                        attrs="{'required': [('oil_destination', '=', 'mix')]}" class="oe_inline"/>
+                    <label string=" L"/>
+                </div>
+            </group>
+            <group name="extras" string="Extra Items and Analysis">
+                <field name="extra_ids" nolabel="1"/>
+            </group>
+        </form>
+    </field>
+</record>
+
 
 <record id="olive_arrival_line_tree" model="ir.ui.view">
     <field name="name">olive.arrival.line.tree</field>
@@ -186,6 +227,8 @@
         </tree>
     </field>
 </record>
+
+
 
 
 </odoo>

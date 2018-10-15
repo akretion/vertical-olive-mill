@@ -15,7 +15,7 @@
     <field name="arch" type="xml">
         <field name="type" position="after">
             <field name="olive_type" attrs="{'invisible': [('type', '!=', 'product')]}"/>
-            <field name="olive_culture_type" attrs="{'invisible': [('olive_type', '=', 'False')], 'required': [('olive_type', '!=', False)]}"/>
+            <field name="olive_culture_type" attrs="{'invisible': [('olive_type', '=', 'False')], 'required': [('olive_type', '=', 'oil')]}"/>
         </field>
     </field>
 </record>
