@@ -46,5 +46,13 @@
     <field name="location_id" ref="stock.stock_location_stock"/>
 </record>
 
+<record id="compensation" model="stock.location">
+    <field name="name">Compensation</field>
+    <field name="usage">internal</field>
+    <field name="olive_tank" eval="True"/>
+    <field name="location_id" ref="stock.stock_location_stock"/>
+</record>
+
+
 
 </odoo>

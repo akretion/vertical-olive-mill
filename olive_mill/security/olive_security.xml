@@ -57,6 +57,13 @@
     <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
 </record>
 
+<record id="olive_sale_pricelist_rule" model="ir.rule">
+    <field name="name">Olive Sale Pricelist multi-company</field>
+    <field name="model_id" ref="model_olive_sale_pricelist"/>
+    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
+</record>
+
+
 
 </data>
 </odoo>

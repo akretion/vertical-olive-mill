@@ -15,15 +15,14 @@ class OliveOilProductionForce2Pack(models.TransientModel):
     _name = 'olive.oil.production.force2pack'
     _description = 'Olive Oil Production Force2Pack'
 
-    olive_oil_production_id = fields.Many2one(
+    production_id = fields.Many2one(
         'olive.oil.production', string='Olive Oil Production', required=True)
     palox_id = fields.Many2one(
-        related='olive_oil_production_id.palox_id', readonly=True)
+        related='production_id.palox_id', readonly=True)
     oil_product_id = fields.Many2one(
-        related='olive_oil_production_id.oil_product_id', readonly=True)
+        related='production_id.oil_product_id', readonly=True)
     global_ratio = fields.Float(
-        related='olive_oil_production_id.ratio', readonly=True,
-        string='Global Ratio')
+        related='production_id.ratio', readonly=True, string='Global Ratio')
     arrival_line_id = fields.Many2one(
         'olive.arrival.line', required=True, string='Production Line')
     force_ratio = fields.Float(
@@ -32,7 +31,7 @@ class OliveOilProductionForce2Pack(models.TransientModel):
 
     def validate(self):
         self.ensure_one()
-        prod = self.olive_oil_production_id
+        prod = self.production_id
         line = self.arrival_line_id
         assert line.production_id == prod, 'Line not attached to production'
         if self.force_ratio > MAX_RATIO or self.force_ratio < MIN_RATIO:

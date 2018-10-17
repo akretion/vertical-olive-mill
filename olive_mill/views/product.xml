@@ -14,8 +14,10 @@
     <field name="priority">1000</field>  <!-- to have olive_type right after type -->
     <field name="arch" type="xml">
         <field name="type" position="after">
-            <field name="olive_type" attrs="{'invisible': [('type', '!=', 'product')]}"/>
-            <field name="olive_culture_type" attrs="{'invisible': [('olive_type', '=', 'False')], 'required': [('olive_type', '=', 'oil')]}"/>
+            <field name="olive_type"/>
+            <field name="olive_culture_type" attrs="{'invisible': [('olive_type', '=', False)], 'required': [('olive_type', '=', 'oil')]}"/>
+            <field name="olive_bottle_free_full" attrs="{'invisible': [('olive_type', '!=', 'bottle')]}"/>
+            <field name="olive_invoice_service_ids" widget="many2many_tags" attrs="{'invisible': [('olive_type', '!=', 'oil')]}"/>
         </field>
     </field>
 </record>
@@ -31,13 +33,23 @@
     </field>
 </record>
 
+<record id="product_template_search_view" model="ir.ui.view">
+    <field name="name">olive.mill.product.template.search</field>
+    <field name="model">product.template</field>
+    <field name="inherit_id" ref="product.product_template_search_view"/>
+    <field name="arch" type="xml">
+        <filter name="filter_to_sell" position="before">
+            <filter name="olive_mill" string="Olive Mill" domain="[('olive_type', '!=', False)]"/>
+            <separator/>
+        </filter>
+    </field>
+</record>
 
 <record id="olive_product_action" model="ir.actions.act_window">
     <field name="name">Products</field>
     <field name="res_model">product.product</field>
     <field name="view_mode">tree,form,kanban</field>
-    <field name="domain">[('olive_type', '!=', False)]</field>
-    <field name="context">{'default_type': 'product'}</field>
+    <field name="context">{'default_type': 'product', 'search_default_olive_mill': True}</field>
 </record>
 
 <menuitem id="olive_product_menu" action="olive_product_action" parent="olive_data_menu" sequence="100"/>

@@ -28,7 +28,6 @@
                 </div>
                 <group name="main">
                     <field name="company_id" groups="base.group_multi_company"/>
-                    <field name="organic"/>
                     <field name="borrower_partner_id"/>
                     <field name="borrowed_date"/>
                     <field name="oil_product_id"/>
@@ -53,7 +52,6 @@
     <field name="arch" type="xml">
         <tree string="Olive Palox">
             <field name="name"/>
-            <field name="organic"/>
             <field name="weight"/>
             <field name="oil_product_id"/>
             <field name="borrower_partner_id"/>
@@ -70,9 +68,6 @@
             <field name="name"/>
             <field name="borrower_partner_id"/>
             <separator/>
-            <filter name="organic" domain="[('organic', '=', True)]" string="Organic"/>
-            <filter name="not_organic" domain="[('organic', '=', False)]" string="Regular"/>
-            <separator/>
             <filter name="lended" domain="[('borrower_partner_id', '!=', False)]" string="Lended"/>
             <filter name="not_lended" domain="[('borrower_partner_id', '=', False)]" string="Not Lended"/>
             <group string="Group By" name="groupby">
@@ -88,6 +83,6 @@
     <field name="view_mode">tree,form</field>
 </record>
 
-<menuitem id="olive_palox_menu" action="olive_palox_action" parent="olive_config_menu" sequence="40"/>
+<menuitem id="olive_palox_menu" action="olive_palox_action" parent="olive_data_menu" sequence="40"/>
 
 </odoo>

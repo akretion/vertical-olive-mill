@@ -34,6 +34,8 @@ class ResPartner(models.Model):
     olive_organic_certified_logo = fields.Binary(
         compute='_compute_olive_organic_certified',
         string='Organic Certified Logo', readonly=True)
+    olive_sale_pricelist_id = fields.Many2one(
+        'olive.sale.pricelist', string='Sale Pricelist', ondelete='restrict')
 
     @api.onchange('olive_farmer')
     def olive_farmer_change(self):
@@ -44,50 +46,29 @@ class ResPartner(models.Model):
     def _compute_olive_total(self):
         cases_rg = []
         parcels_rg = []
-        try:
-            cases_rg = self.env['olive.lended.case'].read_group([
-                ('company_id', '=', self.env.user.company_id.id),
-                ('partner_id', 'in', self.ids)],
-                ['partner_id', 'regular_qty', 'organic_qty'], ['partner_id'])
-        except Exception:
-            pass
-        try:
-            parcels_rg = self.env['olive.parcel'].read_group([
-                ('partner_id', 'in', self.ids)],
-                ['partner_id', 'tree_qty', 'area'], ['partner_id'])
-        except Exception:
-            pass
+        company = self.env.user.company_id
+        cases_res = self.env['olive.lended.case'].read_group([
+            ('company_id', '=', company.id),
+            ('partner_id', 'in', self.ids)],
+            ['partner_id', 'regular_qty', 'organic_qty'], ['partner_id'])
+        for cases_re in cases_res:
+            partner = self.browse(cases_re['partner_id'][0])
+            partner.olive_lended_regular_case = cases_re['regular_qty']
+            partner.olive_lended_organic_case = cases_re['organic_qty']
+        parcel_res = self.env['olive.parcel'].read_group([
+            ('partner_id', 'in', self.ids)],
+            ['partner_id', 'tree_qty', 'area'], ['partner_id'])
+        for parcel_re in parcel_res:
+            partner = self.browse(cases_re['partner_id'][0])
+            partner.olive_tree_total = parcel_re['tree_qty']
+            partner.olive_area_total = parcel_re['area']
 
-        for partner in self:
-            tree = 0
-            area = 0.0
-            palox = 0
-            regular_case = 0
-            organic_case = 0
-
-            if partner.olive_farmer and not partner.parent_id:
-                for parcel_rg in parcels_rg:
-                    if parcel_rg.get('partner_id') and parcel_rg['partner_id'][0] == partner.id:
-                        tree = parcel_rg.get('tree_qty')
-                        area = parcel_rg.get('area')
-                        break
-                try:
-                    palox = self.env['olive.palox'].search([
-                        ('borrower_partner_id', '=', partner.id),
-                        ], count=True)
-                except Exception:
-                    pass
-                for case_rg in cases_rg:
-                    if case_rg.get('partner_id') and case_rg['partner_id'][0] == partner.id:
-                        regular_case = case_rg.get('regular_qty')
-                        organic_case = case_rg.get('organic_qty')
-                        break
-
-            partner.olive_tree_total = tree
-            partner.olive_area_total = area
-            partner.olive_lended_palox = palox
-            partner.olive_lended_regular_case = regular_case
-            partner.olive_lended_organic_case = organic_case
+        palox_res = self.env['olive.palox'].read_group([
+            ('borrower_partner_id', 'in', self.ids),
+            ('company_id', '=', company.id),
+            ], ['borrower_partner_id'], ['borrower_partner_id'])
+        for palox_re in palox_res:
+            partner = self.browse(cases_re['borrower_partner_id'][0])
 
     def _compute_olive_organic_certified(self):
         season = self.env['olive.season'].get_current_season()

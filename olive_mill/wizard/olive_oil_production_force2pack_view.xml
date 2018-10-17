@@ -13,7 +13,7 @@
     <field name="arch" type="xml">
         <form string="Force Ratio">
             <group name="main">
-                <field name="olive_oil_production_id" invisible="1"/>
+                <field name="production_id" invisible="1"/>
                 <field name="palox_id"/>
                 <field name="oil_product_id"/>
                 <label for="global_ratio"/>

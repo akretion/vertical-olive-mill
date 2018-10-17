@@ -14,10 +14,12 @@
         <form string="Olive Lended Case">
             <group name="main">
                 <field name="partner_id" invisible="not context.get('olive_lended_case_main_view')"/>
+                <field name="partner_olive_culture_type" invisible="1"/>
+                <field name="warehouse_id"/>
                 <field name="company_id" groups="base.group_multi_company"/>
                 <field name="date"/>
-                <field name="regular_qty"/>
-                <field name="organic_qty"/>
+                <field name="regular_qty" attrs="{'readonly': [('partner_olive_culture_type', 'in', ('organic', 'conversion'))]}"/>
+                <field name="organic_qty" attrs="{'readonly': [('partner_olive_culture_type', '=', 'regular')]}"/>
                 <field name="notes"/>
             </group>
         </form>
@@ -31,6 +33,7 @@
         <tree string="Olive Lended Cases">
             <field name="partner_id" invisible="not context.get('olive_lended_case_main_view')"/>
             <field name="date"/>
+            <field name="warehouse_id"/>
             <field name="regular_qty" sum="1"/>
             <field name="organic_qty" sum="1"/>
             <field name="notes"/>
@@ -45,8 +48,10 @@
     <field name="arch" type="xml">
         <search string="Search Olive Lended Cases">
             <field name="partner_id"/>
+            <field name="warehouse_id"/>
             <group string="Group By" name="groupby">
                 <filter name="partner_groupby" string="Partner" context="{'group_by': 'partner_id'}"/>
+                <filter name="warehouse_groupby" string="Warehouse" context="{'group_by': 'warehouse_id'}"/>
                 <filter name="date_groupby" string="Date" context="{'group_by': 'date'}"/>
             </group>
         </search>
@@ -60,6 +65,6 @@
     <field name="context">{'olive_lended_case_main_view': True}</field>
 </record>
 
-<menuitem id="olive_lended_case_menu" action="olive_lended_case_action" parent="olive_operations_menu" sequence="100"/>
+<menuitem id="olive_lended_case_menu" action="olive_lended_case_action" parent="olive_data_menu" sequence="100"/>
 
 </odoo>

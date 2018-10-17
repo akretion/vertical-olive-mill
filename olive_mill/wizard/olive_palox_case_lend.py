@@ -16,6 +16,8 @@ class OlivePaloxCaseLend(models.TransientModel):
     palox_ids = fields.Many2many(
         'olive.palox', string='Lended Palox',
         domain=[('borrower_partner_id', '=', False)])
+    partner_olive_culture_type = fields.Selection(
+        related='partner_id.olive_culture_type', readonly=True)
     regular_case_qty = fields.Integer(string='Lended Case Qty')
     organic_case_qty = fields.Integer(string='Lended Organic Case Qty')
 

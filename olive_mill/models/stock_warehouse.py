@@ -14,13 +14,24 @@ class StockWarehouse(models.Model):
     _inherit = 'stock.warehouse'
 
     olive_mill = fields.Boolean(string='Olive Mill')
+    olive_regular_case_total = fields.Integer(string='Regular Cases Total')
+    olive_regular_case_stock = fields.Integer(
+        compute='_compute_cases', string='Regular Cases in Stock',
+        readonly=True)
+    olive_organic_case_total = fields.Integer(string='Organic Cases Total')
+    olive_organic_case_stock = fields.Integer(
+        compute='_compute_cases', string='Organic Cases in Stock',
+        readonly=True)
     olive_shrinkage_loc_id = fields.Many2one(
         'stock.location', string='Olive Oil Shrinkage Tank',
         domain=[('olive_tank', '=', True)])
     olive_withdrawal_loc_id = fields.Many2one(
         'stock.location', string='Olive Oil Withdrawal Location',
         domain=[('olive_tank', '=', False), ('usage', '=', 'internal')])
-    olive_oil_compensation_olive_qty = fields.Float(
+    olive_compensation_loc_id = fields.Many2one(
+        'stock.location', string='Olive Oil Compensation Tank',
+        domain=[('olive_tank', '=', True)])
+    olive_compensation_last_qty = fields.Float(
         string='Olive Compensation Quantity', default=45.0,
         digits=dp.get_precision('Olive Weight'))
     olive_oil_compensation_ratio = fields.Float(
@@ -35,9 +46,21 @@ class StockWarehouse(models.Model):
         'olive_oil_compensation_ratio_positive',
         'CHECK(olive_oil_compensation_ratio >= 0)',
         'Oil compensation ratio must be positive or 0'),
-        ('olive_oil_compensation_olive_qty',
-         'CHECK(olive_oil_compensation_olive_qty) >= 0)',
+        ('olive_compensation_last_qty_positive',
+         'CHECK(olive_compensation_last_qty) >= 0)',
          'Olive Compensation Quantity must be positive or 0')]
+
+    @api.depends('olive_organic_case_total', 'olive_regular_case_total')
+    def _compute_cases(self):
+        cases_res = self.env['olive.lended.case'].read_group(
+            [('warehouse_id', 'in', self.ids)],
+            ['warehouse_id', 'regular_qty', 'organic_qty'], ['warehouse_id'])
+        for cases_re in cases_res:
+            wh = self.browse(cases_re['warehouse_id'][0])
+            wh.olive_regular_case_stock =\
+                wh.olive_regular_case_total - cases_re['regular_qty']
+            wh.olive_organic_case_stock =\
+                wh.olive_organic_case_total - cases_re['organic_qty']
 
     @api.model
     def olive_oil_compensation_ratio_update_cron(self):

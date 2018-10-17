@@ -15,12 +15,20 @@ class ProductTemplate(models.Model):
         ('oil', 'Olive Oil'),
         ('bottle', 'Oil Bottle'),
         ('analysis', 'Analysis'),
+        ('service', 'Production Service'),
         ], string='Olive Type')
     olive_culture_type = fields.Selection([
         ('regular', 'Regular'),
         ('organic', 'Organic'),
         ('conversion', 'Conversion'),
         ], string='Culture Type')
+    olive_bottle_free_full = fields.Boolean(
+        string="Not Invoiced when Full")
+    olive_invoice_service_ids = fields.Many2many(
+        'product.product', 'product_template_olive_invoice_service_rel',
+        'product_tmpl_id', 'product_id',
+        string='Extra Production Services To Invoice',
+        domain=[('olive_type', '=', 'service')])
 
     # DUPLICATED in product product
     @api.onchange('olive_type')
@@ -35,6 +43,8 @@ class ProductTemplate(models.Model):
             self.uom_po_id = pce_uom
         if not self.olive_type:
             self.olive_culture_type = False
+        if self.olive_type == 'service' and self.type != 'service':
+            self.type = 'service'
 
     @api.constrains('olive_type', 'uom_id', 'olive_culture_type')
     def check_olive_type(self):
@@ -48,7 +58,7 @@ class ProductTemplate(models.Model):
             if pt.olive_type == 'oil' and pt.uom_id != liter_uom:
                 raise ValidationError(_(
                     "Product '%s' has an Olive Type (%s) that require 'Liter' "
-                    "as it's unit of measure (current unit of measure is %s)")
+                    "as it's unit of measure (current unit of measure is %s).")
                     % (pt.display_name, pt.olive_type, pt.uom_id.display_name))
             if (
                     pt.olive_type in ('bottle', 'analysis') and
@@ -58,6 +68,13 @@ class ProductTemplate(models.Model):
                     "that require a unit of measure that belong to the "
                     "'Unit' category (current unit of measure: %s).")
                     % (pt.display_name, pt.uom_id.display_name))
+            if (
+                    pt.olive_type == 'invoice_option' and
+                    pt.type != 'service'):
+                raise ValidationError(_(
+                    "Product '%s' has an Olive Type 'Invoice Option' "
+                    "so it must be configured as a Service.") % (
+                        pt.display_name))
 
 
 class ProductProduct(models.Model):
@@ -81,5 +98,7 @@ class ProductProduct(models.Model):
             self.uom_po_id = pce_uom
         if not self.olive_type:
             self.olive_culture_type = False
+        if self.olive_type == 'service' and self.type != 'service':
+            self.type = 'service'
 
 

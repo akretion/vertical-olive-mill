@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo noupdate="0">  <!-- TODO set to 0 once finished -->
+
+<record id="sale_pricelist1" model="olive.sale.pricelist">
+    <field name="name">Professional</field>
+</record>
+
+<record id="sale_pricelist2" model="olive.sale.pricelist">
+    <field name="name">Amateur</field>
+</record>
+
+<record id="sale_pricelist1_price1" model="olive.sale.pricelist.line">
+    <field name="pricelist_id" ref="sale_pricelist1"/>
+    <field name="product_id" ref="oil"/>
+    <field name="price">11.5</field>
+</record>
+
+<record id="sale_pricelist1_price2" model="olive.sale.pricelist.line">
+    <field name="pricelist_id" ref="sale_pricelist1"/>
+    <field name="product_id" ref="black_oil"/>
+    <field name="price">11.5</field>
+</record>
+
+<record id="sale_pricelist2_price1" model="olive.sale.pricelist.line">
+    <field name="pricelist_id" ref="sale_pricelist2"/>
+    <field name="product_id" ref="oil"/>
+    <field name="price">10.5</field>
+</record>
+
+<record id="sale_pricelist2_price2" model="olive.sale.pricelist.line">
+    <field name="pricelist_id" ref="sale_pricelist2"/>
+    <field name="product_id" ref="black_oil"/>
+    <field name="price">10.5</field>
+</record>
+
+
+</odoo>

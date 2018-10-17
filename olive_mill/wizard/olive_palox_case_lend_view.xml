@@ -14,9 +14,10 @@
         <form string="Lend Olive Case and/or Palox">
             <group name="main">
                 <field name="partner_id"/>
+                <field name="partner_olive_culture_type" invisible="1"/>
                 <field name="palox_ids" widget="many2many_tags"/>
-                <field name="regular_case_qty"/>
-                <field name="organic_case_qty"/>
+                <field name="regular_case_qty" attrs="{'readonly': [('partner_olive_culture_type', 'in', ('organic', 'conversion'))]}"/>
+                <field name="organic_case_qty" attrs="{'readonly': [('partner_olive_culture_type', '=', 'regular')]}"/>
             </group>
             <footer>
                 <button name="validate" type="object" string="Validate" class="btn-primary"/>

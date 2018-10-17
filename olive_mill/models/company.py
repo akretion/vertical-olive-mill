@@ -24,15 +24,6 @@ class ResCompany(models.Model):
     olive_appointment_min_minutes = fields.Integer(
         string='Appointment Minimum Duration', default=5,
         help="Appointment minimum duration in minutes")
-    # TODO Move to WH ?
-    olive_regular_case_total = fields.Integer(string='Regular Cases Total')
-    olive_regular_case_stock = fields.Integer(
-        compute='_compute_cases', string='Regular Cases in Stock',
-        readonly=True)
-    olive_organic_case_total = fields.Integer(string='Organic Cases Total')
-    olive_organic_case_stock = fields.Integer(
-        compute='_compute_cases', string='Organic Cases in Stock',
-        readonly=True)
     olive_shrinkage_ratio = fields.Float(
         string='Shrinkage Ratio', default=0.4,
         digits=dp.get_precision('Olive Oil Ratio'),
@@ -47,16 +38,16 @@ class ResCompany(models.Model):
         help='Olive oil density in kg per liter')
     olive_oil_leaf_removal_product_id = fields.Many2one(
         'product.product', string='Leaf Removal Product',
-        domain=[('type', '=', 'service')])
+        domain=[('olive_type', '=', 'service')])
     olive_oil_production_product_id = fields.Many2one(
         'product.product', string='Production Product',
-        domain=[('type', '=', 'service')])
+        domain=[('olive_type', '=', 'service')])
     olive_oil_tax_product_id = fields.Many2one(
         'product.product', string='AFIDOL Tax Product',
-        domain=[('type', '=', 'service')])
+        domain=[('olive_type', '=', 'service')])
     olive_oil_early_bird_discount_product_id = fields.Many2one(
         'product.product', string='Early Bird Discount Product',
-        domain=[('type', '=', 'service')])
+        domain=[('olive_type', '=', 'service')])
     olive_oil_tax_price_unit = fields.Float(
         string='AFIDOL Tax Unit Price',
         digits=dp.get_precision('Olive Oil Tax Price Unit'), default=0.129,
@@ -75,25 +66,6 @@ class ResCompany(models.Model):
         'olive_oil_tax_price_unit_positive',
         'CHECK(olive_oil_tax_price_unit) >= 0)',
         'Tax unit price must be positive or null')]
-
-    @api.depends('olive_organic_case_total', 'olive_regular_case_total')
-    def _compute_cases(self):
-        cases_rg = self.env['olive.lended.case'].read_group(
-            [('company_id', 'in', self.ids)],
-            ['company_id', 'regular_qty', 'organic_qty'], ['company_id'])
-        for company in self:
-            organic_qty = 0
-            regular_qty = 0
-            for case_rg in cases_rg:
-                if (
-                        case_rg.get('company_id') and
-                        case_rg['company_id'][0] == company.id):
-                    organic_qty = case_rg.get('organic_qty')
-                    regular_qty = case_rg.get('regular_qty')
-            company.olive_organic_case_stock =\
-                company.olive_organic_case_total - organic_qty
-            company.olive_regular_case_stock =\
-                company.olive_regular_case_total - regular_qty
 
     @api.model
     def olive_oil_liter2kg(self, qty):

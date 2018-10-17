@@ -12,12 +12,12 @@ class OliveOilProductionPack2Check(models.TransientModel):
     _name = 'olive.oil.production.pack2check'
     _description = 'Olive Oil Production pack2check'
 
-    olive_oil_production_id = fields.Many2one(
+    production_id = fields.Many2one(
         'olive.oil.production', string='Olive Oil Production', required=True)
     palox_id = fields.Many2one(
-        related='olive_oil_production_id.palox_id', readonly=True)
+        related='production_id.palox_id', readonly=True)
     oil_product_id = fields.Many2one(
-        related='olive_oil_production_id.oil_product_id', readonly=True)
+        related='production_id.oil_product_id', readonly=True)
     todo_arrival_line_ids = fields.Many2many(
         'olive.arrival.line', string='Arrival Lines Left to Process')
     arrival_line_id = fields.Many2one(
@@ -38,7 +38,7 @@ class OliveOilProductionPack2Check(models.TransientModel):
         res = super(OliveOilProductionPack2Check, self).default_get(
             fields_list)
         prod = self.env['olive.oil.production'].browse(
-            res.get('olive_oil_production_id'))
+            res.get('production_id'))
         line_ids = [
             line.id for line in prod.line_ids
             if line.oil_destination in ('withdrawal', 'mix')]
@@ -50,7 +50,7 @@ class OliveOilProductionPack2Check(models.TransientModel):
 
     def validate(self):
         self.ensure_one()
-        prod = self.olive_oil_production_id
+        prod = self.production_id
         line = self.arrival_line_id
         if self.todo_arrival_line_ids:
             new_line_id = self.todo_arrival_line_ids[0].id

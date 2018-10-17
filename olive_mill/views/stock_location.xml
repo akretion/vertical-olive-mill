@@ -12,9 +12,28 @@
     <field name="model">stock.location</field>
     <field name="inherit_id" ref="stock.view_location_form"/>
     <field name="arch" type="xml">
+        <group groups="stock.group_adv_location" position="after">
+            <group name="olive" string="Olive Oil">
+                <field name="olive_tank"/>
+                <field name="oil_product_id" attrs="{'invisible': [('olive_tank', '=', False)]}"/>
+                <!--                <label for="olive_oil_compensation_ratio" attrs="{'invisible': [('olive_tank', '=', False)]}"/>
+                <div name="olive_oil_compensation_ratio" attrs="{'invisible': [('olive_tank', '=', False)]}">
+                    <field name="olive_oil_compensation_ratio" class="oe_inline"/>
+                    <label string=" %"/>
+                </div> -->
+            </group>
+        </group>
+    </field>
+</record>
+
+<record id="view_location_tree2" model="ir.ui.view">
+    <field name="name">olive.mill.stock.location.tree</field>
+    <field name="model">stock.location</field>
+    <field name="inherit_id" ref="stock.view_location_tree2"/>
+    <field name="arch" type="xml">
         <field name="usage" position="after">
-            <field name="olive_tank"/>
-            <field name="oil_product_id" attrs="{'invisible': [('olive_tank', '=', False)]}"/>
+            <field name="olive_tank" invisible="not context.get('default_olive_tank')"/>
+            <field name="oil_product_id" invisible="not context.get('default_olive_tank')"/>
         </field>
     </field>
 </record>
@@ -38,7 +57,7 @@
     <field name="context">{'default_olive_tank': True, 'search_default_olive_tank': True, 'default_usage': 'internal'}</field>
 </record>
 
-<menuitem id="tank_stock_location_menu" action="tank_stock_location_action" parent="olive_config_menu" sequence="60"/>
+<menuitem id="tank_stock_location_menu" action="tank_stock_location_action" parent="olive_data_menu" sequence="60"/>
 
 
 

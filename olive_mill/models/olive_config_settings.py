@@ -25,14 +25,6 @@ class OliveConfigSettings(models.TransientModel):
         related='company_id.olive_appointment_no_leaf_removal_minutes')
     olive_appointment_min_minutes = fields.Integer(
         related='company_id.olive_appointment_min_minutes')
-    olive_organic_case_stock = fields.Integer(
-        related='company_id.olive_organic_case_stock')
-    olive_organic_case_total = fields.Integer(
-        related='company_id.olive_organic_case_total')
-    olive_regular_case_stock = fields.Integer(
-        related='company_id.olive_regular_case_stock')
-    olive_regular_case_total = fields.Integer(
-        related='company_id.olive_regular_case_total')
     olive_shrinkage_ratio = fields.Float(
         related='company_id.olive_shrinkage_ratio')
     olive_filter_ratio = fields.Float(

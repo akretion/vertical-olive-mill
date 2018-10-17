@@ -14,10 +14,10 @@
         <form string="Oil Production">
             <header>
                 <button name="draft2ratio" string="Draft to Ratio" class="btn-primary" states="draft" type="object"/>
-                <button name="%(olive_oil_production_ratio2force_action)d" string="Enter Result" class="btn-primary" states="ratio" type="action" context="{'default_olive_oil_production_id': active_id}"/>
+                <button name="%(olive_oil_production_ratio2force_action)d" string="Enter Result" class="btn-primary" states="ratio" type="action" context="{'default_production_id': active_id}"/>
                 <button name="force2pack" string="Don't Force a Ratio" class="btn-primary" states="force" type="object"/>
-                <button name="%(olive_oil_production_force2pack_action)d" string="Force a Ratio" class="btn-default" states="force" type="action" context="{'default_olive_oil_production_id': active_id}"/>
-                <button name="%(olive_oil_production_pack2check_action)d" string="Pack" class="btn-primary" states="pack" type="action" context="{'default_olive_oil_production_id': active_id}"/>
+                <button name="%(olive_oil_production_force2pack_action)d" string="Force a Ratio" class="btn-default" states="force" type="action" context="{'default_production_id': active_id}"/>
+                <button name="%(olive_oil_production_pack2check_action)d" string="Pack" class="btn-primary" states="pack" type="action" context="{'default_production_id': active_id}"/>
                 <button name="check2done" string="Mark as Done" class="btn-primary" states="check" type="object" confirm="You are about to terminate and lock this oil production. Are you sure?"/>
                 <button name="back2draft" string="Back to Draft" class="btn-default" states="cancel" type="object"/>
                 <button name="cancel" string="Cancel" class="btn-default" states="draft,ratio,force,pack,check" confirm="Are you sure you want to cancel this oil production ?" type="object"/>
@@ -35,47 +35,54 @@
                         <field name="palox_id"/>
                         <field name="date"/>
                         <field name="oil_product_id"/>
-                        <label for="olive_qty_compute" states="draft,ratio,force,check,cancel" string="Olive Quantity"/>
-                        <div name="olive_qty_compute" states="draft,ratio,force,check,cancel">
-                            <field name="olive_qty_compute" class="oe_inline"/>
-                            <label string=" kg" class="oe_inline"/>
-                        </div>
-                        <label for="olive_qty_done" states="done" string="Olive Quantity"/>
-                        <div name="olive_qty_done" states="done">
-                            <field name="olive_qty_done" class="oe_inline"/>
+                        <label for="olive_qty"/>
+                        <div name="olive_qty">
+                            <field name="olive_qty" class="oe_inline"/>
                             <label string=" kg" class="oe_inline"/>
                         </div>
                         <field name="compensation_type"/>
-                        <label for="compensation_olive_qty" attrs="{'invisible': [('compensation_type', 'not in', ('positive', 'negative'))]}"/>
-                        <div name="compensation_olive_qty" attrs="{'invisible': [('compensation_type', 'not in', ('positive', 'negative'))]}">
-                            <field name="compensation_olive_qty" class="oe_inline" attrs="{'required': [('compensation_type', 'in', ('positive', 'negative'))]}"/>
+                        <label for="compensation_last_olive_qty" attrs="{'invisible': [('compensation_type', '!=', 'last')]}"/>
+                        <div name="compensation_last_olive_qty" attrs="{'invisible': [('compensation_type', '!=', 'last')]}">
+                            <field name="compensation_last_olive_qty" class="oe_inline"/>
                             <label string=" kg"/>
                         </div>
-                        <label for="compensation_ratio" attrs="{'invisible': [('compensation_type', 'not in', ('positive', 'negative'))]}"/>
-                        <div name="compensation_ratio" attrs="{'invisible': [('compensation_type', 'not in', ('positive', 'negative'))]}">
-                            <field name="compensation_ratio" class="oe_inline" attrs="{'required': [('compensation_type', 'in', ('positive', 'negative'))]}"/>
+                        <label for="compensation_ratio" attrs="{'invisible': [('compensation_type', '!=', 'last')]}"/>
+                        <div name="compensation_ratio" attrs="{'invisible': [('compensation_type', '!=', 'last')]}">
+                            <field name="compensation_ratio" class="oe_inline"/>
                             <label string=" %"/>
                         </div>
+                        <label for="compensation_oil_qty" attrs="{'invisible': [('compensation_type', 'not in', ('first', 'last'))]}" string="Compensation Oil Qty"/>
+                        <div name="compensation_oil_qty" attrs="{'invisible': [('compensation_type', 'not in', ('first', 'last'))]}">
+                            <field name="compensation_oil_qty" class="oe_inline"/>
+                            <label string=" L /" class="oe_inline"/>
+                            <field name="compensation_oil_qty_kg" class="oe_inline"/>
+                            <label string=" kg" class="oe_inline"/>
+                    </div>
+                    <!--
+                        <label for="compensation_oil_qty_kg" attrs="{'invisible': [('compensation_type', 'not in', ('first', 'last'))]}" string="Compensation Oil Qty"/>
+                        <div name="compensation_oil_qty_kg" attrs="{'invisible': [('compensation_type', 'not in', ('first', 'last'))]}">
+                            <field name="compensation_oil_qty_kg" class="oe_inline"/>
+                            <label string=" kg"/>
+                        </div> -->
                     </group>
                     <group name="right">
-                        <label for="oil_qty_kg" string="Oil Quantity"/>
-                        <div name="oil_qty_kg">
-                            <field name="oil_qty_kg" class="oe_inline"/>
-                            <label string=" kg" class="oe_inline"/>
-                        </div>
                         <label for="oil_qty" string="Oil Quantity"/>
                         <div name="oil_qty">
                             <field name="oil_qty" class="oe_inline"/>
-                            <label string=" L" class="oe_inline"/>
+                            <label string=" L /" class="oe_inline"/>
+                            <field name="oil_qty_kg" class="oe_inline"/>
+                            <label string=" kg" class="oe_inline"/>
                         </div>
                         <label for="ratio"/>
                         <div name="ratio">
                             <field name="ratio" class="oe_inline"/>
                             <label string=" %" class="oe_inline"/>
                         </div>
-                        <field name="sale_location_id" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}"/>
+                        <field name="sale_location_id" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank', '=', True), ('oil_product_id', '=', oil_product_id)]"/>
                         <field name="shrinkage_location_id"/>
                         <field name="withdrawal_location_id"/>
+                        <field name="compensation_location_id" attrs="{'invisible': [('compensation_type', 'not in', ('first', 'last'))], 'required': [('compensation_type', 'in', ('first', 'last'))]}"/>
+                        <field name="compensation_sale_location_id" attrs="{'invisible': ['|', ('compensation_type', '!=', 'first'), ('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank', '=', True), ('oil_product_id', '=', oil_product_id)]"/>
                         <field name="oil_destination"/>
                     </group>
                 </group>
@@ -91,6 +98,7 @@
                                     <field name="oil_ratio"/>
                                     <field name="oil_qty_kg" sum="1"/>
                                     <field name="oil_qty" sum="1"/>
+                                    <field name="compensation_oil_qty" sum="1"/>
                                     <field name="shrinkage_oil_qty" sum="1"/>
                                     <field name="withdrawal_oil_qty" sum="1"/>
                                     <field name="filter_loss_oil_qty" sum="1"/>
@@ -130,7 +138,7 @@
             <field name="date"/>
             <field name="palox_id"/>
             <field name="compensation_type"/>
-            <field name="olive_qty_total" string="Total Olive Qty (kg)"/>
+            <field name="olive_qty" string="Total Olive Qty (kg)"/>
             <field name="oil_qty" string="Oil Qty (L)"/>
             <field name="ratio" string="Ratio (%)"/>
             <field name="sale_location_id"/>
@@ -147,7 +155,7 @@
             <field name="name"/>
             <field name="date"/>
             <separator/>
-            <filter string="Draft" domain="[('state', '=', 'draft')]" name="draft"/>
+            <filter string="In Progress" domain="[('state', 'not in', ('done', 'cancel'))]" name="progress"/>
             <filter string="Done" domain="[('state', '=', 'done')]" name="done"/>
             <group string="Group By" name="groupby">
                 <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>
@@ -162,6 +170,7 @@
     <field name="name">Oil Productions</field>
     <field name="res_model">olive.oil.production</field>
     <field name="view_mode">tree,form</field>
+    <field name="context">{'search_default_progress': True}</field>
 </record>
 
 <menuitem id="olive_oil_production_menu" action="olive_oil_production_action" parent="olive_operations_menu" sequence="30"/>

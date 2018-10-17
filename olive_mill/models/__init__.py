@@ -19,6 +19,7 @@ from . import olive_cultivation
 from . import olive_appointment
 from . import olive_arrival
 from . import olive_oil_production
+from . import olive_sale_pricelist
 from . import stock_location
 from . import stock_production_lot
 from . import stock_quant

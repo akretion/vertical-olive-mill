@@ -30,13 +30,10 @@
                     <group name="left">
                         <field name="partner_id"/>
                         <field name="partner_olive_culture_type" invisible="0"/>
-                        <field name="organic_palox_required" invisible="1"/>
                         <field name="default_variant_id" widget="selection"/>
                         <field name="default_ochard_id" domain="[('partner_id', '=', partner_id)]" context="{'default_partner_id': partner_id}"/>
                         <field name="default_oil_destination"/>
                         <field name="default_leaf_removal"/>
-                        <field name="returned_case"/>
-                        <field name="returned_organic_case"/>
                     </group>
                     <group name="right">
                         <field name="date"/>
@@ -45,33 +42,42 @@
                             <field name="olive_qty" class="oe_inline"/>
                             <label string=" kg"/>
                         </div>
+                        <field name="returned_regular_case" attrs="{'readonly': [('partner_olive_culture_type', 'in', ('organic', 'conversion'))]}"/>
+                        <field name="returned_organic_case" attrs="{'readonly': [('partner_olive_culture_type', '=', 'regular')]}"/>
                         <field name="returned_palox_ids" widget="many2many_tags"
                             domain="[('borrower_partner_id', '=', partner_id)]"/>
-                        <field name="warehouse_id"/>
-                        <field name="season_id"/>
-                        <field name="done_datetime" states="done"/>
-                        <field name="company_id" groups="base.group_multi_company"/>
                     </group>
                 </group>
-                <group name="lines">
-                    <field name="line_ids" nolabel="1"
-                        context="{'default_leaf_removal': default_leaf_removal, 'default_variant_id': default_variant_id, 'default_ochard_id': default_ochard_id, 'default_partner_id': partner_id, 'default_oil_destination': default_oil_destination, 'default_partner_olive_culture_type': partner_olive_culture_type, 'default_organic_palox_required': organic_palox_required, 'form_view_ref': 'olive_mill.olive_arrival_line_arrival_form'}">
-                        <tree>
-                            <field name="name"/>
-                            <field name="olive_qty" sum="1"/>
-                            <field name="leaf_removal"/>
-                            <field name="variant_id" widget="selection"/>
-                            <field name="ripeness"/>
-                            <field name="sanitary_state"/>
-                            <field name="oil_product_id"/>
-                            <field name="ochard_id"/>
-                            <field name="palox_id"/>
-                            <field name="oil_destination"/>
-                            <field name="mix_withdrawal_oil_qty" string="Withdrawal (L)" sum="1"/>
-                            <field name="extra_count" string="Extras"/>
-                        </tree>
-                    </field>
-                </group>
+                <notebook>
+                    <page name="lines" string="Arrival Lines">
+                        <field name="line_ids" nolabel="1"
+                            context="{'default_leaf_removal': default_leaf_removal, 'default_variant_id': default_variant_id, 'default_ochard_id': default_ochard_id, 'default_partner_id': partner_id, 'default_oil_destination': default_oil_destination, 'default_partner_olive_culture_type': partner_olive_culture_type, 'form_view_ref': 'olive_mill.olive_arrival_line_arrival_form'}">
+                            <tree>
+                                <field name="name"/>
+                                <field name="olive_qty" sum="1"/>
+                                <field name="leaf_removal"/>
+                                <field name="variant_id" widget="selection"/>
+                                <field name="ripeness"/>
+                                <field name="sanitary_state"/>
+                                <field name="oil_product_id"/>
+                                <field name="ochard_id"/>
+                                <field name="palox_id"/>
+                                <field name="oil_destination"/>
+                                <field name="mix_withdrawal_oil_qty" string="Withdrawal (L)" sum="1"/>
+                                <field name="extra_count" string="Extras"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page name="additional" string="Additional Info">
+                        <group name="tech">
+                            <field name="warehouse_id"/>
+                            <field name="season_id"/>
+                            <field name="lended_case_id" context="{'olive_lended_case_main_view': True}"/>
+                            <field name="done_datetime" states="done"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </page>
+                </notebook>
             </sheet>
             <div class="oe_chatter">
                 <field name="message_follower_ids" widget="mail_followers"/>
@@ -145,7 +151,6 @@
                 <field name="name"/>
                 <field name="partner_id" invisible="1"/>
                 <field name="partner_olive_culture_type" invisible="1"/>
-                <field name="organic_palox_required" invisible="1"/>
                 <label for="olive_qty" string="Olive Qty"/>
                 <div name="olive_qty">
                     <field name="olive_qty" class="oe_inline"/>
@@ -158,7 +163,7 @@
                 <field name="oil_product_id"
                    domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', partner_olive_culture_type)]"/>
                 <field name="ochard_id" domain="[('partner_id', '=', partner_id)]"/>
-                <field name="palox_id" domain="['|', ('oil_product_id', '=', False), ('oil_product_id', '=', oil_product_id), ('organic', '=', organic_palox_required)]"/>
+                <field name="palox_id" domain="['|', ('oil_product_id', '=', False), ('oil_product_id', '=', oil_product_id), '|', ('borrower_partner_id', '=', False), ('borrower_partner_id', '=', partner_id)]"/>
                 <field name="oil_destination"/>
                 <label for="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}" string="Requested Withdrawal Qty"/>
                 <div name="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}">
@@ -222,8 +227,10 @@
     <field name="arch" type="xml">
         <tree editable="bottom">
             <field name="product_id"/>
+            <field name="product_olive_type" invisible="1"/>
             <field name="qty"/>
             <field name="uom_id" groups="product.group_uom"/>
+            <field name="fillup"/>
         </tree>
     </field>
 </record>

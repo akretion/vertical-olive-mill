@@ -19,14 +19,15 @@
         <notebook position="inside">
             <page name="olive_mill" string="Olive Mill" attrs="{'invisible': [('olive_mill', '=', False)]}">
                 <group name="olive_mill">
-                <group name="olive_mill_left">
+                <group name="olive_mill_left" string="Locations">
                     <field name="olive_shrinkage_loc_id" attrs="{'required': [('olive_mill', '=', True)]}"/>
                     <field name="olive_withdrawal_loc_id" attrs="{'required': [('olive_mill', '=', True)]}"/>
+                    <field name="olive_compensation_loc_id"/>
                 </group>
-                <group name="olive_mill_right">
-                    <label for="olive_oil_compensation_olive_qty"/>
-                    <div name="olive_oil_compensation_olive_qty">
-                        <field name="olive_oil_compensation_olive_qty" class="oe_inline"/>
+                <group name="olive_mill_right" string="Compensation">
+                    <label for="olive_compensation_last_qty"/>
+                    <div name="olive_compensation_last_qty">
+                        <field name="olive_compensation_last_qty" class="oe_inline"/>
                         <label string=" kg"/>
                     </div>
                     <label for="olive_oil_compensation_ratio"/>
@@ -41,6 +42,12 @@
                         <label string=" last days"/>
                     </div>
                     <button name="olive_oil_compensation_ratio_update" type="object" string="Update Compensation Ratio" colspan="2"/>
+                </group>
+                <group name="olive_lended_cases" string="Lended Cases">
+                    <field name="olive_regular_case_total"/>
+                    <field name="olive_regular_case_stock"/>
+                    <field name="olive_organic_case_total"/>
+                    <field name="olive_organic_case_stock"/>
                 </group>
                 </group>
             </page>
@@ -61,12 +68,12 @@
 </record>
 
 <record id="stock_warehouse_olive_mill_action" model="ir.actions.act_window">
-    <field name="name">Olive Mill</field>
+    <field name="name">Warehouse</field>
     <field name="res_model">stock.warehouse</field>
     <field name="view_mode">tree,form</field>
     <field name="context">{'default_olive_mill': True, 'search_default_olive_mill': True}</field>
 </record>
 
-<menuitem id="stock_warehouse_olive_mill_menu" action="stock_warehouse_olive_mill_action" parent="olive_config_menu" sequence="15"/>
+<menuitem id="stock_warehouse_olive_mill_menu" action="stock_warehouse_olive_mill_action" parent="olive_data_menu" sequence="60"/>
 
 </odoo>

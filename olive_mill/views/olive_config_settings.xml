@@ -17,18 +17,6 @@
                 <button string="Apply" type="object" name="execute" class="btn-primary"/>
                 <button string="Cancel" type="object" name="cancel" class="btn-default" special="cancel"/>
             </header>
-            <group name="cases" string="Cases">
-                <label for="olive_regular_case_total"/>
-                <div name="olive_regular_case_total">
-                    <field name="olive_regular_case_total" class="oe_inline"/>
-                </div>
-                <field name="olive_regular_case_stock"/>
-                <label for="olive_organic_case_total"/>
-                <div name="olive_organic_case_total">
-                    <field name="olive_organic_case_total" class="oe_inline"/>
-                </div>
-                <field name="olive_organic_case_stock"/>
-            </group>
             <group name="variables" string="Variables">
                 <field name="company_id" invisible="1"/>
                 <label for="olive_oil_density"/>

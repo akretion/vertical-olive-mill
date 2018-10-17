@@ -25,3 +25,7 @@ access_olive_arrival_user,Full access on olive.arrival,model_olive_arrival,stock
 access_olive_arrival_line_user,Full access on olive.arrival.line,model_olive_arrival_line,stock.group_stock_user,1,1,1,1
 access_olive_arrival_line_extra_user,Full access on olive.arrival.line.extra,model_olive_arrival_line_extra,stock.group_stock_user,1,1,1,1
 access_olive_oil_production_user,Full access on olive.oil.production,model_olive_oil_production,stock.group_stock_user,1,1,1,1
+access_olive_sale_pricelist_full,Full access on olive.sale.pricelist to Stock Manager,model_olive_sale_pricelist,stock.group_stock_manager,1,1,1,1
+access_olive_sale_pricelist_read,Read access on olive.sale.pricelist to Employee,model_olive_sale_pricelist,base.group_user,1,0,0,0
+access_olive_sale_pricelist_line_full,Full access on olive.sale.pricelist.line to Stock Manager,model_olive_sale_pricelist_line,stock.group_stock_manager,1,1,1,1
+access_olive_sale_pricelist_line_read,Read access on olive.sale.pricelist.line to Employee,model_olive_sale_pricelist,base.group_user,1,0,0,0

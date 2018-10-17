@@ -13,14 +13,21 @@
     <field name="arch" type="xml">
         <form string="Olive Oil Production Ratio2Force">
             <group name="main">
-                <field name="olive_oil_production_id" invisible="1"/>
+                <field name="production_id" invisible="1"/>
                 <field name="palox_id"/>
                 <field name="oil_product_id"/>
+                <field name="compensation_type"/>
                 <field name="oil_destination" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}"/>
-                <field name="sale_location_id" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}"/>
+                <field name="sale_location_id" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank', '=', True), ('oil_product_id', '=', oil_product_id)]"/>
+                <field name="compensation_sale_location_id" attrs="{'invisible': ['|', ('compensation_type', '!=', 'first'), ('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank', '=', True), ('oil_product_id', '=', oil_product_id)]"/>
                 <label for="olive_qty"/>
                 <div name="olive_qty">
                     <field name="olive_qty" class="oe_inline"/>
+                    <label string=" kg" class="oe_inline"/>
+                </div>
+                <label for="compensation_last_olive_qty" attrs="{'invisible': [('compensation_type', '!=', 'last')]}"/>
+                <div name="compensation_last_olive_qty" attrs="{'invisible': [('compensation_type', '!=', 'last')]}">
+                    <field name="compensation_last_olive_qty" class="oe_inline"/>
                     <label string=" kg" class="oe_inline"/>
                 </div>
                 <label for="oil_qty_kg"/>

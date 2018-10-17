@@ -12,16 +12,6 @@
     <field name="company_id" eval="False"/>
 </record>
 
-<record id="olive_arrival_line_seq" model="ir.sequence">
-    <field name="name">Olive Arrival Line</field>
-    <field name="code">olive.arrival.line</field>
-    <field name="prefix">L</field>
-    <field name="padding">5</field>
-    <field name="number_next">1</field>
-    <field name="company_id" eval="False"/>
-</record>
-
-
 <record id="olive_oil_production_seq" model="ir.sequence">
     <field name="name">Olive Oil Production</field>
     <field name="code">olive.oil.production</field>

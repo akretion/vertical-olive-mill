@@ -47,6 +47,7 @@
             <page name="olive" string="Olive" attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}">
                 <group name="olive_main">
                     <group name="left">
+                        <field name="olive_sale_pricelist_id"/>
                         <field name="olive_culture_type" invisible="1"/>
                         <label for="olive_area_total"/>
                         <div name="olive_area_total">

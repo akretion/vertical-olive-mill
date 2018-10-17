@@ -22,8 +22,7 @@ class OliveParcel(models.Model):
         string='Area', digits=dp.get_precision('Olive Parcel Area'),
         help="Area in hectare")
     tree_qty = fields.Integer(string='Number of trees')
-    product_ids = fields.Many2many(  # TODO
-        'product.product', string='Olive Types', domain=[('olive_type', '=', 'olive')])
+    variant_ids = fields.Many2many('olive.variant', string='Olive Variants')
     density = fields.Char('Density', size=64)
     planted_year = fields.Integer('Planted Year')
     irrigation = fields.Selection([

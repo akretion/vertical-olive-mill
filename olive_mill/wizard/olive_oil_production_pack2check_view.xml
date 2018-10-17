@@ -13,7 +13,7 @@
     <field name="arch" type="xml">
         <form string="Olive Oil Production pack2check">
             <group name="main">
-                <field name="olive_oil_production_id" invisible="1"/>
+                <field name="production_id" invisible="1"/>
                 <field name="palox_id"/>
                 <field name="oil_product_id"/>
                 <field name="todo_arrival_line_ids" invisible="1"/>
@@ -40,7 +40,7 @@
                 </div>
             </group>
             <group name="lines" string="Extra Items">
-                <field name="extra_ids" nolabel="1" colspan="2"/>
+                <field name="extra_ids" nolabel="1" colspan="2" context="{'olive_fillup_bottles': True}"/>
             </group>
             <footer>
                 <button name="validate" type="object" string="Validate" class="btn-primary"/>

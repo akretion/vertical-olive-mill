@@ -19,7 +19,6 @@ class OlivePalox(models.Model):
         'res.company', string='Company', ondelete='cascade', required=True,
         default=lambda self: self.env['res.company']._company_default_get(
             'olive.palox'))
-    organic = fields.Boolean(string='Organic')
     borrower_partner_id = fields.Many2one(
         'res.partner', string='Borrower', ondelete='restrict', copy=False,
         domain=[('parent_id', '=', False), ('olive_farmer', '=', True)],
