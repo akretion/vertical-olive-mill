@@ -9,17 +9,17 @@
 
 <record forcecreate="True" id="olive_weight" model="decimal.precision">
     <field name="name">Olive Weight</field>  <!-- Also used for Olive Oil at the moment -->
-    <field name="digits">1</field>
+    <field name="digits">2</field>
 </record>
 
 <record forcecreate="True" id="olive_oil_volume" model="decimal.precision">
     <field name="name">Olive Oil Volume</field>
-    <field name="digits">1</field>
+    <field name="digits">2</field>
 </record>
 
 <record forcecreate="True" id="olive_oil_ratio" model="decimal.precision">
     <field name="name">Olive Oil Ratio</field>
-    <field name="digits">1</field>
+    <field name="digits">2</field>
 </record>
 
 <record forcecreate="True" id="olive_oil_density" model="decimal.precision">

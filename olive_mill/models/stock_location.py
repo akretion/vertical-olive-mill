@@ -13,6 +13,8 @@ class StockLocation(models.Model):
     _inherit = 'stock.location'
 
     olive_tank = fields.Boolean(string='Olive Oil Tank')
+    olive_season_id = fields.Many2one(
+        'olive.season', string='Season', ondelete='restrict')
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Product',
         domain=[('olive_type', '=', 'oil')])
@@ -23,7 +25,7 @@ class StockLocation(models.Model):
         # because it's a related non stored field...
         qty = 0.0
         quant_rg = self.check_olive_oil_tank()
-        if quant_rg:
+        if quant_rg and quant_rg[0].get('qty'):
             qty = quant_rg[0]['qty']
         return qty
 
@@ -43,7 +45,7 @@ class StockLocation(models.Model):
                 raise UserError(_(
                     "The tank '%s' is empty.") % self.display_name)
             else:
-                return True
+                return []
         if len(quant_rg) > 1:
             raise UserError(_(
                 "There are several different products in tank '%s'. "
@@ -63,8 +65,8 @@ class StockLocation(models.Model):
         return quant_rg
 
     def olive_oil_transfer(
-            self, dest_loc, transfer_type, warehouse, origin=False,
-            auto_validate=False):
+            self, dest_loc, transfer_type, warehouse, dest_partner=False,
+            origin=False, auto_validate=False):
         self.ensure_one()
         sqo = self.env['stock.quant']
         smo = self.env['stock.move']
@@ -95,7 +97,6 @@ class StockLocation(models.Model):
             'location_id': src_loc.id,
             'location_dest_id': dest_loc.id,
             }
-        print "PICK vals=", vals
         pick = self.env['stock.picking'].create(vals)
 
         if transfer_type == 'full':
@@ -120,11 +121,14 @@ class StockLocation(models.Model):
                     'product_uom': quant.product_id.uom_id.id,
                     'product_uom_qty': quant.qty,
                     'restrict_lot_id': quant.lot_id.id or False,
+                    'restrict_partner_id': quant.owner_id.id or False,
                     'picking_id': pick.id,
                 }
-                print "mvals=", mvals
                 move = smo.create(mvals)
-                quant.sudo().reservation_id = move.id
+                qvals = {'reservation_id': move.id}
+                if dest_partner and quant.owner_id != dest_partner:
+                    qvals['owner_id'] = dest_partner.id
+                quant.sudo().write(qvals)
         pick.action_confirm()
         pick.action_assign()
         pick.action_pack_operation_auto_fill()

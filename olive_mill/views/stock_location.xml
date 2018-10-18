@@ -16,6 +16,7 @@
             <group name="olive" string="Olive Oil">
                 <field name="olive_tank"/>
                 <field name="oil_product_id" attrs="{'invisible': [('olive_tank', '=', False)]}"/>
+                <field name="olive_season_id"/>
                 <!--                <label for="olive_oil_compensation_ratio" attrs="{'invisible': [('olive_tank', '=', False)]}"/>
                 <div name="olive_oil_compensation_ratio" attrs="{'invisible': [('olive_tank', '=', False)]}">
                     <field name="olive_oil_compensation_ratio" class="oe_inline"/>
@@ -34,6 +35,7 @@
         <field name="usage" position="after">
             <field name="olive_tank" invisible="not context.get('default_olive_tank')"/>
             <field name="oil_product_id" invisible="not context.get('default_olive_tank')"/>
+            <field name="olive_season_id" invisible="not context.get('default_olive_tank')"/>
         </field>
     </field>
 </record>

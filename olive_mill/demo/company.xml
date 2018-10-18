@@ -9,9 +9,6 @@
 
 
 <record id="base.main_company" model="res.company">
-    <field name="olive_default_warehouse_id" ref="stock.warehouse0"/>
-    <field name="olive_regular_case_total">1000</field>
-    <field name="olive_organic_case_total">500</field>
     <field name="olive_oil_leaf_removal_product_id" ref="leaf_remove_product"/>
     <field name="olive_oil_production_product_id" ref="production_product"/>
     <field name="olive_oil_tax_product_id" ref="tax_product"/>

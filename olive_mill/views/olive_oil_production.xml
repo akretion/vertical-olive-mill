@@ -80,7 +80,7 @@
                         </div>
                         <field name="sale_location_id" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank', '=', True), ('oil_product_id', '=', oil_product_id)]"/>
                         <field name="shrinkage_location_id"/>
-                        <field name="withdrawal_location_id"/>
+                        <field name="withdrawal_location_id" attrs="{'invisible': [('oil_destination', '=', 'sale')]}"/>
                         <field name="compensation_location_id" attrs="{'invisible': [('compensation_type', 'not in', ('first', 'last'))], 'required': [('compensation_type', 'in', ('first', 'last'))]}"/>
                         <field name="compensation_sale_location_id" attrs="{'invisible': ['|', ('compensation_type', '!=', 'first'), ('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank', '=', True), ('oil_product_id', '=', oil_product_id)]"/>
                         <field name="oil_destination"/>

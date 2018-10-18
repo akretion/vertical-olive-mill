@@ -59,7 +59,7 @@ class ResPartner(models.Model):
             ('partner_id', 'in', self.ids)],
             ['partner_id', 'tree_qty', 'area'], ['partner_id'])
         for parcel_re in parcel_res:
-            partner = self.browse(cases_re['partner_id'][0])
+            partner = self.browse(parcel_re['partner_id'][0])
             partner.olive_tree_total = parcel_re['tree_qty']
             partner.olive_area_total = parcel_re['area']
 
@@ -68,7 +68,8 @@ class ResPartner(models.Model):
             ('company_id', '=', company.id),
             ], ['borrower_partner_id'], ['borrower_partner_id'])
         for palox_re in palox_res:
-            partner = self.browse(cases_re['borrower_partner_id'][0])
+            partner = self.browse(palox_re['borrower_partner_id'][0])
+            partner.olive_lended_palox = palox_re['borrower_partner_id_count']
 
     def _compute_olive_organic_certified(self):
         season = self.env['olive.season'].get_current_season()

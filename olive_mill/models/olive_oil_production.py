@@ -102,12 +102,12 @@ class OliveOilProduction(models.Model):
         string='Oil Quantity (L)', digits=dp.get_precision('Olive Oil Volume'),
         readonly=True)  # written by ratio2force wizard
     ratio = fields.Float(
-        string='Ratio', compute='_compute_ratio',
-        digits=dp.get_precision('Olive Oil Ratio'), readonly=True, store=True,
+        string='Ratio', digits=dp.get_precision('Olive Oil Ratio'),
+        readonly=True,
         help="This ratio gives the number of liters of olive oil for "
         "100 Kg of olives.")  # Yes, it's a ratio between liters and kg !!!
     date = fields.Date(
-        string='Date', default=fields.Date.context_today,
+        string='Date', default=fields.Date.context_today, required=True,
         states={'done': [('readonly', True)]}, track_visibility='onchange')
     sequence = fields.Integer()
     state = fields.Selection([
@@ -126,7 +126,8 @@ class OliveOilProduction(models.Model):
         'stock.move', string='Shrinkage Stock Move', readonly=True, copy=False)
     line_ids = fields.One2many(
         'olive.arrival.line', 'production_id', string='Arrival Lines',
-        readonly=True)
+        readonly=True,
+        states={'cancel': [('readonly', False)], 'draft': [('readonly', False)]})
 
     _sql_constraints = [
         ('oil_qty_kg_positive', 'CHECK(oil_qty_kg) >= 0', 'The oil quantity must be positive.'),
@@ -201,30 +202,32 @@ class OliveOilProduction(models.Model):
             production = self.browse(re['production_id'][0])
             production.olive_qty = re['olive_qty']
 
-    @api.depends(
-            'oil_qty', 'olive_qty', 'compensation_type',
-            'compensation_last_olive_qty')
-    def _compute_ratio(self):
-        for prod in self:
-            ratio = 0.0
-            olive_qty = prod.olive_qty
-            if prod.compensation_type == 'last':
-                olive_qty += prod.compensation_last_olive_qty
-            if olive_qty:
-                ratio = 100 * prod.oil_qty / olive_qty
-            prod.ratio = ratio
+#    @api.depends(
+#            'oil_qty', 'olive_qty', 'compensation_type',
+#            'compensation_last_olive_qty')
+#    def _compute_ratio(self):
+#        for prod in self:
+#            ratio = 0.0
+#            olive_qty = prod.olive_qty
+#            if prod.compensation_type == 'last':
+#                olive_qty += prod.compensation_last_olive_qty
+#            if olive_qty:
+#                ratio = 100 * prod.oil_qty / olive_qty
+#            prod.ratio = ratio
 
     @api.depends('line_ids.oil_destination')
     def _compute_oil_destination(self):
-        for production in self:
-            dests = [line.oil_destination for line in production.line_ids]
-            if all([dest == 'sale' for dest in dests]):
-                oil_destination = 'sale'
-            elif all([dest == 'withdrawal' for dest in dests]):
-                oil_destination = 'withdrawal'
-            else:
-                oil_destination = 'mix'
-            production.oil_destination = oil_destination
+        for prod in self:
+            oil_destination = False
+            if prod.line_ids:
+                dests = [line.oil_destination for line in prod.line_ids]
+                if all([dest == 'sale' for dest in dests]):
+                    oil_destination = 'sale'
+                elif all([dest == 'withdrawal' for dest in dests]):
+                    oil_destination = 'withdrawal'
+                else:
+                    oil_destination = 'mix'
+            prod.oil_destination = oil_destination
 
     @api.model
     def create(self, vals):
@@ -239,74 +242,84 @@ class OliveOilProduction(models.Model):
                 raise UserError(_(
                     "Cannot cancel production %s which is in 'done' state.")
                     % production.name)
-            production.line_ids.write({'production_id': False})
-            production.palox_id.oil_product_id = False
+            #production.line_ids.write({'production_id': False})
+            #production.palox_id.oil_product_id = False
         self.write({
             'state': 'cancel',
+            'oil_qty': 0,
             'oil_qty_kg': 0,
-            'compensation_first_oil_qty': 0,
+            'compensation_oil_qty': 0,
+            'compensation_oil_qty_kg': 0,
             })
 
     def back2draft(self):
         self.ensure_one()
         assert self.state == 'cancel'
-        if self.line_ids:
-            raise UserError(_(
-                "The cancelled production %s should not have any lines") % self.name)
         self.write({'state': 'draft'})
 
     def draft2ratio(self):
         """Attach arrival lines to olive.oil.production"""
         self.ensure_one()
         assert self.state == 'draft'
-        if self.line_ids:
-            raise UserError(_(
-                "There shouldn't be any lines in production %s") % self.name)
-        lines = self.env['olive.arrival.line'].search([
-            ('palox_id', '=', self.palox_id.id),
-            ('warehouse_id', '=', self.warehouse_id.id),
-            ('arrival_state', '=', 'done'),
-            ('production_id', '=', False)])
-        if not lines:
-            raise UserError(_(
-                "The palox %s is empty or currently in production.")
-                % self.palox_id.display_name)
+        oalo = self.env['olive.arrival.line']
+        pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
+        if not self.line_ids:
+            draft_lines = oalo.search([
+                ('palox_id', '=', self.palox_id.id),
+                ('warehouse_id', '=', self.warehouse_id.id),
+                ('arrival_state', '=', 'draft'),
+                ('production_id', '=', False)])
+            if draft_lines:
+                raise UserError(_(
+                    "Arrival line %s is linked to palox %s but it is still "
+                    "in draft state. If you want to take this arrival line "
+                    "in this production, you should validate the arrival. "
+                    "Otherwise, you should cancel the arrival.")
+                    % (draft_lines[0].name, self.palox_id.name))
+            done_lines = oalo.search([
+                ('palox_id', '=', self.palox_id.id),
+                ('warehouse_id', '=', self.warehouse_id.id),
+                ('arrival_state', '=', 'done'),
+                ('production_id', '=', False)])
+            if not done_lines:
+                raise UserError(_(
+                    "The palox %s is empty or currently in production.")
+                    % self.palox_id.name)
+            done_lines.write({'production_id': self.id})
+            # Free the palox
+            self.palox_id.oil_product_id = False
         oil_dests = []
         oil_product = False
-        pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
-        for l in lines:
+        for l in self.line_ids:
             oil_dests.append(l.oil_destination)
             if oil_product:
                 if oil_product != l.oil_product_id:
                     raise UserError(_(
                         "The oil type is not the same "
-                        "on all the lines of palox %s.") % self.palox_id.display_name)
+                        "on all the lines of palox %s.") % self.palox_id.name)
                     # TODO improve error
             else:
                 oil_product = l.oil_product_id
             if float_compare(l.olive_qty, 0, precision_digits=pr_oli) <= 0:
                 raise UserError(_(
                     "On line %s, the olive qty is null !") % l.name)
-        lines.write({'production_id': self.id})
 
-        compensation_ratio = compensation_first_oil_qty = False
+        compensation_oil_qty = False
+        cratio = self.compensation_ratio
         ctype = self.compensation_type
         self.compensation_check_tank()
         density = self.company_id.olive_oil_density
         if ctype == 'last':
-            compensation_ratio = self.warehouse_id.olive_oil_compensation_ratio
-            if compensation_ratio < MIN_RATIO or compensation_ratio > MAX_RATIO:
+            if cratio < MIN_RATIO or cratio > MAX_RATIO:
                 raise UserError(_(
-                    "The compensation ratio (%s) is not realistic")
-                    % compensation_ratio)
-            compensation_oil_qty = compensation_ratio * self.compensation_last_olive_qty / 100.0
+                    "The compensation ratio (%s) is not realistic") % cratio)
+            compensation_oil_qty = cratio * self.compensation_last_olive_qty / 100.0
         elif ctype == 'first':
             compensation_oil_qty =\
                 self.compensation_location_id.olive_oil_qty()
         self.write({
             'state': 'ratio',
             'oil_product_id': oil_product.id,
-            'compensation_ratio': compensation_ratio,
             'compensation_oil_qty': compensation_oil_qty,
             'compensation_oil_qty_kg': compensation_oil_qty * density,
             })
@@ -450,6 +463,7 @@ class OliveOilProduction(models.Model):
                     "The production %s uses last of day compensation, so the 'Oil Compensation' should be positive.") % self.name)
         for line in self.line_ids:
             # create prod lot
+            # No expiry date on olive oil in tanks
             prodlot = splo.create({
                 'arrival_line_id': line.id,
                 'product_id': oil_product.id,
@@ -493,7 +507,7 @@ class OliveOilProduction(models.Model):
                     'product_id': oil_product.id,
                     'name': _('Olive oil production %s: compensation related to arrival line %s') % (self.name, line.name),
                     'location_id': oil_product.property_stock_production.id,
-                    'location_dest_id': cloc_id.id,
+                    'location_dest_id': cloc.id,
                     'product_uom': oil_product.uom_id.id,
                     'origin': self.name,
                     'product_uom_qty': line.compensation_oil_qty,
@@ -513,7 +527,7 @@ class OliveOilProduction(models.Model):
                 extra_move = smo.create({
                     'product_id': extra.product_id.id,
                     'name': _('Olive oil production %s: extra item withdrawal related to arrival line %s') % (self.name, line.name),
-                    'location_id': stock_loc_id,
+                    'location_id': stock_loc.id,
                     'location_dest_id': wloc.id,
                     'product_uom': extra.product_id.uom_id.id,
                     'origin': self.name,
@@ -545,8 +559,9 @@ class OliveOilProduction(models.Model):
                 })
             shrinkage_move.action_done()
             prod_vals['shrinkage_move_id'] = shrinkage_move.id
+        # Distribute compensation
         if ctype == 'first':
-            if self.oil_destination == 'sale':
+            if all([line.oil_destination in ('sale', 'mix') for line in self.line_ids]):
                 if not self.compensation_sale_location_id:
                     raise UserError(_(
                         "On oil production %s which has first-of-day "
@@ -562,6 +577,7 @@ class OliveOilProduction(models.Model):
             elif self.oil_destination == 'withdrawal' and len(self.line_ids) == 1:
                 cloc.olive_oil_transfer(
                     wloc, 'full', self.warehouse_id,
+                    dest_partner=self.line_ids[0].partner_id,
                     origin=_('Empty compensation tank to withdrawal location'),
                     auto_validate=True)
             else:
@@ -570,8 +586,6 @@ class OliveOilProduction(models.Model):
             cloc.oil_product_id = False
 
         self.write(prod_vals)
-        # Free the palox
-        self.palox_id.oil_product_id = False
 
     def unlink(self):
         for production in self:

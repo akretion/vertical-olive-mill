@@ -139,6 +139,31 @@
     <field name="tracking">lot</field>
 </record>
 
+<record id="inox_can" model="product.product">
+    <field name="name">Inox Can</field>
+    <field name="default_code">CANINOX</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="True"/>
+    <field name="type">product</field>
+    <field name="olive_type">bottle</field>
+    <field name="uom_id" ref="product.product_uom_unit"/>
+    <field name="uom_po_id" ref="product.product_uom_unit"/>
+</record>
+
+<record id="customer_inox_can" model="product.product">
+    <field name="name">Inox Can of the customer</field>
+    <field name="default_code">CUSTCANINOX</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="False"/>
+    <field name="purchase_ok" eval="False"/>
+    <field name="type">consu</field>
+    <field name="olive_type">bottle</field>
+    <field name="olive_bottle_free_full" eval="True"/>
+    <field name="uom_id" ref="product.product_uom_unit"/>
+    <field name="uom_po_id" ref="product.product_uom_unit"/>
+</record>
+
 <record id="can20l" model="product.product">
     <field name="name">Can 20L</field>
     <field name="default_code">CAN20L</field>
@@ -259,7 +284,7 @@
     <field name="uom_po_id" ref="product.product_uom_kgm"/>
 </record>
 
-
+<!-- INVENTORY for bottles  -->
 
 
 

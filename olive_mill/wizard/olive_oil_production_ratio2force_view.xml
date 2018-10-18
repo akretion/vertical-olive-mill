@@ -17,6 +17,8 @@
                 <field name="palox_id"/>
                 <field name="oil_product_id"/>
                 <field name="compensation_type"/>
+                <field name="compensation_oil_qty" attrs="{'invisible': [('compensation_type', '!=', 'first')]}"/>
+                <field name="compensation_last_olive_qty" attrs="{'invisible': [('compensation_type', '!=', 'last')]}"/>
                 <field name="oil_destination" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}"/>
                 <field name="sale_location_id" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank', '=', True), ('oil_product_id', '=', oil_product_id)]"/>
                 <field name="compensation_sale_location_id" attrs="{'invisible': ['|', ('compensation_type', '!=', 'first'), ('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank', '=', True), ('oil_product_id', '=', oil_product_id)]"/>

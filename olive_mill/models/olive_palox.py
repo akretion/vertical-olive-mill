@@ -40,7 +40,7 @@ class OlivePalox(models.Model):
         res = self.env['olive.arrival.line'].read_group([
             ('palox_id', 'in', self.ids),
             ('arrival_state', '=', 'done'),
-            ('production_state', 'not in', ('done', 'cancel')),
+            ('production_id', '=', False),
             ], ['palox_id', 'olive_qty'], ['palox_id'])
         for re in res:
             self.browse(re['palox_id'][0]).weight = re['olive_qty']

@@ -22,8 +22,10 @@ class StockProductionLot(models.Model):
             dname = lot.name
             if lot.expiry_date:
                 dname = '[%s] %s' % (lot.expiry_date, dname)
-            if lot.oil_merge_lot:
-                dname = '%s %s' % (u'\u2180', dname)
+            if lot.arrival_line_id:
+                dname = u'%s (%s, %s)' % (dname, lot.arrival_line_id.partner_id.name, lot.arrival_line_id.variant_id.name)
+            #if lot.oil_merge_lot:
+            #    dname = '%s %s' % (u'\u2180', dname)
             res.append((lot.id, dname))
         return res
 

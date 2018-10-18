@@ -28,11 +28,6 @@
                     <field name="line_oil_ratio" class="oe_inline"/>
                     <label string=" %" class="oe_inline"/>
                 </div>
-                <label for="line_shrinkage_oil_qty"/>
-                <div>
-                    <field name="line_shrinkage_oil_qty" class="oe_inline"/>
-                    <label string=" L" class="oe_inline"/>
-                </div>
                 <label for="line_withdrawal_oil_qty"/>
                 <div>
                     <field name="line_withdrawal_oil_qty" class="oe_inline"/>

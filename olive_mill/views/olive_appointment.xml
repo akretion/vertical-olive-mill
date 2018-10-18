@@ -28,8 +28,8 @@
                         <field name="palox_qty"/>
                         <field name="leaf_removal"/>
                         <field name="oil_destination"/>
-                        <label for="withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}"/>
-                        <div name="withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}">
+                        <label for="withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}"/>
+                        <div name="withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}">
                             <field name="withdrawal_oil_qty" class="oe_inline"/>
                             <label string=" L" class="oe_inline"/>
                         </div>
@@ -82,6 +82,9 @@
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
         <search string="Search Olive appointments">
+            <filter name="today" string="Today" domain="[('start_datetime', '&lt;=', datetime.datetime.combine(context_today(), datetime.time(23, 59, 0))), ('start_datetime', '&gt;', datetime.datetime.combine(context_today(), datetime.time(0, 0, 0)))]"/>
+            <filter name="tomorrow" string="Tomorrow" domain="[('start_datetime', '&lt;=', datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(23, 59, 0))), ('start_datetime', '&gt;', datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(0, 0, 0)))]"/>
+            <separator/>
             <field name="partner_id"/>
             <group string="Group By" name="groupby">
                 <filter name="start_groupby" string="Day" context="{'group_by': 'start_datetime:day'}"/>

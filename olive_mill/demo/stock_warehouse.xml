@@ -13,6 +13,8 @@
     <field name="olive_shrinkage_loc_id" ref="shrinkage"/>
     <field name="olive_withdrawal_loc_id" ref="withdrawal"/>
     <field name="olive_compensation_loc_id" ref="compensation"/>
+    <field name="olive_regular_case_total">1000</field>
+    <field name="olive_organic_case_total">500</field>
 </record>
 
 

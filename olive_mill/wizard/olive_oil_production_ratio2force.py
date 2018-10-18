@@ -30,8 +30,11 @@ class OliveOilProductionRatio2force(models.TransientModel):
         related='production_id.compensation_type', readonly=True)
     compensation_last_olive_qty = fields.Float(
         related='production_id.compensation_last_olive_qty', readonly=True)
+    compensation_oil_qty = fields.Float(
+        related='production_id.compensation_oil_qty', readonly=True)
     oil_qty_kg = fields.Float(
-        string='Oil Qty', digits=dp.get_precision('Olive Weight'))
+        string='Oil Qty', digits=dp.get_precision('Olive Weight'),
+        required=True)
     oil_qty = fields.Float(
         string='Oil Qty', compute='_compute_all',
         digits=dp.get_precision('Olive Oil Volume'), readonly=True)
@@ -56,11 +59,14 @@ class OliveOilProductionRatio2force(models.TransientModel):
             if density:
                 oil_qty = wiz.oil_qty_kg / density
                 oil_qty = float_round(oil_qty, precision_digits=pr_oil)
-            olive_qty = wiz.olive_qty
+            olive_qty_for_ratio = wiz.olive_qty
+            oil_qty_for_ratio = oil_qty
             if wiz.compensation_type == 'last':
-                olive_qty += wiz.compensation_last_olive_qty
-            if olive_qty:
-                ratio = 100 * oil_qty / olive_qty
+                olive_qty_for_ratio += wiz.compensation_last_olive_qty
+            elif wiz.compensation_type == 'first':
+                oil_qty_for_ratio += wiz.compensation_oil_qty
+            if olive_qty_for_ratio:
+                ratio = 100 * oil_qty_for_ratio / olive_qty_for_ratio
                 ratio = float_round(ratio, precision_digits=pr_ratio)
             wiz.ratio = ratio
             wiz.oil_qty = oil_qty
@@ -75,6 +81,7 @@ class OliveOilProductionRatio2force(models.TransientModel):
         vals = {
             'oil_qty_kg': self.oil_qty_kg,
             'oil_qty': self.oil_qty,
+            'ratio': self.ratio,
             }
         prod.write(vals)
         prod.ratio2force()

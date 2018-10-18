@@ -12,6 +12,11 @@
     <field name="product_id" ref="oil"/>
 </record>
 
+<record id="black_oil_shrinkage_lot" model="stock.production.lot">
+    <field name="name">OOILBLACK-SHRINK</field>
+    <field name="product_id" ref="black_oil"/>
+</record>
+
 <record id="oil_organic_shrinkage_lot" model="stock.production.lot">
     <field name="name">ORG_OOIL-SHRINK</field>
     <field name="product_id" ref="oil_organic"/>
@@ -24,6 +29,10 @@
 
 <record id="oil" model="product.product">
     <field name="shrinkage_prodlot_id" ref="oil_shrinkage_lot"/>
+</record>
+
+<record id="black_oil" model="product.product">
+    <field name="shrinkage_prodlot_id" ref="black_oil_shrinkage_lot"/>
 </record>
 
 <record id="oil_organic" model="product.product">

@@ -25,13 +25,11 @@
 </record>
 
 <record id="palox5" model="olive.palox">
-    <field name="name">B005</field>
-    <field name="organic" eval="True"/>
+    <field name="name">005</field>
 </record>
 
 <record id="palox6" model="olive.palox">
-    <field name="name">B006</field>
-    <field name="organic" eval="True"/>
+    <field name="name">006</field>
 </record>
 
 

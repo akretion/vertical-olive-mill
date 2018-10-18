@@ -21,7 +21,7 @@
                     <field name="global_ratio" class="oe_inline"/>
                     <label string=" %" class="oe_inline"/>
                 </div>
-                <field name="arrival_line_id" domain="[('production_id', '=', olive_oil_production_id)]"/>
+                <field name="arrival_line_id" domain="[('production_id', '=', production_id)]"/>
                 <label for="force_ratio"/>
                 <div name="force_ratio">
                     <field name="force_ratio" class="oe_inline"/>

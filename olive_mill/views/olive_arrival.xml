@@ -42,8 +42,8 @@
                             <field name="olive_qty" class="oe_inline"/>
                             <label string=" kg"/>
                         </div>
-                        <field name="returned_regular_case" attrs="{'readonly': [('partner_olive_culture_type', 'in', ('organic', 'conversion'))]}"/>
-                        <field name="returned_organic_case" attrs="{'readonly': [('partner_olive_culture_type', '=', 'regular')]}"/>
+                        <field name="returned_regular_case" attrs="{'readonly': ['|', ('partner_olive_culture_type', 'in', ('organic', 'conversion')), ('state', '=', 'done')]}"/>
+                        <field name="returned_organic_case" attrs="{'readonly': ['|', ('partner_olive_culture_type', '=', 'regular'), ('state', '=', 'done')]}"/>
                         <field name="returned_palox_ids" widget="many2many_tags"
                             domain="[('borrower_partner_id', '=', partner_id)]"/>
                     </group>

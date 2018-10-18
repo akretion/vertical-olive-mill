@@ -13,6 +13,9 @@ class OliveAppointment(models.Model):
     _order = 'start_datetime desc'
     _inherit = ['mail.thread']
 
+    # name is required when you create from calendar
+    # it is also needed for appointments with type = 'other'
+    name = fields.Char()
     company_id = fields.Many2one(
         'res.company', string='Company',
         ondelete='cascade', required=True,
@@ -54,6 +57,11 @@ class OliveAppointment(models.Model):
         'CHECK(withdrawal_oil_qty >= 0)',
         'The quantity of oil withdrawn must be positive or 0.'),
         ]
+
+    @api.onchange('oil_destination')
+    def oil_destination_change(self):
+        if self.oil_destination in ('sale', 'withdrawal'):
+            self.withdrawal_oil_qty = 0
 
     @api.depends('partner_id', 'start_datetime')
     def name_get(self):

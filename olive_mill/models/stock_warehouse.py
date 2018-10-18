@@ -52,15 +52,24 @@ class StockWarehouse(models.Model):
 
     @api.depends('olive_organic_case_total', 'olive_regular_case_total')
     def _compute_cases(self):
+        print "_compute_cases self=", self
         cases_res = self.env['olive.lended.case'].read_group(
             [('warehouse_id', 'in', self.ids)],
             ['warehouse_id', 'regular_qty', 'organic_qty'], ['warehouse_id'])
-        for cases_re in cases_res:
-            wh = self.browse(cases_re['warehouse_id'][0])
-            wh.olive_regular_case_stock =\
-                wh.olive_regular_case_total - cases_re['regular_qty']
-            wh.olive_organic_case_stock =\
-                wh.olive_organic_case_total - cases_re['organic_qty']
+        if cases_res:
+            for cases_re in cases_res:
+                wh = self.browse(cases_re['warehouse_id'][0])
+                print "cases_r=", cases_re
+                print "wh.olive_regular_case_total=", wh.olive_regular_case_total
+                print "wh.olive_organic_case_total=", wh.olive_organic_case_total
+                wh.olive_regular_case_stock =\
+                    wh.olive_regular_case_total - cases_re['regular_qty']
+                wh.olive_organic_case_stock =\
+                    wh.olive_organic_case_total - cases_re['organic_qty']
+        else:
+            for wh in self:
+                wh.olive_regular_case_stock = wh.olive_regular_case_total
+                wh.olive_organic_case_stock = wh.olive_organic_case_total
 
     @api.model
     def olive_oil_compensation_ratio_update_cron(self):

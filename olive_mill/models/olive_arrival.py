@@ -40,6 +40,7 @@ class OliveArrival(models.Model):
         'stock.warehouse', string='Warehouse', required=True,
         domain=[('olive_mill', '=', True)],
         default=lambda self: self.env.user._default_olive_mill_wh(),
+        states={'done': [('readonly', True)]},
         track_visibility='onchange')
     default_variant_id = fields.Many2one(
         'olive.variant', string='Default Olive Variant',
@@ -75,12 +76,15 @@ class OliveArrival(models.Model):
     line_ids = fields.One2many(
         'olive.arrival.line', 'arrival_id', string='Arrival Lines',
         states={'done': [('readonly', True)]})
-    returned_regular_case = fields.Integer(string='Returned Regular Cases')
-    returned_organic_case = fields.Integer(string='Returned Organic Cases')
+    returned_regular_case = fields.Integer(
+        string='Returned Regular Cases', states={'done': [('readonly', True)]})
+    returned_organic_case = fields.Integer(
+        string='Returned Organic Cases', states={'done': [('readonly', True)]})
     lended_case_id = fields.Many2one(
         'olive.lended.case', string='Lended Case Move', readonly=True)
     returned_palox_ids = fields.Many2many(
         'olive.palox', string='Other Returned Palox',
+        states={'done': [('readonly', True)]},
         help="Select returned palox other than those used in the arrival "
         "lines")
 
@@ -107,6 +111,8 @@ class OliveArrival(models.Model):
                 ('partner_id', '=', self.partner_id.id)])
             if len(ochards) == 1:
                 self.default_ochard_id = ochards
+                if len(ochards.parcel_ids) == 1 and len(ochards.parcel_ids[0].variant_ids) == 1:
+                    self.default_variant_id = ochards.parcel_ids[0].variant_ids[0].id
         else:
             self.default_ochard_id = False
 
@@ -219,20 +225,6 @@ class OliveArrival(models.Model):
                 raise UserError(_(
                     "On line %s, the oil destination is 'mix' so you must "
                     "enter the requested withdrawal qty") % line.name)
-            # Block if palox under production
-            same_palox_under_production = oalo.search([
-                ('palox_id', '=', line.palox_id.id),
-                ('arrival_state', '=', 'done'),
-                ('production_id', '!=', False),
-                ('production_state', 'not in', ('done', 'cancel')),
-                ], limit=1)
-            if same_palox_under_production:
-                raise UserError(_(
-                    "You are collecting in palox %s which is currently under "
-                    "production (%s). You should finish or cancel this "
-                    "production first.") % (
-                        line.palox_id.name,
-                        same_palox_under_production.production_id.name))
 
             # Check oil product is the same
             if not line.palox_id.oil_product_id:
@@ -379,7 +371,7 @@ class OliveArrivalLine(models.Model):
         'product.product', string='Oil Type', required=True,
         domain=[('olive_type', '=', 'oil')])
     production_id = fields.Many2one(
-        'olive.oil.production', string='Production', ondelete='restrict')
+        'olive.oil.production', string='Production')
     # START related fields for production
     production_date = fields.Date(
         related='production_id.date', string='Production Date', readonly=True,
@@ -467,13 +459,13 @@ class OliveArrivalLine(models.Model):
         if self.oil_destination != 'mix':
             self.mix_withdrawal_oil_qty = 0
 
-    @api.depends('name', 'partner_id')
+    @api.depends('name', 'partner_id', 'variant_id')
     def name_get(self):
         res = []
         for rec in self:
             name = rec.name
             if rec.partner_id:
-                name = u'%s (%s)' % (name, rec.partner_id.name)
+                name = u'%s (%s, %s)' % (name, rec.partner_id.name, rec.variant_id.name)
             res.append((rec.id, name))
         return res
 
@@ -488,6 +480,7 @@ class OliveArrivalLine(models.Model):
         shrinkage_ratio = company.olive_shrinkage_ratio
         filter_ratio = company.olive_filter_ratio
         oil_destination = self.oil_destination
+        ctype = self.compensation_type
         if not density:
             raise UserError(_(
                 "Missing Olive Oil Density on company '%s'")
@@ -514,14 +507,15 @@ class OliveArrivalLine(models.Model):
         elif oil_destination == 'sale':
             filter_loss_oil_qty = oil_qty * filter_ratio / 100
             sale_oil_qty = oil_minus_shrinkage - filter_loss_oil_qty
+            if ctype == 'first':
+                sale_oil_qty += compensation_oil_qty
             to_sale_tank_oil_qty = oil_qty - filter_loss_oil_qty
 
         elif oil_destination == 'mix':
-            # TODO: compensation => take compensation in sale if possible
-            if line.compensation_type == 'first':
-                raise UserError(_(
-                    "We don't support first-of-day compensation "
-                    "with mixed olive destination for the moment."))
+            # When oil_destination == 'mix' and ctype == 'first',
+            # the compensation is always for SALE
+            # (compensation is withdrawn only when the requested qty is
+            # superior to oil production minus shrinkage without compensation
             if float_compare(
                     oil_minus_shrinkage, self.mix_withdrawal_oil_qty,
                     precision_digits=pr_oil) >= 0:
@@ -533,10 +527,13 @@ class OliveArrivalLine(models.Model):
                     - shrinkage_oil_qty - filter_loss_oil_qty
                 to_sale_tank_oil_qty = oil_qty_minus_withdrawal \
                     - filter_loss_oil_qty
+                if ctype == 'first':
+                    sale_oil_qty += compensation_oil_qty
             else:
                 withdrawal_oil_qty = oil_minus_shrinkage
                 # rewrite oil destination, for shrinkage stock move
                 oil_destination = 'withdrawal'
+                # Nothing more to do for ctype == 'first':
             withdrawal_oil_qty_kg = withdrawal_oil_qty * density
         ratio_net = float_round(
             100 * (oil_minus_shrinkage - filter_loss_oil_qty) / self.olive_qty,
@@ -667,8 +664,11 @@ class OliveArrivalLine(models.Model):
                 totals['olive_qty'], partner)
             vals['invoice_line_ids'].append((0, 0, il_vals))
             # Extra service options
+            # NOTE : ('oil_destination', '=', 'withdrawal') in domain
+            # for extra service options may seem a bit specific to the Barroux
+            # Abbey
             product_totals = self.read_group(
-                [('id', 'in', self.ids)],
+                [('id', 'in', self.ids), ('oil_destination', '=', 'withdrawal')],
                 ['olive_qty', 'oil_product_id'], ['oil_product_id'])
             for product_total in product_totals:
                 product = ppo.browse(product_total['oil_product_id'][0])
@@ -717,9 +717,14 @@ class OliveArrivalLine(models.Model):
             # AFIDOL Tax
             il_vals = self.pre_prepare_invoice_line(
                 company.olive_oil_tax_product_id, vals)
-            # TODO: plus compensation if 'first'
             qty = totals['oil_qty'] - totals['shrinkage_oil_qty']\
                 - totals['filter_loss_oil_qty']
+            total_comp = self.read_group(
+                [('id', 'in', self.ids), ('compensation_type', '=', 'first')],
+                ['compensation_oil_qty'], [])
+            print "total_comp=", total_comp
+            if total_comp and total_comp[0]['compensation_oil_qty']:
+                qty += total_comp[0]['compensation_oil_qty']
             if float_is_zero(company.olive_oil_tax_price_unit, precision_digits=pr_tax):
                 price_unit = pricelist.get_product_price(
                     company.olive_oil_tax_product_id, qty, partner)

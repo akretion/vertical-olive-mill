@@ -26,8 +26,6 @@ class OliveOilProductionPack2Check(models.TransientModel):
         related='arrival_line_id.oil_qty', readonly=True)
     line_oil_ratio = fields.Float(
         related='arrival_line_id.oil_ratio', readonly=True)
-    line_shrinkage_oil_qty = fields.Float(
-        related='arrival_line_id.shrinkage_oil_qty', readonly=True)
     line_withdrawal_oil_qty = fields.Float(
         related='arrival_line_id.withdrawal_oil_qty', readonly=True)
     extra_ids = fields.One2many(
