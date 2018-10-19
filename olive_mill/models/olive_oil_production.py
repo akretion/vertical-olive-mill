@@ -57,27 +57,32 @@ class OliveOilProduction(models.Model):
         track_visibility='onchange')
     compensation_location_id = fields.Many2one(
         'stock.location', string='Compensation Tank',
-        readonly=True, states={'draft': [('readonly', False)]},
+        readonly=True, states={'draft': [('readonly', False)], 'ratio': [('readonly', False)]},
         domain=[('olive_tank', '=', True)], track_visibility='onchange')
     compensation_sale_location_id = fields.Many2one(
         'stock.location', string='Compensation Sale Tank',
         states={'done': [('readonly', True)]},
-        domain=[('olive_tank', '=', True), ('usage', '=', 'internal')],
-        track_visibility='onchange')
+        domain=[('olive_tank', '=', True)], track_visibility='onchange')
+    compensation_oil_product_id = fields.Many2one(
+        'product.product', string='Compensation Oil Type', readonly=True,
+        states={'draft': [('readonly', False)], 'ratio': [('readonly', False)]})
+    compensation_readonly_oil_product_id = fields.Many2one(
+        related='compensation_oil_product_id', readonly=True)
     compensation_type = fields.Selection([
         ('none', 'No Compensation'),
         ('first', 'First of the Day'),
         ('last', 'Last of the Day'),
-        ], string='Compensation Type', default='none',
-        readonly=True, states={'draft': [('readonly', False)], 'ratio': [('readonly', False)]})
+        ], string='Compensation Type', default='none', readonly=True,
+        states={'draft': [('readonly', False)], 'ratio': [('readonly', False)]})
     compensation_last_olive_qty = fields.Float(
         string='Olive Compensation Qty',
-        digits=dp.get_precision('Olive Weight'),
-        readonly=True, states={'draft': [('readonly', False)]},
+        digits=dp.get_precision('Olive Weight'), readonly=True,
+        states={'draft': [('readonly', False)], 'ratio': [('readonly', False)]},
         track_visibility='onchange', help="Olive compensation in kg")
     compensation_ratio = fields.Float(
         string='Compensation Ratio', digits=dp.get_precision('Olive Oil Ratio'),
-        readonly=True, states={'draft': [('readonly', False)]})
+        readonly=True,
+        states={'draft': [('readonly', False)], 'ratio': [('readonly', False)]})
     olive_qty = fields.Float(
         string='Olive Qty', compute='_compute_lines',
         digits=dp.get_precision('Olive Weight'), readonly=True, store=True,
@@ -92,7 +97,8 @@ class OliveOilProduction(models.Model):
         ('withdrawal', 'Withdrawal'),
         ('sale', 'Sale'),
         ('mix', 'Mix'),
-        ], string='Oil Destination', compute='_compute_oil_destination', readonly=True)
+        ], string='Oil Destination', compute='_compute_oil_destination',
+        readonly=True)
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Type', readonly=True)
     oil_qty_kg = fields.Float(
@@ -168,6 +174,7 @@ class OliveOilProduction(models.Model):
         cloc = False
         res = {'warning': {}}
         wh = self.warehouse_id
+        coil_product_id = False
         if self.compensation_type == 'last':
             cloc = wh.olive_compensation_loc_id
             cratio = wh.olive_oil_compensation_ratio
@@ -188,7 +195,9 @@ class OliveOilProduction(models.Model):
                     "empty on the warehouse '%s'.") % wh.display_name
         elif self.compensation_type == 'first':
             cloc = wh.olive_compensation_loc_id
+            coil_product_id = cloc.oil_product_id.id
         self.compensation_location_id = cloc
+        self.compensation_oil_product_id = coil_product_id
         self.compensation_last_olive_qty = cqty_last
         self.compensation_ratio = cratio
         return res
@@ -303,7 +312,24 @@ class OliveOilProduction(models.Model):
             if float_compare(l.olive_qty, 0, precision_digits=pr_oli) <= 0:
                 raise UserError(_(
                     "On line %s, the olive qty is null !") % l.name)
+        self.check_first_of_day_scenario()
 
+        self.write({
+            'state': 'ratio',
+            'oil_product_id': oil_product.id,
+            })
+
+    def check_first_of_day_scenario(self):
+        if self.compensation_type == 'first':
+            withdrawals = [l.id for l in self.line_ids if l.oil_destination == 'withdrawal']
+            if len(withdrawals) > 1:
+                raise UserError(_(
+                    "This first-of-day compensation scenario is not implemented yet."))
+
+    def start_ratio2force(self):
+        self.ensure_one()
+        assert self.state == 'ratio'
+        self.check_first_of_day_scenario()
         compensation_oil_qty = False
         cratio = self.compensation_ratio
         ctype = self.compensation_type
@@ -318,11 +344,14 @@ class OliveOilProduction(models.Model):
             compensation_oil_qty =\
                 self.compensation_location_id.olive_oil_qty()
         self.write({
-            'state': 'ratio',
-            'oil_product_id': oil_product.id,
             'compensation_oil_qty': compensation_oil_qty,
             'compensation_oil_qty_kg': compensation_oil_qty * density,
             })
+        action = self.env['ir.actions.act_window'].for_xml_id(
+            'olive_mill', 'olive_oil_production_ratio2force_action')
+        action['context'] = {'default_production_id': self.id}
+        print "action=", action
+        return action
 
     def ratio2force(self):
         self.ensure_one()
@@ -336,6 +365,7 @@ class OliveOilProduction(models.Model):
             'state': new_state,
             })
         self.set_qty_on_lines()
+        self.check_first_of_day_scenario()
 
     def force2pack(self):
         self.ensure_one()
@@ -371,6 +401,11 @@ class OliveOilProduction(models.Model):
             first_line_to_process = force_ratio[0]
             first_line_ratio = force_ratio[1]
             first_line_oil_qty = first_line_to_process.olive_qty * first_line_ratio / 100.0
+            if float_compare(first_line_oil_qty, total_oil_qty, precision_digits=oil_prec) > 0:
+                raise UserError(_(
+                    "The forced ratio (%s %% on arrival line %s) is not possible because it would "
+                    "attribute more oil than the produced oil.") % (
+                        first_line_ratio, first_line_to_process.name))
             total_oil_prorata = total_oil_qty - first_line_oil_qty
             total_olive_prorata = self.olive_qty - first_line_to_process.olive_qty
         else:
@@ -382,7 +417,7 @@ class OliveOilProduction(models.Model):
         first_line_compensation_oil_qty = False
         if total_compensation_oil_qty:
             first_line_compensation_oil_qty = total_compensation_oil_qty * first_line_oil_qty / total_oil_qty
-
+        print "first_line_compensation_oil_qty=", first_line_compensation_oil_qty
         first_line_vals = first_line_to_process.oil_qty_compute_other_vals(
             first_line_oil_qty, first_line_compensation_oil_qty, first_line_ratio)
         # Write on first line
@@ -391,11 +426,15 @@ class OliveOilProduction(models.Model):
         for line in lines:
             # compute oil qty at the pro-rata of olive qty
             oil_qty = line.olive_qty * total_oil_prorata / total_olive_prorata
-            ratio = float_round(
-                100 * oil_qty / line.olive_qty, precision_digits=ratio_prec)
-            compensation_oil_qty = False
+            olive_qty_with_compensation = line.olive_qty
+            if ctype == 'last':
+                olive_qty_with_compensation += self.compensation_last_olive_qty * line.olive_qty / self.olive_qty
+            compensation_oil_qty = 0.0
             if total_compensation_oil_qty:
-                compensation_oil_qty = total_compensation_oil_qty * oil_qty / total_oil_qty,
+                compensation_oil_qty = total_compensation_oil_qty * oil_qty / total_oil_qty
+            print "olive_qty_with_compensation=",olive_qty_with_compensation
+            ratio = float_round(
+                100 * (oil_qty + compensation_oil_qty) / olive_qty_with_compensation, precision_digits=ratio_prec)
             vals = line.oil_qty_compute_other_vals(
                 oil_qty, compensation_oil_qty, ratio)
             # Write on other lines
@@ -566,11 +605,11 @@ class OliveOilProduction(models.Model):
                     raise UserError(_(
                         "On oil production %s which has first-of-day "
                         "compensation, you must set a compensation sale tank.") % self.name)
-                if self.compensation_sale_location_id.oil_product_id != self.oil_product_id:
+                if self.compensation_sale_location_id.oil_product_id != self.compensation_oil_product_id:
                     raise UserError(_(
                         "On oil production %s, you must select a compensation "
                         "tank with an olive type %s.") % (
-                            self.name, self.oil_product_id.display_name))
+                            self.name, self.compensation_oil_product_id.display_name))
                 cloc.olive_oil_transfer(
                     self.compensation_sale_location_id, 'full', self.warehouse_id,
                     origin=_('Empty compensation tank to sale tank'), auto_validate=True)
@@ -582,7 +621,7 @@ class OliveOilProduction(models.Model):
                     auto_validate=True)
             else:
                 raise UserError(_(
-                    "This first-of-day compensation scenario is not implemented yet"))
+                    "This first-of-day compensation scenario is not implemented yet."))
             cloc.oil_product_id = False
 
         self.write(prod_vals)

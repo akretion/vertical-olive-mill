@@ -151,51 +151,14 @@ class OliveArrival(models.Model):
         pr_oil = self.env['decimal.precision'].precision_get(
             'Olive Oil Volume')
         wh = self.warehouse_id
+        partner_olive_culture_type = self.partner_id.olive_culture_type
+        palox_max_weight = self.company_id.olive_max_qty_per_palox
         arrival_vals = {
             'state': 'done',
             'done_datetime': fields.Datetime.now(),
             }
-
-        if self.returned_regular_case or self.returned_organic_case:
-            if (
-                    not self.lended_case_id and
-                    self.returned_regular_case > self.partner_id.olive_lended_regular_case):
-                raise UserError(_(
-                    "The olive farmer '%s' currently has %d lended case(s) "
-                    "and the olive arrival %s declares %d returned case(s).")
-                    % (self.partner_id.display_name,
-                       self.partner_id.olive_lended_regular_case,
-                       self.name,
-                       self.returned_regular_case))
-            if (
-                    not self.lended_case_id and
-                    self.returned_organic_case >
-                    self.partner_id.olive_lended_organic_case):
-                raise UserError(_(
-                    "The olive farmer '%s' currently has %d lended organic "
-                    "case(s) and the olive arrival %s declares %d returned "
-                    "organic case(s).") % (
-                        self.partner_id.display_name,
-                        self.partner_id.olive_lended_organic_case,
-                        self.name,
-                        self.returned_organic_case))
-            lended_case_vals = {
-                'partner_id': self.partner_id.id,
-                'regular_qty': self.returned_regular_case * -1,
-                'organic_qty': self.returned_organic_case * -1,
-                'warehouse_id': wh.id,
-                'company_id': self.company_id.id,
-                'notes': self.name,
-                }
-            if self.lended_case_id:
-                self.lended_case_id.write(lended_case_vals)
-            else:
-                lended_case = olco.create(lended_case_vals)
-                arrival_vals['lended_case_id'] = lended_case.id
-        returned_palox = self.env['olive.palox']
-        partner_olive_culture_type = self.partner_id.olive_culture_type
-        palox_max_weight = self.company_id.olive_max_qty_per_palox
         i = 0
+        warn_msgs = []
         for line in self.line_ids:
             i += 1
             if float_is_zero(line.olive_qty, precision_digits=pr_oli):
@@ -237,7 +200,7 @@ class OliveArrival(models.Model):
                         line.palox_id.name,
                         line.palox_id.oil_product_id.name))
 
-            # Check palox max qty
+            # Warn palox max qty
             new_weight = line.palox_id.weight + line.olive_qty
             if new_weight > palox_max_weight:
                 raise UserError(_(
@@ -249,14 +212,12 @@ class OliveArrival(models.Model):
             if (
                     line.oil_destination == 'mix' and
                     line.mix_withdrawal_oil_qty > wh.olive_oil_compensation_ratio * line.olive_qty / 100.0):
-                msg = _("On arrival line %d that has a mixed oil destination, "
+                warn_msgs.append(_("On arrival line %d that has a mixed oil destination, "
                         "the requested withdraway quantity (%s L) is superior to "
                         "the olive quantity of the line (%s kg) multiplied by the "
                         "average ratio (%s %%).") % (
                             i, line.mix_withdrawal_oil_qty,
-                            line.olive_qty, wh.olive_oil_compensation_ratio)
-                self.env.user.notify_warning(msg)
-                self.message_post(msg)
+                            line.olive_qty, wh.olive_oil_compensation_ratio))
 
             # Warn if not same variant
             same_palox_different_variant = oalo.search([
@@ -265,15 +226,13 @@ class OliveArrival(models.Model):
                 ('production_id', '=', False),
                 ('variant_id', '!=', line.variant_id.id)])
             if same_palox_different_variant:
-                msg = _(
+                warn_msgs.append(_(
                     "You are putting %s in palox %s but arrival line %s "
-                    "in the same palox has %s") % (
+                    "in the same palox has %s.") % (
                         line.variant_id.display_name,
                         line.palox_id.name,
                         same_palox_different_variant[0].name,
-                        same_palox_different_variant[0].variant_id.name)
-                self.env.user.notify_warning(msg)
-                self.message_post(msg)
+                        same_palox_different_variant[0].variant_id.name))
 
             # Warn if not same oil destination
             same_palox_different_oil_destination = oalo.search([
@@ -282,17 +241,67 @@ class OliveArrival(models.Model):
                 ('production_id', '=', False),
                 ('oil_destination', '!=', line.oil_destination)])
             if same_palox_different_oil_destination:
-                msg = _(
+                warn_msgs.append(_(
                     "You selected %s for palox %s but arrival line %s in "
-                    "the same palox has %s") % (
+                    "the same palox has %s.") % (
                         line.oil_destination,
                         line.palox_id.name,
                         same_palox_different_oil_destination[0].display_name,
-                        same_palox_different_oil_destination[0].oil_destination)
-                self.env.user.notify_warning(msg)
-                self.message_post(msg)
+                        same_palox_different_oil_destination[0].oil_destination))
             # Set line number
             line.name = '%s/%s' % (self.name, i)
+
+        if warn_msgs:
+            if not self._context.get('olive_no_warning'):
+                action = self.env['ir.actions.act_window'].for_xml_id(
+                    'olive_mill', 'olive_arrival_warning_action')
+                action['context'] = {
+                    'default_arrival_id': self.id,
+                    'default_msg': '\n\n'.join(warn_msgs),
+                    'default_count': len(warn_msgs),
+                    }
+                return action
+            else:
+                for warn_msg in warn_msgs:
+                    self.message_post(warn_msg)
+
+        if self.returned_regular_case or self.returned_organic_case:
+            if (
+                    not self.lended_case_id and
+                    self.returned_regular_case > self.partner_id.olive_lended_regular_case):
+                raise UserError(_(
+                    "The olive farmer '%s' currently has %d lended case(s) "
+                    "and the olive arrival %s declares %d returned case(s).")
+                    % (self.partner_id.display_name,
+                       self.partner_id.olive_lended_regular_case,
+                       self.name,
+                       self.returned_regular_case))
+            if (
+                    not self.lended_case_id and
+                    self.returned_organic_case >
+                    self.partner_id.olive_lended_organic_case):
+                raise UserError(_(
+                    "The olive farmer '%s' currently has %d lended organic "
+                    "case(s) and the olive arrival %s declares %d returned "
+                    "organic case(s).") % (
+                        self.partner_id.display_name,
+                        self.partner_id.olive_lended_organic_case,
+                        self.name,
+                        self.returned_organic_case))
+            lended_case_vals = {
+                'partner_id': self.partner_id.id,
+                'regular_qty': self.returned_regular_case * -1,
+                'organic_qty': self.returned_organic_case * -1,
+                'warehouse_id': wh.id,
+                'company_id': self.company_id.id,
+                'notes': self.name,
+                }
+            if self.lended_case_id:
+                self.lended_case_id.write(lended_case_vals)
+            else:
+                lended_case = olco.create(lended_case_vals)
+                arrival_vals['lended_case_id'] = lended_case.id
+        returned_palox = self.env['olive.palox']
         # Mark palox as returned
         returned_palox.write({
             'borrower_partner_id': False,
@@ -486,6 +495,7 @@ class OliveArrivalLine(models.Model):
                 "Missing Olive Oil Density on company '%s'")
                 % company.display_name)
         oil_qty = float_round(oil_qty, precision_digits=pr_oil)
+        print "compensation_oil_qty=", compensation_oil_qty
         compensation_oil_qty = float_round(
             compensation_oil_qty, precision_digits=pr_oil)
         oil_qty_kg = float_round(

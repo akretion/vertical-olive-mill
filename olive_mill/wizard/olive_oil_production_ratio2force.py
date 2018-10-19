@@ -28,6 +28,8 @@ class OliveOilProductionRatio2force(models.TransientModel):
         related='production_id.olive_qty', readonly=True)
     compensation_type = fields.Selection(
         related='production_id.compensation_type', readonly=True)
+    compensation_oil_product_id = fields.Many2one(
+        related='production_id.compensation_oil_product_id', readonly=True)
     compensation_last_olive_qty = fields.Float(
         related='production_id.compensation_last_olive_qty', readonly=True)
     compensation_oil_qty = fields.Float(

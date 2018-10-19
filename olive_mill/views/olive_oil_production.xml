@@ -14,7 +14,7 @@
         <form string="Oil Production">
             <header>
                 <button name="draft2ratio" string="Draft to Ratio" class="btn-primary" states="draft" type="object"/>
-                <button name="%(olive_oil_production_ratio2force_action)d" string="Enter Result" class="btn-primary" states="ratio" type="action" context="{'default_production_id': active_id}"/>
+                <button name="start_ratio2force" string="Enter Result" class="btn-primary" states="ratio" type="object"/>
                 <button name="force2pack" string="Don't Force a Ratio" class="btn-primary" states="force" type="object"/>
                 <button name="%(olive_oil_production_force2pack_action)d" string="Force a Ratio" class="btn-default" states="force" type="action" context="{'default_production_id': active_id}"/>
                 <button name="%(olive_oil_production_pack2check_action)d" string="Pack" class="btn-primary" states="pack" type="action" context="{'default_production_id': active_id}"/>
@@ -41,6 +41,8 @@
                             <label string=" kg" class="oe_inline"/>
                         </div>
                         <field name="compensation_type"/>
+                        <field name="compensation_oil_product_id" invisible="1"/>
+                        <field name="compensation_readonly_oil_product_id" attrs="{'invisible': [('compensation_type', '!=', 'first')]}"/>
                         <label for="compensation_last_olive_qty" attrs="{'invisible': [('compensation_type', '!=', 'last')]}"/>
                         <div name="compensation_last_olive_qty" attrs="{'invisible': [('compensation_type', '!=', 'last')]}">
                             <field name="compensation_last_olive_qty" class="oe_inline"/>
@@ -82,7 +84,7 @@
                         <field name="shrinkage_location_id"/>
                         <field name="withdrawal_location_id" attrs="{'invisible': [('oil_destination', '=', 'sale')]}"/>
                         <field name="compensation_location_id" attrs="{'invisible': [('compensation_type', 'not in', ('first', 'last'))], 'required': [('compensation_type', 'in', ('first', 'last'))]}"/>
-                        <field name="compensation_sale_location_id" attrs="{'invisible': ['|', ('compensation_type', '!=', 'first'), ('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank', '=', True), ('oil_product_id', '=', oil_product_id)]"/>
+                        <field name="compensation_sale_location_id" attrs="{'invisible': ['|', ('compensation_type', '!=', 'first'), ('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank', '=', True), ('oil_product_id', '=', compensation_oil_product_id)]"/>
                         <field name="oil_destination"/>
                     </group>
                 </group>
@@ -96,8 +98,8 @@
                                     <field name="oil_destination"/>
                                     <field name="olive_qty" sum="1"/>
                                     <field name="oil_ratio"/>
-                                    <field name="oil_qty_kg" sum="1"/>
                                     <field name="oil_qty" sum="1"/>
+                                    <field name="oil_qty_kg" sum="1"/>
                                     <field name="compensation_oil_qty" sum="1"/>
                                     <field name="shrinkage_oil_qty" sum="1"/>
                                     <field name="withdrawal_oil_qty" sum="1"/>
@@ -154,6 +156,10 @@
         <search string="Search Oil Productions">
             <field name="name"/>
             <field name="date"/>
+            <separator/>
+            <filter name="today" string="Today" domain="[('date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+            <filter name="tomorrow" string="Tomorrow" domain="[('date', '=', (context_today() + datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]"/>
+            <filter name="day-after-tomorrow" string="Day after Tomorrow" domain="[('date', '=', (context_today() + datetime.timedelta(days=2)).strftime('%Y-%m-%d'))]"/>
             <separator/>
             <filter string="In Progress" domain="[('state', 'not in', ('done', 'cancel'))]" name="progress"/>
             <filter string="Done" domain="[('state', '=', 'done')]" name="done"/>

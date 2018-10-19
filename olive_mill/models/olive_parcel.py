@@ -28,8 +28,8 @@ class OliveParcel(models.Model):
     irrigation = fields.Selection([
         ('dry', 'Dry'),
         ('dripping', 'Dripping'),
+        ('micro-sprinkler', 'Micro-Sprinkler'),
         ('spraying', 'Spraying'),
-        ('waterway', 'Waterway'),
         ], string='Irrigation')
     cultivation_method = fields.Char(string='Cultivation Method', size=128)
     notes = fields.Text(string='Notes')

@@ -27,15 +27,19 @@
                     </h1>
                 </div>
                 <group name="main">
-                    <field name="company_id" groups="base.group_multi_company"/>
-                    <field name="borrower_partner_id"/>
-                    <field name="borrowed_date"/>
-                    <field name="oil_product_id"/>
                     <label for="weight" string="Current Weight"/>
                     <div>
                         <field name="weight" class="oe_inline"/>
                         <label string=" kg" class="oe_inline"/>
                     </div>
+                    <field name="oil_product_id"/>
+                    <field name="oil_destination"/>
+                    <field name="borrower_partner_id"/>
+                    <field name="borrowed_date"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </group>
+                <group name="content" string="Current Content">
+                    <field name="line_ids" nolabel="1"/>
                 </group>
             </sheet>
             <div class="oe_chatter">
@@ -54,6 +58,8 @@
             <field name="name"/>
             <field name="weight"/>
             <field name="oil_product_id"/>
+            <field name="oil_destination"/>
+            <field name="farmers"/>
             <field name="borrower_partner_id"/>
             <field name="borrowed_date"/>
         </tree>

@@ -19,6 +19,17 @@ class StockLocation(models.Model):
         'product.product', string='Oil Product',
         domain=[('olive_type', '=', 'oil')])
 
+    def name_get(self):
+        res = super(StockLocation, self).name_get()
+        new_res = []
+        for entry in res:
+            loc = self.browse(entry[0])
+            new_name = entry[1]
+            if loc.olive_tank and loc.oil_product_id:
+                new_name = '%s (%s)' % (new_name, loc.oil_product_id.name)
+            new_res.append((entry[0], new_name))
+        return new_res
+
     def olive_oil_qty(self):
         self.ensure_one()
         # I can't group by on product_uom_id to check that it is L

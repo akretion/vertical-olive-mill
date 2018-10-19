@@ -200,6 +200,31 @@
     </field>
 </record>
 
+<record id="olive_arrival_line_search" model="ir.ui.view">
+    <field name="name">olive.arrival.line.search</field>
+    <field name="model">olive.arrival.line</field>
+    <field name="arch" type="xml">
+        <search string="Search Arrival Lines">
+            <field name="partner_id"/>
+            <field name="season_id"/>
+            <field name="warehouse_id"/>
+            <separator/>
+            <filter name="regular" string="Regular" domain="[('partner_olive_culture_type', '=', 'regular')]"/>
+            <filter name="conversion" string="Conversion" domain="[('partner_olive_culture_type', '=', 'conversion')]"/>
+            <filter name="organic" string="Organic" domain="[('partner_olive_culture_type', '=', 'organic')]"/>
+            <group string="Group By" name="groupby">
+                <filter name="partner_groupby" string="Partner" context="{'group_by': 'partner_id'}"/>
+                <filter name="arrival_day_groupby" string="Arrival Day" context="{'group_by': 'arrival_date:day'}"/>
+                <filter name="arrival_week_groupby" string="Arrival Week" context="{'group_by': 'arrival_date:week'}"/>
+                <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>
+                <filter name="oil_destination_groupby" string="Oil Destination" context="{'group_by': 'oil_destination'}"/>
+                <filter name="variant_groupby" string="Olive Variant" context="{'group_by': 'variant_id'}"/>
+                <filter name="ochard_groupby" string="Ochard" context="{'group_by': 'ochard_id'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
 <record id="olive_arrival_line_pivot" model="ir.ui.view">
     <field name="name">olive.arrival.line.pivot</field>
     <field name="model">olive.arrival.line</field>
@@ -209,17 +234,48 @@
             <field name="oil_product_id" type="row"/>
             <field name="olive_qty" type="measure"/>
             <field name="oil_qty" type="measure"/>
+            <field name="withdrawal_oil_qty" type="measure"/>
+            <field name="sale_oil_qty" type="measure"/>
         </pivot>
+    </field>
+</record>
+
+
+<record id="partner_olive_arrival_line_pivot" model="ir.ui.view">
+    <field name="name">olive.arrival.line.pivot</field>
+    <field name="model">olive.arrival.line</field>
+    <field name="priority">1000</field>
+    <field name="arch" type="xml">
+        <pivot string="Olive Arrival Lines">
+            <field name="season_id" type="col"/>
+            <field name="oil_product_id" type="row"/>
+            <field name="olive_qty" type="measure"/>
+            <field name="oil_qty" type="measure"/>
+            <field name="withdrawal_oil_qty" type="measure"/>
+            <field name="sale_oil_qty" type="measure"/>
+        </pivot>
+    </field>
+</record>
+
+
+<record id="olive_arrival_line_graph" model="ir.ui.view">
+    <field name="name">olive.arrival.line.graph</field>
+    <field name="model">olive.arrival.line</field>
+    <field name="arch" type="xml">
+        <graph string="Olive Arrival Lines">
+            <field name="arrival_date" type="row" interval="week"/>
+            <field name="olive_qty" type="measure"/>
+        </graph>
     </field>
 </record>
 
 <record id="olive_arrival_line_action" model="ir.actions.act_window">
     <field name="name">Olive Arrivals Lines</field>
     <field name="res_model">olive.arrival.line</field>
-    <field name="view_mode">tree,form,pivot</field>
+    <field name="view_mode">tree,form,pivot,graph</field>
 </record>
 
-<menuitem id="olive_arrival_line_menu" action="olive_arrival_line_action" parent="olive_operations_menu" sequence="25" groups="stock.group_stock_manager"/>  <!-- maybe we will remove group once appropriate prodections are setup -->
+<menuitem id="olive_arrival_line_menu" action="olive_arrival_line_action" parent="olive_report_menu" sequence="10" groups="stock.group_stock_manager"/>  <!-- maybe we will remove group once appropriate prodections are setup -->
 
 <record id="olive_arrival_line_extra_tree" model="ir.ui.view">
     <field name="name">olive.arrival.line.extra.tree</field>

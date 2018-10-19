@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="olive_arrival_warning_form" model="ir.ui.view">
+    <field name="name">olive.arrival.warning.form</field>
+    <field name="model">olive.arrival.warning</field>
+    <field name="arch" type="xml">
+        <form string="Olive Arrival Warnings">
+            <div class="oe_title">
+                <h1>
+                    <field name="count" class="oe_inline"/>
+                    <label for="count" string=" warning(s)" class="oe_inline"/>
+                </h1>
+            </div>
+            <group name="main">
+                <field name="msg" nolabel="1"/>
+            </group>
+            <footer>
+                <button name="validate" type="object" string="Force Validation" class="btn-primary"/>
+                <button special="cancel" string="Cancel" class="btn-default"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+<record id="olive_arrival_warning_action" model="ir.actions.act_window">
+    <field name="name">Warning</field>
+    <field name="res_model">olive.arrival.warning</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+</record>
+
+
+</odoo>
