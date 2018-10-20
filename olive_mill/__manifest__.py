@@ -21,7 +21,6 @@
         'report_py3o',
         'base_usability',  # for reports
         'onchange_helper',
-        'web_notify',
         ],
     'data': [
         'security/olive_security.xml',

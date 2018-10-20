@@ -17,7 +17,7 @@
                 <field name="palox_id"/>
                 <field name="oil_product_id"/>
                 <field name="todo_arrival_line_ids" invisible="1"/>
-                <field name="arrival_line_id"/>
+                <field name="arrival_line_id" domain="[('production_id', '=', production_id)]"/>
                 <label for="line_oil_qty"/>
                 <div>
                     <field name="line_oil_qty" class="oe_inline"/>

@@ -212,6 +212,10 @@
             <filter name="regular" string="Regular" domain="[('partner_olive_culture_type', '=', 'regular')]"/>
             <filter name="conversion" string="Conversion" domain="[('partner_olive_culture_type', '=', 'conversion')]"/>
             <filter name="organic" string="Organic" domain="[('partner_olive_culture_type', '=', 'organic')]"/>
+            <separator/>
+            <filter name="arrival_state_draft" string="Arrival Draft" domain="[('arrival_state', '=', 'draft')]"/>
+            <filter name="arrival_state_done" string="Arrival Done" domain="[('arrival_state', '=', 'done')]"/>
+            <filter name="arrival_state_cancel" string="Arrival Cancel" domain="[('arrival_state', '=', 'cancel')]"/>
             <group string="Group By" name="groupby">
                 <filter name="partner_groupby" string="Partner" context="{'group_by': 'partner_id'}"/>
                 <filter name="arrival_day_groupby" string="Arrival Day" context="{'group_by': 'arrival_date:day'}"/>
@@ -273,6 +277,7 @@
     <field name="name">Olive Arrivals Lines</field>
     <field name="res_model">olive.arrival.line</field>
     <field name="view_mode">tree,form,pivot,graph</field>
+    <field name="context">{'search_default_arrival_state_done': True}</field>
 </record>
 
 <menuitem id="olive_arrival_line_menu" action="olive_arrival_line_action" parent="olive_report_menu" sequence="10" groups="stock.group_stock_manager"/>  <!-- maybe we will remove group once appropriate prodections are setup -->

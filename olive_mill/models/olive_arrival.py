@@ -417,24 +417,29 @@ class OliveArrivalLine(models.Model):
     # END fields BEFORE shrinkage BEFORE filter_loss
 
     shrinkage_oil_qty = fields.Float(  # Sale and withdraw
+        string='Shrinkage Oil Qty (L)',
         readonly=True, digits=dp.get_precision('Olive Oil Volume'))
     shrinkage_oil_qty_kg = fields.Float(  # Withdraw only
+        string='Shrinkage Oil Qty (kg)',
         readonly=True, digits=dp.get_precision('Olive Weight'))
 
     # START fields AFTER shrinkage
     withdrawal_oil_qty_kg = fields.Float(
+        string='Withdrawal Oil Qty (Kg)',
         readonly=True, digits=dp.get_precision('Olive Weight'))
     withdrawal_oil_qty = fields.Float(
+        string='Withdrawal Oil Qty (L)',
         readonly=True, digits=dp.get_precision('Olive Oil Volume'))
     # END fields AFTER shrinkage
 
     to_sale_tank_oil_qty = fields.Float(
+        string='Oil Qty to Sale Tank (L)',
         readonly=True, digits=dp.get_precision('Olive Oil Volume'))
     sale_oil_qty = fields.Float(
+        string='Oil Qty Sold (L)',
         readonly=True, digits=dp.get_precision('Olive Oil Volume'))
     filter_loss_oil_qty = fields.Float(
-        readonly=True, digits=dp.get_precision('Olive Oil Volume'))
-    sale_without_shrinkage_oil_qty = fields.Float(
+        string='Oil Qty Lost in Filter (L)',
         readonly=True, digits=dp.get_precision('Olive Oil Volume'))
     # Moves
     sale_move_id = fields.Many2one(
@@ -468,6 +473,15 @@ class OliveArrivalLine(models.Model):
         if self.oil_destination != 'mix':
             self.mix_withdrawal_oil_qty = 0
 
+    def unlink(self):
+        for line in self:
+            if line.arrival_id:
+                raise UserError(_(
+                    "Deletion of arrival line %s not allowed because "
+                    "it is still linked to arrival %s.") % (
+                        line.name, line.arrival_id.name))
+        return super(OliveArrivalLine, self).unlink()
+
     @api.depends('name', 'partner_id', 'variant_id')
     def name_get(self):
         res = []
@@ -495,7 +509,6 @@ class OliveArrivalLine(models.Model):
                 "Missing Olive Oil Density on company '%s'")
                 % company.display_name)
         oil_qty = float_round(oil_qty, precision_digits=pr_oil)
-        print "compensation_oil_qty=", compensation_oil_qty
         compensation_oil_qty = float_round(
             compensation_oil_qty, precision_digits=pr_oil)
         oil_qty_kg = float_round(

@@ -27,7 +27,7 @@ class OliveInvoiceCreate(models.TransientModel):
         self.ensure_one()
         oalo = self.env['olive.arrival.line']
         commercial_partner = self.partner_id.commercial_partner_id
-        invoice_ids = []
+        in_invoice = out_invoice = self.env['account.invoice']
         if self.invoice_type in ('in', 'all'):
             lines = oalo.search([
                 ('partner_id', 'child_of', commercial_partner.id),
@@ -39,7 +39,6 @@ class OliveInvoiceCreate(models.TransientModel):
                 ])
             if lines:
                 in_invoice = lines.in_invoice_create()
-                invoice_ids.append(in_invoice.id)
         if self.invoice_type in ('all', 'out'):
             lines = oalo.search([
                 ('partner_id', 'child_of', commercial_partner.id),
@@ -49,15 +48,20 @@ class OliveInvoiceCreate(models.TransientModel):
                 ])
             if lines:
                 out_invoice = lines.out_invoice_create()
-                invoice_ids.append(out_invoice.id)
-        if not invoice_ids:
-            raise UserError(_("No invoice to create"))
-        action = self.env['ir.actions.act_window'].for_xml_id(
-            'account', 'action_invoice_tree2')
-        action.update({
-            'views': False,
-            'view_id': False,
-            'view_mode': 'tree,form,kanban,calendar',
-            'domain': "[('id', 'in', %s)]" % invoice_ids,
-            })
+        if not in_invoice and not out_invoice:
+            raise UserError(_("No invoice created"))
+        if in_invoice and not out_invoice:
+            action = self.env.ref('account.action_invoice_tree2').read()[0]
+            action.update({
+                'views': [(self.env.ref('account.invoice_supplier_form').id, 'form')],
+                'view_mode': 'form,tree,kanban,calendar',
+                'res_id': in_invoice.id,
+                })
+        else:
+            action = self.env.ref('account.action_invoice_tree1').read()[0]
+            action.update({
+                'views': [(self.env.ref('account.invoice_form').id, 'form')],
+                'view_mode': 'form,tree,kanban,calendar',
+                'res_id': out_invoice.id,
+                })
         return action

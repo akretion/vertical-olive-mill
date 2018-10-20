@@ -14,7 +14,9 @@ class StockLocation(models.Model):
 
     olive_tank = fields.Boolean(string='Olive Oil Tank')
     olive_season_id = fields.Many2one(
-        'olive.season', string='Season', ondelete='restrict')
+        'olive.season', string='Olive Season', ondelete='restrict')
+    olive_season_year = fields.Char(
+        related='olive_season_id.year', store=True)
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Product',
         domain=[('olive_type', '=', 'oil')])
@@ -26,7 +28,8 @@ class StockLocation(models.Model):
             loc = self.browse(entry[0])
             new_name = entry[1]
             if loc.olive_tank and loc.oil_product_id:
-                new_name = '%s (%s)' % (new_name, loc.oil_product_id.name)
+                new_name = '%s (%s, %s)' % (
+                    new_name, loc.olive_season_year, loc.oil_product_id.name)
             new_res.append((entry[0], new_name))
         return new_res
 
@@ -35,12 +38,43 @@ class StockLocation(models.Model):
         # I can't group by on product_uom_id to check that it is L
         # because it's a related non stored field...
         qty = 0.0
-        quant_rg = self.check_olive_oil_tank()
+        quant_rg = self.olive_oil_tank_check()
         if quant_rg and quant_rg[0].get('qty'):
             qty = quant_rg[0]['qty']
         return qty
 
-    def check_olive_oil_tank(self, raise_if_empty=False):
+    def olive_oil_tank_compatibility_check(self, oil_product, season):
+        self.ensure_one()
+        if not self.olive_tank:
+            raise UserError(_(
+                "The stock location '%s' is not an olive tank.")
+                % self.display_name)
+        if not self.oil_product_id:
+            raise UserError(_(
+                "Oil product is not configured on stock location '%s'.")
+                % self.display_name)
+        if not self.olive_season_id:
+            raise UserError(_(
+                "Olive season is not configured on stock location '%s'.")
+                % self.display_name)
+        if self.oil_product_id != oil_product:
+            raise UserError(_(
+                "You are working with oil product '%s', "
+                "but the olive tank '%s' is configured "
+                "with oil product '%s'.") % (
+                    oil_product.display_name,
+                    self.display_name,
+                    self.oil_product_id.display_name))
+        if self.olive_season_id != season:
+            raise UserError(_(
+                "You are working with olive season '%s', "
+                "but the olive tank '%s' is configured "
+                "with olive season '%s'.") % (
+                    season.name,
+                    self.display_name,
+                    self.olive_season_id.name))
+
+    def olive_oil_tank_check(self, raise_if_empty=False):
         self.ensure_one()
         sqo = self.env['stock.quant']
         ppo = self.env['product.product']
@@ -82,10 +116,10 @@ class StockLocation(models.Model):
         sqo = self.env['stock.quant']
         smo = self.env['stock.move']
         src_loc = self
-        src_loc.check_olive_oil_tank(raise_if_empty=True)
+        src_loc.olive_oil_tank_check(raise_if_empty=True)
         # compat src/dest
         if dest_loc.olive_tank:
-            dest_loc.check_olive_oil_tank()
+            dest_loc.olive_oil_tank_check()
             if not dest_loc.oil_product_id:
                 dest_loc.oil_product_id = src_loc.oil_product_id.id
             elif dest_loc.oil_product_id != src_loc.oil_product_id:

@@ -20,6 +20,8 @@ class OliveOilProductionRatio2force(models.TransientModel):
         'olive.oil.production', string='Olive Oil Production', required=True)
     palox_id = fields.Many2one(
         related='production_id.palox_id', readonly=True)
+    season_id = fields.Many2one(
+        related='production_id.season_id', readonly=True)
     oil_product_id = fields.Many2one(
         related='production_id.oil_product_id', readonly=True)
     oil_destination = fields.Selection(
@@ -47,6 +49,10 @@ class OliveOilProductionRatio2force(models.TransientModel):
         related='production_id.sale_location_id', readonly=False)
     compensation_sale_location_id = fields.Many2one(
         related='production_id.compensation_sale_location_id', readonly=False)
+    decanter_duration = fields.Integer(string='Decanter Duration')
+    decanter_speed = fields.Integer(
+        string='Decanter Speed', compute='_compute_decanter_speed',
+        readonly=True)
 
     @api.depends('oil_qty_kg')
     def _compute_all(self):
@@ -73,6 +79,14 @@ class OliveOilProductionRatio2force(models.TransientModel):
             wiz.ratio = ratio
             wiz.oil_qty = oil_qty
 
+    @api.depends('decanter_duration')
+    def _compute_decanter_speed(self):
+        for wiz in self:
+            decanter_speed = 0
+            if wiz.decanter_duration:
+                decanter_speed = wiz.olive_qty * 60 / wiz.decanter_duration
+            wiz.decanter_speed = decanter_speed
+
     def validate(self):
         self.ensure_one()
         prod = self.production_id
@@ -84,6 +98,7 @@ class OliveOilProductionRatio2force(models.TransientModel):
             'oil_qty_kg': self.oil_qty_kg,
             'oil_qty': self.oil_qty,
             'ratio': self.ratio,
+            'decanter_speed': self.decanter_speed,
             }
         prod.write(vals)
         prod.ratio2force()

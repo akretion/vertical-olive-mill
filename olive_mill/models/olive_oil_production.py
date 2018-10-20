@@ -42,7 +42,6 @@ class OliveOilProduction(models.Model):
     sale_location_id = fields.Many2one(
         'stock.location', string='Sale Tank',
         states={'done': [('readonly', True)]},
-        domain=[('olive_tank', '=', True), ('usage', '=', 'internal')],
         track_visibility='onchange')
     # not a pb to have withdrawal_location_id required because
     # this field has a default value
@@ -53,16 +52,14 @@ class OliveOilProduction(models.Model):
     shrinkage_location_id = fields.Many2one(
         'stock.location', string='Shrinkage Tank',
         states={'done': [('readonly', True)]},
-        domain=[('olive_tank', '=', True)],
         track_visibility='onchange')
     compensation_location_id = fields.Many2one(
         'stock.location', string='Compensation Tank',
         readonly=True, states={'draft': [('readonly', False)], 'ratio': [('readonly', False)]},
-        domain=[('olive_tank', '=', True)], track_visibility='onchange')
+        track_visibility='onchange')
     compensation_sale_location_id = fields.Many2one(
         'stock.location', string='Compensation Sale Tank',
-        states={'done': [('readonly', True)]},
-        domain=[('olive_tank', '=', True)], track_visibility='onchange')
+        states={'done': [('readonly', True)]}, track_visibility='onchange')
     compensation_oil_product_id = fields.Many2one(
         'product.product', string='Compensation Oil Type', readonly=True,
         states={'draft': [('readonly', False)], 'ratio': [('readonly', False)]})
@@ -115,6 +112,10 @@ class OliveOilProduction(models.Model):
     date = fields.Date(
         string='Date', default=fields.Date.context_today, required=True,
         states={'done': [('readonly', True)]}, track_visibility='onchange')
+    sample = fields.Boolean(string='Sample', readonly=True)
+    farmers = fields.Char(string='Farmers', readonly=True)
+    decanter_speed = fields.Integer(
+        string='Decanter Speed', states={'done': [('readonly', True)]})
     sequence = fields.Integer()
     state = fields.Selection([
         ('draft', 'Palox Selection'),
@@ -132,8 +133,7 @@ class OliveOilProduction(models.Model):
         'stock.move', string='Shrinkage Stock Move', readonly=True, copy=False)
     line_ids = fields.One2many(
         'olive.arrival.line', 'production_id', string='Arrival Lines',
-        readonly=True,
-        states={'cancel': [('readonly', False)], 'draft': [('readonly', False)]})
+        readonly=True)
 
     _sql_constraints = [
         ('oil_qty_kg_positive', 'CHECK(oil_qty_kg) >= 0', 'The oil quantity must be positive.'),
@@ -299,6 +299,8 @@ class OliveOilProduction(models.Model):
             self.palox_id.oil_product_id = False
         oil_dests = []
         oil_product = False
+        sample = False
+        farmers = []
         for l in self.line_ids:
             oil_dests.append(l.oil_destination)
             if oil_product:
@@ -309,12 +311,25 @@ class OliveOilProduction(models.Model):
                     # TODO improve error
             else:
                 oil_product = l.oil_product_id
+            if l.season_id != self.season_id:
+                raise UserError(_(
+                    "The season of arrival line %s is %s, but this oil "
+                    "production is attached to season %s.") % (
+                        l.name, l.season_id.name, self.season_id.name))
+            farmers.append(l.partner_id.name)
             if float_compare(l.olive_qty, 0, precision_digits=pr_oli) <= 0:
                 raise UserError(_(
                     "On line %s, the olive qty is null !") % l.name)
+            if not sample:
+                for extra in l.extra_ids:
+                    if extra.product_olive_type == 'analysis':
+                        sample = True
+                        break
         self.check_first_of_day_scenario()
 
         self.write({
+            'farmers': u' / '.join(farmers),
+            'sample': sample,
             'state': 'ratio',
             'oil_product_id': oil_product.id,
             })
@@ -476,6 +491,7 @@ class OliveOilProduction(models.Model):
         sale_loc = self.sale_location_id
         cloc = self.compensation_location_id
         oil_product = self.oil_product_id
+        season = self.season_id
         to_shrinkage_tank_oil_qty = 0.0
         ctype = self.compensation_type
 
@@ -483,18 +499,7 @@ class OliveOilProduction(models.Model):
             if not sale_loc:
                 raise UserError(_(
                     "Sale tank is not set on oil production %s.") % self.name)
-            if not sale_loc.oil_product_id:
-                raise UserError(_(
-                    "Oil product not configured on stock location '%s'.")
-                    % sale_loc.display_name)
-            if sale_loc.oil_product_id != oil_product:
-                raise UserError(_(
-                    "The production %s is configured to produce "
-                    "oil product '%s', but the sale tank '%s' "
-                    "is configured with oil product '%s'.") % (
-                        self.name, oil_product.display_name,
-                        sale_loc.display_name,
-                        sale_loc.oil_product_id.display_name))
+            sale_loc.olive_oil_tank_compatibility_check(oil_product, season)
         self.compensation_check_tank()
         if ctype == 'last':
             if float_compare(self.compensation_oil_qty, 0, precision_digits=pr_oil) <= 0:
@@ -605,11 +610,8 @@ class OliveOilProduction(models.Model):
                     raise UserError(_(
                         "On oil production %s which has first-of-day "
                         "compensation, you must set a compensation sale tank.") % self.name)
-                if self.compensation_sale_location_id.oil_product_id != self.compensation_oil_product_id:
-                    raise UserError(_(
-                        "On oil production %s, you must select a compensation "
-                        "tank with an olive type %s.") % (
-                            self.name, self.compensation_oil_product_id.display_name))
+                self.compensation_sale_location_id.olive_oil_tank_compatibility_check(
+                    self.compensation_oil_product_id, season)
                 cloc.olive_oil_transfer(
                     self.compensation_sale_location_id, 'full', self.warehouse_id,
                     origin=_('Empty compensation tank to sale tank'), auto_validate=True)
@@ -633,3 +635,7 @@ class OliveOilProduction(models.Model):
                     "Cannot delete production %s which is in Done state.")
                     % production.name)
         return super(OliveOilProduction, self).unlink()
+
+    def detach_lines(self):
+        self.ensure_one()
+        self.line_ids.write({'production_id': False})

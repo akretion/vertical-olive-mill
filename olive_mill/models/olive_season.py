@@ -21,6 +21,7 @@ class OliveSeason(models.Model):
             'olive.season'))
     start_date = fields.Date(string='Start Date', required=True)
     end_date = fields.Date(string='End Date', required=True)
+    year = fields.Char(compute='_compute_year', string='Year', store=True)
     early_bird_date = fields.Date(string='Early Bird Limit Date')
     default_expiry_date = fields.Date(string='Default Oil Expiry Date')
 
@@ -28,6 +29,11 @@ class OliveSeason(models.Model):
         'name_unique',
         'unique(name, company_id)',
         'This season name already exists in this company.')]
+
+    @api.depends('start_date')
+    def _compute_year(self):
+        for season in self:
+            season.year = season.start_date[:4]
 
     @api.constrains('start_date', 'end_date', 'early_bird_date')
     def season_check(self):

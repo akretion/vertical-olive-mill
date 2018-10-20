@@ -21,7 +21,8 @@ class OliveOilProductionPack2Check(models.TransientModel):
     todo_arrival_line_ids = fields.Many2many(
         'olive.arrival.line', string='Arrival Lines Left to Process')
     arrival_line_id = fields.Many2one(
-        'olive.arrival.line', required=True, string='Production Line')
+        'olive.arrival.line', string='Production Line',
+        readonly=False, required=True)
     line_oil_qty = fields.Float(
         related='arrival_line_id.oil_qty', readonly=True)
     line_oil_ratio = fields.Float(
@@ -63,23 +64,3 @@ class OliveOilProductionPack2Check(models.TransientModel):
         else:
             prod.pack2check()
             return True
-
-
-class OliveOilProductionPack2CheckLine(models.TransientModel):
-    _name = 'olive.oil.production.pack2check.line'
-    _description = 'Equivalent of olive.arrival.line.extra in wizard'
-
-    wizard_id = fields.Many2one(
-        'olive.oil.production.pack2check',
-        ondelete='cascade')
-    product_id = fields.Many2one(
-        'product.product', string='Extra Product',
-        required=True, ondelete='restrict',
-        domain=[
-            ('olive_type', '=', 'bottle'),
-            '|', ('tracking', '=', False), ('tracking', '=', 'none')])
-    qty = fields.Float(
-        string='Quantity', default=1,
-        digits=dp.get_precision('Product Unit of Measure'), required=True)
-    uom_id = fields.Many2one(
-        related='product_id.uom_id', readonly=True)

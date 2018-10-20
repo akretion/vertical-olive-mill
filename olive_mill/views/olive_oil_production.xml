@@ -13,7 +13,8 @@
     <field name="arch" type="xml">
         <form string="Oil Production">
             <header>
-                <button name="draft2ratio" string="Draft to Ratio" class="btn-primary" states="draft" type="object"/>
+                <button name="draft2ratio" string="Get Arrival Lines" class="btn-primary" states="draft" type="object"/>
+                <button name="detach_lines" string="Detach Arrival Lines" type="object" attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('line_ids', '=', [])]}"/>
                 <button name="start_ratio2force" string="Enter Result" class="btn-primary" states="ratio" type="object"/>
                 <button name="force2pack" string="Don't Force a Ratio" class="btn-primary" states="force" type="object"/>
                 <button name="%(olive_oil_production_force2pack_action)d" string="Force a Ratio" class="btn-default" states="force" type="action" context="{'default_production_id': active_id}"/>
@@ -80,12 +81,13 @@
                             <field name="ratio" class="oe_inline"/>
                             <label string=" %" class="oe_inline"/>
                         </div>
-                        <field name="sale_location_id" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank', '=', True), ('oil_product_id', '=', oil_product_id)]"/>
-                        <field name="shrinkage_location_id"/>
+                        <field name="sale_location_id" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank', '=', True), ('oil_product_id', '=', oil_product_id), ('olive_season_id', '=', season_id)]"/>
+                        <field name="shrinkage_location_id" domain="[('olive_tank', '=', True), ('olive_season_id', '=', season_id)]"/>
                         <field name="withdrawal_location_id" attrs="{'invisible': [('oil_destination', '=', 'sale')]}"/>
-                        <field name="compensation_location_id" attrs="{'invisible': [('compensation_type', 'not in', ('first', 'last'))], 'required': [('compensation_type', 'in', ('first', 'last'))]}"/>
-                        <field name="compensation_sale_location_id" attrs="{'invisible': ['|', ('compensation_type', '!=', 'first'), ('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank', '=', True), ('oil_product_id', '=', compensation_oil_product_id)]"/>
+                        <field name="compensation_location_id" attrs="{'invisible': [('compensation_type', 'not in', ('first', 'last'))], 'required': [('compensation_type', 'in', ('first', 'last'))]}" domain="[('olive_tank', '=', True), ('olive_season_id', '=', season_id)]"/>
+                        <field name="compensation_sale_location_id" attrs="{'invisible': ['|', ('compensation_type', '!=', 'first'), ('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank', '=', True), ('oil_product_id', '=', compensation_oil_product_id), ('olive_season_id', '=', season_id)('olive_season_id', '=', season_id)]"/>
                         <field name="oil_destination"/>
+                        <field name="sample"/>
                     </group>
                 </group>
                 <notebook>
@@ -113,6 +115,11 @@
                     </page>
                     <page name="additional" string="Additional Info">
                         <group name="tech">
+                            <label for="decanter_speed"/>
+                            <div name="decanter_speed">
+                                <field name="decanter_speed" class="oe_inline"/>
+                                <label string=" kg / h"/>
+                            </div>
                             <field name="warehouse_id"/>
                             <field name="season_id"/>
                             <field name="company_id" groups="base.group_multi_company"/>
@@ -134,12 +141,13 @@
     <field name="name">olive.oil.production.tree</field>
     <field name="model">olive.oil.production</field>
     <field name="arch" type="xml">
-        <tree string="Oil Productions" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
+        <tree string="Oil Productions" decoration-info="state not in ('cancel', 'done')" decoration-muted="state == 'cancel'">
             <field name="sequence" widget="handle"/>
             <field name="name"/>
             <field name="date"/>
             <field name="palox_id"/>
             <field name="compensation_type"/>
+            <field name="farmers"/>
             <field name="olive_qty" string="Total Olive Qty (kg)"/>
             <field name="oil_qty" string="Oil Qty (L)"/>
             <field name="ratio" string="Ratio (%)"/>
