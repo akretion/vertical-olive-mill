@@ -12,11 +12,9 @@ class OliveOilTankTransfer(models.TransientModel):
     _description = 'Wizard for olive oil tank transfer'
 
     src_location_id = fields.Many2one(
-        'stock.location', string='Source Olive Tank', required=True,
-        domain=[('olive_tank', '=', True)])
+        'stock.location', string='Source Olive Tank', required=True)
     dest_location_id = fields.Many2one(
-        'stock.location', string='Destination Olive Tank', required=True,
-        domain=[('olive_tank', '=', True)])
+        'stock.location', string='Destination Olive Tank', required=True)
     transfer_type = fields.Selection([
         ('full', 'Full Transfer'),
         ('partial', 'Partial Transfer (Not implemented yet)'),
@@ -25,6 +23,9 @@ class OliveOilTankTransfer(models.TransientModel):
         'stock.warehouse', string='Warehouse', required=True,
         domain=[('olive_mill', '=', True)],
         default=lambda self: self.env.user._default_olive_mill_wh())
+    season_id = fields.Many2one(
+        'olive.season', string='Season', required=True,
+        default=lambda self: self.env['olive.season'].get_current_season())
 
     def validate(self):
         self.ensure_one()

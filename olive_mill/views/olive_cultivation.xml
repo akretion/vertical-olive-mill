@@ -64,6 +64,6 @@
     <field name="context">{'olive_cultivation_main_view': True}</field>
 </record>
 
-<menuitem id="olive_cultivation_menu" action="olive_cultivation_action" parent="olive_data_menu" sequence="50"/>
+<menuitem id="olive_cultivation_menu" action="olive_cultivation_action" parent="olive_data_menu" sequence="20"/>
 
 </odoo>

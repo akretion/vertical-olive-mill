@@ -65,12 +65,12 @@
 </record>
 
 <record id="partner_organic_certification_action" model="ir.actions.act_window">
-    <field name="name">Partner Organic Certif.</field>
+    <field name="name">Organic Certifications</field>
     <field name="res_model">partner.organic.certification</field>
     <field name="view_mode">tree,form</field>
     <field name="context">{'partner_organic_certification_main_view': True}</field>
 </record>
 
-<menuitem id="partner_organic_certification_menu" action="partner_organic_certification_action" parent="olive_data_menu" sequence="90"/>
+<menuitem id="partner_organic_certification_menu" action="partner_organic_certification_action" parent="olive_data_menu" sequence="80"/>
 
 </odoo>

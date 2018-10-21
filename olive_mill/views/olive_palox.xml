@@ -89,6 +89,6 @@
     <field name="view_mode">tree,form</field>
 </record>
 
-<menuitem id="olive_palox_menu" action="olive_palox_action" parent="olive_data_menu" sequence="40"/>
+<menuitem id="olive_palox_menu" action="olive_palox_action" parent="olive_data_menu" sequence="50"/>
 
 </odoo>

@@ -14,8 +14,9 @@
         <form string="Olive Oil Tank Transfer">
             <group name="main">
                 <field name="warehouse_id"/>
-                <field name="src_location_id"/>
-                <field name="dest_location_id"/>
+                <field name="season_id"/>
+                <field name="src_location_id" domain="[('olive_tank', '=', True), ('olive_season_id', '=', season_id)]"/>
+                <field name="dest_location_id" domain="[('olive_tank', '=', True), ('olive_season_id', '=', season_id)]"/>
                 <field name="transfer_type"/>
             </group>
             <footer>

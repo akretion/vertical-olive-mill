@@ -74,6 +74,6 @@
     <field name="context">{'default_olive_mill': True, 'search_default_olive_mill': True}</field>
 </record>
 
-<menuitem id="stock_warehouse_olive_mill_menu" action="stock_warehouse_olive_mill_action" parent="olive_data_menu" sequence="60"/>
+<menuitem id="stock_warehouse_olive_mill_menu" action="stock_warehouse_olive_mill_action" parent="olive_data_menu" sequence="40"/>
 
 </odoo>

@@ -13,7 +13,7 @@
 
 <menuitem id="olive_data_menu" parent="olive_root_menu" name="Data" sequence="20"/>
 
-<menuitem id="olive_report_menu" parent="olive_root_menu" name="Report" sequence="30"/>
+<menuitem id="olive_report_menu" parent="olive_root_menu" name="Reports" sequence="30"/>
 
 <menuitem id="olive_config_menu" parent="olive_root_menu" name="Configuration" sequence="100" groups="stock.group_stock_manager"/>
 

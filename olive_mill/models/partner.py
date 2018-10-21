@@ -23,6 +23,9 @@ class ResPartner(models.Model):
         compute='_compute_olive_total', string='Lended Regular Case', readonly=True)
     olive_lended_organic_case = fields.Integer(
         compute='_compute_olive_total', string='Lended Organic Case', readonly=True)
+    olive_qty_current_season = fields.Integer(
+        compute='_compute_olive_total', string='Olive Qty', readonly=True,
+        help="Olive qty for the current season in Kg")
     olive_organic_certification_ids = fields.One2many(
         'partner.organic.certification', 'partner_id', 'Organic Certifications')
     olive_culture_type = fields.Selection([
@@ -70,6 +73,17 @@ class ResPartner(models.Model):
         for palox_re in palox_res:
             partner = self.browse(palox_re['borrower_partner_id'][0])
             partner.olive_lended_palox = palox_re['borrower_partner_id_count']
+        season = self.env['olive.season'].get_current_season()
+        if season:
+            arrival_res = self.env['olive.arrival.line'].read_group([
+                ('season_id', '=', season.id),
+                ('partner_id', 'in', self.ids),
+                ('arrival_state', '!=', 'cancel')],
+                ['partner_id', 'olive_qty'], ['partner_id'])
+            for arrival_re in arrival_res:
+                partner = self.browse(arrival_re['partner_id'][0])
+                partner.olive_qty_current_season = int(arrival_re['olive_qty'])
+
 
     def _compute_olive_organic_certified(self):
         season = self.env['olive.season'].get_current_season()

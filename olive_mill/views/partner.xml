@@ -7,34 +7,6 @@
 
 <odoo>
 
-<record id="ochard_partner_action" model="ir.actions.act_window">
-    <field name="name">Ochard</field>
-    <field name="res_model">olive.ochard</field>
-    <field name="view_mode">tree,form</field>
-    <field name="context">{'search_default_partner_id': active_id, 'default_partner_id': active_id}</field>
-</record>
-
-<record id="olive_lended_palox_partner_action" model="ir.actions.act_window">
-    <field name="name">Lended Palox</field>
-    <field name="res_model">olive.palox</field>
-    <field name="view_mode">tree,form</field>
-    <field name="context">{'search_default_borrower_partner_id': active_id, 'no_create': True}</field>
-</record>
-
-<record id="olive_lended_regular_case_partner_action" model="ir.actions.act_window">
-    <field name="name">Lended Cases</field>
-    <field name="res_model">olive.lended.case</field>
-    <field name="view_mode">tree,form</field>
-    <field name="context">{'search_default_partner_id': active_id, 'default_partner_id': active_id, 'olive_lended_regular_case_main_view': True}</field>
-</record>
-
-<record id="partner_organic_certification_partner_action" model="ir.actions.act_window">
-    <field name="name">Partner Organic Certif.</field>
-    <field name="res_model">partner.organic.certification</field>
-    <field name="view_mode">tree,form</field>
-    <field name="context">{'partner_organic_certification_main_view': True, 'search_default_partner_id': active_id, 'default_partner_id': active_id}</field>
-</record>
-
 <record id="partner_olive_arrival_line_action" model="ir.actions.act_window">
     <field name="name">Olive Arrivals Lines</field>
     <field name="res_model">olive.arrival.line</field>
@@ -72,7 +44,7 @@
                     </group>
                     <group name="olive_organic_certification" string="Organic Certifications" col="1">
                         <field name="olive_organic_certification_ids" nolabel="1" readonly="1"/>
-                        <button name="%(partner_organic_certification_partner_action)d" string="Update Organic Certifications" type="action"/>
+                        <button name="%(partner_organic_certification_action)d" string="Update Organic Certifications" type="action" context="{'partner_organic_certification_main_view': True, 'search_default_partner_id': active_id, 'default_partner_id': active_id}"/>
                     </group>
                 </group>
             </page>
@@ -85,20 +57,37 @@
         </div>
         <div name="button_box" position="inside">
             <button class="oe_stat_button" type="action"
-                name="%(olive_mill.ochard_partner_action)d"
+                name="%(olive_mill.olive_arrival_action)d"
                 attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}"
-                icon="fa-pagelines">
+                icon="fa-arrow-down"
+                context="{'default_partner_id': active_id, 'search_default_partner_id': active_id, 'search_default_not_cancelled': 1}">  <!-- use fa-tractor when we'll have access to FA 5.4 -->
+                <div class="o_form_field o_stat_info">
+                    <span class="o_stat_value">
+                        <field name="olive_qty_current_season" widget="statinfo" nolabel="1"/>
+                        kg
+                    </span>
+                    <span class="o_stat_text">Olives</span>
+                </div>
+
+            </button>
+            <button class="oe_stat_button" type="action"
+                name="%(olive_mill.olive_ochard_action)d"
+                attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}"
+                icon="fa-pagelines"
+                context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}">
                 <field string="Olive Trees" name="olive_tree_total" widget="statinfo"/>
             </button>
             <button class="oe_stat_button" type="action"
-                name="%(olive_mill.olive_lended_palox_partner_action)d"
+                name="%(olive_mill.olive_palox_action)d"
                 attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}"
+                context="{'default_borrower_partner_id': active_id, 'search_default_borrower_partner_id': active_id, 'no_create': True}"
                 icon="fa-inbox">  <!-- use fa-pallet when we'll have access to FA 5.0.7, which is not the case in v10 -->
                 <field string="Lended Palox" name="olive_lended_palox" widget="statinfo"/>
             </button>
             <button class="oe_stat_button" type="action"
-                name="%(olive_mill.olive_lended_regular_case_partner_action)d"
+                name="%(olive_mill.olive_lended_case_action)d"
                 attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}"
+                context="{'default_partner_id': active_id, 'search_default_partner_id': active_id, 'olive_lended_case_main_view': 1}"
                 icon="fa-codepen">
                 <div class="o_form_field o_stat_info">
                     <span class="o_stat_value">
@@ -132,6 +121,6 @@
     <field name="context">{'search_default_olive_farmer': True, 'default_olive_farmer': True}</field>
 </record>
 
-<menuitem id="olive_farmer_partner_menu" action="olive_farmer_partner_action" parent="olive_data_menu" sequence="80"/>
+<menuitem id="olive_farmer_partner_menu" action="olive_farmer_partner_action" parent="olive_data_menu" sequence="10"/>
 
 </odoo>

@@ -95,7 +95,7 @@
             <field name="name"/>
             <field name="date"/>
             <field name="partner_id"/>
-            <field name="olive_qty"/>
+            <field name="olive_qty" sum="1"/>
             <field name="state"/>
             <field name="company_id" groups="base.group_multi_company"/>
         </tree>
@@ -113,6 +113,18 @@
     </field>
 </record>
 
+<record id="olive_arrival_graph" model="ir.ui.view">
+    <field name="name">olive.arrival.graph</field>
+    <field name="model">olive.arrival</field>
+    <field name="arch" type="xml">
+        <graph string="Olive Arrivals">
+            <field name="date" type="row" interval="week"/>
+            <field name="olive_qty" type="measure"/>
+        </graph>
+    </field>
+</record>
+
+
 
 <record id="olive_arrival_search" model="ir.ui.view">
     <field name="name">olive.arrival.search</field>
@@ -121,11 +133,17 @@
         <search string="Search Olive Arrivals">
             <field name="name"/>
             <field name="partner_id"/>
+            <field name="warehouse_id"/>
             <separator/>
             <filter string="Draft" domain="[('state', '=', 'draft')]" name="draft"/>
             <filter string="Done" domain="[('state', '=', 'done')]" name="done"/>
+            <filter string="Not Cancelled" domain="[('state', '!=', 'cancel')]" name="not_cancelled"/>
+            <separator/>
+            <filter name="today" string="Today" domain="[('date', '=', context_today().strftime('%Y-%m-%d'))]"/>
             <group string="Group By" name="groupby">
                 <filter name="partner_groupby" string="Farmer" context="{'group_by': 'partner_id'}"/>
+                <filter name="date_groupby" string="Date" context="{'group_by': 'date:week'}"/>
+                <filter name="warehouse_groupby" string="Warehouse" context="{'group_by': 'warehouse_id'}"/>
                 <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>
                 <filter name="state_groupby" string="State" context="{'group_by': 'state'}"/>
             </group>
@@ -134,12 +152,131 @@
 </record>
 
 <record id="olive_arrival_action" model="ir.actions.act_window">
-    <field name="name">Olive Arrivals</field>
+    <field name="name">Arrivals</field>
     <field name="res_model">olive.arrival</field>
-    <field name="view_mode">tree,form,pivot</field>
+    <field name="view_mode">tree,form,pivot,graph</field>
+    <field name="context">{'search_default_not_cancelled': 1}</field>
 </record>
 
 <menuitem id="olive_arrival_menu" action="olive_arrival_action" parent="olive_operations_menu" sequence="20"/>
+
+<record id="olive_arrival_line_form" model="ir.ui.view">
+    <field name="name">olive.arrival.line.form</field>
+    <field name="model">olive.arrival.line</field>
+    <field name="arch" type="xml">
+        <form string="Olive Arrival Lines">
+            <group name="main">
+            <group name="main-left" string="Arrival">
+                <field name="name"/>
+                <field name="arrival_id"/>
+                <field name="arrival_date"/>
+                <field name="arrival_state"/>
+                <field name="partner_id"/>
+                <field name="partner_olive_culture_type"/>
+                <label for="olive_qty" string="Olive Qty"/>
+                <div name="olive_qty">
+                    <field name="olive_qty" class="oe_inline"/>
+                    <label string=" kg"/>
+                </div>
+                <field name="leaf_removal"/>
+                <field name="variant_id" widget="selection"/>
+                <field name="ripeness"/>
+                <field name="sanitary_state"/>
+                <field name="oil_product_id"
+                   domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', partner_olive_culture_type)]"/>
+                <field name="ochard_id" domain="[('partner_id', '=', partner_id)]"/>
+                <field name="palox_id" domain="['|', ('oil_product_id', '=', False), ('oil_product_id', '=', oil_product_id), '|', ('borrower_partner_id', '=', False), ('borrower_partner_id', '=', partner_id)]"/>
+                <field name="oil_destination"/>
+                <label for="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}" string="Requested Withdrawal Qty"/>
+                <div name="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}">
+                    <field name="mix_withdrawal_oil_qty"
+                        attrs="{'required': [('oil_destination', '=', 'mix')]}" class="oe_inline"/>
+                    <label string=" L"/>
+                </div>
+            </group>
+            <group name="main-right" string="Production">
+                <field name="production_id"/>
+                <field name="production_date"/>
+                <field name="production_state"/>
+                <field name="compensation_type"/>
+                <label for="oil_qty" string="Oil Qty"/>
+                <div name="oil_qty">
+                    <field name="oil_qty" class="oe_inline"/>
+                    <label string=" L / " class="oe_inline"/>
+                    <field name="oil_qty_kg" class="oe_inline"/>
+                    <label string=" kg" class="oe_inline"/>
+                </div>
+                <label for="compensation_oil_qty" string="Compensation Oil Qty" attrs="{'invisible': [('compensation_type', 'not in', ('last', 'first'))]}"/>
+                <div name="compensation_oil_qty" attrs="{'invisible': [('compensation_type', 'not in', ('last', 'first'))]}">
+                    <field name="compensation_oil_qty" class="oe_inline"/>
+                    <label string=" L"/>
+                </div>
+                <label for="shrinkage_oil_qty" string="Shrinkage Oil Qty"/>
+                <div name="shrinkage_oil_qty">
+                    <field name="shrinkage_oil_qty" class="oe_inline"/>
+                    <label string=" L / " class="oe_inline"/>
+                    <field name="shrinkage_oil_qty_kg" class="oe_inline"/>
+                    <label string=" kg" class="oe_inline"/>
+                </div>
+                <label for="withdrawal_oil_qty" string="Withdrawal Oil Qty" attrs="{'invisible': [('oil_destination', 'not in', ('withdrawal', 'mix'))]}"/>
+                <div name="withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', 'not in', ('withdrawal', 'mix'))]}">
+                    <field name="withdrawal_oil_qty" class="oe_inline"/>
+                    <label string=" L / " class="oe_inline"/>
+                    <field name="withdrawal_oil_qty_kg" class="oe_inline"/>
+                    <label string=" kg" class="oe_inline"/>
+                </div>
+                <label for="filter_loss_oil_qty" string="Oil Qty Lost in Filter" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}"/>
+                <div name="filter_loss_oil_qty" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}">
+                    <field name="filter_loss_oil_qty" class="oe_inline"/>
+                    <label string=" L" class="oe_inline"/>
+                </div>
+                <label for="to_sale_tank_oil_qty" string="Oil Qty to Sale Tank" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}"/>
+                <div name="to_sale_tank_oil_qty" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}">
+                    <field name="to_sale_tank_oil_qty" class="oe_inline"/>
+                    <label string=" L" class="oe_inline"/>
+                </div>
+                <label for="sale_oil_qty" string="Oil Qty Sold" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}"/>
+                <div name="sale_oil_qty" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}">
+                    <field name="sale_oil_qty" class="oe_inline"/>
+                    <label string=" L" class="oe_inline"/>
+                </div>
+                <label for="oil_ratio" string="Oil Gross Ratio"/>
+                <div name="oil_ratio">
+                    <field name="oil_ratio" class="oe_inline"/>
+                    <label string=" %" class="oe_inline"/>
+                </div>
+                <label for="oil_ratio_net" string="Oil Net Ratio"/>
+                <div name="oil_ratio_net">
+                    <field name="oil_ratio_net" class="oe_inline"/>
+                    <label string=" %" class="oe_inline"/>
+                </div>
+            </group>
+            </group>
+            <notebook>
+                <page name="extras" string="Extra Items and Analysis">
+                    <field name="extra_ids" nolabel="1"/>
+                </page>
+                <page name="other" string="Additional Information">
+                    <group name="other_info">
+                        <group name="other_stock">
+                            <field name="season_id"/>
+                            <field name="warehouse_id"/>
+                            <field name="sale_move_id"/>
+                            <field name="withdrawal_move_id"/>
+                            <field name="compensation_last_move_id"/>
+                        </group>
+                        <group name="invoice">
+                            <field name="out_invoice_id"/>
+                            <field name="in_invoice_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                </page>
+            </notebook>
+        </form>
+    </field>
+</record>
+
 
 <record id="olive_arrival_line_arrival_form" model="ir.ui.view">
     <field name="name">olive.arrival.line.extra_only.form</field>
@@ -274,7 +411,7 @@
 </record>
 
 <record id="olive_arrival_line_action" model="ir.actions.act_window">
-    <field name="name">Olive Arrivals Lines</field>
+    <field name="name">Arrivals Lines</field>
     <field name="res_model">olive.arrival.line</field>
     <field name="view_mode">tree,form,pivot,graph</field>
     <field name="context">{'search_default_arrival_state_done': True}</field>

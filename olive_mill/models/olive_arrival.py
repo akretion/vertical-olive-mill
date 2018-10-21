@@ -392,7 +392,7 @@ class OliveArrivalLine(models.Model):
         related='production_id.compensation_type', readonly=True, store=True)
     # END related fields for production
     oil_ratio = fields.Float(
-        string='Oil Ratio (%)', digits=dp.get_precision('Olive Oil Ratio'),
+        string='Oil Gross Ratio (%)', digits=dp.get_precision('Olive Oil Ratio'),
         readonly=True)
     oil_ratio_net = fields.Float(
         string='Oil Net Ratio (%)', digits=dp.get_precision('Olive Oil Ratio'),
@@ -449,8 +449,10 @@ class OliveArrivalLine(models.Model):
     compensation_last_move_id = fields.Many2one(
         'stock.move', string='Compensation Last of the Day Move', readonly=True)
     # Invoicing
-    out_invoice_id = fields.Many2one('account.invoice', readonly=True)
-    in_invoice_id = fields.Many2one('account.invoice', readonly=True)
+    out_invoice_id = fields.Many2one(
+        'account.invoice', string="Customer Invoice", readonly=True)
+    in_invoice_id = fields.Many2one(
+        'account.invoice', string="Vendor Bill", readonly=True)
 
     _sql_constraints = [(
         'olive_qty_positive',
