@@ -113,10 +113,17 @@ class OliveArrival(models.Model):
                 ('partner_id', '=', self.commercial_partner_id.id)])
             if len(ochards) == 1:
                 self.default_ochard_id = ochards
-                if len(ochards.parcel_ids) == 1 and len(ochards.parcel_ids[0].variant_ids) == 1:
-                    self.default_variant_id = ochards.parcel_ids[0].variant_ids[0].id
         else:
             self.default_ochard_id = False
+
+    @api.onchange('default_ochard_id')
+    def default_ochard_id_change(self):
+        variant = False
+        if self.default_ochard_id:
+            ochard = self.default_ochard_id
+            if len(ochard.parcel_ids) == 1 and len(ochard.parcel_ids[0].variant_ids) == 1:
+                variant = ochard.parcel_ids[0].variant_ids[0]
+        self.default_variant_id = variant
 
     @api.model
     def create(self, vals):

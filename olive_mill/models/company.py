@@ -11,19 +11,25 @@ import odoo.addons.decimal_precision as dp
 class ResCompany(models.Model):
     _inherit = 'res.company'
 
-    olive_qty_per_palox = fields.Integer(
-        string='Quantity of Olives per Palox', default=380)
     olive_max_qty_per_palox = fields.Integer(
         string='Maximum Quantity of Olives per Palox', default=500)
-    olive_appointment_no_leaf_removal_minutes = fields.Integer(
-        string='Appointment Duration without Leaf Removal', default=3,
+    # START APPOINTMENTS
+    olive_appointment_qty_per_palox = fields.Integer(
+        string='Quantity of Olives per Palox', default=380)
+    olive_appointment_arrival_no_leaf_removal_minutes = fields.Integer(
+        string='Arrival Appointment Default Duration without Leaf Removal', default=3,
         help="Number of minutes per 100 kg of olives")
-    olive_appointment_leaf_removal_minutes = fields.Integer(
-        string='Appointment Duration with Leaf Removal', default=8,
+    olive_appointment_arrival_leaf_removal_minutes = fields.Integer(
+        string='Arrival Appointment Default Duration with Leaf Removal', default=8,
         help="Number of minutes per 100 kg of olives")
-    olive_appointment_min_minutes = fields.Integer(
-        string='Appointment Minimum Duration', default=5,
-        help="Appointment minimum duration in minutes")
+    olive_appointment_arrival_min_minutes = fields.Integer(
+        string='Arrival Appointment Minimum Duration', default=5,
+        help="Arrival appointment minimum duration in minutes")
+    olive_appointment_lend_minutes = fields.Integer(
+        string='Lend Palox/Case Appointment Default Duration', default=5)
+    olive_appointment_withdrawal_minutes = fields.Integer(
+        string='Withdrawal Appointment Default Duration', default=5)
+    # END APPOINTMENTS
     olive_shrinkage_ratio = fields.Float(
         string='Shrinkage Ratio', default=0.4,
         digits=dp.get_precision('Olive Oil Ratio'),
@@ -54,6 +60,9 @@ class ResCompany(models.Model):
         help='Tax unit price per liter of olive oil')
 
     _sql_constraints = [(
+        'olive_max_qty_per_palox_positive',
+        'CHECK(olive_max_qty_per_palox >= 0)',
+        'Maximum Quantity of Olives per Palox must be positive'), (
         'olive_oil_density_positive',
         'CHECK(olive_oil_density > 0)',
         'Olive oil density must be strictly positive'), (
@@ -65,7 +74,26 @@ class ResCompany(models.Model):
         'Production shrinkage ratio must be positive'), (
         'olive_oil_tax_price_unit_positive',
         'CHECK(olive_oil_tax_price_unit) >= 0)',
-        'Tax unit price must be positive or null')]
+        'Tax unit price must be positive or null'), (
+        'olive_appointment_qty_per_palox_positive',
+        'CHECK(olive_appointment_qty_per_palox >= 0)',
+        'Quantity of Olives per Palox must be positive'), (
+        'olive_appointment_arrival_no_leaf_removal_minutes_positive',
+        'CHECK(olive_appointment_arrival_no_leaf_removal_minutes >= 0)',
+        'Arrival Appointment Default Duration without Leaf Removal must be positive'), (
+        'olive_appointment_arrival_leaf_removal_minutes_positive',
+        'CHECK(olive_appointment_arrival_leaf_removal_minutes >= 0)',
+        'Arrival Appointment Default Duration with Leaf Removal must be positive'), (
+        'olive_appointment_arrival_min_minutes_positive',
+        'CHECK(olive_appointment_arrival_min_minutes >= 0)',
+        'Arrival Appointment Minimum Duration must be positive'), (
+        'olive_appointment_lend_minutes_positive',
+        'CHECK(olive_appointment_lend_minutes >= 0)',
+        'Lend Palox/Case Appointment Default Duration must be positive'), (
+        'olive_appointment_withdrawal_minutes_positive',
+        'CHECK(olive_appointment_withdrawal_minutes >= 0)',
+        'Withdrawal Appointment Default Duration must be positive'),
+        ]
 
     @api.model
     def olive_oil_liter2kg(self, qty):

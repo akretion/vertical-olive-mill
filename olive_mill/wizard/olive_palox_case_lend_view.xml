@@ -28,7 +28,7 @@
 </record>
 
 <record id="olive_palox_lend_action" model="ir.actions.act_window">
-    <field name="name">Lend Olive Case and/or Palox</field>
+        <field name="name">Lend Palox/Case</field>
     <field name="res_model">olive.palox.case.lend</field>
     <field name="view_mode">form</field>
     <field name="target">new</field>

@@ -31,8 +31,8 @@
                         <field name="partner_id"/>
                         <field name="commercial_partner_id" invisible="1"/>
                         <field name="partner_olive_culture_type" invisible="0"/>
-                        <field name="default_variant_id" widget="selection"/>
                         <field name="default_ochard_id" domain="[('partner_id', '=', commercial_partner_id)]" context="{'default_partner_id': commercial_partner_id}"/>
+                        <field name="default_variant_id" widget="selection"/>
                         <field name="default_oil_destination"/>
                         <field name="default_leaf_removal"/>
                     </group>

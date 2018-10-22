@@ -41,24 +41,34 @@
                 </div>
             </group>
             <group name="appointment" string="Appointments">
-                <label for="olive_qty_per_palox"/>
-                <div name="olive_qty_per_palox">
-                    <field name="olive_qty_per_palox" class="oe_inline"/>
+                <label for="olive_appointment_qty_per_palox"/>
+                <div name="olive_appointment_qty_per_palox">
+                    <field name="olive_appointment_qty_per_palox" class="oe_inline"/>
                     <label string=" kg" class="oe_inline"/>
                 </div>
-                <label for="olive_appointment_no_leaf_removal_minutes"/>
-                <div name="olive_appointment_no_leaf_removal_minutes">
-                    <field name="olive_appointment_no_leaf_removal_minutes" class="oe_inline"/>
+                <label for="olive_appointment_arrival_no_leaf_removal_minutes"/>
+                <div name="olive_appointment_arrival_no_leaf_removal_minutes">
+                    <field name="olive_appointment_arrival_no_leaf_removal_minutes" class="oe_inline"/>
                     <label string=" minutes / 100 kg of olive" class="oe_inline"/>
                 </div>
-                <label for="olive_appointment_leaf_removal_minutes"/>
-                <div name="olive_appointment_leaf_removal_minutes">
-                    <field name="olive_appointment_leaf_removal_minutes" class="oe_inline"/>
+                <label for="olive_appointment_arrival_leaf_removal_minutes"/>
+                <div name="olive_appointment_arrival_leaf_removal_minutes">
+                    <field name="olive_appointment_arrival_leaf_removal_minutes" class="oe_inline"/>
                     <label string=" minutes / 100 kg of olive" class="oe_inline"/>
                 </div>
-                <label for="olive_appointment_min_minutes"/>
-                <div name="olive_appointment_min_minutes">
-                    <field name="olive_appointment_min_minutes" class="oe_inline"/>
+                <label for="olive_appointment_arrival_min_minutes"/>
+                <div name="olive_appointment_arrival_min_minutes">
+                    <field name="olive_appointment_arrival_min_minutes" class="oe_inline"/>
+                    <label string=" minutes" class="oe_inline"/>
+                </div>
+                <label for="olive_appointment_lend_minutes"/>
+                <div name="olive_appointment_lend_minutes">
+                    <field name="olive_appointment_lend_minutes" class="oe_inline"/>
+                    <label string=" minutes" class="oe_inline"/>
+                </div>
+                <label for="olive_appointment_withdrawal_minutes"/>
+                <div name="olive_appointment_withdrawal_minutes">
+                    <field name="olive_appointment_withdrawal_minutes" class="oe_inline"/>
                     <label string=" minutes" class="oe_inline"/>
                 </div>
             </group>

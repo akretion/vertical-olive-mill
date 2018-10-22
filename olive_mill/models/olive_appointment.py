@@ -15,7 +15,7 @@ class OliveAppointment(models.Model):
 
     # name is required when you create from calendar
     # it is also needed for appointments with type = 'other'
-    name = fields.Char()
+    name = fields.Char(string='Note')
     company_id = fields.Many2one(
         'res.company', string='Company',
         ondelete='cascade', required=True,
@@ -26,6 +26,12 @@ class OliveAppointment(models.Model):
         domain=[('olive_farmer', '=', True)], track_visibility='onchange')
     commercial_partner_id = fields.Many2one(
         related='partner_id.commercial_partner_id', readonly=True, store=True)
+    appointment_type = fields.Selection([
+        ('lend', 'Lend Palox/Case'),
+        ('arrival', 'Arrival'),
+        ('withdrawal', 'Withdrawal'),
+        ('other', 'Other'),
+        ], string='Appointment Type', required=True)
     variant_id = fields.Many2one(
         'olive.variant', string='Olive Variant', track_visibility='onchange')
     leaf_removal = fields.Boolean(
@@ -36,7 +42,7 @@ class OliveAppointment(models.Model):
     start_datetime = fields.Datetime(
         string='Start', required=True, track_visibility='onchange')
     end_datetime = fields.Datetime(
-        string='End', compute='_compute_end_datetime', readonly=True)
+        string='End', required=True)
     oil_destination = fields.Selection([
         ('withdrawal', 'Withdrawal'),
         ('sale', 'Sale'),
@@ -64,6 +70,19 @@ class OliveAppointment(models.Model):
         if self.oil_destination in ('sale', 'withdrawal'):
             self.withdrawal_oil_qty = 0
 
+    @api.onchange('partner_id', 'appointment_type')
+    def partner_id_change(self):
+        if self.partner_id.commercial_partner_id and self.appointment_type == 'arrival':
+            ochards = self.env['olive.ochard'].search([
+                ('partner_id', '=', self.partner_id.commercial_partner_id.id)])
+            if (
+                    len(ochards) == 1 and
+                    len(ochards[0].parcel_ids) == 1 and
+                    len(ochards[0].parcel_ids[0].variant_ids) == 1):
+                self.variant_id = ochards[0].parcel_ids[0].variant_ids[0]
+        else:
+            self.variant_id = False
+
     @api.depends('partner_id', 'start_datetime')
     def name_get(self):
         res = []
@@ -77,46 +96,50 @@ class OliveAppointment(models.Model):
                 u'%s %s' % (app.partner_id.display_name, start_in_tz[:16])))
         return res
 
-    @api.depends('start_datetime', 'leaf_removal', 'qty')
-    def _compute_end_datetime(self):
-        for app in self:
-            if app.start_datetime and app.qty:
-                start_dt = fields.Datetime.from_string(app.start_datetime)
-                if app.leaf_removal:
-                    duration_coef = app.company_id.olive_appointment_leaf_removal_minutes
+    @api.onchange('start_datetime', 'appointment_type', 'leaf_removal', 'qty')
+    def end_datetime_change(self):
+        if self.start_datetime and self.appointment_type and self.company_id:
+            minutes = False
+            company = self.company_id
+            start_dt = fields.Datetime.from_string(self.start_datetime)
+            if self.appointment_type == 'arrival':
+                if self.leaf_removal:
+                    duration_coef = company.olive_appointment_arrival_leaf_removal_minutes
                 else:
-                    duration_coef = app.company_id.olive_appointment_no_leaf_removal_minutes
-                minutes = duration_coef * app.qty / 100.0
-                if minutes < app.company_id.olive_appointment_min_minutes:
-                    minutes = app.company_id.olive_appointment_min_minutes
+                    duration_coef = company.olive_appointment_arrival_no_leaf_removal_minutes
+                minutes = duration_coef * self.qty / 100.0
+                if minutes < company.olive_appointment_arrival_min_minutes:
+                    minutes = company.olive_appointment_arrival_min_minutes
+            elif self.appointment_type == 'lend':
+                minutes = company.olive_appointment_lend_minutes
+            elif self.appointment_type in ('withdrawal', 'other'):
+                minutes = company.olive_appointment_withdrawal_minutes
+            if minutes:
                 end_dt = start_dt + relativedelta(minutes=minutes)
-                app.end_datetime = fields.Datetime.to_string(end_dt)
-            else:
-                app.end_datetime = False
+                self.end_datetime = fields.Datetime.to_string(end_dt)
 
     @api.depends('qty')
     def _compute_palox_qty(self):
         for app in self:
             palox_qty = 0
-            if app.company_id.olive_qty_per_palox:
-                palox_qty = app.qty / float(app.company_id.olive_qty_per_palox)
+            qty_per_palox = app.company_id.olive_appointment_qty_per_palox
+            if qty_per_palox:
+                palox_qty = app.qty / float(qty_per_palox)
             app.palox_qty = palox_qty
 
     def create_arrival(self):
         self.ensure_one()
         assert not self.arrival_id
+        oao = self.env['olive.arrival']
         vals = {
             'partner_id': self.partner_id.id,
             'company_id': self.company_id.id,
             'default_variant_id': self.variant_id.id or False,
             'default_oil_destination': self.oil_destination,
-            'leaf_removal': self.leaf_removal,
+            'default_leaf_removal': self.leaf_removal,
             }
-        ochards = self.env['olive.ochard'].search([
-            ('partner_id', '=', self.commercial_partner_id.id)])
-        if len(ochards) == 1:
-            vals['default_ochard_id'] = ochards[0].id
-        arrival = self.env['olive.arrival'].create(vals)
+        vals = oao.play_onchanges(vals, ['partner_id'])
+        arrival = oao.create(vals)
         self.arrival_id = arrival.id
         action = self.env['ir.actions.act_window'].for_xml_id(
             'olive_mill', 'olive_arrival_action')
