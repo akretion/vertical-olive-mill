@@ -24,7 +24,7 @@ class OliveParcel(models.Model):
     tree_qty = fields.Integer(string='Number of trees')
     variant_ids = fields.Many2many('olive.variant', string='Olive Variants')
     density = fields.Char('Density', size=64)
-    planted_year = fields.Integer('Planted Year')
+    planted_year = fields.Char(string='Planted Year')
     irrigation = fields.Selection([
         ('dry', 'Dry'),
         ('dripping', 'Dripping'),
