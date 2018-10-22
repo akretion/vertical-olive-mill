@@ -66,14 +66,14 @@ class ResCompany(models.Model):
         'olive_oil_density_positive',
         'CHECK(olive_oil_density > 0)',
         'Olive oil density must be strictly positive'), (
-        'olive_filter_shrinkage_ratio_positive',
-        'CHECK(olive_filter_shrinkage_ratio >= 0)',
-        'Filter shrinkage ratio must be positive'), (
-        'olive_production_shrinkage_ratio_positive',
-        'CHECK(olive_production_shrinkage_ratio >= 0)',
-        'Production shrinkage ratio must be positive'), (
+        'olive_shrinkage_ratio_positive',
+        'CHECK(olive_shrinkage_ratio >= 0)',
+        'Shrinkage Ratio must be positive'), (
+        'olive_filter_ratio_positive',
+        'CHECK(olive_filter_ratio >= 0)',
+        'Filter Ratio must be positive'), (
         'olive_oil_tax_price_unit_positive',
-        'CHECK(olive_oil_tax_price_unit) >= 0)',
+        'CHECK(olive_oil_tax_price_unit >= 0)',
         'Tax unit price must be positive or null'), (
         'olive_appointment_qty_per_palox_positive',
         'CHECK(olive_appointment_qty_per_palox >= 0)',

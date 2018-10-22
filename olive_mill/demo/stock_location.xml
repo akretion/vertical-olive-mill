@@ -5,7 +5,7 @@
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
 
-<odoo noupdate="0">  <!-- TODO set to 0 once finished -->
+<odoo noupdate="1">
 
 <record id="tank1" model="stock.location">
     <field name="name">Tank 1</field>

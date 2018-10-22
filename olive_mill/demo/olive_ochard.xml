@@ -5,7 +5,7 @@
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
 
-<odoo noupdate="0">  <!-- TODO set to 0 once finished -->
+<odoo noupdate="1">
 
 <record id="ochard1" model="olive.ochard">
     <field name="name">Big Farm Ochard1</field>

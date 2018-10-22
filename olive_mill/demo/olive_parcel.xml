@@ -5,7 +5,7 @@
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
 
-<odoo noupdate="0">  <!-- TODO set to 0 once finished -->
+<odoo noupdate="1">
 
 <record id="ochard1_parcel1" model="olive.parcel">
     <field name="ochard_id" ref="ochard1"/>
@@ -13,6 +13,7 @@
     <field name="area">1.5</field>
     <field name="tree_qty">100</field>
     <field name="density">8x8</field>
+    <field name="variant_ids" eval="[(4, ref('variant1'))]"/>
     <field name="planted_year">2002</field>
     <field name="irrigation">dry</field>
 </record>
@@ -23,6 +24,7 @@
     <field name="area">1.2</field>
     <field name="tree_qty">90</field>
     <field name="density">9x9</field>
+    <field name="variant_ids" eval="[(4, ref('variant1'))]"/>
     <field name="planted_year">2003</field>
     <field name="irrigation">dry</field>
 </record>
@@ -33,6 +35,7 @@
     <field name="area">2.9</field>
     <field name="tree_qty">230</field>
     <field name="density">8x8</field>
+    <field name="variant_ids" eval="[(4, ref('variant2'))]"/>
     <field name="planted_year">1998</field>
     <field name="irrigation">dry</field>
 </record>
@@ -43,6 +46,7 @@
     <field name="area">0.2</field>
     <field name="tree_qty">6</field>
     <field name="density">8x8</field>
+    <field name="variant_ids" eval="[(4, ref('variant1'))]"/>
     <field name="planted_year">2006</field>
     <field name="irrigation">dry</field>
 </record>
@@ -53,6 +57,7 @@
     <field name="area">1.1</field>
     <field name="tree_qty">50</field>
     <field name="density">8x8</field>
+    <field name="variant_ids" eval="[(4, ref('variant3'))]"/>
     <field name="planted_year">2002</field>
     <field name="irrigation">dry</field>
 </record>
@@ -63,6 +68,7 @@
     <field name="area">2.5</field>
     <field name="tree_qty">150</field>
     <field name="density">8x8</field>
+    <field name="variant_ids" eval="[(4, ref('variant1'))]"/>
     <field name="planted_year">2002</field>
     <field name="irrigation">dry</field>
 </record>
@@ -73,6 +79,7 @@
     <field name="area">1.5</field>
     <field name="tree_qty">90</field>
     <field name="density">7x7</field>
+    <field name="variant_ids" eval="[(4, ref('variant4'))]"/>
     <field name="planted_year">2002</field>
     <field name="irrigation">dry</field>
 </record>

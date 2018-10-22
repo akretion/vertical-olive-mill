@@ -5,7 +5,7 @@
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
 
-<odoo noupdate="0">
+<odoo noupdate="1">
 
 <!-- Extra Service options -->
 <record id="organic_option_product" model="product.product">

@@ -17,7 +17,7 @@ MAX_RATIO = 35
 class OliveOilProduction(models.Model):
     _name = 'olive.oil.production'
     _description = 'Olive Oil Production'
-    _order = 'date desc, sequence'  # TODO Time and scheduling
+    _order = 'date desc, sequence'
     _inherit = ['mail.thread']
 
     name = fields.Char(string='Production Number', required=True, default='/')
@@ -136,9 +136,9 @@ class OliveOilProduction(models.Model):
         readonly=True)
 
     _sql_constraints = [
-        ('oil_qty_kg_positive', 'CHECK(oil_qty_kg) >= 0', 'The oil quantity must be positive.'),
-        ('compensation_last_olive_qty_positive', 'CHECK(compensation_last_olive_qty) >= 0', 'The compensation olive quantity must be positive.'),
-        ('compensation_oil_qty_positive', 'CHECK(compensation_oil_qty) >= 0', 'The compensation oil quantity must be positive.'),
+        ('oil_qty_kg_positive', 'CHECK(oil_qty_kg >= 0)', 'The oil quantity must be positive.'),
+        ('compensation_last_olive_qty_positive', 'CHECK(compensation_last_olive_qty >= 0)', 'The compensation olive quantity must be positive.'),
+        ('compensation_oil_qty_positive', 'CHECK(compensation_oil_qty >= 0)', 'The compensation oil quantity must be positive.'),
         ]
 
     @api.constrains('compensation_ratio', 'compensation_type')
@@ -306,9 +306,13 @@ class OliveOilProduction(models.Model):
             if oil_product:
                 if oil_product != l.oil_product_id:
                     raise UserError(_(
-                        "The oil type is not the same "
-                        "on all the lines of palox %s.") % self.palox_id.name)
-                    # TODO improve error
+                        "The oil type of arrival line %s is %s, "
+                        "but it is %s on the first arrival line "
+                        "of palox %s.") % (
+                            line.name,
+                            line.oil_product_id.name,
+                            oil_product.name,
+                            self.palox_id.name))
             else:
                 oil_product = l.oil_product_id
             if l.season_id != self.season_id:

@@ -47,7 +47,7 @@ class StockWarehouse(models.Model):
         'CHECK(olive_oil_compensation_ratio >= 0)',
         'Oil compensation ratio must be positive or 0'),
         ('olive_compensation_last_qty_positive',
-         'CHECK(olive_compensation_last_qty) >= 0)',
+         'CHECK(olive_compensation_last_qty >= 0)',
          'Olive Compensation Quantity must be positive or 0')]
 
     @api.depends('olive_organic_case_total', 'olive_regular_case_total')
