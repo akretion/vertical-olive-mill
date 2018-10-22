@@ -27,6 +27,7 @@
                     </h1>
                 </div>
                 <group name="main">
+                    <field name="label"/>
                     <label for="weight" string="Current Weight"/>
                     <div>
                         <field name="weight" class="oe_inline"/>
@@ -42,10 +43,6 @@
                     <field name="line_ids" nolabel="1"/>
                 </group>
             </sheet>
-            <div class="oe_chatter">
-                <field name="message_follower_ids" widget="mail_followers"/>
-                <field name="message_ids" widget="mail_thread"/>
-            </div>
         </form>
     </field>
 </record>
@@ -56,6 +53,7 @@
     <field name="arch" type="xml">
         <tree string="Olive Palox">
             <field name="name"/>
+            <field name="label"/>
             <field name="weight"/>
             <field name="oil_product_id"/>
             <field name="oil_destination"/>
@@ -71,7 +69,7 @@
     <field name="model">olive.palox</field>
     <field name="arch" type="xml">
         <search string="Search Olive Palox">
-            <field name="name"/>
+            <field name="name" filter_domain="['|', ('name', 'ilike', self), ('label', 'ilike', self)]" string="Number or Label"/>
             <field name="borrower_partner_id"/>
             <separator/>
             <filter name="lended" domain="[('borrower_partner_id', '!=', False)]" string="Lended"/>

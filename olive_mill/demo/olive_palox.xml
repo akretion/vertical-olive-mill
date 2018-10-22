@@ -10,26 +10,32 @@
 
 <record id="palox1" model="olive.palox">
     <field name="name">001</field>
+    <field name="label">Red</field>
 </record>
 
 <record id="palox2" model="olive.palox">
     <field name="name">002</field>
+    <field name="label">Green</field>
 </record>
 
 <record id="palox3" model="olive.palox">
     <field name="name">003</field>
+    <field name="label">Yellow</field>
 </record>
 
 <record id="palox4" model="olive.palox">
     <field name="name">004</field>
+    <field name="label">Broken Red</field>
 </record>
 
 <record id="palox5" model="olive.palox">
     <field name="name">005</field>
+    <field name="label">Black</field>
 </record>
 
 <record id="palox6" model="olive.palox">
     <field name="name">006</field>
+    <field name="label">Fluo</field>
 </record>
 
 
