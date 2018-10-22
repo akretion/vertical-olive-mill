@@ -20,17 +20,18 @@ class OliveWithdrawal(models.TransientModel):
 
     def _prepare_picking(self):
         src_loc = self.warehouse_id.olive_withdrawal_loc_id
+        commercial_partner = self.partner_id.commercial_partner_id
         quants_group_product = self.env['stock.quant'].read_group([
             ('location_id', '=', src_loc.id),
             ('reservation_id', '=', False),
-            ('owner_id', '=', self.partner_id.id),
+            ('owner_id', '=', commercial_partner.id),
             ], ['product_id', 'qty'], ['product_id'])
         if not quants_group_product:
             raise UserError(_(
                 "There are no unreserved quants on the stock location '%s' "
                 "owned by '%s'") % (
                     src_loc.display_name,
-                    self.partner_id.display_name))
+                    commercial_partner.display_name))
         moves = []
         for quant_gp in quants_group_product:
             product_id = quant_gp['product_id'][0]
@@ -43,7 +44,7 @@ class OliveWithdrawal(models.TransientModel):
                 'product_uom': product.uom_id.id,
                 'product_uom_qty': quant_gp['qty'],
                 'origin': _('Olive Withdrawal Wizard'),
-                'restrict_partner_id': self.partner_id.id,
+                'restrict_partner_id': commercial_partner.id,
                 }
             moves.append((0, 0, mvals))
         vals = {
@@ -52,7 +53,7 @@ class OliveWithdrawal(models.TransientModel):
             'move_lines': moves,
             'origin': _('Olive Withdrawal Wizard'),
             'location_id': src_loc.id,
-            'location_dest_id': self.partner_id.property_stock_customer.id,
+            'location_dest_id': commercial_partner.property_stock_customer.id,
             }
         return vals
 

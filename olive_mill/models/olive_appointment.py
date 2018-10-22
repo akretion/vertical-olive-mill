@@ -23,8 +23,9 @@ class OliveAppointment(models.Model):
             'olive.appointment'))
     partner_id = fields.Many2one(
         'res.partner', string='Olive Farmer', required=True, copy=False,
-        domain=[('parent_id', '=', False), ('olive_farmer', '=', True)],
-        track_visibility='onchange')
+        domain=[('olive_farmer', '=', True)], track_visibility='onchange')
+    commercial_partner_id = fields.Many2one(
+        related='partner_id.commercial_partner_id', readonly=True, store=True)
     variant_id = fields.Many2one(
         'olive.variant', string='Olive Variant', track_visibility='onchange')
     leaf_removal = fields.Boolean(
@@ -112,7 +113,7 @@ class OliveAppointment(models.Model):
             'leaf_removal': self.leaf_removal,
             }
         ochards = self.env['olive.ochard'].search([
-            ('partner_id', '=', self.partner_id.id)])
+            ('partner_id', '=', self.commercial_partner_id.id)])
         if len(ochards) == 1:
             vals['default_ochard_id'] = ochards[0].id
         arrival = self.env['olive.arrival'].create(vals)

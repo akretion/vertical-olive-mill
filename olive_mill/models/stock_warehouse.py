@@ -24,13 +24,13 @@ class StockWarehouse(models.Model):
         readonly=True)
     olive_shrinkage_loc_id = fields.Many2one(
         'stock.location', string='Olive Oil Shrinkage Tank',
-        domain=[('olive_tank', '=', True)])
+        domain=[('olive_tank_type', '=', 'shrinkage')])
     olive_withdrawal_loc_id = fields.Many2one(
         'stock.location', string='Olive Oil Withdrawal Location',
-        domain=[('olive_tank', '=', False), ('usage', '=', 'internal')])
+        domain=[('olive_tank_type', '=', False), ('usage', '=', 'internal')])
     olive_compensation_loc_id = fields.Many2one(
         'stock.location', string='Olive Oil Compensation Tank',
-        domain=[('olive_tank', '=', True)])
+        domain=[('olive_tank_type', '=', 'compensation')])
     olive_compensation_last_qty = fields.Float(
         string='Olive Compensation Quantity', default=45.0,
         digits=dp.get_precision('Olive Weight'))
@@ -52,16 +52,12 @@ class StockWarehouse(models.Model):
 
     @api.depends('olive_organic_case_total', 'olive_regular_case_total')
     def _compute_cases(self):
-        print "_compute_cases self=", self
         cases_res = self.env['olive.lended.case'].read_group(
             [('warehouse_id', 'in', self.ids)],
             ['warehouse_id', 'regular_qty', 'organic_qty'], ['warehouse_id'])
         if cases_res:
             for cases_re in cases_res:
                 wh = self.browse(cases_re['warehouse_id'][0])
-                print "cases_r=", cases_re
-                print "wh.olive_regular_case_total=", wh.olive_regular_case_total
-                print "wh.olive_organic_case_total=", wh.olive_organic_case_total
                 wh.olive_regular_case_stock =\
                     wh.olive_regular_case_total - cases_re['regular_qty']
                 wh.olive_organic_case_stock =\

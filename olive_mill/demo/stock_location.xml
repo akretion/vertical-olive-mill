@@ -10,7 +10,7 @@
 <record id="tank1" model="stock.location">
     <field name="name">Tank 1</field>
     <field name="usage">internal</field>
-    <field name="olive_tank" eval="True"/>
+    <field name="olive_tank_type">regular</field>
     <field name="oil_product_id" ref="oil"/>
     <field name="location_id" ref="stock.stock_location_stock"/>
 </record>
@@ -18,7 +18,7 @@
 <record id="tank2" model="stock.location">
     <field name="name">Tank 2</field>
     <field name="usage">internal</field>
-    <field name="olive_tank" eval="True"/>
+    <field name="olive_tank_type">regular</field>
     <field name="oil_product_id" ref="oil"/>
     <field name="location_id" ref="stock.stock_location_stock"/>
 </record>
@@ -26,7 +26,7 @@
 <record id="tank3" model="stock.location">
     <field name="name">Tank 3</field>
     <field name="usage">internal</field>
-    <field name="olive_tank" eval="True"/>
+    <field name="olive_tank_type">regular</field>
     <field name="oil_product_id" ref="oil"/>
     <field name="location_id" ref="stock.stock_location_stock"/>
 </record>
@@ -34,7 +34,7 @@
 <record id="shrinkage" model="stock.location">
     <field name="name">Shrinkage Tank</field>
     <field name="usage">internal</field>
-    <field name="olive_tank" eval="True"/>
+    <field name="olive_tank_type">shrinkage</field>
     <field name="oil_product_id" ref="oil"/>
     <field name="location_id" ref="stock.stock_location_stock"/>
 </record>
@@ -42,14 +42,14 @@
 <record id="withdrawal" model="stock.location">
     <field name="name">Withdrawal</field>
     <field name="usage">internal</field>
-    <field name="olive_tank" eval="False"/>
+    <field name="olive_tank_type" eval="False"/>
     <field name="location_id" ref="stock.stock_location_stock"/>
 </record>
 
 <record id="compensation" model="stock.location">
     <field name="name">Compensation</field>
     <field name="usage">internal</field>
-    <field name="olive_tank" eval="True"/>
+    <field name="olive_tank_type">compensation</field>
     <field name="location_id" ref="stock.stock_location_stock"/>
 </record>
 

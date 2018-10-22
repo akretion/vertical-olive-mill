@@ -18,7 +18,7 @@
                 <field name="palox_id"/>
                 <field name="oil_destination" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}"/>
                 <field name="oil_product_id"/>
-                <field name="sale_location_id" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank', '=', True), ('oil_product_id', '=', oil_product_id), ('olive_season_id', '=', season_id)]"/>
+                <field name="sale_location_id" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank_type', '=', 'regular'), ('oil_product_id', '=', oil_product_id), ('olive_season_id', '=', season_id)]"/>
                 <label for="olive_qty"/>
                 <div name="olive_qty">
                     <field name="olive_qty" class="oe_inline"/>
@@ -26,7 +26,7 @@
                 </div>
                 <field name="compensation_type"/>
                 <field name="compensation_oil_product_id" attrs="{'invisible': [('compensation_type', '!=', 'first')]}"/>
-                <field name="compensation_sale_location_id" attrs="{'invisible': ['|', ('compensation_type', '!=', 'first'), ('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank', '=', True), ('oil_product_id', '=', compensation_oil_product_id), ('olive_season_id', '=', season_id)]"/>
+                <field name="compensation_sale_location_id" attrs="{'invisible': ['|', ('compensation_type', '!=', 'first'), ('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank_type', '=', 'regular'), ('oil_product_id', '=', compensation_oil_product_id), ('olive_season_id', '=', season_id)]"/>
                 <label name="compensation_oil_qty" string="Compensation Oil Qty" attrs="{'invisible': [('compensation_type', '!=', 'first')]}"/>
                 <div name="compensation_oil_qty" attrs="{'invisible': [('compensation_type', '!=', 'first')]}">
                     <field name="compensation_oil_qty" class="oe_inline"/>
@@ -37,21 +37,21 @@
                     <field name="compensation_last_olive_qty" class="oe_inline"/>
                     <label string=" kg" class="oe_inline"/>
                 </div>
-                <label for="oil_qty_kg"/>
+                <label for="oil_qty_kg" string="Oil Qty"/>
                 <div name="oil_qty_kg">
                     <field name="oil_qty_kg" class="oe_inline"/>
                     <label string=" kg" class="oe_inline"/>
                 </div>
-                <label for="oil_qty"/>
+                <label for="oil_qty" string="Oil Qty"/>
                 <div name="oil_qty">
                     <field name="oil_qty" class="oe_inline"/>
                     <label string=" L" class="oe_inline"/>
                 </div>
 
-                <label for="ratio"/>
+                <label for="ratio" string="Gross Ratio"/>
                 <div name="ratio">
                     <field name="ratio" class="oe_inline"/>
-                    <label string=" %" class="oe_inline"/>
+                    <label string=" % (L)" class="oe_inline"/>
                 </div>
                 <label for="decanter_duration"/>
                 <div name="decanter_duration">

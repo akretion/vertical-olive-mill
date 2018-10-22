@@ -12,10 +12,9 @@ class OliveOchard(models.Model):
     _description = 'Olive Ochard'
     _inherit = ['mail.thread']
 
-    # Number ??
     name = fields.Char(string='Name', required=True)
     partner_id = fields.Many2one(
-        'res.partner', string='Olive Farmer', ondelete='restrict',
+        'res.partner', string='Olive Farmer', ondelete='cascade',
         domain=[('parent_id', '=', False), ('olive_farmer', '=', True)])
     active = fields.Boolean(default=True)
     zip_id = fields.Many2one('res.better.zip', 'City/Zip Shortcut')

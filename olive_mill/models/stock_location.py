@@ -12,7 +12,11 @@ import odoo.addons.decimal_precision as dp
 class StockLocation(models.Model):
     _inherit = 'stock.location'
 
-    olive_tank = fields.Boolean(string='Olive Oil Tank')
+    olive_tank_type = fields.Selection([
+        ('regular', 'Regular'),
+        ('compensation', 'Compensation'),
+        ('shrinkage', 'Shrinkage'),
+        ], string='Olive Oil Tank Type')
     olive_season_id = fields.Many2one(
         'olive.season', string='Olive Season', ondelete='restrict')
     olive_season_year = fields.Char(
@@ -27,7 +31,7 @@ class StockLocation(models.Model):
         for entry in res:
             loc = self.browse(entry[0])
             new_name = entry[1]
-            if loc.olive_tank and loc.oil_product_id:
+            if loc.olive_tank_type and loc.oil_product_id:
                 new_name = '%s (%s, %s)' % (
                     new_name, loc.olive_season_year, loc.oil_product_id.name)
             new_res.append((entry[0], new_name))
@@ -45,9 +49,9 @@ class StockLocation(models.Model):
 
     def olive_oil_tank_compatibility_check(self, oil_product, season):
         self.ensure_one()
-        if not self.olive_tank:
+        if not self.olive_tank_type:
             raise UserError(_(
-                "The stock location '%s' is not an olive tank.")
+                "The stock location '%s' is not an olive oil tank.")
                 % self.display_name)
         if not self.oil_product_id:
             raise UserError(_(
@@ -78,7 +82,7 @@ class StockLocation(models.Model):
         self.ensure_one()
         sqo = self.env['stock.quant']
         ppo = self.env['product.product']
-        if not self.olive_tank:
+        if not self.olive_tank_type:
             raise UserError(_(
                 "The stock location '%s' is not an olive oil tank.")
                 % self.display_name)
@@ -118,7 +122,7 @@ class StockLocation(models.Model):
         src_loc = self
         src_loc.olive_oil_tank_check(raise_if_empty=True)
         # compat src/dest
-        if dest_loc.olive_tank:
+        if dest_loc.olive_tank_type:
             dest_loc.olive_oil_tank_check()
             if not dest_loc.oil_product_id:
                 dest_loc.oil_product_id = src_loc.oil_product_id.id

@@ -76,16 +76,16 @@
                             <field name="oil_qty_kg" class="oe_inline"/>
                             <label string=" kg" class="oe_inline"/>
                         </div>
-                        <label for="ratio"/>
+                        <label for="ratio" string="Gross Ratio"/>
                         <div name="ratio">
                             <field name="ratio" class="oe_inline"/>
-                            <label string=" %" class="oe_inline"/>
+                            <label string=" % (L)" class="oe_inline"/>
                         </div>
-                        <field name="sale_location_id" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank', '=', True), ('oil_product_id', '=', oil_product_id), ('olive_season_id', '=', season_id)]"/>
-                        <field name="shrinkage_location_id" domain="[('olive_tank', '=', True), ('olive_season_id', '=', season_id)]"/>
+                        <field name="sale_location_id" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank_type', '=', 'regular'), ('oil_product_id', '=', oil_product_id), ('olive_season_id', '=', season_id)]"/>
+                        <field name="shrinkage_location_id" domain="[('olive_tank_type', '=', 'shrinkage'), ('olive_season_id', '=', season_id)]"/>
                         <field name="withdrawal_location_id" attrs="{'invisible': [('oil_destination', '=', 'sale')]}"/>
-                        <field name="compensation_location_id" attrs="{'invisible': [('compensation_type', 'not in', ('first', 'last'))], 'required': [('compensation_type', 'in', ('first', 'last'))]}" domain="[('olive_tank', '=', True), ('olive_season_id', '=', season_id)]"/>
-                        <field name="compensation_sale_location_id" attrs="{'invisible': ['|', ('compensation_type', '!=', 'first'), ('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank', '=', True), ('oil_product_id', '=', compensation_oil_product_id), ('olive_season_id', '=', season_id)('olive_season_id', '=', season_id)]"/>
+                        <field name="compensation_location_id" attrs="{'invisible': [('compensation_type', 'not in', ('first', 'last'))], 'required': [('compensation_type', 'in', ('first', 'last'))]}" domain="[('olive_tank_type', '=', 'compensation'), ('olive_season_id', '=', season_id)]"/>
+                        <field name="compensation_sale_location_id" attrs="{'invisible': ['|', ('compensation_type', '!=', 'first'), ('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank_type', '=', 'regular'), ('oil_product_id', '=', compensation_oil_product_id), ('olive_season_id', '=', season_id)]"/>
                         <field name="oil_destination"/>
                         <field name="sample"/>
                     </group>
@@ -96,7 +96,7 @@
                             <field name="line_ids" nolabel="1">
                                 <tree editable="bottom">
                                     <field name="name"/>
-                                    <field name="partner_id"/>
+                                    <field name="commercial_partner_id"/>
                                     <field name="oil_destination"/>
                                     <field name="olive_qty" sum="1"/>
                                     <field name="oil_ratio"/>
@@ -105,6 +105,7 @@
                                     <field name="compensation_oil_qty" sum="1"/>
                                     <field name="shrinkage_oil_qty" sum="1"/>
                                     <field name="withdrawal_oil_qty" sum="1"/>
+                                    <field name="withdrawal_oil_qty_kg" sum="1"/>
                                     <field name="filter_loss_oil_qty" sum="1"/>
                                     <field name="to_sale_tank_oil_qty" sum="1"/>
                                     <field name="sale_oil_qty" sum="1"/>

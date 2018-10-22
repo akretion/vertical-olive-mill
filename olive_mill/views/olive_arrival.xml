@@ -29,9 +29,10 @@
                 <group name="main">
                     <group name="left">
                         <field name="partner_id"/>
+                        <field name="commercial_partner_id" invisible="1"/>
                         <field name="partner_olive_culture_type" invisible="0"/>
                         <field name="default_variant_id" widget="selection"/>
-                        <field name="default_ochard_id" domain="[('partner_id', '=', partner_id)]" context="{'default_partner_id': partner_id}"/>
+                        <field name="default_ochard_id" domain="[('partner_id', '=', commercial_partner_id)]" context="{'default_partner_id': commercial_partner_id}"/>
                         <field name="default_oil_destination"/>
                         <field name="default_leaf_removal"/>
                     </group>
@@ -45,13 +46,13 @@
                         <field name="returned_regular_case" attrs="{'readonly': ['|', ('partner_olive_culture_type', 'in', ('organic', 'conversion')), ('state', '=', 'done')]}"/>
                         <field name="returned_organic_case" attrs="{'readonly': ['|', ('partner_olive_culture_type', '=', 'regular'), ('state', '=', 'done')]}"/>
                         <field name="returned_palox_ids" widget="many2many_tags"
-                            domain="[('borrower_partner_id', '=', partner_id)]"/>
+                            domain="[('borrower_partner_id', '=', commercial_partner_id)]"/>
                     </group>
                 </group>
                 <notebook>
                     <page name="lines" string="Arrival Lines">
                         <field name="line_ids" nolabel="1"
-                            context="{'default_leaf_removal': default_leaf_removal, 'default_variant_id': default_variant_id, 'default_ochard_id': default_ochard_id, 'default_partner_id': partner_id, 'default_oil_destination': default_oil_destination, 'default_partner_olive_culture_type': partner_olive_culture_type, 'form_view_ref': 'olive_mill.olive_arrival_line_arrival_form'}">
+                            context="{'default_leaf_removal': default_leaf_removal, 'default_variant_id': default_variant_id, 'default_ochard_id': default_ochard_id, 'default_commercial_partner_id': commercial_partner_id, 'default_oil_destination': default_oil_destination, 'default_partner_olive_culture_type': partner_olive_culture_type, 'form_view_ref': 'olive_mill.olive_arrival_line_arrival_form'}">
                             <tree>
                                 <field name="name"/>
                                 <field name="olive_qty" sum="1"/>
@@ -95,6 +96,7 @@
             <field name="name"/>
             <field name="date"/>
             <field name="partner_id"/>
+            <field name="commercial_partner_id" invisible="1"/>
             <field name="olive_qty" sum="1"/>
             <field name="state"/>
             <field name="company_id" groups="base.group_multi_company"/>
@@ -107,7 +109,7 @@
     <field name="model">olive.arrival</field>
     <field name="arch" type="xml">
         <pivot string="Olive Arrivals">
-            <field name="partner_id" type="row"/>
+            <field name="commercial_partner_id" type="row"/>
             <field name="olive_qty" type="measure"/>
         </pivot>
     </field>
@@ -132,7 +134,7 @@
     <field name="arch" type="xml">
         <search string="Search Olive Arrivals">
             <field name="name"/>
-            <field name="partner_id"/>
+            <field name="partner_id" operator="child_of"/>
             <field name="warehouse_id"/>
             <separator/>
             <filter string="Draft" domain="[('state', '=', 'draft')]" name="draft"/>
@@ -141,7 +143,7 @@
             <separator/>
             <filter name="today" string="Today" domain="[('date', '=', context_today().strftime('%Y-%m-%d'))]"/>
             <group string="Group By" name="groupby">
-                <filter name="partner_groupby" string="Farmer" context="{'group_by': 'partner_id'}"/>
+                <filter name="commercial_partner_groupby" string="Farmer" context="{'group_by': 'commercial_partner_id'}"/>
                 <filter name="date_groupby" string="Date" context="{'group_by': 'date:week'}"/>
                 <filter name="warehouse_groupby" string="Warehouse" context="{'group_by': 'warehouse_id'}"/>
                 <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>
@@ -171,7 +173,7 @@
                 <field name="arrival_id"/>
                 <field name="arrival_date"/>
                 <field name="arrival_state"/>
-                <field name="partner_id"/>
+                <field name="commercial_partner_id"/>
                 <field name="partner_olive_culture_type"/>
                 <label for="olive_qty" string="Olive Qty"/>
                 <div name="olive_qty">
@@ -184,8 +186,8 @@
                 <field name="sanitary_state"/>
                 <field name="oil_product_id"
                    domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', partner_olive_culture_type)]"/>
-                <field name="ochard_id" domain="[('partner_id', '=', partner_id)]"/>
-                <field name="palox_id" domain="['|', ('oil_product_id', '=', False), ('oil_product_id', '=', oil_product_id), '|', ('borrower_partner_id', '=', False), ('borrower_partner_id', '=', partner_id)]"/>
+                <field name="ochard_id" domain="[('partner_id', '=', commercial_partner_id)]"/>
+                <field name="palox_id" domain="['|', ('oil_product_id', '=', False), ('oil_product_id', '=', oil_product_id), '|', ('borrower_partner_id', '=', False), ('borrower_partner_id', '=', commercial_partner_id)]"/>
                 <field name="oil_destination"/>
                 <label for="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}" string="Requested Withdrawal Qty"/>
                 <div name="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}">
@@ -243,12 +245,12 @@
                 <label for="oil_ratio" string="Oil Gross Ratio"/>
                 <div name="oil_ratio">
                     <field name="oil_ratio" class="oe_inline"/>
-                    <label string=" %" class="oe_inline"/>
+                    <label string=" % (L)" class="oe_inline"/>
                 </div>
                 <label for="oil_ratio_net" string="Oil Net Ratio"/>
                 <div name="oil_ratio_net">
                     <field name="oil_ratio_net" class="oe_inline"/>
-                    <label string=" %" class="oe_inline"/>
+                    <label string=" % (L)" class="oe_inline"/>
                 </div>
             </group>
             </group>
@@ -286,7 +288,7 @@
         <form string="Olive Arrival Lines Extra">
             <group name="main">
                 <field name="name"/>
-                <field name="partner_id" invisible="1"/>
+                <field name="commercial_partner_id" invisible="1"/>
                 <field name="partner_olive_culture_type" invisible="1"/>
                 <label for="olive_qty" string="Olive Qty"/>
                 <div name="olive_qty">
@@ -299,8 +301,8 @@
                 <field name="sanitary_state"/>
                 <field name="oil_product_id"
                    domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', partner_olive_culture_type)]"/>
-                <field name="ochard_id" domain="[('partner_id', '=', partner_id)]"/>
-                <field name="palox_id" domain="['|', ('oil_product_id', '=', False), ('oil_product_id', '=', oil_product_id), '|', ('borrower_partner_id', '=', False), ('borrower_partner_id', '=', partner_id)]"/>
+                <field name="ochard_id" domain="[('partner_id', '=', commercial_partner_id)]"/>
+                <field name="palox_id" domain="['|', ('oil_product_id', '=', False), ('oil_product_id', '=', oil_product_id), '|', ('borrower_partner_id', '=', False), ('borrower_partner_id', '=', commercial_partner_id)]"/>
                 <field name="oil_destination"/>
                 <label for="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}" string="Requested Withdrawal Qty"/>
                 <div name="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}">
@@ -325,7 +327,7 @@
             <field name="name"/>
             <field name="arrival_id"/>
             <field name="production_id"/>
-            <field name="partner_id"/>
+            <field name="commercial_partner_id"/>
             <field name="olive_qty" string="Olive Quantity (kg)"/>
             <field name="palox_id"/>
             <field name="oil_product_id"/>
@@ -342,7 +344,7 @@
     <field name="model">olive.arrival.line</field>
     <field name="arch" type="xml">
         <search string="Search Arrival Lines">
-            <field name="partner_id"/>
+            <field name="commercial_partner_id"/>
             <field name="season_id"/>
             <field name="warehouse_id"/>
             <separator/>
@@ -354,7 +356,7 @@
             <filter name="arrival_state_done" string="Arrival Done" domain="[('arrival_state', '=', 'done')]"/>
             <filter name="arrival_state_cancel" string="Arrival Cancel" domain="[('arrival_state', '=', 'cancel')]"/>
             <group string="Group By" name="groupby">
-                <filter name="partner_groupby" string="Partner" context="{'group_by': 'partner_id'}"/>
+                <filter name="commercial_partner_groupby" string="Partner" context="{'group_by': 'commercial_partner_id'}"/>
                 <filter name="arrival_day_groupby" string="Arrival Day" context="{'group_by': 'arrival_date:day'}"/>
                 <filter name="arrival_week_groupby" string="Arrival Week" context="{'group_by': 'arrival_date:week'}"/>
                 <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>

@@ -30,7 +30,7 @@ class OliveInvoiceCreate(models.TransientModel):
         in_invoice = out_invoice = self.env['account.invoice']
         if self.invoice_type in ('in', 'all'):
             lines = oalo.search([
-                ('partner_id', 'child_of', commercial_partner.id),
+                ('commercial_partner_id', '=', commercial_partner.id),
                 ('warehouse_id', '=', self.warehouse_id.id),
                 ('production_state', '=', 'done'),
                 ('in_invoice_id', '=', False),
@@ -41,7 +41,7 @@ class OliveInvoiceCreate(models.TransientModel):
                 in_invoice = lines.in_invoice_create()
         if self.invoice_type in ('all', 'out'):
             lines = oalo.search([
-                ('partner_id', 'child_of', commercial_partner.id),
+                ('commercial_partner_id', '=', commercial_partner.id),
                 ('warehouse_id', '=', self.warehouse_id.id),
                 ('production_state', '=', 'done'),
                 ('out_invoice_id', '=', False),

@@ -77,11 +77,11 @@ class ResPartner(models.Model):
         if season:
             arrival_res = self.env['olive.arrival.line'].read_group([
                 ('season_id', '=', season.id),
-                ('partner_id', 'in', self.ids),
+                ('commercial_partner_id', 'in', self.ids),
                 ('arrival_state', '!=', 'cancel')],
-                ['partner_id', 'olive_qty'], ['partner_id'])
+                ['commercial_partner_id', 'olive_qty'], ['commercial_partner_id'])
             for arrival_re in arrival_res:
-                partner = self.browse(arrival_re['partner_id'][0])
+                partner = self.browse(arrival_re['commercial_partner_id'][0])
                 partner.olive_qty_current_season = int(arrival_re['olive_qty'])
 
 

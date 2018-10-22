@@ -13,7 +13,7 @@
     <field name="view_mode">pivot,graph</field>
     <field name="view_id" ref="partner_olive_arrival_line_pivot"/>
     <field name="domain">[('arrival_state', '!=', 'cancel')]</field>
-    <field name="context">{'search_default_partner_id': active_id}</field>
+    <field name="context">{'search_default_commercial_partner_id': active_id}</field>
 </record>
 
 <record id="view_partner_form" model="ir.ui.view">
@@ -21,11 +21,22 @@
     <field name="model">res.partner</field>
     <field name="inherit_id" ref="base.view_partner_form"/>
     <field name="arch" type="xml">
+        <xpath expr="//field[@name='child_ids']/form//field[@name='customer']" position="after">
+            <field name="olive_farmer" invisible="1"/>
+        </xpath>
+        <field name="child_ids" position="attributes">
+            <attribute name="context" operation="python_dict" key="default_olive_farmer">olive_farmer</attribute>
+        </field>
         <xpath expr="//page[@name='sales_purchases']//field[@name='customer']" position="after">
-            <field name="olive_farmer" attrs="{'invisible': [('parent_id', '!=', False)]}"/>
+            <field name="olive_farmer"/>
         </xpath>
         <page name="sales_purchases" position="after">
-            <page name="olive" string="Olive" attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}">
+            <page string="Olive Mill" name="olive_disabled" attrs="{'invisible': ['|', ('parent_id', '=', False), ('olive_farmer', '=', False)]}">
+                <div>
+                    <p>Olive mill related settings are managed on <button name="open_commercial_entity" type="object" string="the parent company" class="oe_link"/></p>
+                </div>
+            </page>
+            <page name="olive" string="Olive Mill" attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}">
                 <group name="olive_main">
                     <group name="left">
                         <field name="olive_sale_pricelist_id"/>
@@ -38,7 +49,7 @@
                         <button type="action" name="%(olive_appointment_action)d" string="Appointments" context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}" colspan="2"/>
                         <button type="action" name="%(olive_palox_lend_action)d" string="Lend Palox and/or Cases" context="{'default_partner_id': active_id}" colspan="2"/>
                         <button type="action" name="%(olive_arrival_action)d" string="Arrivals" context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}" colspan="2"/>
-                        <button type="action" name="%(olive_withdrawal_action)d" string="Olive Oil Withdrawal" context="{'default_partner_id': active_id}" colspan="2"/>
+                        <button type="action" name="%(olive_withdrawal_action)d" string="New Olive Oil Withdrawal" context="{'default_partner_id': active_id}" colspan="2"/>
                         <button type="action" name="%(olive_invoice_create_action)d" string="Create Invoice" context="{'default_partner_id': active_id}" colspan="2"/>
                         <button type="action" name="%(partner_olive_arrival_line_action)d" string="Show statistics" colspan="2"/>
                     </group>

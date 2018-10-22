@@ -21,6 +21,7 @@
         'report_py3o',
         'base_usability',  # for reports
         'onchange_helper',
+        'base_view_inheritance_extension',
         ],
     'data': [
         'security/olive_security.xml',

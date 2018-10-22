@@ -14,14 +14,9 @@
     <field name="arch" type="xml">
         <group groups="stock.group_adv_location" position="after">
             <group name="olive" string="Olive Oil">
-                <field name="olive_tank"/>
-                <field name="oil_product_id" attrs="{'invisible': [('olive_tank', '=', False)]}"/>
-                <field name="olive_season_id"/>
-                <!--                <label for="olive_oil_compensation_ratio" attrs="{'invisible': [('olive_tank', '=', False)]}"/>
-                <div name="olive_oil_compensation_ratio" attrs="{'invisible': [('olive_tank', '=', False)]}">
-                    <field name="olive_oil_compensation_ratio" class="oe_inline"/>
-                    <label string=" %"/>
-                </div> -->
+                <field name="olive_tank_type"/>
+                <field name="oil_product_id" attrs="{'invisible': [('olive_tank_type', '=', False)]}"/>
+                <field name="olive_season_id" attrs="{'invisible': [('olive_tank_type', '=', False)]}"/>
             </group>
         </group>
     </field>
@@ -33,7 +28,7 @@
     <field name="inherit_id" ref="stock.view_location_tree2"/>
     <field name="arch" type="xml">
         <field name="usage" position="after">
-            <field name="olive_tank" invisible="not context.get('default_olive_tank')"/>
+            <field name="olive_tank_type" invisible="not context.get('default_olive_tank')"/>
             <field name="oil_product_id" invisible="not context.get('default_olive_tank')"/>
             <field name="olive_season_id" invisible="not context.get('default_olive_tank')"/>
         </field>
@@ -47,7 +42,7 @@
     <field name="arch" type="xml">
         <filter name="supplier" position="after">
             <separator/>
-            <filter name="olive_tank" string="Olive Oil Tank" domain="[('olive_tank', '=', True)]"/>
+            <filter name="olive_tank" string="Olive Oil Tank" domain="[('olive_tank', '!=', False)]"/>
         </filter>
     </field>
 </record>
@@ -56,7 +51,7 @@
     <field name="name">Tanks</field>
     <field name="res_model">stock.location</field>
     <field name="view_mode">tree,form</field>
-    <field name="context">{'default_olive_tank': True, 'search_default_olive_tank': True, 'default_usage': 'internal'}</field>
+    <field name="context">{'default_olive_tank': 'regular', 'search_default_olive_tank': True, 'default_usage': 'internal'}</field>
 </record>
 
 <menuitem id="tank_stock_location_menu" action="tank_stock_location_action" parent="olive_data_menu" sequence="60"/>

@@ -19,6 +19,7 @@
                 <group name="main">
                     <group name="left">
                         <field name="partner_id"/>
+                        <field name="commercial_partner_id" invisible="1"/>
                         <field name="variant_id" widget="selection"/>
                         <label for="qty"/>
                         <div name="qty">
@@ -57,6 +58,7 @@
         <tree string="Olive Appointments">
             <field name="start_datetime"/>
             <field name="partner_id"/>
+            <field name="commercial_partner_id" invisible="1"/>
             <field name="variant_id"/>
             <field name="qty" sum="1"/>
             <field name="palox_qty" sum="1"/>
@@ -85,10 +87,10 @@
             <filter name="today" string="Today" domain="[('start_datetime', '&lt;=', datetime.datetime.combine(context_today(), datetime.time(23, 59, 0))), ('start_datetime', '&gt;', datetime.datetime.combine(context_today(), datetime.time(0, 0, 0)))]"/>
             <filter name="tomorrow" string="Tomorrow" domain="[('start_datetime', '&lt;=', datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(23, 59, 0))), ('start_datetime', '&gt;', datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(0, 0, 0)))]"/>
             <separator/>
-            <field name="partner_id"/>
+            <field name="partner_id" operator="child_of"/>
             <group string="Group By" name="groupby">
                 <filter name="start_groupby" string="Day" context="{'group_by': 'start_datetime:day'}"/>
-                <filter name="partner_groupby" string="Partner" context="{'group_by': 'partner_id'}"/>
+                <filter name="commercial_partner_groupby" string="Partner" context="{'group_by': 'commercial_partner_id'}"/>
                 <filter name="variant_groupby" string="Olive Variant" context="{'group_by': 'variant_id'}"/>
             </group>
         </search>

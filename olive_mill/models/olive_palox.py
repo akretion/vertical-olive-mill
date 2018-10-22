@@ -70,11 +70,11 @@ class OlivePalox(models.Model):
             if l.palox_id not in paloxes:
                 paloxes[l.palox_id] = {
                     'oil_dests': [l.oil_destination],
-                    'farmers': [l.partner_id.name],
+                    'farmers': [l.commercial_partner_id.name],
                     }
             else:
                 paloxes[l.palox_id]['oil_dests'].append(l.oil_destination)
-                paloxes[l.palox_id]['farmers'].append(l.partner_id.name)
+                paloxes[l.palox_id]['farmers'].append(l.commercial_partner_id.name)
         for palox, rdict in paloxes.iteritems():
             oil_destination = 'mix'
             if all([dest == 'sale' for dest in rdict['oil_dests']]):

@@ -48,14 +48,14 @@ class OliveOilProduction(models.Model):
     withdrawal_location_id = fields.Many2one(
         'stock.location', string='Withdrawal Location', required=True,
         states={'done': [('readonly', True)]},
-        domain=[('olive_tank', '=', False), ('usage', '=', 'internal')])
+        domain=[('olive_tank_type', '=', False), ('usage', '=', 'internal')])
     shrinkage_location_id = fields.Many2one(
         'stock.location', string='Shrinkage Tank',
         states={'done': [('readonly', True)]},
         track_visibility='onchange')
     compensation_location_id = fields.Many2one(
-        'stock.location', string='Compensation Tank',
-        readonly=True, states={'draft': [('readonly', False)], 'ratio': [('readonly', False)]},
+        'stock.location', string='Compensation Tank', readonly=True,
+        states={'draft': [('readonly', False)], 'ratio': [('readonly', False)]},
         track_visibility='onchange')
     compensation_sale_location_id = fields.Many2one(
         'stock.location', string='Compensation Sale Tank',
@@ -105,7 +105,7 @@ class OliveOilProduction(models.Model):
         string='Oil Quantity (L)', digits=dp.get_precision('Olive Oil Volume'),
         readonly=True)  # written by ratio2force wizard
     ratio = fields.Float(
-        string='Ratio', digits=dp.get_precision('Olive Oil Ratio'),
+        string='Gross Ratio (% L)', digits=dp.get_precision('Olive Oil Ratio'),
         readonly=True,
         help="This ratio gives the number of liters of olive oil for "
         "100 Kg of olives.")  # Yes, it's a ratio between liters and kg !!!
@@ -316,7 +316,7 @@ class OliveOilProduction(models.Model):
                     "The season of arrival line %s is %s, but this oil "
                     "production is attached to season %s.") % (
                         l.name, l.season_id.name, self.season_id.name))
-            farmers.append(l.partner_id.name)
+            farmers.append(l.commercial_partner_id.name)
             if float_compare(l.olive_qty, 0, precision_digits=pr_oli) <= 0:
                 raise UserError(_(
                     "On line %s, the olive qty is null !") % l.name)
@@ -365,7 +365,6 @@ class OliveOilProduction(models.Model):
         action = self.env['ir.actions.act_window'].for_xml_id(
             'olive_mill', 'olive_oil_production_ratio2force_action')
         action['context'] = {'default_production_id': self.id}
-        print "action=", action
         return action
 
     def ratio2force(self):
@@ -429,27 +428,30 @@ class OliveOilProduction(models.Model):
             first_line_oil_qty = first_line_to_process.olive_qty * total_oil_qty / self.olive_qty
             total_oil_prorata = total_oil_qty
             total_olive_prorata = self.olive_qty
+        # The compensation oil qty is distributed pro-rata of the oil_qty ;
+        # so the forced ratio is in-directly taken into account
         first_line_compensation_oil_qty = False
         if total_compensation_oil_qty:
             first_line_compensation_oil_qty = total_compensation_oil_qty * first_line_oil_qty / total_oil_qty
-        print "first_line_compensation_oil_qty=", first_line_compensation_oil_qty
         first_line_vals = first_line_to_process.oil_qty_compute_other_vals(
             first_line_oil_qty, first_line_compensation_oil_qty, first_line_ratio)
         # Write on first line
         first_line_to_process.write(first_line_vals)
         lines = [line for line in self.line_ids if line != first_line_to_process]
         for line in lines:
-            # compute oil qty at the pro-rata of olive qty
+            # compute oil qty with a pro-rata using special values total_oil_prorata
+            # and total_olive_prorata
             oil_qty = line.olive_qty * total_oil_prorata / total_olive_prorata
-            olive_qty_with_compensation = line.olive_qty
-            if ctype == 'last':
-                olive_qty_with_compensation += self.compensation_last_olive_qty * line.olive_qty / self.olive_qty
-            compensation_oil_qty = 0.0
+            compensation_oil_qty = False
             if total_compensation_oil_qty:
                 compensation_oil_qty = total_compensation_oil_qty * oil_qty / total_oil_qty
-            print "olive_qty_with_compensation=",olive_qty_with_compensation
+            oil_qty_for_ratio = oil_qty
+            if ctype == 'last':
+                oil_qty_for_ratio -= compensation_oil_qty
+            elif ctype == 'first':
+                oil_qty_for_ratio += compensation_oil_qty
             ratio = float_round(
-                100 * (oil_qty + compensation_oil_qty) / olive_qty_with_compensation, precision_digits=ratio_prec)
+                100 * oil_qty_for_ratio / line.olive_qty, precision_digits=ratio_prec)
             vals = line.oil_qty_compute_other_vals(
                 oil_qty, compensation_oil_qty, ratio)
             # Write on other lines
@@ -524,7 +526,7 @@ class OliveOilProduction(models.Model):
                     'origin': self.name,
                     'product_uom_qty': line.withdrawal_oil_qty,
                     'restrict_lot_id': prodlot.id,
-                    'restrict_partner_id': line.partner_id.id,
+                    'restrict_partner_id': line.commercial_partner_id.id,
                     })
                 wmove.action_done()
                 assert wmove.state == 'done'
@@ -576,7 +578,7 @@ class OliveOilProduction(models.Model):
                     'product_uom': extra.product_id.uom_id.id,
                     'origin': self.name,
                     'product_uom_qty': extra.qty,
-                    'restrict_partner_id': line.partner_id.id,
+                    'restrict_partner_id': line.commercial_partner_id.id,
                     })
                 extra_move.action_done()
                 assert extra_move.state == 'done'
@@ -618,7 +620,7 @@ class OliveOilProduction(models.Model):
             elif self.oil_destination == 'withdrawal' and len(self.line_ids) == 1:
                 cloc.olive_oil_transfer(
                     wloc, 'full', self.warehouse_id,
-                    dest_partner=self.line_ids[0].partner_id,
+                    dest_partner=self.line_ids[0].commercial_partner_id,
                     origin=_('Empty compensation tank to withdrawal location'),
                     auto_validate=True)
             else:
