@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo noupdate="1">
+
+<record id="fr_bio_01" model="organic.certifying.entity">
+    <field name="name">ECOCERT France</field>
+    <field name="code">FR-BIO-01</field>
+    <field name="sequence">10</field>
+</record>
+
+<record id="fr_bio_16" model="organic.certifying.entity">
+    <field name="name">QUALISUD / Agrocert</field>
+    <field name="code">FR-BIO-16</field>
+    <field name="sequence">20</field>
+</record>
+
+<record id="fr_bio_09" model="organic.certifying.entity">
+    <field name="name">Certipaq / Aclave</field>
+    <field name="code">FR-BIO-09</field>
+    <field name="sequence">30</field>
+</record>
+
+<record id="fr_bio_10" model="organic.certifying.entity">
+    <field name="name">Bureau Veritas/Qualité-France</field>
+    <field name="code">FR-BIO-10</field>
+    <field name="sequence">40</field>
+</record>
+
+<record id="fr_bio_12" model="organic.certifying.entity">
+    <field name="name">CertiSud</field>
+    <field name="code">FR-BIO-12</field>
+    <field name="sequence">50</field>
+</record>
+
+<record id="fr_bio_13" model="organic.certifying.entity">
+    <field name="name">Certis</field>
+    <field name="code">FR-BIO-13</field>
+    <field name="sequence">60</field>
+</record>
+
+<record id="fr_bio_15" model="organic.certifying.entity">
+    <field name="name">Bureau Alpes Contrôles</field>
+    <field name="code">FR-BIO-15</field>
+    <field name="sequence">70</field>
+</record>
+
+
+
+</odoo>
