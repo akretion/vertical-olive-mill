@@ -45,10 +45,10 @@ class StockWarehouse(models.Model):
     _sql_constraints = [(
         'olive_oil_compensation_ratio_positive',
         'CHECK(olive_oil_compensation_ratio >= 0)',
-        'Oil compensation ratio must be positive or 0'),
+        'Oil compensation ratio must be positive or null.'),
         ('olive_compensation_last_qty_positive',
          'CHECK(olive_compensation_last_qty >= 0)',
-         'Olive Compensation Quantity must be positive or 0')]
+         'Olive Compensation Quantity must be positive or null.')]
 
     @api.depends('olive_organic_case_total', 'olive_regular_case_total')
     def _compute_cases(self):

@@ -13,7 +13,7 @@
     <field name="arch" type="xml">
         <form string="Olive Appointment">
             <header>
-                <button name="%(olive_palox_lend_action)d" type="action" string="Lend Palox/Case" attrs="{'invisible': [('appointment_type', '!=', 'lend')]}" context="{'default_partner_id': partner_id}" class="btn-primary"/>
+                <button name="%(olive_palox_lend_action)d" type="action" string="Lend Palox/Cases" attrs="{'invisible': [('appointment_type', '!=', 'lend')]}" context="{'default_partner_id': partner_id}" class="btn-primary"/>
                 <button name="create_arrival" class="btn-primary" attrs="{'invisible': ['|', ('arrival_id', '!=', False), ('appointment_type', '!=', 'arrival')]}" string="Create Arrival" type="object"/>
                 <button name="%(olive_withdrawal_action)d" type="action" string="New Withdrawal" attrs="{'invisible': [('appointment_type', '!=', 'withdrawal')]}" context="{'default_partner_id': partner_id}" class="btn-primary"/>
                 <button name="%(olive_invoice_create_action)d" type="action" string="Create Invoice" attrs="{'invisible': [('appointment_type', '!=', 'withdrawal')]}" context="{'default_partner_id': partner_id}"/>
@@ -91,13 +91,13 @@
     <field name="name">olive.appointment.search</field>
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
-        <search string="Search Olive appointments">
+        <search string="Search Olive Appointments">
             <field name="partner_id" operator="child_of"/>
             <separator/>
             <filter name="today" string="Today" domain="[('start_datetime', '&lt;=', datetime.datetime.combine(context_today(), datetime.time(23, 59, 0))), ('start_datetime', '&gt;', datetime.datetime.combine(context_today(), datetime.time(0, 0, 0)))]"/>
             <filter name="tomorrow" string="Tomorrow" domain="[('start_datetime', '&lt;=', datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(23, 59, 0))), ('start_datetime', '&gt;', datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(0, 0, 0)))]"/>
             <separator/>
-            <filter name="lend" string="Lend Palox/Box" domain="[('appointment_type', '=', 'lend')]"/>
+            <filter name="lend" string="Lend Palox/Cases" domain="[('appointment_type', '=', 'lend')]"/>
             <filter name="arrival" string="Arrival" domain="[('appointment_type', '=', 'arrival')]"/>
             <filter name="withdrawal" string="Withdrawal" domain="[('appointment_type', '=', 'withdrawal')]"/>
             <filter name="other" string="Other" domain="[('appointment_type', '=', 'other')]"/>

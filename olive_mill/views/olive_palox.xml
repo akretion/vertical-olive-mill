@@ -23,7 +23,7 @@
                 <div class="oe_title">
                     <label for="name" string="Palox Number"/>
                     <h1>
-                        <field name="name" placeholder="Write here the number of the palox..."/>
+                        <field name="name" placeholder="Write here the number of the palox"/>
                     </h1>
                 </div>
                 <group name="main">

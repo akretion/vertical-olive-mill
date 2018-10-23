@@ -13,7 +13,7 @@ class StockProductionLot(models.Model):
     arrival_line_id = fields.Many2one(
         'olive.arrival.line', 'Arrival Line', ondelete='restrict',
         readonly=True)
-    oil_merge_lot = fields.Boolean(string='Oil Merge Lot', readonly=False)
+#    oil_merge_lot = fields.Boolean(string='Oil Merge Lot', readonly=False)
 
     @api.depends('name', 'expiry_date', 'oil_merge_lot')
     def name_get(self):
@@ -29,13 +29,13 @@ class StockProductionLot(models.Model):
             res.append((lot.id, dname))
         return res
 
-    @api.constrains('oil_merge_lot', 'product_id')
-    def check_oil_merge_lot(self):
-        for lot in self:
-            if (
-                    lot.oil_merge_lot and
-                    lot.product_id.olive_type not in ('oil', 'olive')):
-                raise ValidationError(_(
-                    u"Oil Merge Lot can only apply on Olive or Oil products, "
-                    u"which is not the case of product '%s'")
-                    % lot.product_id.display_name)
+#    @api.constrains('oil_merge_lot', 'product_id')
+#    def check_oil_merge_lot(self):
+#        for lot in self:
+#            if (
+#                    lot.oil_merge_lot and
+#                    lot.product_id.olive_type not in ('oil', 'olive')):
+#                raise ValidationError(_(
+#                    u"Oil Merge Lot can only apply on Olive or Oil products, "
+#                    u"which is not the case of product '%s'")
+#                    % lot.product_id.display_name)

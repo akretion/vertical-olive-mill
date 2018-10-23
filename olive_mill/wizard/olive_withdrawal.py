@@ -9,7 +9,7 @@ from odoo.exceptions import UserError
 
 class OliveWithdrawal(models.TransientModel):
     _name = 'olive.withdrawal'
-    _description = 'Wizard to Withdraw Olive Oil'
+    _description = 'Wizard to withdraw olive oil'
 
     partner_id = fields.Many2one(
         'res.partner', string='Olive Farmer', required=True,

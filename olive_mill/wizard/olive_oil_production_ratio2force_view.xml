@@ -56,7 +56,7 @@
                 <label for="decanter_duration"/>
                 <div name="decanter_duration">
                     <field name="decanter_duration" class="oe_inline"/>
-                    <label string=" min"/>
+                    <label string=" minutes"/>
                 </div>
                 <label for="decanter_speed"/>
                 <div name="decanter_speed">

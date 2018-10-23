@@ -9,7 +9,7 @@ from odoo.exceptions import UserError, ValidationError
 
 class OliveLendedCase(models.Model):
     _name = 'olive.lended.case'
-    _description = 'Olive Lended Case'
+    _description = 'Olive Lended Cases'
     _order = 'date desc'
 
     partner_id = fields.Many2one(
@@ -29,8 +29,8 @@ class OliveLendedCase(models.Model):
     date = fields.Date(string='Date', required=True, default=fields.Date.context_today)
     regular_qty = fields.Integer(
         string='Case Quantity',
-        help="The quantity is positive when the case is lended, negative when the case is returned.")
+        help="The quantity is positive when the case is lended. It is negative when the case is returned.")
     organic_qty = fields.Integer(
         string='Organic Case Quantity',
-        help="The quantity is positive when the case is lended, negative when the case is returned.")
+        help="The quantity is positive when the case is lended. It is negative when the case is returned.")
     notes = fields.Char(string='Notes')

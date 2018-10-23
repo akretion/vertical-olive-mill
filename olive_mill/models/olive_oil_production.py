@@ -83,7 +83,7 @@ class OliveOilProduction(models.Model):
     olive_qty = fields.Float(
         string='Olive Qty', compute='_compute_lines',
         digits=dp.get_precision('Olive Weight'), readonly=True, store=True,
-        help='Olive quantity without compensation in Kg')
+        help='Olive quantity without compensation in kg')
     compensation_oil_qty = fields.Float(
         string='Oil Compensation Last of Day (L)',
         digits=dp.get_precision('Olive Oil Volume'), readonly=True)
@@ -317,13 +317,13 @@ class OliveOilProduction(models.Model):
                 oil_product = l.oil_product_id
             if l.season_id != self.season_id:
                 raise UserError(_(
-                    "The season of arrival line %s is %s, but this oil "
-                    "production is attached to season %s.") % (
-                        l.name, l.season_id.name, self.season_id.name))
+                    "The season of arrival line %s is '%s', but the oil "
+                    "production %s is attached to season '%s'.") % (
+                        l.name, l.season_id.name, self.name, self.season_id.name))
             farmers.append(l.commercial_partner_id.name)
             if float_compare(l.olive_qty, 0, precision_digits=pr_oli) <= 0:
                 raise UserError(_(
-                    "On line %s, the olive qty is null !") % l.name)
+                    "On line %s, the olive quantity is null.") % l.name)
             if not sample:
                 for extra in l.extra_ids:
                     if extra.product_olive_type == 'analysis':
@@ -357,7 +357,7 @@ class OliveOilProduction(models.Model):
         if ctype == 'last':
             if cratio < MIN_RATIO or cratio > MAX_RATIO:
                 raise UserError(_(
-                    "The compensation ratio (%s) is not realistic") % cratio)
+                    "The compensation ratio (%s %%) is not realistic.") % cratio)
             compensation_oil_qty = cratio * self.compensation_last_olive_qty / 100.0
         elif ctype == 'first':
             compensation_oil_qty =\

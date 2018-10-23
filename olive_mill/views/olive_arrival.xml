@@ -285,7 +285,7 @@
     <field name="model">olive.arrival.line</field>
     <field name="priority">1000</field>
     <field name="arch" type="xml">
-        <form string="Olive Arrival Lines Extra">
+        <form string="Olive Arrival Line">
             <group name="main">
                 <field name="name"/>
                 <field name="commercial_partner_id" invisible="1"/>
@@ -413,7 +413,7 @@
 </record>
 
 <record id="olive_arrival_line_action" model="ir.actions.act_window">
-    <field name="name">Arrivals Lines</field>
+    <field name="name">Arrival Lines</field>
     <field name="res_model">olive.arrival.line</field>
     <field name="view_mode">tree,form,pivot,graph</field>
     <field name="context">{'search_default_arrival_state_done': True}</field>

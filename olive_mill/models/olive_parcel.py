@@ -21,7 +21,7 @@ class OliveParcel(models.Model):
     area = fields.Float(
         string='Area', digits=dp.get_precision('Olive Parcel Area'),
         help="Area in hectare")
-    tree_qty = fields.Integer(string='Number of trees')
+    tree_qty = fields.Integer(string='Number of Trees')
     variant_ids = fields.Many2many('olive.variant', string='Olive Variants')
     density = fields.Char('Density', size=64)
     planted_year = fields.Char(string='Planted Year')
@@ -37,10 +37,8 @@ class OliveParcel(models.Model):
     _sql_constraints = [(
         'area_positive',
         'CHECK(area >= 0)',
-        'The area must be positive or 0.'), (
+        'The area must be positive or null.'), (
         'tree_qty_positive',
         'CHECK(tree_qty >= 0)',
-        "The number of tree must be positive or 0."), (
-        'planted_year_positive',
-        'CHECK(planted_year >= 0)',
-        'The planted year must be positive')]
+        "The number of trees must be positive or null."),
+        ]

@@ -11,7 +11,7 @@
     <field name="name">olive.lended.case.form</field>
     <field name="model">olive.lended.case</field>
     <field name="arch" type="xml">
-        <form string="Olive Lended Case">
+        <form string="Olive Lended Cases">
             <group name="main">
                 <field name="partner_id" invisible="not context.get('olive_lended_case_main_view')"/>
                 <field name="partner_olive_culture_type" invisible="1"/>
