@@ -32,7 +32,7 @@
         'data/cron.xml',
         'report/report.xml',
         'views/menu.xml',
-        'wizard/mrp_product_produce_view.xml',
+        # 'wizard/mrp_product_produce_view.xml',
         'wizard/olive_palox_case_lend_view.xml',
         'wizard/olive_withdrawal_view.xml',
         'wizard/olive_invoice_create_view.xml',

@@ -96,10 +96,10 @@ class OliveArrival(models.Model):
     _sql_constraints = [(
         'returned_regular_case_positive',
         'CHECK(returned_regular_case >= 0)',
-        'The returned regular cases must be positive or 0.'), (
+        'The returned regular cases must be positive or null.'), (
         'returned_organic_case_positive',
         'CHECK(returned_organic_case >= 0)',
-        'The returned organic cases must be positive or 0.')]
+        'The returned organic cases must be positive or null.')]
 
     @api.depends('line_ids.olive_qty')
     def _compute_olive_qty(self):
@@ -175,8 +175,8 @@ class OliveArrival(models.Model):
             i += 1
             if float_is_zero(line.olive_qty, precision_digits=pr_oli):
                 raise UserError(_(
-                    "On line %s, the olive quantity is null")
-                    % line.name)
+                    "On arrival line number %d, the olive quantity is null.")
+                    % i)
             if line.palox_id.borrower_partner_id:
                 returned_palox |= line.palox_id
             for palox in self.returned_palox_ids:
@@ -185,9 +185,9 @@ class OliveArrival(models.Model):
             if (line.oil_product_id.olive_culture_type !=
                     partner_olive_culture_type):
                 raise UserError(_(
-                    "On line %s, the destination oil '%s' is '%s' "
-                    "but the farmer '%s' is '%s'.") % (
-                        line.name,
+                    "On arrival line number %d, the destination oil '%s' is "
+                    "'%s' but the farmer '%s' is '%s'.") % (
+                        i,
                         line.oil_product_id.name,
                         line.oil_product_id.olive_culture_type,
                         self.commercial_partner_id.display_name,
@@ -198,8 +198,8 @@ class OliveArrival(models.Model):
                     float_is_zero(
                         line.mix_withdrawal_oil_qty, precision_digits=pr_oil)):
                 raise UserError(_(
-                    "On line %s, the oil destination is 'mix' so you must "
-                    "enter the requested withdrawal qty") % line.name)
+                    "On arrival line number %d, the oil destination is 'mix' "
+                    "so you must enter the requested withdrawal qty") % i)
 
             # Check oil product is the same
             if not line.palox_id.oil_product_id:
@@ -224,10 +224,12 @@ class OliveArrival(models.Model):
             if (
                     line.oil_destination == 'mix' and
                     line.mix_withdrawal_oil_qty > wh.olive_oil_compensation_ratio * line.olive_qty / 100.0):
-                warn_msgs.append(_("On arrival line %d that has a mixed oil destination, "
-                        "the requested withdraway quantity (%s L) is superior to "
-                        "the olive quantity of the line (%s kg) multiplied by the "
-                        "average ratio (%s %%).") % (
+                warn_msgs.append(_(
+                        "On arrival line number %d that has a mixed oil "
+                        "destination, the requested withdraway quantity "
+                        "(%s L) is superior to the olive quantity of the "
+                        "line (%s kg) multiplied by the average ratio "
+                        "(%s %%).") % (
                             i, line.mix_withdrawal_oil_qty,
                             line.olive_qty, wh.olive_oil_compensation_ratio))
 
@@ -283,7 +285,7 @@ class OliveArrival(models.Model):
                     self.returned_regular_case > self.commercial_partner_id.olive_lended_regular_case):
                 raise UserError(_(
                     "The olive farmer '%s' currently has %d lended case(s) "
-                    "and the olive arrival %s declares %d returned case(s).")
+                    "but the olive arrival %s declares %d returned case(s).")
                     % (self.commercial_partner_id.display_name,
                        self.commercial_partner_id.olive_lended_regular_case,
                        self.name,
@@ -294,7 +296,7 @@ class OliveArrival(models.Model):
                     self.commercial_partner_id.olive_lended_organic_case):
                 raise UserError(_(
                     "The olive farmer '%s' currently has %d lended organic "
-                    "case(s) and the olive arrival %s declares %d returned "
+                    "case(s) but the olive arrival %s declares %d returned "
                     "organic case(s).") % (
                         self.commercial_partner_id.display_name,
                         self.commercial_partner_id.olive_lended_organic_case,
@@ -325,7 +327,7 @@ class OliveArrival(models.Model):
         for arrival in self:
             if arrival.state == 'done':
                 raise UserError(_(
-                    "Cannot delete arrival %s which is in Done state.")
+                    "Cannot delete arrival %s which is in 'Done' state.")
                     % arrival.name)
         return super(OliveArrival, self).unlink()
 
@@ -412,7 +414,7 @@ class OliveArrivalLine(models.Model):
     extra_ids = fields.One2many(
         'olive.arrival.line.extra', 'line_id', string="Extra Items")
     extra_count = fields.Integer(
-        compute='_compute_extra_count', string='Extra Items Lines', readonly=True)
+        compute='_compute_extra_count', string='Extra Item Lines', readonly=True)
 
     # START fields BEFORE shrinkage BEFORE filter_loss
     oil_qty_kg = fields.Float(  # Includes compensation
@@ -429,7 +431,7 @@ class OliveArrivalLine(models.Model):
         string='Compensation Oil Qty (L)',
         readonly=True, digits=dp.get_precision('Olive Oil Volume'),
         help="This field is used both for last of the day and first of "
-        "the day compensations")
+        "the day compensations.")
     # END fields BEFORE shrinkage BEFORE filter_loss
 
     shrinkage_oil_qty = fields.Float(  # Sale and withdraw
@@ -473,10 +475,10 @@ class OliveArrivalLine(models.Model):
     _sql_constraints = [(
         'olive_qty_positive',
         'CHECK(olive_qty >= 0)',
-        'The olive quantity must be positive or 0.'), (
+        'The olive quantity must be positive or null.'), (
         'mix_withdrawal_oil_qty_qty_positive',
         'CHECK(mix_withdrawal_oil_qty >= 0)',
-        'The requested withdrawal qty must be positive or 0.'),
+        'The requested withdrawal qty must be positive or null.'),
         ]
 
     @api.depends('extra_ids')

@@ -11,7 +11,7 @@
     <field name="name">olive.palox.case.lend.form</field>
     <field name="model">olive.palox.case.lend</field>
     <field name="arch" type="xml">
-        <form string="Lend Olive Case and/or Palox">
+        <form string="Lend Palox and/or Cases">
             <group name="main">
                 <field name="partner_id"/>
                 <field name="partner_olive_culture_type" invisible="1"/>
@@ -28,7 +28,7 @@
 </record>
 
 <record id="olive_palox_lend_action" model="ir.actions.act_window">
-        <field name="name">Lend Palox/Case</field>
+    <field name="name">Lend Palox/Cases</field>
     <field name="res_model">olive.palox.case.lend</field>
     <field name="view_mode">form</field>
     <field name="target">new</field>

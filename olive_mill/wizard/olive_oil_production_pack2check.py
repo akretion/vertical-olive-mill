@@ -10,7 +10,7 @@ import odoo.addons.decimal_precision as dp
 
 class OliveOilProductionPack2Check(models.TransientModel):
     _name = 'olive.oil.production.pack2check'
-    _description = 'Olive Oil Production pack2check'
+    _description = 'Olive Oil Production Pack2check'
 
     production_id = fields.Many2one(
         'olive.oil.production', string='Olive Oil Production', required=True)

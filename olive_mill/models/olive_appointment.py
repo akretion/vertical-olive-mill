@@ -15,7 +15,7 @@ class OliveAppointment(models.Model):
 
     # name is required when you create from calendar
     # it is also needed for appointments with type = 'other'
-    name = fields.Char(string='Note')
+    name = fields.Char(string='Notes')
     company_id = fields.Many2one(
         'res.company', string='Company',
         ondelete='cascade', required=True,
@@ -27,7 +27,7 @@ class OliveAppointment(models.Model):
     commercial_partner_id = fields.Many2one(
         related='partner_id.commercial_partner_id', readonly=True, store=True)
     appointment_type = fields.Selection([
-        ('lend', 'Lend Palox/Case'),
+        ('lend', 'Lend Palox/Cases'),
         ('arrival', 'Arrival'),
         ('withdrawal', 'Withdrawal'),
         ('other', 'Other'),
@@ -59,10 +59,10 @@ class OliveAppointment(models.Model):
     _sql_constraints = [(
         'qty_positive',
         'CHECK(qty >= 0)',
-        'The quantity must be positive or 0.'), (
+        'The quantity must be positive or null.'), (
         'withdrawal_oil_qty_positive',
         'CHECK(withdrawal_oil_qty >= 0)',
-        'The quantity of oil withdrawn must be positive or 0.'),
+        'The quantity of oil withdrawn must be positive or null.'),
         ]
 
     @api.onchange('oil_destination')

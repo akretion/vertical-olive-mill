@@ -9,7 +9,7 @@ from odoo.exceptions import UserError
 
 class OliveArrivalWarning(models.TransientModel):
     _name = 'olive.arrival.warning'
-    _description = 'Olive Arrivals Warning'
+    _description = 'Olive arrivals warning'
 
     arrival_id = fields.Many2one(
         'olive.arrival', required=True)

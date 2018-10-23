@@ -8,7 +8,7 @@
 <odoo>
 
 <record id="partner_olive_arrival_line_action" model="ir.actions.act_window">
-    <field name="name">Olive Arrivals Lines</field>
+    <field name="name">Olive Arrival Lines</field>
     <field name="res_model">olive.arrival.line</field>
     <field name="view_mode">pivot,graph</field>
     <field name="view_id" ref="partner_olive_arrival_line_pivot"/>

@@ -9,7 +9,7 @@ from odoo.exceptions import UserError
 
 class OlivePaloxCaseLend(models.TransientModel):
     _name = 'olive.palox.case.lend'
-    _description = 'Wizard to Lend Olive Palox and/or Cases'
+    _description = 'Wizard to lend palox and/or cases'
 
     partner_id = fields.Many2one(
         'res.partner', string='Olive Farmer', required=True,

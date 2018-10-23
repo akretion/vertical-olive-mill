@@ -26,7 +26,7 @@ class ResCompany(models.Model):
         string='Arrival Appointment Minimum Duration', default=5,
         help="Arrival appointment minimum duration in minutes")
     olive_appointment_lend_minutes = fields.Integer(
-        string='Lend Palox/Case Appointment Default Duration', default=5)
+        string='Lend Palox/Cases Appointment Default Duration', default=5)
     olive_appointment_withdrawal_minutes = fields.Integer(
         string='Withdrawal Appointment Default Duration', default=5)
     # END APPOINTMENTS
@@ -62,37 +62,37 @@ class ResCompany(models.Model):
     _sql_constraints = [(
         'olive_max_qty_per_palox_positive',
         'CHECK(olive_max_qty_per_palox >= 0)',
-        'Maximum Quantity of Olives per Palox must be positive'), (
+        'Maximum Quantity of Olives per Palox must be positive.'), (
         'olive_oil_density_positive',
         'CHECK(olive_oil_density > 0)',
-        'Olive oil density must be strictly positive'), (
+        'Olive oil density must be strictly positive.'), (
         'olive_shrinkage_ratio_positive',
         'CHECK(olive_shrinkage_ratio >= 0)',
-        'Shrinkage Ratio must be positive'), (
+        'Shrinkage Ratio must be positive.'), (
         'olive_filter_ratio_positive',
         'CHECK(olive_filter_ratio >= 0)',
-        'Filter Ratio must be positive'), (
+        'Filter Ratio must be positive.'), (
         'olive_oil_tax_price_unit_positive',
         'CHECK(olive_oil_tax_price_unit >= 0)',
-        'Tax unit price must be positive or null'), (
+        'Tax unit price must be positive or null.'), (
         'olive_appointment_qty_per_palox_positive',
         'CHECK(olive_appointment_qty_per_palox >= 0)',
-        'Quantity of Olives per Palox must be positive'), (
+        'The Quantity of Olives per Palox must be positive.'), (
         'olive_appointment_arrival_no_leaf_removal_minutes_positive',
         'CHECK(olive_appointment_arrival_no_leaf_removal_minutes >= 0)',
-        'Arrival Appointment Default Duration without Leaf Removal must be positive'), (
+        'Arrival Appointment Default Duration without Leaf Removal must be positive.'), (
         'olive_appointment_arrival_leaf_removal_minutes_positive',
         'CHECK(olive_appointment_arrival_leaf_removal_minutes >= 0)',
-        'Arrival Appointment Default Duration with Leaf Removal must be positive'), (
+        'Arrival Appointment Default Duration with Leaf Removal must be positive.'), (
         'olive_appointment_arrival_min_minutes_positive',
         'CHECK(olive_appointment_arrival_min_minutes >= 0)',
-        'Arrival Appointment Minimum Duration must be positive'), (
+        'Arrival Appointment Minimum Duration must be positive.'), (
         'olive_appointment_lend_minutes_positive',
         'CHECK(olive_appointment_lend_minutes >= 0)',
-        'Lend Palox/Case Appointment Default Duration must be positive'), (
+        'Lend Palox/Cases Appointment Default Duration must be positive.'), (
         'olive_appointment_withdrawal_minutes_positive',
         'CHECK(olive_appointment_withdrawal_minutes >= 0)',
-        'Withdrawal Appointment Default Duration must be positive'),
+        'Withdrawal Appointment Default Duration must be positive.'),
         ]
 
     @api.model
