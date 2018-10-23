@@ -21,10 +21,12 @@
                 <button name="%(olive_oil_production_pack2check_action)d" string="Pack" class="btn-primary" states="pack" type="action" context="{'default_production_id': active_id}"/>
                 <button name="check2done" string="Mark as Done" class="btn-primary" states="check" type="object" confirm="You are about to terminate and lock this oil production. Are you sure?"/>
                 <button name="back2draft" string="Back to Draft" class="btn-default" states="cancel" type="object"/>
+                <button name="print_report" string="Print" type="object"/>
                 <button name="cancel" string="Cancel" class="btn-default" states="draft,ratio,force,pack,check" confirm="Are you sure you want to cancel this oil production ?" type="object"/>
                 <field name="state" widget="statusbar" statusbar_visible="draft,ratio,force,pack,check,done"/>
             </header>
             <sheet>
+                <field name="olive_culture_type_logo" widget="image" class="oe_avatar" attrs="{'invisible': [('olive_culture_type_logo', '=', False)]}"/>
                 <div class="oe_title">
                     <label for="name"/>
                     <h1>
@@ -36,6 +38,7 @@
                         <field name="palox_id"/>
                         <field name="date"/>
                         <field name="oil_product_id"/>
+                        <field name="olive_culture_type" invisible="1"/>
                         <label for="olive_qty"/>
                         <div name="olive_qty">
                             <field name="olive_qty" class="oe_inline"/>

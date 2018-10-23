@@ -11,7 +11,7 @@
     <field name="name">partner.organic.certification.form</field>
     <field name="model">partner.organic.certification</field>
     <field name="arch" type="xml">
-        <form string="Partner Organic Certification">
+        <form string="Farmer Organic Certification">
             <header>
                 <button name="validate" string="Validate" type="object" confirm="I certify that I have seen the organic certificate of that olive farmer." states="draft"/>
                 <field name="state" widget="statusbar" statusbar_colors="{'draft': 'blue'}"/>
@@ -33,7 +33,7 @@
     <field name="name">partner.organic.certification.tree</field>
     <field name="model">partner.organic.certification</field>
     <field name="arch" type="xml">
-        <tree string="Partner Organic Certifications" decoration-info="state == 'draft'">
+        <tree string="Farmer Organic Certifications" decoration-info="state == 'draft'">
             <field name="partner_id" invisible="not context.get('partner_organic_certification_main_view')"/>
             <field name="season_id"/>
             <field name="certifying_entity_id"/>
@@ -48,7 +48,7 @@
     <field name="name">partner.organic.certification.search</field>
     <field name="model">partner.organic.certification</field>
     <field name="arch" type="xml">
-        <search string="Partner Organic Certifications">
+        <search string="Farmer Organic Certifications">
             <field name="partner_id"/>
             <filter name="draft" domain="[('state', '=', 'draft')]" string="Draft"/>
             <filter name="done" domain="[('state', '=', 'done')]" string="Valid"/>

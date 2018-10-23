@@ -3,7 +3,7 @@
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import models, fields, api, _
+from odoo import api, fields, models, tools, _
 from odoo.exceptions import UserError, ValidationError
 import odoo.addons.decimal_precision as dp
 from odoo.tools import float_compare, float_is_zero, float_round
@@ -17,7 +17,7 @@ MAX_RATIO = 35
 class OliveOilProduction(models.Model):
     _name = 'olive.oil.production'
     _description = 'Olive Oil Production'
-    _order = 'date desc, sequence'
+    _order = 'date desc, sequence, id desc'
     _inherit = ['mail.thread']
 
     name = fields.Char(string='Production Number', required=True, default='/')
@@ -98,6 +98,11 @@ class OliveOilProduction(models.Model):
         readonly=True)
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Type', readonly=True)
+    olive_culture_type = fields.Selection(
+        related='oil_product_id.olive_culture_type', readonly=True, store=True)
+    olive_culture_type_logo = fields.Binary(
+        compute='_compute_olive_culture_type_logo',
+        string='Olive Culture Type Logo', readonly=True)
     oil_qty_kg = fields.Float(
         string='Oil Quantity (kg)', digits=dp.get_precision('Olive Weight'),
         readonly=True)  # written by ratio2force wizard
@@ -112,11 +117,13 @@ class OliveOilProduction(models.Model):
     date = fields.Date(
         string='Date', default=fields.Date.context_today, required=True,
         states={'done': [('readonly', True)]}, track_visibility='onchange')
+    day_position = fields.Integer(
+        compute='_compute_day_position', readonly=True)
     sample = fields.Boolean(string='Sample', readonly=True)
     farmers = fields.Char(string='Farmers', readonly=True)
     decanter_speed = fields.Integer(
         string='Decanter Speed', states={'done': [('readonly', True)]})
-    sequence = fields.Integer()
+    sequence = fields.Integer(default=10)
     state = fields.Selection([
         ('draft', 'Palox Selection'),
         ('ratio', 'Enter Production Result'),
@@ -211,19 +218,6 @@ class OliveOilProduction(models.Model):
             production = self.browse(re['production_id'][0])
             production.olive_qty = re['olive_qty']
 
-#    @api.depends(
-#            'oil_qty', 'olive_qty', 'compensation_type',
-#            'compensation_last_olive_qty')
-#    def _compute_ratio(self):
-#        for prod in self:
-#            ratio = 0.0
-#            olive_qty = prod.olive_qty
-#            if prod.compensation_type == 'last':
-#                olive_qty += prod.compensation_last_olive_qty
-#            if olive_qty:
-#                ratio = 100 * prod.oil_qty / olive_qty
-#            prod.ratio = ratio
-
     @api.depends('line_ids.oil_destination')
     def _compute_oil_destination(self):
         for prod in self:
@@ -238,6 +232,23 @@ class OliveOilProduction(models.Model):
                     oil_destination = 'mix'
             prod.oil_destination = oil_destination
 
+    @api.depends('oil_product_id.olive_culture_type')
+    def _compute_olive_culture_type_logo(self):
+        type2filename = {
+            'organic': 'organic_logo_done.png',
+            'conversion': 'organic_logo_conversion_done.png',
+        }
+        for prod in self:
+            logo = False
+            if prod.olive_culture_type in type2filename:
+                filename = type2filename[prod.olive_culture_type]
+                fname_path = 'olive_mill/static/image/%s' % filename
+                f = tools.file_open(fname_path, 'rb')
+                f_binary = f.read()
+                if f_binary:
+                    logo = f_binary.encode('base64')
+            prod.olive_culture_type_logo = logo
+
     @api.model
     def create(self, vals):
         if vals.get('name', '/') == '/':
@@ -251,8 +262,6 @@ class OliveOilProduction(models.Model):
                 raise UserError(_(
                     "Cannot cancel production %s which is in 'done' state.")
                     % production.name)
-            #production.line_ids.write({'production_id': False})
-            #production.palox_id.oil_product_id = False
         self.write({
             'state': 'cancel',
             'oil_qty': 0,
@@ -645,3 +654,21 @@ class OliveOilProduction(models.Model):
     def detach_lines(self):
         self.ensure_one()
         self.line_ids.write({'production_id': False})
+
+    def print_report(self):
+        action = self.env['report'].get_action(self, 'olive.oil.production')
+        return action
+
+    def _compute_day_position(self):
+        for prod in self:
+            if prod.state == 'cancel':
+                day_position = 0
+            else:
+                # same order as on-screen
+                same_day_prod = self.search(
+                    [('date', '=', prod.date), ('state', '!=', 'cancel')])
+                same_day_reverse_order = [p for p in same_day_prod]
+                same_day_reverse_order.reverse()
+                index = same_day_reverse_order.index(prod)
+                day_position = index + 1
+            prod.day_position = day_position

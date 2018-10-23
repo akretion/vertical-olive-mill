@@ -35,6 +35,9 @@ class OliveArrival(models.Model):
         track_visibility='onchange')
     commercial_partner_id = fields.Many2one(
         related='partner_id.commercial_partner_id', readonly=True, store=True)
+    partner_organic_certified_logo = fields.Binary(
+        related='partner_id.commercial_partner_id.olive_organic_certified_logo',
+        readonly=True)
     partner_olive_culture_type = fields.Selection(
         related='partner_id.commercial_partner_id.olive_culture_type', readonly=True,
         compute_sudo=True)
@@ -436,14 +439,14 @@ class OliveArrivalLine(models.Model):
         string='Shrinkage Oil Qty (kg)',
         readonly=True, digits=dp.get_precision('Olive Weight'))
 
-    # START fields AFTER shrinkage
+    # withdrawal_oil_qty_kg and withdrawal_oil_qty: AFTER shrinkage
+    # WITHOUT compensation
     withdrawal_oil_qty_kg = fields.Float(
         string='Withdrawal Oil Qty (Kg)',
         readonly=True, digits=dp.get_precision('Olive Weight'))
     withdrawal_oil_qty = fields.Float(
         string='Withdrawal Oil Qty (L)',
         readonly=True, digits=dp.get_precision('Olive Oil Volume'))
-    # END fields AFTER shrinkage
 
     to_sale_tank_oil_qty = fields.Float(
         string='Oil Qty to Sale Tank (L)',
@@ -690,15 +693,19 @@ class OliveArrivalLine(models.Model):
                 return False
             if not company.olive_oil_production_product_id:
                 raise UserError(_(
-                    "Missing Production Product on company %s.")
+                    "Missing production product on company %s.")
                     % company.name)
             if not company.olive_oil_leaf_removal_product_id:
                 raise UserError(_(
-                    "Missing leaf removal product on company %s")
+                    "Missing leaf removal product on company %s.")
                     % company.name)
             if not company.olive_oil_tax_product_id:
                 raise UserError(_(
-                    "Missing Tax Product on company %s.") % company.name)
+                    "Missing tax product on company %s.") % company.name)
+            if season.early_bird_date and not company.olive_oil_early_bird_discount_product_id:
+                raise UserError(_(
+                    "Missing early bird discount product on company %s.")
+                    % company.name)
             # Production
             il_vals = self.pre_prepare_invoice_line(
                 company.olive_oil_production_product_id, vals)

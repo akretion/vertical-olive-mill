@@ -55,6 +55,7 @@ class OliveSeason(models.Model):
                         "before the End Date (%s).") % (
                             season.name, season.early_bird_date,
                             season.end_date))
+            # TODO is it really a good idea ?
             oseasons = self.search([
                 ('end_date', '>', season.start_date),
                 ('id', '!=', season.id)])

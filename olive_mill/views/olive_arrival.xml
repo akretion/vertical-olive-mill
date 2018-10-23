@@ -20,6 +20,7 @@
                 <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
             </header>
             <sheet>
+                <field name="partner_organic_certified_logo" widget="image" class="oe_avatar" attrs="{'invisible': [('partner_organic_certified_logo', '=', False)]}"/>
                 <div class="oe_title">
                     <label for="name"/>
                     <h1>
@@ -352,11 +353,21 @@
             <filter name="conversion" string="Conversion" domain="[('partner_olive_culture_type', '=', 'conversion')]"/>
             <filter name="organic" string="Organic" domain="[('partner_olive_culture_type', '=', 'organic')]"/>
             <separator/>
-            <filter name="arrival_state_draft" string="Arrival Draft" domain="[('arrival_state', '=', 'draft')]"/>
-            <filter name="arrival_state_done" string="Arrival Done" domain="[('arrival_state', '=', 'done')]"/>
-            <filter name="arrival_state_cancel" string="Arrival Cancel" domain="[('arrival_state', '=', 'cancel')]"/>
+            <filter name="arrival_draft" string="Draft Arrivals" domain="[('arrival_state', '=', 'draft')]"/>
+            <filter name="arrival_done" string="Done Arrivals" domain="[('arrival_state', '=', 'done')]"/>
+            <filter name="arrival_cancel" string="Cancelled Arrivals" domain="[('arrival_state', '=', 'cancel')]"/>
+            <separator/>
+            <filter name="production_in_progress" string="Production in Progress" domain="[('production_state', 'not in', ('done', 'cancel'))]"/>
+            <filter name="production_done" string="Done Production" domain="[('production_state', '=', 'done')]"/>
+            <filter name="production_cancel" string="Cancelled Production" domain="[('production_state', '=', 'cancel')]"/>
+            <separator/>
+            <filter name="to_invoice" string="To Invoice" domain="[('out_invoice_id', '=', False), ('arrival_state', '=', 'done'), ('production_state', '=', 'done')]"/>
+            <filter name="invoiced" string="Invoiced" domain="[('out_invoice_id', '!=', False), ('arrival_state', '=', 'done'), ('production_state', '=', 'done')]"/>
+            <separator/>
+            <filter name="to_purchase" string="To Purchase" domain="[('oil_destination', 'in', ('sale', 'mix')), ('in_invoice_id', '=', False), ('arrival_state', '=', 'done'), ('production_state', '=', 'done')]"/>
+            <filter name="purchased" string="Purchased" domain="[('oil_destination', 'in', ('sale', 'mix')), ('in_invoice_id', '!=', False), ('arrival_state', '=', 'done'), ('production_state', '=', 'done')]"/>
             <group string="Group By" name="groupby">
-                <filter name="commercial_partner_groupby" string="Partner" context="{'group_by': 'commercial_partner_id'}"/>
+                <filter name="commercial_partner_groupby" string="Farmer" context="{'group_by': 'commercial_partner_id'}"/>
                 <filter name="arrival_day_groupby" string="Arrival Day" context="{'group_by': 'arrival_date:day'}"/>
                 <filter name="arrival_week_groupby" string="Arrival Week" context="{'group_by': 'arrival_date:week'}"/>
                 <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>
@@ -416,7 +427,7 @@
     <field name="name">Arrivals Lines</field>
     <field name="res_model">olive.arrival.line</field>
     <field name="view_mode">tree,form,pivot,graph</field>
-    <field name="context">{'search_default_arrival_state_done': True}</field>
+    <field name="context">{'search_default_arrival_done': True}</field>
 </record>
 
 <menuitem id="olive_arrival_line_menu" action="olive_arrival_line_action" parent="olive_report_menu" sequence="10" groups="stock.group_stock_manager"/>  <!-- maybe we will remove group once appropriate prodections are setup -->

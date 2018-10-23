@@ -42,7 +42,7 @@
     <field name="arch" type="xml">
         <filter name="supplier" position="after">
             <separator/>
-            <filter name="olive_tank" string="Olive Oil Tank" domain="[('olive_tank', '!=', False)]"/>
+            <filter name="olive_tank" string="Olive Oil Tank" domain="[('olive_tank_type', '!=', False)]"/>
         </filter>
     </field>
 </record>

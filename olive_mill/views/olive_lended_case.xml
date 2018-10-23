@@ -50,7 +50,7 @@
             <field name="partner_id"/>
             <field name="warehouse_id"/>
             <group string="Group By" name="groupby">
-                <filter name="partner_groupby" string="Partner" context="{'group_by': 'partner_id'}"/>
+                <filter name="partner_groupby" string="Farmer" context="{'group_by': 'partner_id'}"/>
                 <filter name="warehouse_groupby" string="Warehouse" context="{'group_by': 'warehouse_id'}"/>
                 <filter name="date_groupby" string="Date" context="{'group_by': 'date'}"/>
             </group>

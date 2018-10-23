@@ -15,7 +15,7 @@
     <field name="py3o_filetype">odt</field>
     <field name="module">olive_mill</field>
     <field name="py3o_template_fallback">report/olive_culture_form.odt</field>
-    <field name="print_report_name">'Olive_culture_' + (object.commercial_partner_id.ref or (object.commercial_partner_id.name and object.commercial_partner_id.name.replace(' ', '_') or 'no-name')) + '.pdf'</field>
+    <field name="print_report_name">'Olive_culture_' + (object.commercial_partner_id.ref or (object.commercial_partner_id.name and object.commercial_partner_id.name.replace(' ', '_') or 'no-name')) + '.odt'</field>
 </record>
 
 <record id="button_olive_culture_report" model="ir.values">
@@ -24,5 +24,64 @@
     <field name="name">Olive Culture Form</field>
     <field name="value" eval="'ir.actions.report.xml,%d'%olive_culture_report" />
 </record>
+
+<record id="olive_parcel_report" model="ir.actions.report.xml">
+    <field name="name">Olive Parcel</field>
+    <field name="model">res.partner</field>
+    <field name="report_name">res.partner.olive.parcel</field>
+    <field name="report_type">py3o</field>
+    <field name="py3o_filetype">odt</field>
+    <field name="module">olive_mill</field>
+    <field name="py3o_template_fallback">report/olive_parcel.odt</field>
+    <field name="print_report_name">'Olive_parcel_' + (object.commercial_partner_id.ref or (object.commercial_partner_id.name and object.commercial_partner_id.name.replace(' ', '_') or 'no-name')) + '.odt'</field>
+    <field name="py3o_multi_in_one" eval="True"/>
+</record>
+
+<record id="button_olive_parcel_report" model="ir.values">
+    <field name="key2">client_print_multi</field>
+    <field name="model">res.partner</field>
+    <field name="name">Olive Parcel Form</field>
+    <field name="value" eval="'ir.actions.report.xml,%d'%olive_parcel_report" />
+</record>
+
+<record id="olive_oil_production_report" model="ir.actions.report.xml">
+    <field name="name">Olive Oil Production</field>
+    <field name="model">olive.oil.production</field>
+    <field name="report_name">olive.oil.production</field>
+    <field name="report_type">py3o</field>
+    <field name="py3o_filetype">odt</field>
+    <field name="module">olive_mill</field>
+    <field name="py3o_template_fallback">report/olive_oil_production.odt</field>
+    <field name="print_report_name">'Olive_oil_production_' + object.name + '.odt'</field>
+    <field name="py3o_multi_in_one" eval="True"/>
+</record>
+
+<record id="button_olive_oil_production_report" model="ir.values">
+    <field name="key2">client_print_multi</field>
+    <field name="model">olive.oil.production</field>
+    <field name="name">Olive Oil Production</field>
+    <field name="value" eval="'ir.actions.report.xml,%d'%olive_oil_production_report" />
+</record>
+
+<record id="olive_oil_delivery_report" model="ir.actions.report.xml">
+    <field name="name">Olive Oil Withdrawal</field>
+    <field name="model">stock.picking</field>
+    <field name="report_name">olive.oil.delivery</field>
+    <field name="report_type">py3o</field>
+    <field name="py3o_filetype">odt</field>
+    <field name="module">olive_mill</field>
+    <field name="py3o_template_fallback">report/oil_delivery.odt</field>
+    <field name="print_report_name">'BL-' + object.name.replace('/', '_') + '-' + (object.state == 'done' and object.date_done[:10] or '') + '-' + (object.partner_id and object.partner_id.commercial_partner_id.name.replace(' ', '_') or '') + '.odt'</field>
+    <field name="py3o_multi_in_one" eval="True"/>
+</record>
+
+<record id="button_olive_oil_delivery_report" model="ir.values">
+    <field name="key2">client_print_multi</field>
+    <field name="model">stock.picking</field>
+    <field name="name">Olive Oil Withdrawal</field>
+    <field name="value" eval="'ir.actions.report.xml,%d'%olive_oil_delivery_report" />
+</record>
+
+
 
 </odoo>

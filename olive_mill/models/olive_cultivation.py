@@ -40,10 +40,10 @@ class OliveCultivation(models.Model):
         for cult in self:
             if cult.date > cult.season_id.end_date:
                 raise ValidationError(_(
-                    "On the cultivation method of ochard '%s', the date (%s) is after the "
+                    "On the cultivation form of ochard '%s', the date (%s) is after the "
                     "end of the season (%s)")
                     % (cult.ochard_id.display_name, cult.date, cult.season_id.end_date))
             if cult.date > today:
                 raise ValidationError(_(
-                    "On the cultivation method of ochard '%s', the date (%s) is in the future!")
+                    "On the cultivation form of ochard '%s', the date (%s) is in the future!")
                     % (cult.ochard_id.display_name, cult.date))

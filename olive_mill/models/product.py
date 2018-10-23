@@ -35,31 +35,40 @@ class ProductTemplate(models.Model):
     def olive_type_change(self):
         liter_uom = self.env.ref('product.product_uom_litre')
         pce_uom = self.env.ref('product.product_uom_unit')
-        if self.olive_type == 'oil' and self.uom_id != liter_uom:
-            self.uom_id = liter_uom
-            self.uom_po_id = liter_uom
-        else:
-            self.uom_id = pce_uom
-            self.uom_po_id = pce_uom
+        if self.olive_type == 'oil':
+            if self.uom_id != liter_uom:
+                self.uom_id = liter_uom
+                self.uom_po_id = liter_uom
+            self.tracking = 'lot'
+        if self.olive_type == 'service':
+            self.type = 'service'
+        elif self.olive_type == 'analysis':
+            self.type == 'consu'
         if not self.olive_type:
             self.olive_culture_type = False
-        if self.olive_type == 'service' and self.type != 'service':
-            self.type = 'service'
 
-    @api.constrains('olive_type', 'uom_id', 'olive_culture_type')
+    @api.constrains('olive_type', 'uom_id', 'olive_culture_type', 'type')
     def check_olive_type(self):
         liter_uom = self.env.ref('product.product_uom_litre')
         unit_categ_uom = self.env.ref('product.product_uom_categ_unit')
         for pt in self:
-            if pt.olive_type == 'oil' and not pt.olive_culture_type:
-                raise ValidationError(_(
-                    "Product '%s' has an Olive Type 'Olive Oil', so a culture "
-                    "type must also be configured.") % pt.display_name)
-            if pt.olive_type == 'oil' and pt.uom_id != liter_uom:
-                raise ValidationError(_(
-                    "Product '%s' has an Olive Type (%s) that require 'Liter' "
-                    "as it's unit of measure (current unit of measure is %s).")
-                    % (pt.display_name, pt.olive_type, pt.uom_id.display_name))
+            if pt.olive_type == 'oil':
+                if not pt.olive_culture_type:
+                    raise ValidationError(_(
+                        "Product '%s' has an Olive Type 'Olive Oil', so a "
+                        "culture type must also be configured.")
+                        % pt.display_name)
+                if pt.uom_id != liter_uom:
+                    raise ValidationError(_(
+                        "Product '%s' has an Olive Type 'Olive Oil' that "
+                        "require 'Liter' as it's unit of measure "
+                        "(current unit of measure is %s).")
+                        % (pt.display_name, pt.uom_id.display_name))
+                if pt.tracking != 'lot':
+                    raise ValidationError(_(
+                        "Product '%s' has an Olive Type (%s) that require "
+                        "tracking by lots.") % (
+                            pt.display_name, pt.olive_type))
             if (
                     pt.olive_type in ('bottle', 'analysis') and
                     pt.uom_id.category_id != unit_categ_uom):
@@ -68,6 +77,11 @@ class ProductTemplate(models.Model):
                     "that require a unit of measure that belong to the "
                     "'Unit' category (current unit of measure: %s).")
                     % (pt.display_name, pt.uom_id.display_name))
+            if pt.olive_type == 'analysis' and pt.type != 'consu':
+                raise ValidationError(_(
+                    "Product '%s' has an Olive Type 'Analysis', so "
+                    "it must be configured as a consumable.")
+                    % pt.display_name)
             if (
                     pt.olive_type == 'invoice_option' and
                     pt.type != 'service'):
@@ -90,15 +104,14 @@ class ProductProduct(models.Model):
     def olive_type_change(self):
         liter_uom = self.env.ref('product.product_uom_litre')
         pce_uom = self.env.ref('product.product_uom_unit')
-        if self.olive_type == 'oil' and self.uom_id != liter_uom:
-            self.uom_id = liter_uom
-            self.uom_po_id = liter_uom
-        else:
-            self.uom_id = pce_uom
-            self.uom_po_id = pce_uom
+        if self.olive_type == 'oil':
+            if self.uom_id != liter_uom:
+                self.uom_id = liter_uom
+                self.uom_po_id = liter_uom
+            self.tracking = 'lot'
+        if self.olive_type == 'service':
+            self.type = 'service'
+        elif self.olive_type == 'analysis':
+            self.type == 'consu'
         if not self.olive_type:
             self.olive_culture_type = False
-        if self.olive_type == 'service' and self.type != 'service':
-            self.type = 'service'
-
-

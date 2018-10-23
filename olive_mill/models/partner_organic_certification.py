@@ -8,7 +8,7 @@ from odoo import models, fields, api
 
 class PartnerOrganicCertification(models.Model):
     _name = 'partner.organic.certification'
-    _description = 'Partner Organic Certification'
+    _description = 'Farmer Organic Certification'
     _order = 'season_id desc'
 
     partner_id = fields.Many2one(
@@ -60,4 +60,4 @@ class PartnerOrganicCertification(models.Model):
     _sql_constraints = [(
         'partner_season_unique',
         'unique(season_id, partner_id)',
-        'This partner already has a certification for that season.')]
+        'This farmer already has a certification for that season.')]

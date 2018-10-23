@@ -12,6 +12,8 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     olive_farmer = fields.Boolean('Olive Farmer')
+    olive_ochard_ids = fields.One2many(
+        'olive.ochard', 'partner_id', string='Olive Ochards')
     olive_tree_total = fields.Integer(
         compute='_compute_olive_total', string='Total Trees', readonly=True)
     olive_area_total = fields.Float(

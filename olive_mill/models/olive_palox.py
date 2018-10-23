@@ -96,7 +96,7 @@ class OlivePalox(models.Model):
     def name_get(self):
         res = []
         for rec in self:
-            label = rec.label and rec.label + ' ' or ''
+            label = rec.label and ' ' + rec.label or ''
             name = _('%s%s (Current: %s kg%s)') % (rec.name, label, rec.weight, rec.oil_product_id and ' ' + rec.oil_product_id.name or '')
             res.append((rec.id, name))
         return res

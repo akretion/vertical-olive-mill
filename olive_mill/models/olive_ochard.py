@@ -52,3 +52,13 @@ class OliveOchard(models.Model):
             if self.zip_id.name:
                 name = u'%s %s' % (self.zip_id.name, name)
             self.city = name
+
+    @api.depends('name', 'city')
+    def name_get(self):
+        res = []
+        for ochard in self:
+            name = ochard.name
+            if ochard.city:
+                name = u'%s (%s)' % (name, ochard.city)
+            res.append((ochard.id, name))
+        return res
