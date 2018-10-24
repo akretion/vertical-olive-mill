@@ -15,6 +15,7 @@ class ProductTemplate(models.Model):
         ('oil', 'Olive Oil'),
         ('bottle', 'Oil Bottle'),
         ('analysis', 'Analysis'),
+        ('extra_service', 'Extra Service'),
         ('service', 'Production Service'),
         ], string='Olive Type')
     olive_culture_type = fields.Selection([
@@ -40,7 +41,7 @@ class ProductTemplate(models.Model):
                 self.uom_id = liter_uom
                 self.uom_po_id = liter_uom
             self.tracking = 'lot'
-        if self.olive_type == 'service':
+        if self.olive_type in ('service', 'extra_service'):
             self.type = 'service'
         elif self.olive_type == 'analysis':
             self.type == 'consu'
@@ -83,11 +84,11 @@ class ProductTemplate(models.Model):
                     "it must be configured as a consumable.")
                     % pt.display_name)
             if (
-                    pt.olive_type == 'invoice_option' and
+                    pt.olive_type in ('service', 'extra_service') and
                     pt.type != 'service'):
                 raise ValidationError(_(
-                    "Product '%s' has an Olive Type 'Invoice Option' "
-                    "so it must be configured as a Service.") % (
+                    "Product '%s' has an Olive Type 'Production Service' or "
+                    "'Extra Service' so it must be configured as a Service.") % (
                         pt.display_name))
 
 
@@ -96,6 +97,7 @@ class ProductProduct(models.Model):
 
     shrinkage_prodlot_id = fields.Many2one(
         'stock.production.lot', string='Shrinkage Production Lot',
+        copy=False,
         help="Select the generic production lot that will be used for all "
         "moves of this olive oil product to the shrinkage tank.")
 
@@ -109,7 +111,7 @@ class ProductProduct(models.Model):
                 self.uom_id = liter_uom
                 self.uom_po_id = liter_uom
             self.tracking = 'lot'
-        if self.olive_type == 'service':
+        if self.olive_type in ('service', 'extra_service'):
             self.type = 'service'
         elif self.olive_type == 'analysis':
             self.type == 'consu'

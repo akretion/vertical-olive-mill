@@ -55,14 +55,13 @@ class OliveSeason(models.Model):
                         "before the End Date (%s).") % (
                             season.name, season.early_bird_date,
                             season.end_date))
-            # TODO is it really a good idea ?
             oseasons = self.search([
-                ('end_date', '>', season.start_date),
+                ('year', '=', season.year),
                 ('id', '!=', season.id)])
             if oseasons:
                 raise ValidationError(_(
-                    "Season '%s' (%s to %s) is after or over this "
-                    "season (%s)") % (
+                    "Season '%s' (%s to %s) is attached to the same year "
+                    "as season '%s'.") % (
                         oseasons[0].name, oseasons[0].start_date,
                         oseasons[0].end_date, season.name))
 

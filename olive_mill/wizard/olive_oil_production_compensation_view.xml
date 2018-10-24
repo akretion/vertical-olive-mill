@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="olive_oil_production_compensation_form" model="ir.ui.view">
+    <field name="name">olive.oil.production.compensation.form</field>
+    <field name="model">olive.oil.production.compensation</field>
+    <field name="arch" type="xml">
+        <form string="Choose Compensation Type">
+            <group name="main">
+                <field name="production_id" invisible="1"/>
+                <field name="warehouse_id" invisible="1"/>
+                <field name="season_id" invisible="1"/>
+                <field name="palox_id"/>
+                <field name="compensation_type"/>
+                <field name="compensation_location_id" attrs="{'invisible': [('compensation_type', 'not in', ('first', 'last'))], 'required': [('compensation_type', 'in', ('first', 'last'))]}" domain="[('olive_tank_type', '=', 'compensation'), ('olive_season_id', '=', season_id)]"/>
+                <label for="compensation_last_olive_qty" attrs="{'invisible': [('compensation_type', '!=', 'last')]}"/>
+                <div name="compensation_last_olive_qty" attrs="{'invisible': [('compensation_type', '!=', 'last')]}">
+                    <field name="compensation_last_olive_qty" class="oe_inline" attrs="{'required': [('compensation_type', '=', 'last')]}"/>
+                    <label string=" kg" class="oe_inline"/>
+                </div>
+                <label for="compensation_ratio" attrs="{'invisible': [('compensation_type', '!=', 'last')]}"/>
+                <div name="compensation_ratio" attrs="{'invisible': [('compensation_type', '!=', 'last')]}">
+                    <field name="compensation_ratio" class="oe_inline" attrs="{'required': [('compensation_type', '=', 'last')]}"/>
+                    <label string=" %" class="oe_inline"/>
+                </div>
+                <field name="compensation_ratio_update_date" attrs="{'invisible': [('compensation_type', '!=', 'last')]}"/>
+                <label for="compensation_last_oil_qty" attrs="{'invisible': [('compensation_type', '!=', 'last')]}"/>
+                <div name="compensation_last_oil_qty" attrs="{'invisible': [('compensation_type', '!=', 'last')]}">
+                    <field name="compensation_last_oil_qty" class="oe_inline"/>
+                    <label string=" L" class="oe_inline"/>
+                </div>
+            </group>
+            <footer>
+                <button name="validate" type="object" string="Validate" class="btn-primary"/>
+                <button special="cancel" string="Cancel" class="btn-default"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+<record id="olive_oil_production_compensation_action" model="ir.actions.act_window">
+    <field name="name">Olive Oil Production Compensation</field>
+    <field name="res_model">olive.oil.production.compensation</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+</record>
+
+</odoo>

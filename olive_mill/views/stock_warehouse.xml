@@ -20,7 +20,6 @@
             <page name="olive_mill" string="Olive Mill" attrs="{'invisible': [('olive_mill', '=', False)]}">
                 <group name="olive_mill">
                 <group name="olive_mill_left" string="Locations">
-                    <field name="olive_shrinkage_loc_id" attrs="{'required': [('olive_mill', '=', True)]}"/>
                     <field name="olive_withdrawal_loc_id" attrs="{'required': [('olive_mill', '=', True)]}"/>
                     <field name="olive_compensation_loc_id"/>
                 </group>

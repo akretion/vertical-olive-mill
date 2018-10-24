@@ -7,9 +7,9 @@
 
 <odoo>
 
-<record id="olive_oil_production_force2pack_form" model="ir.ui.view">
-    <field name="name">olive.oil.production.force2pack.form</field>
-    <field name="model">olive.oil.production.force2pack</field>
+<record id="olive_oil_production_force_ratio_form" model="ir.ui.view">
+    <field name="name">olive.oil.production.force.ratio.form</field>
+    <field name="model">olive.oil.production.force.ratio</field>
     <field name="arch" type="xml">
         <form string="Force Ratio">
             <group name="main">
@@ -36,9 +36,9 @@
     </field>
 </record>
 
-<record id="olive_oil_production_force2pack_action" model="ir.actions.act_window">
-    <field name="name">Olive Oil Production Force2pack</field>
-    <field name="res_model">olive.oil.production.force2pack</field>
+<record id="olive_oil_production_force_ratio_action" model="ir.actions.act_window">
+    <field name="name">Olive Oil Production Force Ratio</field>
+    <field name="res_model">olive.oil.production.force.ratio</field>
     <field name="view_mode">form</field>
     <field name="target">new</field>
 </record>

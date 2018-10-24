@@ -171,6 +171,7 @@ class OliveArrival(models.Model):
             }
         i = 0
         warn_msgs = []
+        returned_palox = self.env['olive.palox']
         for line in self.line_ids:
             i += 1
             if float_is_zero(line.olive_qty, precision_digits=pr_oli):
@@ -315,7 +316,6 @@ class OliveArrival(models.Model):
             else:
                 lended_case = olco.create(lended_case_vals)
                 arrival_vals['lended_case_id'] = lended_case.id
-        returned_palox = self.env['olive.palox']
         # Mark palox as returned
         returned_palox.write({
             'borrower_partner_id': False,
@@ -393,6 +393,8 @@ class OliveArrivalLine(models.Model):
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Type', required=True,
         domain=[('olive_type', '=', 'oil')])
+    product_olive_culture_type = fields.Selection(
+        related='oil_product_id.olive_culture_type', readonly=True, store=True)
     production_id = fields.Many2one(
         'olive.oil.production', string='Production')
     # START related fields for production
@@ -416,33 +418,38 @@ class OliveArrivalLine(models.Model):
     extra_count = fields.Integer(
         compute='_compute_extra_count', string='Extra Item Lines', readonly=True)
 
-    # START fields BEFORE shrinkage BEFORE filter_loss
-    oil_qty_kg = fields.Float(  # Includes compensation
+    # Shrinkage: NOT deducted
+    # filter loss: NOT deducted
+    # Compensation last : already deducted
+    # Compensation first: not included
+    oil_qty_kg = fields.Float(
         string='Oil Qty (kg)',
         readonly=True, digits=dp.get_precision('Olive Oil Volume'))
-    oil_qty = fields.Float(  # Includes compensation
+    oil_qty = fields.Float(
         string='Oil Qty (L)',
         readonly=True, digits=dp.get_precision('Olive Oil Volume'))
     # We don't have the field 'compensation_last_olive_qty'
     # because it would add un-needed complexity to have it on lines (it would also
     # required to have the compensation ratio on lines, etc...)
     # Instead, we use compensation_oil_qty (value set both for first and last)
+    # The sign is always positive, even for last-of-day compensation
     compensation_oil_qty = fields.Float(
         string='Compensation Oil Qty (L)',
         readonly=True, digits=dp.get_precision('Olive Oil Volume'),
         help="This field is used both for last of the day and first of "
         "the day compensations.")
-    # END fields BEFORE shrinkage BEFORE filter_loss
 
-    shrinkage_oil_qty = fields.Float(  # Sale and withdraw
+    shrinkage_oil_qty = fields.Float(  # Sale and withdrawal
         string='Shrinkage Oil Qty (L)',
         readonly=True, digits=dp.get_precision('Olive Oil Volume'))
-    shrinkage_oil_qty_kg = fields.Float(  # Withdraw only
+    shrinkage_oil_qty_kg = fields.Float(  # Withdrawal only
         string='Shrinkage Oil Qty (kg)',
         readonly=True, digits=dp.get_precision('Olive Weight'))
 
-    # withdrawal_oil_qty_kg and withdrawal_oil_qty: AFTER shrinkage
-    # WITHOUT compensation
+    # Shrinkage: already deducted
+    # Filter loss: not applicable
+    # Compensation last : already deducted
+    # Compensation first: not included
     withdrawal_oil_qty_kg = fields.Float(
         string='Withdrawal Oil Qty (Kg)',
         readonly=True, digits=dp.get_precision('Olive Weight'))
@@ -450,12 +457,21 @@ class OliveArrivalLine(models.Model):
         string='Withdrawal Oil Qty (L)',
         readonly=True, digits=dp.get_precision('Olive Oil Volume'))
 
+    # Shrinkage: not deducted (because we take shrinkage in sale tank)
+    # Filter loss: already deducted
+    # Compensation last : already deduced
+    # Compensation first: not included
     to_sale_tank_oil_qty = fields.Float(
         string='Oil Qty to Sale Tank (L)',
         readonly=True, digits=dp.get_precision('Olive Oil Volume'))
+    # Shrinkage: already deducted
+    # Filter loss: already deducted
+    # Compensation last : already deduced
+    # Compensation first: included
     sale_oil_qty = fields.Float(
         string='Oil Qty Sold (L)',
         readonly=True, digits=dp.get_precision('Olive Oil Volume'))
+
     filter_loss_oil_qty = fields.Float(
         string='Oil Qty Lost in Filter (L)',
         readonly=True, digits=dp.get_precision('Olive Oil Volume'))
@@ -580,10 +596,8 @@ class OliveArrivalLine(models.Model):
             withdrawal_oil_qty_kg = withdrawal_oil_qty * density
         # Compute net ratio, with compensations
         oil_qty_for_net_ratio = oil_minus_shrinkage - filter_loss_oil_qty
-        if ctype == 'last':
-            oil_qty_for_net_ratio -= self.compensation_oil_qty
-        elif ctype == 'first':
-            oil_qty_for_net_ratio += self.compensation_oil_qty
+        if ctype == 'first':
+            oil_qty_for_net_ratio += compensation_oil_qty
         ratio_net = float_round(
             100 * oil_qty_for_net_ratio / self.olive_qty,
             precision_digits=pr_ratio)
@@ -644,6 +658,7 @@ class OliveArrivalLine(models.Model):
             'invoice_line_ids': [],
         }
         vals = aio.play_onchanges(vals, ['partner_id'])
+        lang = partner.lang or self.env.user.lang
         if invoice_type == 'in_invoice':
             saledict = {}  # key = arrival, value = {'product': sale_oil_qty}
             # I can't do a double groupby via read_group()
@@ -670,7 +685,8 @@ class OliveArrivalLine(models.Model):
                     arrival_date_formatted = format_date(
                         fields.Date.from_string(arrival.date),
                         format='short', locale=self.env.user.lang or 'en_US')
-                    il_vals['name'] += _(' (Arrival %s dated %s)') % (
+                    il_vals['name'] = _('%s (Arrival %s dated %s)') % (
+                        product.with_context(lang=lang).name,
                         arrival.name, arrival_date_formatted)
                     il_vals['quantity'] = quantity
                     seller = product._select_seller(
@@ -716,10 +732,8 @@ class OliveArrivalLine(models.Model):
                 company.olive_oil_production_product_id,
                 totals['olive_qty'], partner)
             vals['invoice_line_ids'].append((0, 0, il_vals))
-            # Extra service options
-            # NOTE : ('oil_destination', '=', 'withdrawal') in domain
-            # for extra service options may seem a bit specific to the Barroux
-            # Abbey
+            # additionnal service options are only invoiced on withdrawal
+            # cf ('oil_destination', '=', 'withdrawal') in domain
             product_totals = self.read_group(
                 [('id', 'in', self.ids), ('oil_destination', '=', 'withdrawal')],
                 ['olive_qty', 'oil_product_id'], ['oil_product_id'])
@@ -841,8 +855,7 @@ class OliveArrivalLineExtra(models.Model):
         'product.product', string='Extra Product',
         required=True, ondelete='restrict',
         domain=[
-            ('type', 'in', ('product', 'consu')),
-            ('olive_type', 'in', ('bottle', 'analysis')),
+            ('olive_type', 'in', ('bottle', 'analysis', 'extra_service')),
             '|', ('tracking', '=', False), ('tracking', '=', 'none')])
     product_olive_type = fields.Selection(
         related='product_id.olive_type', readonly=True, store=True)

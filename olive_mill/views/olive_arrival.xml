@@ -58,7 +58,7 @@
                                 <field name="name"/>
                                 <field name="olive_qty" sum="1"/>
                                 <field name="leaf_removal"/>
-                                <field name="variant_id" widget="selection"/>
+                                <field name="variant_id"/>
                                 <field name="ripeness"/>
                                 <field name="sanitary_state"/>
                                 <field name="oil_product_id"/>
@@ -431,6 +431,26 @@
 </record>
 
 <menuitem id="olive_arrival_line_menu" action="olive_arrival_line_action" parent="olive_report_menu" sequence="10" groups="stock.group_stock_manager"/>  <!-- maybe we will remove group once appropriate prodections are setup -->
+
+<record id="olive_arrival_line_extra_form" model="ir.ui.view">
+    <field name="name">olive.arrival.line.extra.form</field>
+    <field name="model">olive.arrival.line.extra</field>
+    <field name="arch" type="xml">
+        <form>
+            <group name="main">
+                <field name="product_id"/>
+                <field name="product_olive_type" invisible="1"/>
+                <label for="qty"/>
+                <div name="qty">
+                    <field name="qty" class="oe_inline"/>
+                    <field name="uom_id" class="oe_inline"/>
+                </div>
+                <field name="fillup"/>
+            </group>
+        </form>
+    </field>
+</record>
+
 
 <record id="olive_arrival_line_extra_tree" model="ir.ui.view">
     <field name="name">olive.arrival.line.extra.tree</field>

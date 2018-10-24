@@ -7,7 +7,7 @@
 
 <odoo>
 
-<menuitem id="olive_root_menu" name="Olive Mill" sequence="8"/>
+<menuitem id="olive_root_menu" name="Olive Mill" sequence="31" groups="stock.group_stock_user"/>
 
 <menuitem id="olive_operations_menu" parent="olive_root_menu" name="Operations" sequence="10"/>
 

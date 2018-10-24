@@ -38,6 +38,7 @@ class OliveInvoiceCreate(models.TransientModel):
                 ('sale_oil_qty', '>', 0),
                 ])
             if lines:
+                commercial_partner.olive_check_in_invoice_fiscal_position()
                 in_invoice = lines.in_invoice_create()
         if self.invoice_type in ('all', 'out'):
             lines = oalo.search([

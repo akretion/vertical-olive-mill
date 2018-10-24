@@ -3,7 +3,7 @@
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl)
 
-from odoo import fields, models, _
+from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import float_compare, float_is_zero, float_round
 import odoo.addons.decimal_precision as dp
@@ -24,6 +24,15 @@ class StockLocation(models.Model):
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Product',
         domain=[('olive_type', '=', 'oil')])
+
+    @api.onchange('olive_tank_type')
+    def olive_tank_type_change(self):
+        if self.olive_tank_type:
+            season = self.env['olive.season'].get_current_season()
+            if season:
+                self.olive_season_id = season
+        else:
+            self.olive_season_id = False
 
     def name_get(self):
         res = super(StockLocation, self).name_get()

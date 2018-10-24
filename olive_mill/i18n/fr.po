@@ -1,0 +1,3498 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* olive_mill
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-10-23 07:59+0000\n"
+"PO-Revision-Date: 2018-10-24 14:54+0200\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: fr\n"
+"X-Generator: Poedit 1.8.12\n"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:786
+#, python-format
+msgid " (%s L x %s %s / L)"
+msgstr " (%s l x %s %s / l)"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:670
+#, python-format
+msgid "%s (Arrival %s dated %s)"
+msgstr "%s (Apport %s du %s)"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_palox.py:100
+#, python-format
+msgid "%s%s (Current: %s kg%s)"
+msgstr "%s%s (Actuellement : %s kg%s)"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.view_partner_form
+msgid "<span class=\"o_stat_text\">Lended Cases</span>"
+msgstr "<span class=\"o_stat_text\">Caisses prêtées</span>"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.view_partner_form
+msgid "<span class=\"o_stat_text\">Olives</span>"
+msgstr "<span class=\"o_stat_text\">Olives</span>"
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.tax_product
+#: model:product.template,name:olive_mill.tax_product_product_template
+msgid "AFIDOL Tax"
+msgstr "Taxe AFIDOL"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_olive_oil_tax_product_id
+#: model:ir.model.fields,field_description:olive_mill.field_res_company_olive_oil_tax_product_id
+msgid "AFIDOL Tax Product"
+msgstr "Article taxe AFIDOL"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_olive_oil_tax_price_unit
+#: model:ir.model.fields,field_description:olive_mill.field_res_company_olive_oil_tax_price_unit
+msgid "AFIDOL Tax Unit Price"
+msgstr "Prix unitaire taxe AFIDOL"
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.acidity_analysis
+#: model:product.template,name:olive_mill.acidity_analysis_product_template
+msgid "Acidity Analysis"
+msgstr "Analyse d'acidité"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_ochard_active
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_active
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_active
+#: model:ir.model.fields,field_description:olive_mill.field_olive_treatment_active
+#: model:ir.model.fields,field_description:olive_mill.field_olive_variant_active
+#: model:ir.model.fields,field_description:olive_mill.field_organic_certifying_entity_active
+msgid "Active"
+msgstr "Actif"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
+msgid "Additional Info"
+msgstr "Informations complémentaires"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_form
+msgid "Additional Information"
+msgstr "Information complémentaire"
+
+#. module: olive_mill
+#: selection:product.template,olive_type:0
+msgid "Analysis"
+msgstr "Analyse"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_config_settings_form
+msgid "Apply"
+msgstr "Appliquer"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment_appointment_type
+#: model:ir.ui.view,arch_db:olive_mill.olive_appointment_search
+msgid "Appointment Type"
+msgstr "Type de rendez-vous"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_appointment_action
+#: model:ir.ui.menu,name:olive_mill.olive_appointment_menu
+#: model:ir.ui.view,arch_db:olive_mill.olive_appointment_calendar
+#: model:ir.ui.view,arch_db:olive_mill.olive_config_settings_form
+#: model:ir.ui.view,arch_db:olive_mill.view_partner_form
+msgid "Appointments"
+msgstr "Rendez-vous"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_sale_pricelist_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_treatment_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_variant_search
+#: model:ir.ui.view,arch_db:olive_mill.organic_certifying_entity_search
+msgid "Archived"
+msgstr "Archivé"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_form
+msgid "Are you sure you want to cancel this arrival ?"
+msgstr "Etes-vous sûr de vouloir annuler cet apport ?"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
+msgid "Are you sure you want to cancel this oil production ?"
+msgstr "Etes-vous sûr de vouloir annuler cette production d'huile ?"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_parcel_area
+msgid "Area"
+msgstr "Surface"
+
+#. module: olive_mill
+#: model:ir.model.fields,help:olive_mill.field_olive_parcel_area
+msgid "Area in hectare"
+msgstr "Surface en hectare"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_arrival_id
+#: model:ir.ui.view,arch_db:olive_mill.olive_appointment_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_form
+#: selection:olive.appointment,appointment_type:0
+msgid "Arrival"
+msgstr "Apport"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_olive_appointment_arrival_leaf_removal_minutes
+#: model:ir.model.fields,field_description:olive_mill.field_res_company_olive_appointment_arrival_leaf_removal_minutes
+msgid "Arrival Appointment Default Duration with Leaf Removal"
+msgstr "Durée par défaut du rendez-vous d'apport avec effeuillage"
+
+#. module: olive_mill
+#: sql_constraint:res.company:0
+msgid "Arrival Appointment Default Duration with Leaf Removal must be positive."
+msgstr "La durée par défaut du rendez-vous d'apport avec effeuillage doit être positive."
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_olive_appointment_arrival_no_leaf_removal_minutes
+#: model:ir.model.fields,field_description:olive_mill.field_res_company_olive_appointment_arrival_no_leaf_removal_minutes
+msgid "Arrival Appointment Default Duration without Leaf Removal"
+msgstr "Durée par défaut du rendez-vous d'apport sans effeuillage"
+
+#. module: olive_mill
+#: sql_constraint:res.company:0
+msgid "Arrival Appointment Default Duration without Leaf Removal must be positive."
+msgstr "La durée par défaut du rendez-vous d'apport sans effeuillage doit être positive."
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_olive_appointment_arrival_min_minutes
+#: model:ir.model.fields,field_description:olive_mill.field_res_company_olive_appointment_arrival_min_minutes
+msgid "Arrival Appointment Minimum Duration"
+msgstr "Durée minimale du rendez-vous d'apport"
+
+#. module: olive_mill
+#: sql_constraint:res.company:0
+msgid "Arrival Appointment Minimum Duration must be positive."
+msgstr "La durée minimale du rendez-vous d'apport doit être positive."
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_search
+msgid "Arrival Cancel"
+msgstr "Arrival Cancel"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_arrival_date
+msgid "Arrival Date"
+msgstr "Arrival Date"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_search
+msgid "Arrival Day"
+msgstr "Jour d'apport"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_search
+msgid "Arrival Done"
+msgstr "Arrival Done"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_search
+msgid "Arrival Draft"
+msgstr "Arrival Draft"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_extra_line_id
+#: model:ir.model.fields,field_description:olive_mill.field_stock_production_lot_arrival_line_id
+msgid "Arrival Line"
+msgstr "Ligne d'apport"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_name
+msgid "Arrival Line Number"
+msgstr "Numéro de ligne d'apport"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_arrival_line_action
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_ids
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_line_ids
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_arrival_line_ids
+#: model:ir.ui.menu,name:olive_mill.olive_arrival_line_menu
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
+msgid "Arrival Lines"
+msgstr "Lignes d'apport"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check_todo_arrival_line_ids
+msgid "Arrival Lines Left to Process"
+msgstr "Lignes d'apport restant à traiter"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_name
+msgid "Arrival Number"
+msgstr "Numéro d'apport"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_arrival_state
+msgid "Arrival State"
+msgstr "Arrival State"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_search
+msgid "Arrival Week"
+msgstr "Semaine d'apport"
+
+#. module: olive_mill
+#: model:ir.model.fields,help:olive_mill.field_olive_config_settings_olive_appointment_arrival_min_minutes
+#: model:ir.model.fields,help:olive_mill.field_res_company_olive_appointment_arrival_min_minutes
+msgid "Arrival appointment minimum duration in minutes"
+msgstr "Durée minimale en minutes du rendez-vous d'apport"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_warning_arrival_id
+msgid "Arrival id"
+msgstr "Identifiant de l'apport"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:282
+#, python-format
+msgid "Arrival line %s is linked to palox %s but it is still in draft state. If you want to take this arrival line in this production, you should validate the arrival. Otherwise, you should cancel the arrival."
+msgstr "La ligne d'apport %s est liée au palox %s mais elle est toujours en brouillon. Si vous voulez prendre en compte cette ligne d'apport dans cette presse, vous devez valider l'apport. Sinon, vous devez annuler l'apport."
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_arrival_action
+#: model:ir.ui.menu,name:olive_mill.olive_arrival_menu
+#: model:ir.ui.view,arch_db:olive_mill.view_partner_form
+msgid "Arrivals"
+msgstr "Apports"
+
+#. module: olive_mill
+#: selection:olive.arrival.line,sanitary_state:0
+msgid "Average"
+msgstr "Moyenne"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
+msgid "Back to Draft"
+msgstr "Remettre en brouillon"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_stock_warehouse_olive_oil_compensation_ratio_days
+msgid "Base for Compensation Ratio Computation"
+msgstr "Base pour le calcul du rendement de la compensation"
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.black_oil
+#: model:product.template,name:olive_mill.black_oil_product_template
+msgid "Black Fruity Olive Oil"
+msgstr "Fruité noir"
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.black_option_product
+#: model:product.template,name:olive_mill.black_option_product_product_template
+msgid "Black Fruity Production Option"
+msgstr "Choix de production fruité noir"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_borrowed_date
+msgid "Borrowed Date"
+msgstr "Date de prêt"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_borrower_partner_id
+#: model:ir.ui.view,arch_db:olive_mill.olive_palox_search
+msgid "Borrower"
+msgstr "Borrower"
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.can10l
+#: model:product.template,name:olive_mill.can10l_product_template
+msgid "Can 10L"
+msgstr "Bidon 10 l"
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.can20l
+#: model:product.template,name:olive_mill.can20l_product_template
+msgid "Can 20L"
+msgstr "Bidon 20 l"
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.can5l
+#: model:product.template,name:olive_mill.can5l_product_template
+msgid "Can 5L"
+msgstr "Bidon 5 l"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:573
+#, python-format
+msgid "Can't select the product '%s' in extra items of line %s because it is tracked by lot or serial."
+msgstr "Impossible de sélectionner le produit '%s' dans les articles supplémentaires de la ligne %s car il fait l'objet d'un suivi par lot ou en série."
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_warning_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_config_settings_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_invoice_create_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_force2pack_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_pack2check_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_ratio2force_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_tank_transfer_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_palox_lend_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_withdrawal_form
+msgid "Cancel"
+msgstr "Annuler"
+
+#. module: olive_mill
+#: selection:olive.arrival,state:0 selection:olive.oil.production,state:0
+msgid "Cancelled"
+msgstr "Annulé"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:140
+#, python-format
+msgid "Cannot cancel arrival %s because it has lines already selected in a production."
+msgstr "Impossible d'annuler l'apport %s, car des lignes ont déjà été sélectionnées dans une presse."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:251
+#, python-format
+msgid "Cannot cancel production %s which is in 'done' state."
+msgstr "Impossible d'annule une presse %s qui est à l'état 'Terminé'."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:326
+#, python-format
+msgid "Cannot delete arrival %s which is in 'Done' state."
+msgstr "Impossible d'annuler l'apport %s qui est à l'état 'Terminé'."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:640
+#, python-format
+msgid "Cannot delete production %s which is in Done state."
+msgstr "Impossible d'annuler la presse %s qui est à l'état 'Terminé'"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_lended_case_regular_qty
+msgid "Case Quantity"
+msgstr "Nombre de caisses"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification_certifying_entity_id
+#: model:ir.ui.view,arch_db:olive_mill.partner_organic_certification_search
+msgid "Certifying Entity"
+msgstr "Organisme de certification"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_ochard_city
+msgid "City"
+msgstr "Ville"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_ochard_zip_id
+msgid "City/Zip Shortcut"
+msgstr "Raccourci CP/Ville"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_organic_certifying_entity_code
+msgid "Code"
+msgstr "Code"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment_commercial_partner_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_commercial_partner_id
+msgid "Commercial Entity"
+msgstr "Entité commerciale"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_res_company
+msgid "Companies"
+msgstr "Sociétés"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment_company_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_company_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_company_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_company_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_cultivation_company_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_lended_case_company_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_company_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_company_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_company_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_season_company_id
+#: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification_company_id
+msgid "Company"
+msgstr "Société"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.view_warehouse
+#: selection:stock.location,olive_tank_type:0
+msgid "Compensation"
+msgstr "Compensation"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_compensation_last_move_id
+msgid "Compensation Last of the Day Move"
+msgstr "Mouvement de stock pour la dernière compensation de la journée"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_ratio2force_form
+msgid "Compensation Oil Qty"
+msgstr "Quantité d'huile de compensation"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_compensation_oil_qty
+msgid "Compensation Oil Qty (L)"
+msgstr "Quantité d'huile de compensation (L)"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_compensation_oil_product_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_compensation_readonly_oil_product_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_compensation_oil_product_id
+msgid "Compensation Oil Type"
+msgstr "Type de compensation d'huile"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_compensation_ratio
+#: model:ir.model.fields,field_description:olive_mill.field_stock_warehouse_olive_oil_compensation_ratio
+msgid "Compensation Ratio"
+msgstr "Rendement compensation"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_compensation_sale_location_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_compensation_sale_location_id
+msgid "Compensation Sale Tank"
+msgstr "Cuve de vente compensation"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_compensation_location_id
+msgid "Compensation Tank"
+msgstr "Cuve de compensation"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_compensation_type
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_compensation_type
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_compensation_type
+msgid "Compensation Type"
+msgstr "Type de compensation"
+
+#. module: olive_mill
+#: model:ir.ui.menu,name:olive_mill.olive_config_menu
+msgid "Configuration"
+msgstr "Configuration"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_config_settings_form
+msgid "Configure Warehouse"
+msgstr "Configurer l'entrepôt"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_line_ids
+msgid "Content"
+msgstr "Content"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification_conversion
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_search
+#: model:ir.ui.view,arch_db:olive_mill.partner_organic_certification_search
+#: selection:product.template,olive_culture_type:0
+#: selection:res.partner,olive_culture_type:0
+msgid "Conversion"
+msgstr "Conversion"
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.bottle_conversion
+#: model:product.template,name:olive_mill.bottle_conversion_product_template
+msgid "Conversion Organic Olive Oil Bottle"
+msgstr "Bouteille d'huile d'olive conversion bio"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_warning_count
+msgid "Count"
+msgstr "Comptage"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_appointment_form
+msgid "Create Arrival"
+msgstr "Créer un apport"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_invoice_create_action
+#: model:ir.ui.menu,name:olive_mill.olive_invoice_create_menu
+#: model:ir.ui.view,arch_db:olive_mill.olive_appointment_form
+#: model:ir.ui.view,arch_db:olive_mill.view_partner_form
+msgid "Create Invoice"
+msgstr "Créer les factures"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_extra_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_warning_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_cultivation_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_invoice_create_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_lended_case_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_ochard_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force2pack_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_tank_transfer_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_case_lend_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_parcel_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_line_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_season_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_treatment_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_variant_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_withdrawal_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_organic_certifying_entity_create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification_create_uid
+msgid "Created by"
+msgstr "Créé par"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_extra_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_warning_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_cultivation_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_invoice_create_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_lended_case_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_ochard_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force2pack_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_tank_transfer_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_case_lend_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_parcel_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_line_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_season_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_treatment_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_variant_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_withdrawal_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_organic_certifying_entity_create_date
+#: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification_create_date
+msgid "Created on"
+msgstr "Créé le"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_parcel_cultivation_method
+#: model:ir.ui.view,arch_db:olive_mill.olive_cultivation_form
+msgid "Cultivation Method"
+msgstr "Méthode culturale"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_cultivation_action
+#: model:ir.model.fields,field_description:olive_mill.field_olive_ochard_cultivation_ids
+#: model:ir.ui.menu,name:olive_mill.olive_cultivation_menu
+#: model:ir.ui.view,arch_db:olive_mill.olive_cultivation_tree
+#: model:ir.ui.view,arch_db:olive_mill.olive_ochard_form
+msgid "Cultivation Methods"
+msgstr "Méthodes culturales"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_delivery_carrier_olive_culture_type
+#: model:ir.model.fields,field_description:olive_mill.field_product_product_olive_culture_type
+#: model:ir.model.fields,field_description:olive_mill.field_product_template_olive_culture_type
+msgid "Culture Type"
+msgstr "Type de culture"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_line_currency_id
+msgid "Currency"
+msgstr "Devise"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_palox_form
+msgid "Current Content"
+msgstr "Contenu actuel"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_oil_product_id
+msgid "Current Oil Product"
+msgstr "Article huile actuel"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_palox_form
+msgid "Current Weight"
+msgstr "Poids actuel"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_weight
+msgid "Current Weight (kg)"
+msgstr "Poids actuel en kg"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_out_invoice_id
+#: selection:olive.invoice.create,invoice_type:0
+msgid "Customer Invoice"
+msgstr "Facture client"
+
+#. module: olive_mill
+#: model:ir.ui.menu,name:olive_mill.olive_data_menu
+msgid "Data"
+msgstr "Données"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_cultivation_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_lended_case_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_date
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_cultivation_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_lended_case_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_search
+msgid "Date"
+msgstr "Date "
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_done_datetime
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_done_datetime
+msgid "Date Done"
+msgstr "Date 'Terminé'"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_appointment_search
+msgid "Day"
+msgstr "Jour"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_search
+msgid "Day after Tomorrow"
+msgstr "Après-demain"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_decanter_duration
+msgid "Decanter Duration"
+msgstr "Temps de décantation"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_decanter_speed
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_decanter_speed
+msgid "Decanter Speed"
+msgstr "Vitesse de décantation"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_default_leaf_removal
+msgid "Default Leaf Removal"
+msgstr "Effeuillage (par défaut)"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_default_ochard_id
+msgid "Default Ochard"
+msgstr "Verger (par défaut)"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_default_oil_destination
+msgid "Default Oil Destination"
+msgstr "Destination huile (par défaut)"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_season_default_expiry_date
+msgid "Default Oil Expiry Date"
+msgstr "Date de péremption (par défaut)"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_default_variant_id
+msgid "Default Olive Variant"
+msgstr "Variété d'olive (par défaut)"
+
+#. module: olive_mill
+#: model:ir.model.fields,help:olive_mill.field_olive_arrival_line_extra_uom_id
+msgid "Default Unit of Measure used for all stock operation."
+msgstr "Unité de mesure par défaut utilisée pour toutes les opérations de stock"
+
+#. module: olive_mill
+#: model:ir.model.fields,help:olive_mill.field_partner_organic_certification_certifying_entity_id
+msgid "Default value: same as previous season."
+msgstr "Valeur par défaut : la même que la campagne précédente."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:496
+#, python-format
+msgid "Deletion of arrival line %s not allowed because it is still linked to arrival %s."
+msgstr "Suppression de la ligne d'apport %s non autorisée car elle est toujours liée à l'apport %s."
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_parcel_density
+msgid "Density"
+msgstr "Densité"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_tank_transfer_dest_location_id
+msgid "Destination Olive Tank"
+msgstr "Cuve de destination"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
+msgid "Detach Arrival Lines"
+msgstr "Détacher les lignes d'apport"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_extra_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_warning_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_cultivation_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_invoice_create_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_lended_case_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_ochard_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force2pack_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_tank_transfer_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_case_lend_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_parcel_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_line_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_season_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_treatment_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_variant_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_withdrawal_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_organic_certifying_entity_display_name
+#: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification_display_name
+msgid "Display Name"
+msgstr "Nom affiché"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
+msgid "Don't Force a Ratio"
+msgstr "Ne pas forcer un rendement"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_search
+#: selection:olive.arrival,state:0 selection:olive.oil.production,state:0
+msgid "Done"
+msgstr "Terminé"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_search
+#: model:ir.ui.view,arch_db:olive_mill.partner_organic_certification_search
+#: selection:olive.arrival,state:0
+#: selection:partner.organic.certification,state:0
+msgid "Draft"
+msgstr "Brouillon"
+
+#. module: olive_mill
+#: selection:olive.parcel,irrigation:0
+msgid "Dripping"
+msgstr "Goutte à goutte"
+
+#. module: olive_mill
+#: selection:olive.parcel,irrigation:0
+msgid "Dry"
+msgstr "Sec"
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.early_bird_discount_product
+#: model:product.template,name:olive_mill.early_bird_discount_product_product_template
+msgid "Early Bird Discount"
+msgstr "Remise pour apport précoce"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_olive_oil_early_bird_discount_product_id
+#: model:ir.model.fields,field_description:olive_mill.field_res_company_olive_oil_early_bird_discount_product_id
+msgid "Early Bird Discount Product"
+msgstr "Article remise pour apport précoce"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_season_early_bird_date
+msgid "Early Bird Limit Date"
+msgstr "Date limite apport précoce"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:623
+#, python-format
+msgid "Empty compensation tank to sale tank"
+msgstr "Vider la cuve de compensation dans la cuve de vente"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:628
+#, python-format
+msgid "Empty compensation tank to withdrawal location"
+msgstr "Vider la cuve de compensation dans l'emplacement de retrait"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment_end_datetime
+msgid "End"
+msgstr "Fin"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_season_end_date
+msgid "End Date"
+msgstr "Date de fin"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_season.py:42
+#, python-format
+msgid "End Date must be after Start Date on season '%s'"
+msgstr "La date de fin doit être postérieure à la date de début de la campagne '%s'"
+
+#. module: olive_mill
+#: selection:olive.oil.production,state:0
+msgid "Enter Production Result"
+msgstr "Entrer le résultat de la presse"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
+msgid "Enter Result"
+msgstr "Entrer le résultat"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_oil_production_pack2check_line
+msgid "Equivalent of olive.arrival.line.extra in wizard"
+msgstr "Equivalent de olive.arrival.line.extra dans le wizard"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment_palox_qty
+msgid "Estimated Palox Qty"
+msgstr "Quantité de palox estimée"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_extra_count
+msgid "Extra Item Lines"
+msgstr "Lignes d'articles supplémentaires"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_extra_ids
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check_extra_ids
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_pack2check_form
+msgid "Extra Items"
+msgstr "Eléments supplémentaires"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_arrival_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_form
+msgid "Extra Items and Analysis"
+msgstr "Articles supplémentaires et analyses"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_extra_product_id
+msgid "Extra Product"
+msgstr "Article supplémentaire"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_delivery_carrier_olive_invoice_service_ids
+#: model:ir.model.fields,field_description:olive_mill.field_product_product_olive_invoice_service_ids
+#: model:ir.model.fields,field_description:olive_mill.field_product_template_olive_invoice_service_ids
+msgid "Extra Production Services To Invoice"
+msgstr "Services supplémentaires vers facture"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_arrival_line_extra
+msgid "Extra items linked to the arrival line"
+msgstr "Articles supplémentaires liés à une ligne d'apport"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_form
+msgid "Extras"
+msgstr "Suppléments"
+
+#. module: olive_mill
+#: selection:olive.arrival.line,sanitary_state:0
+msgid "Fair"
+msgstr "Passable"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_cultivation_partner_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_parcel_partner_id
+#: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification_partner_id
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_cultivation_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_ochard_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_parcel_search
+#: model:ir.ui.view,arch_db:olive_mill.partner_organic_certification_search
+msgid "Farmer"
+msgstr "Oléiculteur"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_farmer_partner_action
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_farmers
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_farmers
+#: model:ir.ui.menu,name:olive_mill.olive_farmer_partner_menu
+msgid "Farmers"
+msgstr "Oléiculteurs"
+
+#. module: olive_mill
+#: selection:olive.cultivation,treatment_type:0
+msgid "Fertilisation"
+msgstr "Fertilisation"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_extra_fillup
+msgid "Fill-up"
+msgstr "Remplir"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_olive_filter_ratio
+#: model:ir.model.fields,field_description:olive_mill.field_res_company_olive_filter_ratio
+msgid "Filter Loss Ratio"
+msgstr "Taux de perte de filtrage"
+
+#. module: olive_mill
+#: sql_constraint:res.company:0
+msgid "Filter Ratio must be positive."
+msgstr "Le taux de perte de filtrage doit être positif."
+
+#. module: olive_mill
+#: model:ir.model.fields,help:olive_mill.field_olive_config_settings_olive_filter_ratio
+#: model:ir.model.fields,help:olive_mill.field_res_company_olive_filter_ratio
+msgid "Filter loss in percentage"
+msgstr "Perte de filtrage en pourcentage"
+
+#. module: olive_mill
+#: selection:olive.oil.production,state:0
+msgid "Final Check"
+msgstr "Contrôle final"
+
+#. module: olive_mill
+#: selection:olive.oil.production,compensation_type:0
+msgid "First of the Day"
+msgstr "Premier du jour"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force2pack_force_ratio
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_force2pack_form
+#: selection:olive.oil.production,state:0
+msgid "Force Ratio"
+msgstr "Forcer le rendement"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_warning_form
+msgid "Force Validation"
+msgstr "Forcer la validation"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
+msgid "Force a Ratio"
+msgstr "Forcer un rendement"
+
+#. module: olive_mill
+#: selection:olive.oil.tank.transfer,transfer_type:0
+msgid "Full Transfer"
+msgstr "Transfert de cuve intégral"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/stock_location.py:165
+#, python-format
+msgid "Full olive oil tank transfer"
+msgstr "Transfert de cuve d'huile intégral"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
+msgid "Get Arrival Lines"
+msgstr "Récupérer les lignes d'apport"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force2pack_global_ratio
+msgid "Global Ratio"
+msgstr "Rendement global"
+
+#. module: olive_mill
+#: selection:olive.arrival.line,sanitary_state:0
+msgid "Good"
+msgstr "Bon"
+
+#. module: olive_mill
+#: selection:olive.arrival.line,ripeness:0
+msgid "Green"
+msgstr "Vertes"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_ratio2force_form
+msgid "Gross Ratio"
+msgstr "Rendement brut"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_ratio
+msgid "Gross Ratio (% L)"
+msgstr "Rendement brut (% l)"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_appointment_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_cultivation_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_lended_case_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_ochard_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_palox_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_parcel_search
+#: model:ir.ui.view,arch_db:olive_mill.partner_organic_certification_search
+msgid "Group By"
+msgstr "Grouper par"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.partner_organic_certification_form
+msgid "I certify that I have seen the organic certificate of that olive farmer."
+msgstr "Je certifie que j'ai vu le certificat bio de cet oléiculteur."
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_extra_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_warning_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_cultivation_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_invoice_create_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_lended_case_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_ochard_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force2pack_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_tank_transfer_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_case_lend_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_parcel_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_line_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_season_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_treatment_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_variant_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_withdrawal_id
+#: model:ir.model.fields,field_description:olive_mill.field_organic_certifying_entity_id
+#: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification_id
+msgid "ID"
+msgstr "ID"
+
+#. module: olive_mill
+#: selection:olive.arrival.line,ripeness:0
+msgid "In Between"
+msgstr "Tournantes"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_search
+msgid "In Progress"
+msgstr "En cours"
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.inox_can
+#: model:product.template,name:olive_mill.inox_can_product_template
+msgid "Inox Can"
+msgstr "Bidon inox"
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.customer_inox_can
+#: model:product.template,name:olive_mill.customer_inox_can_product_template
+msgid "Inox Can of the customer"
+msgstr "Bidon inox du client"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/stock_location.py:140
+#, python-format
+msgid "Internal picking type not configured on warehouse %s."
+msgstr "Type d'opération interne non configuré dans l'entrepôt %s."
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_stock_location
+msgid "Inventory Locations"
+msgstr "Emplacements de stock"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_invoice_create_invoice_type
+msgid "Invoice Type"
+msgstr "Type de facture"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_config_settings_form
+msgid "Invoicing"
+msgstr "Facturation"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_parcel_irrigation
+msgid "Irrigation"
+msgstr "Irrigation"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_label
+msgid "Label"
+msgstr "Libellé"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_parcel_land_registry_ref
+msgid "Land Registry Ref"
+msgstr "Cadastre"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_extra___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_warning___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_cultivation___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_invoice_create___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_lended_case___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_ochard___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force2pack___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_tank_transfer___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_case_lend___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_parcel___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_line___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_season___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_treatment___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_variant___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_withdrawal___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_organic_certifying_entity___last_update
+#: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification___last_update
+msgid "Last Modified on"
+msgstr "Dernière Modification le"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_stock_warehouse_olive_oil_compensation_ratio_update_date
+msgid "Last Update of the Compensation Ratio"
+msgstr "Dernière mise à jour du rendement de la compensation"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_extra_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_warning_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_cultivation_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_invoice_create_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_lended_case_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_ochard_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force2pack_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_tank_transfer_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_case_lend_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_parcel_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_line_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_season_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_treatment_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_variant_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_withdrawal_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_organic_certifying_entity_write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification_write_uid
+msgid "Last Updated by"
+msgstr "Dernière mise à jour par"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_extra_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_warning_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_cultivation_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_invoice_create_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_lended_case_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_ochard_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force2pack_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_tank_transfer_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_case_lend_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_parcel_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_line_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_season_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_treatment_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_variant_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_withdrawal_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_organic_certifying_entity_write_date
+#: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification_write_date
+msgid "Last Updated on"
+msgstr "Dernière mise à jour le"
+
+#. module: olive_mill
+#: selection:olive.oil.production,compensation_type:0
+msgid "Last of the Day"
+msgstr "Dernier de la journée"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment_leaf_removal
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_leaf_removal
+#: model:product.product,name:olive_mill.leaf_remove_product
+#: model:product.template,name:olive_mill.leaf_remove_product_product_template
+msgid "Leaf Removal"
+msgstr "Effeuillage"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_olive_oil_leaf_removal_product_id
+#: model:ir.model.fields,field_description:olive_mill.field_res_company_olive_oil_leaf_removal_product_id
+msgid "Leaf Removal Product"
+msgstr "Article effeuillage"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_palox_lend_form
+#: model:ir.ui.view,arch_db:olive_mill.view_partner_form
+msgid "Lend Palox and/or Cases"
+msgstr "Prêt palox et/ou caisses"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_palox_lend_action
+#: model:ir.ui.view,arch_db:olive_mill.olive_appointment_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_appointment_search
+#: selection:olive.appointment,appointment_type:0
+msgid "Lend Palox/Cases"
+msgstr "Prêt palox/caisses"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_olive_appointment_lend_minutes
+#: model:ir.model.fields,field_description:olive_mill.field_res_company_olive_appointment_lend_minutes
+msgid "Lend Palox/Cases Appointment Default Duration"
+msgstr "Durée par défaut du rendez-vous du prêt palox/caisses"
+
+#. module: olive_mill
+#: sql_constraint:res.company:0
+msgid "Lend Palox/Cases Appointment Default Duration must be positive."
+msgstr "La durée par défaut du rendez-vous du prêt palox/caisses doit être positive."
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_palox_search
+msgid "Lended"
+msgstr "Prêtés"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_lended_case_id
+msgid "Lended Case Move"
+msgstr "Mouvement de prêt caisse"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_case_lend_regular_case_qty
+msgid "Lended Case Qty"
+msgstr "Quantité de caisses prêtées"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_lended_case_action
+#: model:ir.ui.menu,name:olive_mill.olive_lended_case_menu
+#: model:ir.ui.view,arch_db:olive_mill.view_warehouse
+msgid "Lended Cases"
+msgstr "Caisses prêtées"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_res_partner_olive_lended_organic_case
+#: model:ir.model.fields,field_description:olive_mill.field_res_users_olive_lended_organic_case
+msgid "Lended Organic Case"
+msgstr "Caisse bio prêtée"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_case_lend_organic_case_qty
+msgid "Lended Organic Case Qty"
+msgstr "Quantité de caisses bio prêtées"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_case_lend_palox_ids
+#: model:ir.model.fields,field_description:olive_mill.field_res_partner_olive_lended_palox
+#: model:ir.model.fields,field_description:olive_mill.field_res_users_olive_lended_palox
+#: model:ir.ui.view,arch_db:olive_mill.view_partner_form
+msgid "Lended Palox"
+msgstr "Palox prêté"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_res_partner_olive_lended_regular_case
+#: model:ir.model.fields,field_description:olive_mill.field_res_users_olive_lended_regular_case
+msgid "Lended Regular Case"
+msgstr "Caisse normale prêtée"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_line_ids
+msgid "Lines"
+msgstr "Lignes"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.view_warehouse
+msgid "Locations"
+msgstr "Emplacements"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_stock_production_lot
+msgid "Lot/Serial"
+msgstr "Lot/N° série"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
+msgid "Mark as Done"
+msgstr "Marqué comme fait"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_olive_max_qty_per_palox
+#: model:ir.model.fields,field_description:olive_mill.field_res_company_olive_max_qty_per_palox
+msgid "Maximum Quantity of Olives per Palox"
+msgstr "Quantité maxi d'olives par palox"
+
+#. module: olive_mill
+#: sql_constraint:res.company:0
+msgid "Maximum Quantity of Olives per Palox must be positive."
+msgstr "La quantité maxi d'olives par palox doit être positive."
+
+#. module: olive_mill
+#: selection:olive.parcel,irrigation:0
+msgid "Micro-Sprinkler"
+msgstr "Micro-jet"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:525
+#, python-format
+msgid "Missing Olive Oil Density on company '%s'"
+msgstr "La densité de l'huile d'olive manque dans la société '%s'"
+
+#. module: olive_mill
+#: code:addons/olive_mill/wizard/olive_withdrawal.py:63
+#, python-format
+msgid "Missing Olive Oil Withdrawal Location on warehouse '%s'"
+msgstr "L'emplacement de retrait d'huile d'olive manque dans l'entrepôt '%s'"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:694
+#, python-format
+msgid "Missing Production Product on company %s."
+msgstr "L'article trituration manque dans la société %s."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:702
+#, python-format
+msgid "Missing Tax Product on company %s."
+msgstr "L'article taxe AFIDOL manque dans la société %s."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:698
+#, python-format
+msgid "Missing leaf removal product on company %s"
+msgstr "L'article effeuillage manque dans la société %s."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:156
+#, python-format
+msgid "Missing lines on arrival '%s'."
+msgstr "L'apport '%s' n'a aucune ligne."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:592
+#, python-format
+msgid "Missing shrinkage production lot on product '%s'."
+msgstr "Le lot de freinte n'est pas configuré sur l'article '%s'."
+
+#. module: olive_mill
+#: selection:olive.appointment,oil_destination:0
+#: selection:olive.arrival,default_oil_destination:0
+#: selection:olive.arrival.line,oil_destination:0
+#: selection:olive.oil.production,oil_destination:0
+#: selection:olive.palox,oil_destination:0
+msgid "Mix"
+msgstr "Mixte"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_warning_msg
+msgid "Msg"
+msgstr "Msg"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_ochard_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_season_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_treatment_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_variant_name
+#: model:ir.model.fields,field_description:olive_mill.field_organic_certifying_entity_name
+msgid "Name"
+msgstr "Nom"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.organic_certifying_entity_search
+msgid "Name or Code"
+msgstr "Nom ou code"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.view_partner_form
+msgid "New Olive Oil Withdrawal"
+msgstr "Nouveau retrait d'huile d'olive"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_appointment_form
+msgid "New Withdrawal"
+msgstr "Nouveau retrait"
+
+#. module: olive_mill
+#: selection:olive.oil.production,compensation_type:0
+msgid "No Compensation"
+msgstr "Pas de compensation"
+
+#. module: olive_mill
+#: code:addons/olive_mill/wizard/olive_invoice_create.py:52
+#, python-format
+msgid "No invoice created"
+msgstr "Aucune facture créée"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_search
+msgid "Not Cancelled"
+msgstr "Pas annulé"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_delivery_carrier_olive_bottle_free_full
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_extra_olive_bottle_free_full
+#: model:ir.model.fields,field_description:olive_mill.field_product_product_olive_bottle_free_full
+#: model:ir.model.fields,field_description:olive_mill.field_product_template_olive_bottle_free_full
+msgid "Not Invoiced when Full"
+msgstr "Non facturé si rempli"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_palox_search
+msgid "Not Lended"
+msgstr "Pas prêté"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_cultivation_notes
+#: model:ir.model.fields,field_description:olive_mill.field_olive_lended_case_notes
+#: model:ir.model.fields,field_description:olive_mill.field_olive_parcel_notes
+msgid "Notes"
+msgstr "Notes"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_name
+msgid "Number"
+msgstr "Numéro"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_parcel_tree_qty
+msgid "Number of Trees"
+msgstr "Nombre d'arbres"
+
+#. module: olive_mill
+#: model:ir.model.fields,help:olive_mill.field_olive_config_settings_olive_appointment_arrival_leaf_removal_minutes
+#: model:ir.model.fields,help:olive_mill.field_olive_config_settings_olive_appointment_arrival_no_leaf_removal_minutes
+#: model:ir.model.fields,help:olive_mill.field_res_company_olive_appointment_arrival_leaf_removal_minutes
+#: model:ir.model.fields,help:olive_mill.field_res_company_olive_appointment_arrival_no_leaf_removal_minutes
+msgid "Number of minutes per 100 kg of olives"
+msgstr "Nombre de minutes par 100 kg d'olives"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_palox_search
+msgid "Number or Label"
+msgstr "Numéro ou libellé"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_ochard_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_cultivation_ochard_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_parcel_ochard_id
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_cultivation_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_parcel_search
+msgid "Ochard"
+msgstr "Verger"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_ochard_form
+msgid "Ochard Name"
+msgstr "Nom du verger"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_ochard_action
+#: model:ir.ui.menu,name:olive_mill.olive_ochard_menu
+msgid "Ochards"
+msgstr "Vergers"
+
+#. module: olive_mill
+#: selection:product.template,olive_type:0
+msgid "Oil Bottle"
+msgstr "Bouteille d'huile"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_compensation_oil_qty
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_compensation_oil_qty
+msgid "Oil Compensation Last of Day (L)"
+msgstr "Dernière compensation d'huile de la journée (L)"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_compensation_oil_qty_kg
+msgid "Oil Compensation Last of Day (kg)"
+msgstr "Dernière compensation d'huile de la journée (kg)"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment_oil_destination
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_oil_destination
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_oil_destination
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_oil_destination
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_oil_destination
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_search
+msgid "Oil Destination"
+msgstr "Destination de l'huile"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_form
+msgid "Oil Gross Ratio"
+msgstr "Rendement brut huile"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_oil_ratio
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check_line_oil_ratio
+msgid "Oil Gross Ratio (% L)"
+msgstr "Rendement brut huile (% l)"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_form
+msgid "Oil Net Ratio"
+msgstr "Rendement net huile"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_oil_ratio_net
+msgid "Oil Net Ratio (% L)"
+msgstr "Rendement net huile (% l)"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_line_product_id
+#: model:ir.model.fields,field_description:olive_mill.field_stock_location_oil_product_id
+msgid "Oil Product"
+msgstr "Article huile"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
+msgid "Oil Production"
+msgstr "Presse"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_oil_production_action
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_production_ids
+#: model:ir.ui.menu,name:olive_mill.olive_oil_production_menu
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_tree
+msgid "Oil Productions"
+msgstr "Presses"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_ratio2force_form
+msgid "Oil Qty"
+msgstr "Qté d'huile"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_oil_qty
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check_line_oil_qty
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_oil_qty
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_tree
+msgid "Oil Qty (L)"
+msgstr "Qté d'huile (L)"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_oil_qty_kg
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_oil_qty_kg
+msgid "Oil Qty (kg)"
+msgstr "Qté d'huile (kg)"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_form
+msgid "Oil Qty Lost in Filter"
+msgstr "Qté d'huile perdue au filtrage"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_filter_loss_oil_qty
+msgid "Oil Qty Lost in Filter (L)"
+msgstr "Qté d'huile perdue au filtrage (L)"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_form
+msgid "Oil Qty Sold"
+msgstr "Qté d'huile vendue"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_sale_oil_qty
+msgid "Oil Qty Sold (L)"
+msgstr "Qté d'huile vendue (L)"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_form
+msgid "Oil Qty to Sale Tank"
+msgstr "Qté d'huile vers cuve de vente"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_to_sale_tank_oil_qty
+msgid "Oil Qty to Sale Tank (L)"
+msgstr "Qté d'huile vers cuve de vente (L)"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
+msgid "Oil Quantity"
+msgstr "Qté d'huile"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_oil_qty
+msgid "Oil Quantity (L)"
+msgstr "Qté d'huile (L)"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_oil_qty_kg
+msgid "Oil Quantity (kg)"
+msgstr "Qté d'huile (kg)"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_oil_tank_transfer_action
+#: model:ir.ui.menu,name:olive_mill.olive_oil_tank_transfer_menu
+msgid "Oil Tank Transfer"
+msgstr "Cuve de transfert"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_oil_product_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force2pack_oil_product_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_oil_product_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check_oil_product_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_oil_product_id
+msgid "Oil Type"
+msgstr "Type d'huile"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_withdrawal_action
+#: model:ir.ui.menu,name:olive_mill.olive_withdrawal_menu
+msgid "Oil Withdrawal"
+msgstr "Retrait d'huile"
+
+#. module: olive_mill
+#: sql_constraint:stock.warehouse:0
+msgid "Oil compensation ratio must be positive or null."
+msgstr "Le rendement de l'huile de compensation doit être positif ou nul."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/stock_location.py:57
+#, python-format
+msgid "Oil product is not configured on stock location '%s'."
+msgstr "L'article Huile n'est pas configuré sur l'emplacement de stock '%s'."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/stock_location.py:103
+#, python-format
+msgid "Oil product is not configured on tank '%s'."
+msgstr "L'article Huile n'est pas configuré dans la cuve '%s'."
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_appointment
+#: model:ir.ui.view,arch_db:olive_mill.olive_appointment_form
+msgid "Olive Appointment"
+msgstr "Rendez-vous oléiculteurs"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_appointment_tree
+msgid "Olive Appointments"
+msgstr "Rendez-vous oléiculteurs"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_arrival
+#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment_arrival_id
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_form
+msgid "Olive Arrival"
+msgstr "Apport d'olives"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_arrival_line
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_arrival_form
+msgid "Olive Arrival Line"
+msgstr "Ligne d'apport d'olives"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.partner_olive_arrival_line_action
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_graph
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_pivot
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_tree
+#: model:ir.ui.view,arch_db:olive_mill.partner_olive_arrival_line_pivot
+msgid "Olive Arrival Lines"
+msgstr "Lignes d'apport d'olives"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_warning_form
+msgid "Olive Arrival Warnings"
+msgstr "Avertissements apport d'olives"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_graph
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_pivot
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_tree
+msgid "Olive Arrivals"
+msgstr "Apports d'olives"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_compensation_last_olive_qty
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_compensation_last_olive_qty
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_ratio2force_form
+msgid "Olive Compensation Qty"
+msgstr "Qté de compensation olives"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_stock_warehouse_olive_compensation_last_qty
+msgid "Olive Compensation Quantity"
+msgstr "Qté de compensation olives"
+
+#. module: olive_mill
+#: sql_constraint:stock.warehouse:0
+msgid "Olive Compensation Quantity must be positive or null."
+msgstr "La quantité de compensation olives doit être positive ou nulle."
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_cultivation
+msgid "Olive Cultivation"
+msgstr "Méthode de culture"
+
+#. module: olive_mill
+#: model:ir.actions.report.xml,name:olive_mill.olive_culture_report
+msgid "Olive Culture Form"
+msgstr "Formulaire méthode de culture"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_partner_olive_culture_type
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_partner_olive_culture_type
+#: model:ir.model.fields,field_description:olive_mill.field_olive_lended_case_partner_olive_culture_type
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_case_lend_partner_olive_culture_type
+#: model:ir.model.fields,field_description:olive_mill.field_res_partner_olive_culture_type
+#: model:ir.model.fields,field_description:olive_mill.field_res_users_olive_culture_type
+msgid "Olive Culture Type"
+msgstr "Type de méthode de culture"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment_partner_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_commercial_partner_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_partner_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_invoice_create_partner_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_lended_case_partner_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_ochard_partner_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_case_lend_partner_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_withdrawal_partner_id
+#: model:ir.model.fields,field_description:olive_mill.field_res_partner_olive_farmer
+#: model:ir.model.fields,field_description:olive_mill.field_res_users_olive_farmer
+#: model:ir.ui.view,arch_db:olive_mill.view_res_partner_filter
+msgid "Olive Farmer"
+msgstr "Oléiculteur"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_invoice_create_form
+msgid "Olive Invoice Create"
+msgstr "Créer une facture d'olives"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_lended_case
+#: model:ir.ui.view,arch_db:olive_mill.olive_lended_case_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_lended_case_tree
+msgid "Olive Lended Cases"
+msgstr "Caisses à olives prêtées"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_invoice_create_warehouse_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_withdrawal_warehouse_id
+#: model:ir.model.fields,field_description:olive_mill.field_stock_warehouse_olive_mill
+#: model:ir.ui.menu,name:olive_mill.olive_root_menu
+#: model:ir.ui.view,arch_db:olive_mill.product_template_search_view
+#: model:ir.ui.view,arch_db:olive_mill.stock_warehouse_view_search
+#: model:ir.ui.view,arch_db:olive_mill.view_partner_form
+#: model:ir.ui.view,arch_db:olive_mill.view_warehouse
+msgid "Olive Mill"
+msgstr "Moulin à huile"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_ochard
+#: model:ir.ui.view,arch_db:olive_mill.olive_ochard_form
+msgid "Olive Ochard"
+msgstr "Verger d'oliviers"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_ochard_pivot
+#: model:ir.ui.view,arch_db:olive_mill.olive_ochard_tree
+msgid "Olive Ochards"
+msgstr "Vergers d'oliviers"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.view_location_form
+#: model:product.product,name:olive_mill.oil
+#: model:product.template,name:olive_mill.oil_product_template
+#: selection:product.template,olive_type:0
+msgid "Olive Oil"
+msgstr "Fruité Vert"
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.bottle
+#: model:product.template,name:olive_mill.bottle_product_template
+msgid "Olive Oil Bottle"
+msgstr "Bouteille d'huile d'olives"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_stock_warehouse_olive_compensation_loc_id
+msgid "Olive Oil Compensation Tank"
+msgstr "Cuve de compensation d'huile"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_olive_oil_density
+#: model:ir.model.fields,field_description:olive_mill.field_res_company_olive_oil_density
+msgid "Olive Oil Density"
+msgstr "Densité de l'huile d'olive"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_oil_production
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force2pack_production_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check_production_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_production_id
+msgid "Olive Oil Production"
+msgstr "Presse à huile d'olives"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:602
+#, python-format
+msgid "Olive Oil Production %s: Shrinkage"
+msgstr "Olive Oil Production %s: Shrinkage"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_oil_production_force2pack
+msgid "Olive Oil Production Force2Pack"
+msgstr "Olive Oil Production Force2Pack"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_oil_production_force2pack_action
+msgid "Olive Oil Production Force2pack"
+msgstr "Olive Oil Production Force2pack"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_oil_production_pack2check
+msgid "Olive Oil Production Pack2check"
+msgstr "Olive Oil Production Pack2check"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_oil_production_ratio2force_action
+#: model:ir.model,name:olive_mill.model_olive_oil_production_ratio2force
+msgid "Olive Oil Production Ratio2force"
+msgstr "Olive Oil Production Ratio2force"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_oil_production_pack2check_action
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_pack2check_form
+msgid "Olive Oil Production pack2check"
+msgstr "Olive Oil Production pack2check"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_ratio2force_form
+msgid "Olive Oil Production: Enter Result"
+msgstr "Olive Oil Production: Enter Result"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_stock_warehouse_olive_shrinkage_loc_id
+msgid "Olive Oil Shrinkage Tank"
+msgstr "Cuve de freinte"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.view_location_search
+msgid "Olive Oil Tank"
+msgstr "Cuve d'huile d'olives"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_tank_transfer_form
+msgid "Olive Oil Tank Transfer"
+msgstr "Transfert de cuve"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_stock_location_olive_tank_type
+msgid "Olive Oil Tank Type"
+msgstr "Type de cuve d'huile d'olives"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_stock_warehouse_olive_withdrawal_loc_id
+msgid "Olive Oil Withdrawal Location"
+msgstr "Emplacement retraits huile d'olives"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_palox
+#: model:ir.ui.view,arch_db:olive_mill.olive_palox_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_palox_tree
+msgid "Olive Palox"
+msgstr "Palox"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_parcel_form
+msgid "Olive Parcel"
+msgstr "Parcelle d'oliviers"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_parcel_tree
+msgid "Olive Parcels"
+msgstr "Parcelles d'oliviers"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_olive_qty
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_olive_qty
+#: model:ir.model.fields,field_description:olive_mill.field_res_partner_olive_qty_current_season
+#: model:ir.model.fields,field_description:olive_mill.field_res_users_olive_qty_current_season
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_arrival_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_form
+msgid "Olive Qty"
+msgstr "Qté d'olives"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_olive_qty
+msgid "Olive Qty (kg)"
+msgstr "Qté d'olives (kg)"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_tree
+msgid "Olive Quantity (kg)"
+msgstr "Qté d'olives (kg)"
+
+#. module: olive_mill
+#: model:ir.model.fields,help:olive_mill.field_olive_arrival_line_olive_qty
+msgid "Olive Quantity in Kg"
+msgstr "Qté d'olives (kg)"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_sale_pricelist
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_line_pricelist_id
+#: model:ir.ui.view,arch_db:olive_mill.olive_sale_pricelist_form
+msgid "Olive Sale Pricelist"
+msgstr "Liste de prix de vente d'huile"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_sale_pricelist_line
+msgid "Olive Sale Pricelist Line"
+msgstr "Ligne de liste de prix de vente d'huile"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_sale_pricelist_line_tree
+msgid "Olive Sale Pricelist Lines"
+msgstr "Lignes de liste de prix de vente d'huile"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_sale_pricelist_tree
+msgid "Olive Sale Pricelists"
+msgstr "Listes de prix de vente d'huile"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_season
+#: model:ir.model.fields,field_description:olive_mill.field_stock_location_olive_season_id
+#: model:ir.ui.view,arch_db:olive_mill.olive_season_form
+msgid "Olive Season"
+msgstr "Campagne"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_season_tree
+msgid "Olive Seasons"
+msgstr "Campagnes"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_treatment
+#: model:ir.ui.view,arch_db:olive_mill.olive_treatment_form
+msgid "Olive Treatment"
+msgstr "Trituration des olives"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_treatment_tree
+msgid "Olive Treatments"
+msgstr "Triturations des olives"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_parcel
+msgid "Olive Tree Parcel"
+msgstr "Parcelle d'oliviers"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.view_partner_form
+msgid "Olive Trees"
+msgstr "Oliviers"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_delivery_carrier_olive_type
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_extra_product_olive_type
+#: model:ir.model.fields,field_description:olive_mill.field_product_product_olive_type
+#: model:ir.model.fields,field_description:olive_mill.field_product_template_olive_type
+msgid "Olive Type"
+msgstr "Type olive"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_variant
+#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment_variant_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_variant_id
+#: model:ir.ui.view,arch_db:olive_mill.olive_appointment_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_variant_form
+msgid "Olive Variant"
+msgstr "Variété d'olives"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_variant_action
+#: model:ir.model.fields,field_description:olive_mill.field_olive_parcel_variant_ids
+#: model:ir.ui.menu,name:olive_mill.olive_variant_menu
+#: model:ir.ui.view,arch_db:olive_mill.olive_variant_tree
+msgid "Olive Variants"
+msgstr "Variétés d'olives"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_withdrawal_form
+msgid "Olive Withdrawal"
+msgstr "Retrait d'huile d'olives"
+
+#. module: olive_mill
+#: code:addons/olive_mill/wizard/olive_withdrawal.py:46
+#: code:addons/olive_mill/wizard/olive_withdrawal.py:54
+#, python-format
+msgid "Olive Withdrawal Wizard"
+msgstr "Wizard Retrait d'huile"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_arrival_warning
+msgid "Olive arrivals warning"
+msgstr "Avertissement apport d'olives"
+
+#. module: olive_mill
+#: model:ir.model.fields,help:olive_mill.field_olive_oil_production_compensation_last_olive_qty
+#: model:ir.model.fields,help:olive_mill.field_olive_oil_production_ratio2force_compensation_last_olive_qty
+msgid "Olive compensation in kg"
+msgstr "Compensation olives en kg"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.view_partner_form
+msgid "Olive mill related settings are managed on"
+msgstr "Les paramètres pour le moulin à huile sont gérés sur "
+
+#. module: olive_mill
+#: model:ir.model.fields,help:olive_mill.field_olive_config_settings_olive_oil_density
+#: model:ir.model.fields,help:olive_mill.field_res_company_olive_oil_density
+msgid "Olive oil density in kg per liter"
+msgstr "Densité d'huile d'olives en kg/l"
+
+#. module: olive_mill
+#: sql_constraint:res.company:0
+msgid "Olive oil density must be strictly positive."
+msgstr "La densité d'huile d'olives doit être strictement positive."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:558
+#, python-format
+msgid "Olive oil production %s: compensation related to arrival line %s"
+msgstr "Presse %s : compensation relative à la ligne d'apport %s"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:579
+#, python-format
+msgid "Olive oil production %s: extra item withdrawal related to arrival line %s"
+msgstr "Presse %s : article supplémentaire en retrait relatif à la ligne d'apport %s"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:526
+#, python-format
+msgid "Olive oil production %s: oil withdrawal related to arrival line %s"
+msgstr "Presse %s : huile en retrait relative à la ligne d'apport %s"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:542
+#, python-format
+msgid "Olive oil production %s: sale related to arrival line %s"
+msgstr "Presse %s : vente relative à la ligne d'apport %s"
+
+#. module: olive_mill
+#: code:addons/olive_mill/wizard/olive_oil_tank_transfer.py:35
+#, python-format
+msgid "Olive oil tank transfer wizard"
+msgstr "Wizard de transcodage d'huile"
+
+#. module: olive_mill
+#: model:ir.model.fields,help:olive_mill.field_res_partner_olive_qty_current_season
+#: model:ir.model.fields,help:olive_mill.field_res_users_olive_qty_current_season
+msgid "Olive qty for the current season in Kg"
+msgstr "Qté d'olives pour la campagne en cours en kg"
+
+#. module: olive_mill
+#: model:ir.model.fields,help:olive_mill.field_olive_appointment_qty
+msgid "Olive quantity in kg"
+msgstr "Qté d'olives en kg"
+
+#. module: olive_mill
+#: model:ir.model.fields,help:olive_mill.field_olive_oil_production_olive_qty
+#: model:ir.model.fields,help:olive_mill.field_olive_oil_production_ratio2force_olive_qty
+msgid "Olive quantity without compensation in kg"
+msgstr "Qté d'olives sans compensation en kg"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/stock_location.py:61
+#, python-format
+msgid "Olive season is not configured on stock location '%s'."
+msgstr "La campagne n'est pas configurée dans l'emplacement de stock '%s'."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:224
+#, python-format
+msgid "On arrival line number %d that has a mixed oil destination, the requested withdraway quantity (%s L) is superior to the olive quantity of the line (%s kg) multiplied by the average ratio (%s %%)."
+msgstr "Sur la ligne d'apport n° %d qui a une destination mixte pour l'huile, la quantité demandée en retrait (%s L) est supérieure à la quantité d'olives de la ligne (%s kg) multipliée par le rendement moyen (%s %%)."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:184
+#, python-format
+msgid "On arrival line number %d, the destination oil '%s' is '%s' but the farmer '%s' is '%s'."
+msgstr "Sur la ligne d'apport n° %d, la destination de l'huile '%s' est '%s' mais l'oléiculteur '%s' est '%s'."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:197
+#, python-format
+msgid "On arrival line number %d, the oil destination is 'mix' so you must enter the requested withdrawal qty"
+msgstr "Sur la ligne d'apport n° %d, la destination de l'huile est 'mixte' aussi, vous devez entrer la quantité demandée en retrait"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:174
+#, python-format
+msgid "On arrival line number %d, the olive quantity is null."
+msgstr "Sur la ligne d'apport n° %d, la quantité d'olives est nulle."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:325
+#, python-format
+msgid "On line %s, the olive quantity is null."
+msgstr "Sur la ligne %s, la quantité d'olives est nulle."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:616
+#, python-format
+msgid "On oil production %s which has first-of-day compensation, you must set a compensation sale tank."
+msgstr "Sur la presse %s qui comporte la première compensation de la journée, vous devez saisir une cuve de compensation à l'achat."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_palox.py:92
+#, python-format
+msgid "On palox %s, the fields 'Borrower' and 'Borrowed Date' should be either both set or both empty."
+msgstr "Sur le palox %s, les champs 'Emprunteur' et 'Date de prêt' doivent être renseignés ensemble ou vides."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_season.py:47
+#, python-format
+msgid "On season '%s', the Early Bird Date (%s) must be after the Start Date (%s)."
+msgstr "Sur la campagne '%s', la date d'apport précoce (%s) doit être postérieure à la date de départ (%s)."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_season.py:53
+#, python-format
+msgid "On season '%s', the Early Bird Date (%s) must be before the End Date (%s)."
+msgstr "Sur la campagne '%s', la date d'apport précoce (%s) doit être antérieure à la date de fin (%s)."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_cultivation.py:42
+#, python-format
+msgid "On the cultivation method of ochard '%s', the date (%s) is after the end of the season (%s)"
+msgstr "Sur la méthode culturale du verger '%s', la date (%s) est postérieure à la fin de la campagne (%s)"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_cultivation.py:47
+#, python-format
+msgid "On the cultivation method of ochard '%s', the date (%s) is in the future!"
+msgstr "On the cultivation method of ochard '%s', the date (%s) is in the future!"
+
+#. module: olive_mill
+#: model:ir.ui.menu,name:olive_mill.olive_operations_menu
+msgid "Operations"
+msgstr "Opérations"
+
+#. module: olive_mill
+#: selection:olive.arrival.line,ripeness:0
+msgid "Optimal"
+msgstr "Optimales"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_search
+#: selection:product.template,olive_culture_type:0
+#: selection:res.partner,olive_culture_type:0
+msgid "Organic"
+msgstr "Bio"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_lended_case_organic_qty
+msgid "Organic Case Quantity"
+msgstr "Qté de caisses bio"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_stock_warehouse_olive_organic_case_total
+msgid "Organic Cases Total"
+msgstr "Total des caisses bio"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_stock_warehouse_olive_organic_case_stock
+msgid "Organic Cases in Stock"
+msgstr "Caisses bio en stock"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.organic_certifying_entity_action
+#: model:ir.ui.menu,name:olive_mill.organic_certifying_entity_menu
+msgid "Organic Cert. Entities"
+msgstr "Organismes de certification bio"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.partner_organic_certification_action
+#: model:ir.model.fields,field_description:olive_mill.field_res_partner_olive_organic_certification_ids
+#: model:ir.model.fields,field_description:olive_mill.field_res_users_olive_organic_certification_ids
+#: model:ir.ui.menu,name:olive_mill.partner_organic_certification_menu
+#: model:ir.ui.view,arch_db:olive_mill.view_partner_form
+msgid "Organic Certifications"
+msgstr "Certifications bio"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_res_partner_olive_organic_certified_logo
+#: model:ir.model.fields,field_description:olive_mill.field_res_users_olive_organic_certified_logo
+msgid "Organic Certified Logo"
+msgstr "Logo Certifié bio"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.organic_certifying_entity_tree
+msgid "Organic Certifying Entities"
+msgstr "Organismes de certification bio"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_organic_certifying_entity
+#: model:ir.ui.view,arch_db:olive_mill.organic_certifying_entity_form
+msgid "Organic Certifying Entity"
+msgstr "Organisme de certification bio"
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.oil_conversion
+#: model:product.template,name:olive_mill.oil_conversion_product_template
+msgid "Organic Conversion Oil"
+msgstr "Huile en conversion bio"
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.oil_organic
+#: model:product.template,name:olive_mill.oil_organic_product_template
+msgid "Organic Olive Oil"
+msgstr "Huile d'olives bio"
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.bottle_organic
+#: model:product.template,name:olive_mill.bottle_organic_product_template
+msgid "Organic Olive Oil Bottle"
+msgstr "Bouteille d'huile d'olives bio"
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.organic_option_product
+#: model:product.template,name:olive_mill.organic_option_product_product_template
+msgid "Organic Production Option"
+msgstr "Option presse bio"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_appointment_search
+#: selection:olive.appointment,appointment_type:0
+msgid "Other"
+msgstr "Autre"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_returned_palox_ids
+msgid "Other Returned Palox"
+msgstr "Autre palox rendu"
+
+#. module: olive_mill
+#: selection:olive.arrival.line,ripeness:0
+msgid "Over Ripen"
+msgstr "Surmatures"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
+msgid "Pack"
+msgstr "Conditionner"
+
+#. module: olive_mill
+#: selection:olive.oil.production,state:0
+msgid "Package"
+msgstr "Conditionnement"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_palox_action
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_palox_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force2pack_palox_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check_palox_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_palox_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_palox_id
+#: model:ir.ui.menu,name:olive_mill.olive_palox_menu
+msgid "Palox"
+msgstr "Palox"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_palox_form
+msgid "Palox Number"
+msgstr "Numéro de palox"
+
+#. module: olive_mill
+#: selection:olive.oil.production,state:0
+msgid "Palox Selection"
+msgstr "Sélection de palox"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_parcel_action
+#: model:ir.model.fields,field_description:olive_mill.field_olive_ochard_parcel_ids
+#: model:ir.ui.menu,name:olive_mill.olive_parcel_menu
+#: model:ir.ui.view,arch_db:olive_mill.olive_ochard_form
+msgid "Parcels"
+msgstr "Parcelles"
+
+#. module: olive_mill
+#: selection:olive.oil.tank.transfer,transfer_type:0
+msgid "Partial Transfer (Not implemented yet)"
+msgstr "Transfert partiel (Pas encore implémenté)"
+
+#. module: olive_mill
+#: code:addons/olive_mill/wizard/olive_oil_tank_transfer.py:33
+#, python-format
+msgid "Partial transfer is not implemented yet"
+msgstr "Le transfert partiel n'est pas encore implémenté"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_res_partner
+#: model:ir.ui.view,arch_db:olive_mill.olive_appointment_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_lended_case_search
+msgid "Partner"
+msgstr "Partenaire"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_partner_organic_certification
+#: model:ir.ui.view,arch_db:olive_mill.partner_organic_certification_form
+msgid "Partner Organic Certification"
+msgstr "Partenaire certification bio"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.partner_organic_certification_search
+#: model:ir.ui.view,arch_db:olive_mill.partner_organic_certification_tree
+msgid "Partner Organic Certifications"
+msgstr "Partenaire certifications bio"
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.peroxide_analysis
+#: model:product.template,name:olive_mill.peroxide_analysis_product_template
+msgid "Peroxide Analysis"
+msgstr "Analyse au péroxide"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_parcel_planted_year
+msgid "Planted Year"
+msgstr "Année de plantation"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_line_price
+msgid "Price"
+msgstr "Prix"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_name
+#: model:ir.ui.view,arch_db:olive_mill.olive_sale_pricelist_form
+msgid "Pricelist Name"
+msgstr "Nom de la liste de prix"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_product_product
+msgid "Product"
+msgstr "Article"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/product.py:66
+#, python-format
+msgid "Product '%s' has an Olive Type 'Bottle' or 'Analysis' that require a unit of measure that belong to the 'Unit' category (current unit of measure: %s)."
+msgstr "L'article '%s' a un type olive 'Bouteille' ou 'Analyse' qui demande une unité de mesure qui appartient à la catégorie 'Unité' (actuelle unité de mesure : %s)."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/product.py:74
+#, python-format
+msgid "Product '%s' has an Olive Type 'Invoice Option' so it must be configured as a Service."
+msgstr "L'article '%s' a un type olive 'Option facture' aussi il doit être configuré en Service."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/product.py:55
+#, python-format
+msgid "Product '%s' has an Olive Type 'Olive Oil', so a culture type must also be configured."
+msgstr "L'article '%s' a un type olive 'Huile d'olive', aussi un type de culture doit être configuré."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/product.py:59
+#, python-format
+msgid "Product '%s' has an Olive Type (%s) that require 'Liter' as it's unit of measure (current unit of measure is %s)."
+msgstr "L'article '%s' a un type olive (%s) qui demande 'Litre' comme unité de mesure (actuelle unité de mesure : %s)."
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_product_template
+msgid "Product Template"
+msgstr "Modèle d'article"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_production_id
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_form
+#: model:product.product,name:olive_mill.production_product
+#: model:product.template,name:olive_mill.production_product_product_template
+msgid "Production"
+msgstr "Presse"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_production_date
+msgid "Production Date"
+msgstr "Date de presse"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force2pack_arrival_line_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check_arrival_line_id
+msgid "Production Line"
+msgstr "Ligne de presse"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_name
+msgid "Production Number"
+msgstr "Numéro de presse"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_olive_oil_production_product_id
+#: model:ir.model.fields,field_description:olive_mill.field_res_company_olive_oil_production_product_id
+msgid "Production Product"
+msgstr "Article presse"
+
+#. module: olive_mill
+#: selection:product.template,olive_type:0
+msgid "Production Service"
+msgstr "Service presse"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_production_state
+msgid "Production State"
+msgstr "Etat presse"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_product_action
+#: model:ir.ui.menu,name:olive_mill.olive_product_menu
+msgid "Products"
+msgstr "Articles"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment_qty
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_extra_qty
+#: model:ir.model.fields,field_description:olive_mill.field_olive_cultivation_quantity
+msgid "Quantity"
+msgstr "Quantité"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_olive_appointment_qty_per_palox
+#: model:ir.model.fields,field_description:olive_mill.field_res_company_olive_appointment_qty_per_palox
+msgid "Quantity of Olives per Palox"
+msgstr "Quantité d'olives par palox"
+
+#. module: olive_mill
+#: model:ir.model.fields,help:olive_mill.field_olive_arrival_line_mix_withdrawal_oil_qty
+msgid "Quantity of olive oil withdrawn by the farmer in liters"
+msgstr "Quantité d'huile de retrait par oléiculteur en litres"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_stock_quant
+msgid "Quants"
+msgstr "Quants"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_tree
+msgid "Ratio (%)"
+msgstr "Rendement (%)"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_mrp_product_produce
+msgid "Record Production"
+msgstr "Enregistrer la presse"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_search
+#: model:ir.ui.view,arch_db:olive_mill.partner_organic_certification_search
+#: selection:product.template,olive_culture_type:0
+#: selection:res.partner,olive_culture_type:0
+#: selection:stock.location,olive_tank_type:0
+msgid "Regular"
+msgstr "Conventionnel"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_stock_warehouse_olive_regular_case_total
+msgid "Regular Cases Total"
+msgstr "Total des caisses normales"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_stock_warehouse_olive_regular_case_stock
+msgid "Regular Cases in Stock"
+msgstr "Caisses normales en stock"
+
+#. module: olive_mill
+#: model:ir.ui.menu,name:olive_mill.olive_report_menu
+msgid "Reports"
+msgstr "Rapports"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_arrival_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_form
+msgid "Requested Withdrawal Qty"
+msgstr "Qté de retrait demandée"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_mix_withdrawal_oil_qty
+msgid "Requested Withdrawal Qty (L)"
+msgstr "Qté de retrait demandée (L)"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_returned_organic_case
+msgid "Returned Organic Cases"
+msgstr "Caisses bio rendues"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_returned_regular_case
+msgid "Returned Regular Cases"
+msgstr "Caisses normales rendues"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_ripeness
+msgid "Ripeness"
+msgstr "Maturité"
+
+#. module: olive_mill
+#: selection:olive.appointment,oil_destination:0
+#: selection:olive.arrival,default_oil_destination:0
+#: selection:olive.arrival.line,oil_destination:0
+#: selection:olive.oil.production,oil_destination:0
+#: selection:olive.palox,oil_destination:0
+msgid "Sale"
+msgstr "Vente"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_sale_move_id
+msgid "Sale Move"
+msgstr "Mouvement de vente"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_res_partner_olive_sale_pricelist_id
+#: model:ir.model.fields,field_description:olive_mill.field_res_users_olive_sale_pricelist_id
+msgid "Sale Pricelist"
+msgstr "Liste de prix de vente"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_sale_pricelist_action
+#: model:ir.ui.menu,name:olive_mill.olive_sale_pricelist_menu
+msgid "Sale Pricelists"
+msgstr "Listes de prix de vente"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_sale_pricelist_form
+msgid "Sale Prices"
+msgstr "Prix de vente"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_sale_location_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_sale_location_id
+msgid "Sale Tank"
+msgstr "Cuve de vente"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:506
+#, python-format
+msgid "Sale tank is not set on oil production %s."
+msgstr "La cuve de vente n'est pas renseignée sur la presse %s."
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_sample
+msgid "Sample"
+msgstr "Échantillon"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_sanitary_state
+msgid "Sanitary State"
+msgstr "Etat  sanitaire"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_search
+msgid "Search Arrival Lines"
+msgstr "Search Arrival Lines"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_cultivation_search
+msgid "Search Cultivation Methods"
+msgstr "Search Cultivation Methods"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_search
+msgid "Search Oil Productions"
+msgstr "Search Oil Productions"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_appointment_search
+msgid "Search Olive Appointments"
+msgstr "Search Olive Appointments"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_search
+msgid "Search Olive Arrivals"
+msgstr "Search Olive Arrivals"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_lended_case_search
+msgid "Search Olive Lended Cases"
+msgstr "Search Olive Lended Cases"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_ochard_search
+msgid "Search Olive Ochards"
+msgstr "Search Olive Ochards"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_palox_search
+msgid "Search Olive Palox"
+msgstr "Search Olive Palox"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_parcel_search
+msgid "Search Olive Parcels"
+msgstr "Search Olive Parcels"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_sale_pricelist_search
+msgid "Search Olive Sale Pricelists"
+msgstr "Search Olive Sale Pricelists"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_season_search
+msgid "Search Olive Seasons"
+msgstr "Search Olive Seasons"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_treatment_search
+msgid "Search Olive Treatments"
+msgstr "Search Olive Treatments"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_variant_search
+msgid "Search Olive Variants"
+msgstr "Search Olive Variants"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.organic_certifying_entity_search
+msgid "Search Organic Certifying Entities"
+msgstr "Search Organic Certifying Entities"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_season_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_season_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_cultivation_season_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_season_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_season_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_tank_transfer_season_id
+#: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification_season_id
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_search
+#: model:ir.ui.view,arch_db:olive_mill.partner_organic_certification_search
+msgid "Season"
+msgstr "Campagne"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_season.py:62
+#, python-format
+msgid "Season '%s' (%s to %s) is after or over this season (%s)"
+msgstr "Season '%s' (%s to %s) is after or over this season (%s)"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_season_action
+#: model:ir.ui.menu,name:olive_mill.olive_season_menu
+msgid "Seasons"
+msgstr "Campagnes"
+
+#. module: olive_mill
+#: model:ir.model.fields,help:olive_mill.field_olive_arrival_returned_palox_ids
+msgid "Select returned palox other than those used in the arrival lines"
+msgstr "Sélectionner des palox de retour autres que ceux utilisés dans les lignes d'apport"
+
+#. module: olive_mill
+#: model:ir.model.fields,help:olive_mill.field_delivery_carrier_shrinkage_prodlot_id
+#: model:ir.model.fields,help:olive_mill.field_product_product_shrinkage_prodlot_id
+msgid "Select the generic production lot that will be used for all moves of this olive oil product to the shrinkage tank."
+msgstr "Sélectionner le lot générique utilisé pour tous les mouvements d'huile d'olives dans la cuve de freinte."
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_sequence
+#: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist_sequence
+#: model:ir.model.fields,field_description:olive_mill.field_olive_treatment_sequence
+#: model:ir.model.fields,field_description:olive_mill.field_olive_variant_sequence
+#: model:ir.model.fields,field_description:olive_mill.field_organic_certifying_entity_sequence
+msgid "Sequence"
+msgstr "Séquence"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_config_settings_action
+#: model:ir.ui.menu,name:olive_mill.olive_config_settings_menu
+msgid "Settings"
+msgstr "Configuration"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.view_partner_form
+msgid "Show statistics"
+msgstr "Voir les statistiques"
+
+#. module: olive_mill
+#: selection:stock.location,olive_tank_type:0
+msgid "Shrinkage"
+msgstr "Freinte"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_form
+msgid "Shrinkage Oil Qty"
+msgstr "Qté d'huile de freinte"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_shrinkage_oil_qty
+msgid "Shrinkage Oil Qty (L)"
+msgstr "Qté d'huile de freinte (L)"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_shrinkage_oil_qty_kg
+msgid "Shrinkage Oil Qty (kg)"
+msgstr "Qté d'huile de freinte (kg)"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_delivery_carrier_shrinkage_prodlot_id
+#: model:ir.model.fields,field_description:olive_mill.field_product_product_shrinkage_prodlot_id
+msgid "Shrinkage Production Lot"
+msgstr "Lot de la freinte"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_olive_shrinkage_ratio
+#: model:ir.model.fields,field_description:olive_mill.field_res_company_olive_shrinkage_ratio
+msgid "Shrinkage Ratio"
+msgstr "Taux de freinte"
+
+#. module: olive_mill
+#: sql_constraint:res.company:0
+msgid "Shrinkage Ratio must be positive."
+msgstr "Le taux de freinte doit être positif."
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_shrinkage_move_id
+msgid "Shrinkage Stock Move"
+msgstr "Mouvement de stock de freinte"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_shrinkage_location_id
+msgid "Shrinkage Tank"
+msgstr "Cuve de freinte"
+
+#. module: olive_mill
+#: model:ir.model.fields,help:olive_mill.field_olive_config_settings_olive_shrinkage_ratio
+#: model:ir.model.fields,help:olive_mill.field_res_company_olive_shrinkage_ratio
+msgid "Shrinkage in percentage"
+msgstr "Freinte en pourcentage"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_tank_transfer_src_location_id
+msgid "Source Olive Tank"
+msgstr "Cuve source"
+
+#. module: olive_mill
+#: selection:olive.parcel,irrigation:0
+msgid "Spraying"
+msgstr "Arrosage"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment_start_datetime
+msgid "Start"
+msgstr "Début"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_season_start_date
+msgid "Start Date"
+msgstr "Date de début"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_state
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_state
+#: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification_state
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_search
+msgid "State"
+msgstr "État"
+
+#. module: olive_mill
+#: selection:olive.invoice.create,invoice_type:0
+msgid "Supplier Invoice"
+msgstr "Facture fournisseur"
+
+#. module: olive_mill
+#: selection:olive.invoice.create,invoice_type:0
+msgid "Supplier and Customer Invoice"
+msgstr "Factures fournisseur et client"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.tank_stock_location_action
+#: model:ir.ui.menu,name:olive_mill.tank_stock_location_menu
+msgid "Tanks"
+msgstr "Cuves"
+
+#. module: olive_mill
+#: sql_constraint:res.company:0
+msgid "Tax unit price must be positive or null."
+msgstr "Le prix unitaire de la taxe AFIDOL doit être positif ou nul."
+
+#. module: olive_mill
+#: model:ir.model.fields,help:olive_mill.field_olive_config_settings_olive_oil_tax_price_unit
+#: model:ir.model.fields,help:olive_mill.field_res_company_olive_oil_tax_price_unit
+msgid "Tax unit price per liter of olive oil"
+msgstr "Prix unitaire de la taxe AFIDOL par litre d'huile"
+
+#. module: olive_mill
+#: sql_constraint:res.company:0
+msgid "The Quantity of Olives per Palox must be positive."
+msgstr "La quantité d'olives par palox doit être positive."
+
+#. module: olive_mill
+#: sql_constraint:olive.parcel:0
+msgid "The area must be positive or null."
+msgstr "La surface doit être positive ou nulle."
+
+#. module: olive_mill
+#: sql_constraint:olive.oil.production:0
+msgid "The compensation oil quantity must be positive."
+msgstr "La quantité d'huile de compensation doit être positive."
+
+#. module: olive_mill
+#: sql_constraint:olive.oil.production:0
+msgid "The compensation olive quantity must be positive."
+msgstr "La quantité d'olives de compensation doit être positive."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:150
+#: code:addons/olive_mill/models/olive_oil_production.py:359
+#, python-format
+msgid "The compensation ratio (%s %%) is not realistic."
+msgstr "Le rendement de compensation (%s %%) semble incorrect."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:193
+#, python-format
+msgid "The field 'Last update of the compensation ratio' is empty on the warehouse '%s'."
+msgstr "Le champ 'Dernière mise à jour du rendement de compensation' est vide dans l'entrepôt Moulin '%s'."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:423
+#, python-format
+msgid "The forced ratio (%s %% on arrival line %s) is not possible because it would attribute more oil than the produced oil."
+msgstr "Le rendement forcé (%s %% sur la ligne d'arrivée %s) n'est pas possible car il attribuerait plus d'huile que d'huile produite."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:187
+#, python-format
+msgid "The last update of the compensation ratio for the warehouse '%s' took place on %s. You should update the compensation ratio on that warehouse."
+msgstr "La dernière mise à jour du rendement de compensation pour l'entrepôt Moulin '%s' a été faite le %s. Vous devez mettre à jour le rendement de compensation sur cet entrepôt."
+
+#. module: olive_mill
+#: sql_constraint:olive.parcel:0
+msgid "The number of trees must be positive or null."
+msgstr "Le nombre d'arbres doit être positif ou nul."
+
+#. module: olive_mill
+#: sql_constraint:olive.oil.production:0
+msgid "The oil quantity must be positive."
+msgstr "La quantité d'huile doit être positive."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:308
+#, python-format
+msgid "The oil type of arrival line %s is %s, but it is %s on the first arrival line of palox %s."
+msgstr "Le type d'huile de la ligne d'apport %s est %s, mais il est %s sur la première ligne d'apport du palox %s."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:283
+#, python-format
+msgid "The olive farmer '%s' currently has %d lended case(s) but the olive arrival %s declares %d returned case(s)."
+msgstr "L'oléiculteur '%s' a actuellement %d caisse(s) prêtée(s) mais le bon d'apport %s déclare %d caisse(s) rendue(s)."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:294
+#, python-format
+msgid "The olive farmer '%s' currently has %d lended organic case(s) but the olive arrival %s declares %d returned organic case(s)."
+msgstr "L'oléiculteur '%s' a actuellement %d caisse(s) bio prêtée(s) mais le bon d'apport %s déclare %d caisse(s) bio rendue(s)."
+
+#. module: olive_mill
+#: sql_constraint:olive.arrival.line:0
+msgid "The olive quantity must be positive or null."
+msgstr "La quantité d'olives doit être positive ou nulle."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:294
+#, python-format
+msgid "The palox %s is empty or currently in production."
+msgstr "Le palox %s est vide ou en cours de production."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:472
+#, python-format
+msgid "The production %s uses compensation, so you must set the compensation tank."
+msgstr "La presse %s utilise la compensation, aussi vous devez renseigner la cuve de compensation."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:483
+#, python-format
+msgid "The production %s uses first of day compensation, so the compensation tank mustn't be empty before the operation."
+msgstr "La presse %s utilise la compensation de début de journée, aussi la cuve de compensation ne doit pas être vide avant l'opération."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:512
+#, python-format
+msgid "The production %s uses last of day compensation, so the 'Oil Compensation' should be positive."
+msgstr "La presse %s utilise la compensation de fin de journée, aussi la quantité d'huile de compensation doit être positive."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:479
+#, python-format
+msgid "The production %s uses last of day compensation, so the compensation tank must be empty before the operation."
+msgstr "La presse %s utilise la compensation de fin de journée, aussi la cuve de compensation doit être vide avant l'opération."
+
+#. module: olive_mill
+#: model:ir.model.fields,help:olive_mill.field_olive_lended_case_organic_qty
+#: model:ir.model.fields,help:olive_mill.field_olive_lended_case_regular_qty
+msgid "The quantity is positive when the case is lended. It is negative when the case is returned."
+msgstr "La quantité est positive quand la caisse est prêtée. Elle est négative quand la caisse est rendue."
+
+#. module: olive_mill
+#: sql_constraint:olive.appointment:0
+msgid "The quantity must be positive or null."
+msgstr "La quantité doit être positive ou nulle."
+
+#. module: olive_mill
+#: code:addons/olive_mill/wizard/olive_palox_case_lend.py:35
+#, python-format
+msgid "The quantity of cases to lend must be positive"
+msgstr "La quantité de caisses à prêter doit être positive."
+
+#. module: olive_mill
+#: sql_constraint:olive.appointment:0
+msgid "The quantity of oil withdrawn must be positive or null."
+msgstr "La quantité d'huile en retrait doit être positive ou nulle."
+
+#. module: olive_mill
+#: code:addons/olive_mill/wizard/olive_oil_production_force2pack.py:38
+#, python-format
+msgid "The ratio (%s %%) is not realistic."
+msgstr "Le rendement (%s %%) ne semble pas réaliste."
+
+#. module: olive_mill
+#: code:addons/olive_mill/wizard/olive_oil_production_ratio2force.py:95
+#, python-format
+msgid "The ratio (%s %%) of production %s is not realistic."
+msgstr "Le rendement (%s %%) de la presse %s ne semble pas réaliste."
+
+#. module: olive_mill
+#: sql_constraint:olive.arrival.line:0
+msgid "The requested withdrawal qty must be positive or null."
+msgstr "La quantité demandée en retrait doit être positive ou nulle."
+
+#. module: olive_mill
+#: sql_constraint:olive.arrival:0
+msgid "The returned organic cases must be positive or null."
+msgstr "La quantité de caisses bio rendues doit être positive ou nulle."
+
+#. module: olive_mill
+#: sql_constraint:olive.arrival:0
+msgid "The returned regular cases must be positive or null."
+msgstr "La quantité de caisses normales rendues doit être positive ou nulle."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:319
+#, python-format
+msgid "The season of arrival line %s is '%s', but the oil production %s is attached to season '%s'."
+msgstr "La campagne de la ligne d'apport %s est '%s', mais la presse %s est liée à la campagne '%s'."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/stock_location.py:130
+#, python-format
+msgid "The source tank '%s' contains '%s' but the destination tank '%s' is configured to contain '%s'."
+msgstr "La cuve source '%s' contient '%s' mais la cuve de destination '%s' est configurée pour contenir '%s'."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/stock_location.py:53
+#: code:addons/olive_mill/models/stock_location.py:86
+#, python-format
+msgid "The stock location '%s' is not an olive oil tank."
+msgstr "L'emplacement de stock '%s' n'est pas une cuve d'huile d'olives."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/stock_location.py:109
+#, python-format
+msgid "The tank '%s' contains '%s' but it is configured to contain '%s'. This should never happen."
+msgstr "La cuve '%s' contient '%s' mais elle est configurée pour contenir '%s'. Cela ne devrait jamais arriver."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/stock_location.py:94
+#, python-format
+msgid "The tank '%s' is empty."
+msgstr "La cuve '%s' est vide."
+
+#. module: olive_mill
+#: code:addons/olive_mill/wizard/olive_withdrawal.py:30
+#, python-format
+msgid "There are no unreserved quants on the stock location '%s' owned by '%s'"
+msgstr "Il n'y a pas de quants non réservés sur l'emplacement de stock '%s' détenus par '%s'"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/stock_location.py:99
+#, python-format
+msgid "There are several different products in tank '%s'. This should never happen."
+msgstr "Il y a plusieurs articles différents dans la cuve '%s'. Cela ne devrait jamais arriver."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/stock_location.py:155
+#, python-format
+msgid "There is a negative quant ID %d on olive tank %s. This should never happen."
+msgstr "There is a negative quant ID %d on olive tank %s. Cela ne devrait jamais arriver."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/stock_location.py:160
+#, python-format
+msgid "There is a reserved quant ID %d on olive tank %s. This must be investigated before trying a tank transfer again."
+msgstr "There is a reserved quant ID %d on olive tank %s. This must be investigated before trying a tank transfer again."
+
+#. module: olive_mill
+#: sql_constraint:olive.sale.pricelist.line:0
+msgid "There is already a line with the same product on this pricelist."
+msgstr "Il y a déjà une ligne du même article sur cette liste de prix."
+
+#. module: olive_mill
+#: model:ir.model.fields,help:olive_mill.field_olive_arrival_line_compensation_oil_qty
+msgid "This field is used both for last of the day and first of the day compensations."
+msgstr "Ce champ est utilisé à la fois pour la compensation de début et fin de journée."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_oil_production.py:345
+#: code:addons/olive_mill/models/olive_oil_production.py:631
+#, python-format
+msgid "This first-of-day compensation scenario is not implemented yet."
+msgstr "Le scénario de compensation de début de journée n'est pas encore implémenté."
+
+#. module: olive_mill
+#: sql_constraint:olive.ochard:0
+msgid "This ochard already exists for this partner."
+msgstr "Ce verger existe déjà pour cet oléiculteur."
+
+#. module: olive_mill
+#: sql_constraint:olive.variant:0
+msgid "This olive variant already exists."
+msgstr "La variété d'olive existe déjà."
+
+#. module: olive_mill
+#: sql_constraint:organic.certifying.entity:0
+msgid "This organic certifying entity code already exists."
+msgstr "Le code de cet organisme de certification existe déjà."
+
+#. module: olive_mill
+#: sql_constraint:olive.palox:0
+msgid "This palox number already exists in this company."
+msgstr "Ce numéro de palox existe déjà dans cette société."
+
+#. module: olive_mill
+#: sql_constraint:partner.organic.certification:0
+msgid "This partner already has a certification for that season."
+msgstr "Cet oléiculteur a déjà une certification pour cette campagne."
+
+#. module: olive_mill
+#: sql_constraint:olive.sale.pricelist:0
+msgid "This profile already exists."
+msgstr "Ce profil existe déjà."
+
+#. module: olive_mill
+#: model:ir.model.fields,help:olive_mill.field_olive_oil_production_force2pack_global_ratio
+#: model:ir.model.fields,help:olive_mill.field_olive_oil_production_ratio
+msgid "This ratio gives the number of liters of olive oil for 100 Kg of olives."
+msgstr "Ce rendement donne le nombre de litres d'huile pour 100 kg d'olives."
+
+#. module: olive_mill
+#: sql_constraint:olive.treatment:0
+msgid "This treatment product already exists."
+msgstr "Ce produit de traitement existe déjà."
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_appointment_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_search
+msgid "Today"
+msgstr "Aujourd'hui"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_appointment_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_search
+msgid "Tomorrow"
+msgstr "Demain"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_ochard_area_total
+#: model:ir.model.fields,field_description:olive_mill.field_res_partner_olive_area_total
+#: model:ir.model.fields,field_description:olive_mill.field_res_users_olive_area_total
+msgid "Total Area"
+msgstr "Surface totale"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_tree
+msgid "Total Olive Qty (kg)"
+msgstr "Qté d'olives (kg)"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_form
+msgid "Total Quantity"
+msgstr "Quantité totale"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_olive_qty
+msgid "Total Quantity (kg)"
+msgstr "Quantité totale (kg)"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_ochard_tree_total
+#: model:ir.model.fields,field_description:olive_mill.field_res_partner_olive_tree_total
+#: model:ir.model.fields,field_description:olive_mill.field_res_users_olive_tree_total
+msgid "Total Trees"
+msgstr "Total des arbres"
+
+#. module: olive_mill
+#: model:ir.model.fields,help:olive_mill.field_olive_arrival_olive_qty
+msgid "Total olive quantity in kg"
+msgstr "Qté totale d'olives (kg)"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_tank_transfer_transfer_type
+msgid "Transfer Type"
+msgstr "Type de transfert"
+
+#. module: olive_mill
+#: selection:olive.cultivation,treatment_type:0
+msgid "Treatment"
+msgstr "Traitement"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_cultivation_treatment_id
+msgid "Treatment Product"
+msgstr "Produit de traitement"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_cultivation_treatment_type
+msgid "Treatment Type"
+msgstr "Type de traitement"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_treatment_action
+#: model:ir.ui.menu,name:olive_mill.olive_treatment_menu
+msgid "Treatments"
+msgstr "Traitements"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_extra_uom_id
+msgid "Unit of Measure"
+msgstr "Unité de mesure"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.view_warehouse
+msgid "Update Compensation Ratio"
+msgstr "Mettre à jour le rendement de compensation"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.view_partner_form
+msgid "Update Organic Certifications"
+msgstr "Mettre à jour les certifications bio"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_res_users
+msgid "Users"
+msgstr "Utilisateurs"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.partner_organic_certification_search
+#: selection:partner.organic.certification,state:0
+msgid "Valid"
+msgstr "Valide"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_invoice_create_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_force2pack_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_pack2check_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_ratio2force_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_tank_transfer_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_palox_lend_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_withdrawal_form
+#: model:ir.ui.view,arch_db:olive_mill.partner_organic_certification_form
+msgid "Validate"
+msgstr "Valider"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification_validation_user_id
+msgid "Validated by"
+msgstr "Validé by"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification_validation_datetime
+msgid "Validated on"
+msgstr "Validé le"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_config_settings_form
+msgid "Variables"
+msgstr "Variables"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_in_invoice_id
+msgid "Vendor Bill"
+msgstr "Facture fournisseur"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.stock_warehouse_olive_mill_action
+#: model:ir.model,name:olive_mill.model_stock_warehouse
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_warehouse_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_warehouse_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_lended_case_warehouse_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_warehouse_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_tank_transfer_warehouse_id
+#: model:ir.ui.menu,name:olive_mill.stock_warehouse_olive_mill_menu
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_search
+#: model:ir.ui.view,arch_db:olive_mill.olive_lended_case_search
+msgid "Warehouse"
+msgstr "Entrepôt"
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_arrival_warning_action
+msgid "Warning"
+msgstr "Avertissement"
+
+#. module: olive_mill
+#: selection:olive.cultivation,treatment_type:0
+msgid "Weeding"
+msgstr "Désherbage"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:215
+#, python-format
+msgid "With this arrival, the palox %s would weight %s kg, which is over the maximum weight for a palox (%s kg)."
+msgstr "En ajoutant cet apport, le palox %s devrait peser %s kg, poids qui dépasse le maxi autorisé pour un palox (%s kg)."
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_appointment_search
+#: selection:olive.appointment,appointment_type:0
+#: selection:olive.appointment,oil_destination:0
+#: selection:olive.arrival,default_oil_destination:0
+#: selection:olive.arrival.line,oil_destination:0
+#: selection:olive.oil.production,oil_destination:0
+#: selection:olive.palox,oil_destination:0
+msgid "Withdrawal"
+msgstr "Retrait"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_form
+msgid "Withdrawal (L)"
+msgstr "Retrait (L)"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_olive_appointment_withdrawal_minutes
+#: model:ir.model.fields,field_description:olive_mill.field_res_company_olive_appointment_withdrawal_minutes
+msgid "Withdrawal Appointment Default Duration"
+msgstr "Durée par défaut du rendez-vous retrait"
+
+#. module: olive_mill
+#: sql_constraint:res.company:0
+msgid "Withdrawal Appointment Default Duration must be positive."
+msgstr "La durée par défaut du rendez-vous retrait devrait être positive."
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_withdrawal_location_id
+msgid "Withdrawal Location"
+msgstr "Emplacement retrait"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_withdrawal_move_id
+msgid "Withdrawal Move"
+msgstr "Mouvement de retrait"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_form
+msgid "Withdrawal Oil Qty"
+msgstr "Qté d'huile en retrait"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_withdrawal_oil_qty_kg
+msgid "Withdrawal Oil Qty (Kg)"
+msgstr "Qté d'huile en retrait (kg)"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_withdrawal_oil_qty
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check_line_withdrawal_oil_qty
+msgid "Withdrawal Oil Qty (L)"
+msgstr "Qté d'huile en retrait (L)"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment_withdrawal_oil_qty
+msgid "Withdrawal Oil Quantity"
+msgstr "Quantité d'huile en retrait"
+
+#. module: olive_mill
+#: code:addons/olive_mill/wizard/olive_withdrawal.py:40
+#, python-format
+msgid "Withdrawal of Olive Oil"
+msgstr "Retrait d'huile"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_oil_tank_transfer
+msgid "Wizard for olive oil tank transfer"
+msgstr "Wizard pour transcuvage"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_invoice_create
+msgid "Wizard to create invoices for olive mill"
+msgstr "Wizard pour créer des factures moulin"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_palox_case_lend
+msgid "Wizard to lend palox and/or cases"
+msgstr "Wizard pour prêter des caisses et/ou des palox"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_withdrawal
+msgid "Wizard to withdraw olive oil"
+msgstr "Wizard pour les retraits d'huile"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_palox_form
+msgid "Write here the number of the palox"
+msgstr "Saisir ici le nombre de palox"
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_season_year
+#: model:ir.model.fields,field_description:olive_mill.field_stock_location_olive_season_year
+msgid "Year"
+msgstr "Année"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
+msgid "You are about to terminate and lock this oil production. Are you sure?"
+msgstr "Vous êtes sur le point de terminer et verrouiller cette presse. Etes-vous sûr ?"
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:205
+#, python-format
+msgid "You are collecting %s in palox %s but this palox currently has %s."
+msgstr "Vous êtes en train d'ajouter la variété %s dans le palox %s mais ce palox contient déjà la variété %s."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:240
+#, python-format
+msgid "You are putting %s in palox %s but arrival line %s in the same palox has %s."
+msgstr "Vous êtes en train de mettre la variété %s dans le palox %s mais la ligne d'apport %s dans le même palox a la variété %s."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/stock_location.py:65
+#, python-format
+msgid "You are working with oil product '%s', but the olive tank '%s' is configured with oil product '%s'."
+msgstr "Vous travaillez avec l'article huile '%s', mais la cuve '%s' est configurée avec l'article huile '%s'."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/stock_location.py:73
+#, python-format
+msgid "You are working with olive season '%s', but the olive tank '%s' is configured with olive season '%s'."
+msgstr "Vous travaillez dans la campagne '%s', mais la cuve '%s' est configurée pour la campagne '%s'."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/mrp_production.py:38
+#, python-format
+msgid "You cannot consume '%s' from severals different lots on '%s'. You need to merge them first."
+msgstr "Vous ne pouvez consommer '%s' de plusieurs lots différents sur '%s'. Vous devez d'abord les fusionner."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:865
+#, python-format
+msgid "You cannot enable the fill-up option on product '%s' which is not an oil bottle."
+msgstr "Vous ne pouvez cocher l'option 'rempli' sur l'article '%s' qui n'est pas une bouteille d'huile."
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:255
+#, python-format
+msgid "You selected %s for palox %s but arrival line %s in the same palox has %s."
+msgstr "Vous avez sélectionné %s pour le palox %s mais la ligne d'apport %s dans le même palox a %s."
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_ochard_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_parcel_form
+#: model:ir.ui.view,arch_db:olive_mill.view_partner_form
+msgid "ha"
+msgstr "ha"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_appointment_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_arrival_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_config_settings_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_ratio2force_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_palox_form
+#: model:ir.ui.view,arch_db:olive_mill.view_partner_form
+#: model:ir.ui.view,arch_db:olive_mill.view_warehouse
+msgid "kg"
+msgstr "kg"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_config_settings_form
+msgid "kg / L"
+msgstr "kg / l"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_ratio2force_form
+msgid "kg / h"
+msgstr "kg / h"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.view_warehouse
+msgid "last days"
+msgstr "derniers jours"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_config_settings_form
+#: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_ratio2force_form
+msgid "minutes"
+msgstr "minutes"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_config_settings_form
+msgid "minutes / 100 kg of olive"
+msgstr "minutes / 100 kg d'olives"
+
+#. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_config_settings
+msgid "olive.config.settings"
+msgstr "olive.config.settings"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.view_partner_form
+msgid "organic"
+msgstr "bio"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.view_partner_form
+msgid "the parent company"
+msgstr "la société parente"
+
+#. module: olive_mill
+#: model:ir.ui.view,arch_db:olive_mill.olive_arrival_warning_form
+msgid "warning(s)"
+msgstr "avertissement(s)"

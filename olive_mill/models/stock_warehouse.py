@@ -22,9 +22,6 @@ class StockWarehouse(models.Model):
     olive_organic_case_stock = fields.Integer(
         compute='_compute_cases', string='Organic Cases in Stock',
         readonly=True)
-    olive_shrinkage_loc_id = fields.Many2one(
-        'stock.location', string='Olive Oil Shrinkage Tank',
-        domain=[('olive_tank_type', '=', 'shrinkage')])
     olive_withdrawal_loc_id = fields.Many2one(
         'stock.location', string='Olive Oil Withdrawal Location',
         domain=[('olive_tank_type', '=', False), ('usage', '=', 'internal')])

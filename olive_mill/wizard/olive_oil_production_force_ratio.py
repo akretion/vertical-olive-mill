@@ -11,9 +11,9 @@ MIN_RATIO = 5
 MAX_RATIO = 35
 
 
-class OliveOilProductionForce2Pack(models.TransientModel):
-    _name = 'olive.oil.production.force2pack'
-    _description = 'Olive Oil Production Force2Pack'
+class OliveOilProductionForceRatio(models.TransientModel):
+    _name = 'olive.oil.production.force.ratio'
+    _description = 'Olive Oil Production Force Ratio'
 
     production_id = fields.Many2one(
         'olive.oil.production', string='Olive Oil Production', required=True)
@@ -32,6 +32,7 @@ class OliveOilProductionForce2Pack(models.TransientModel):
     def validate(self):
         self.ensure_one()
         prod = self.production_id
+        assert prod.state == 'force'
         line = self.arrival_line_id
         assert line.production_id == prod, 'Line not attached to production'
         if self.force_ratio > MAX_RATIO or self.force_ratio < MIN_RATIO:
@@ -39,5 +40,4 @@ class OliveOilProductionForce2Pack(models.TransientModel):
                 "The ratio (%s %%) is not realistic.") % self.force_ratio)
         prod.set_qty_on_lines(
             force_ratio=(self.arrival_line_id, self.force_ratio))
-        prod.force2pack()
         return True

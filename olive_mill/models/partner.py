@@ -40,7 +40,8 @@ class ResPartner(models.Model):
         compute='_compute_olive_organic_certified',
         string='Organic Certified Logo', readonly=True)
     olive_sale_pricelist_id = fields.Many2one(
-        'olive.sale.pricelist', string='Sale Pricelist', ondelete='restrict')
+        'olive.sale.pricelist', string='Sale Pricelist',
+        company_dependent=True)
 
     @api.onchange('olive_farmer')
     def olive_farmer_change(self):
@@ -117,3 +118,16 @@ class ResPartner(models.Model):
                     logo = f_binary.encode('base64')
             partner.olive_culture_type = culture_type
             partner.olive_organic_certified_logo = logo
+
+    def olive_check_in_invoice_fiscal_position(self):
+        self.ensure_one()
+        assert not self.parent_id
+        if not self.vat and not self.property_account_position_id:
+            raise UserError(_(
+                "You are about to generate a supplier invoice for "
+                "farmer '%s': you must enter his VAT number in Odoo "
+                "or set a fiscal position corresponding to his "
+                "fiscal situation (otherwise, we would "
+                "purchase olive oil with VAT to a farmer "
+                "that is not subject to VAT, which would be a big "
+                "problem!).") % self.display_name)
