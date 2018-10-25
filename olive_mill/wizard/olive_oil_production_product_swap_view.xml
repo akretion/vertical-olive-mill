@@ -15,6 +15,7 @@
             <group name="main">
                 <field name="production_id" invisible="1"/>
                 <field name="palox_id"/>
+                <field name="farmers"/>
                 <field name="season_id" invisible="1"/>
                 <field name="oil_destination"/>
                 <field name="current_oil_product_id"/>

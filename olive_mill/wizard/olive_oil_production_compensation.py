@@ -26,6 +26,8 @@ class OliveOilProductionCompensation(models.TransientModel):
         related='production_id.season_id', readonly=True)
     palox_id = fields.Many2one(
         related='production_id.palox_id', readonly=True)
+    farmers = fields.Char(
+        related='production_id.farmers', readonly=True)
     compensation_type = fields.Selection([
         ('none', 'No Compensation'),
         ('first', 'First of the Day'),

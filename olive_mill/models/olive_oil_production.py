@@ -575,19 +575,31 @@ class OliveOilProduction(models.Model):
 
         # Shrinkage move
         if float_compare(to_shrinkage_tank_oil_qty, 0, precision_digits=pr_oil) > 0:
-            if not oil_product.shrinkage_prodlot_id:
+            shrinkage_loc = self.shrinkage_location_id
+            if not shrinkage_loc:
+                raise UserError(_(
+                    "Shrinkage tank is not set on oil production %s.") % self.name)
+            # We don't use the oil_product for shrinkage, because we would
+            # have several different oil products in the shrinkage tank
+            # We use shrinkage_product instead
+            shrinkage_product = shrinkage_loc.oil_product_id
+            if not shrinkage_product:
+                raise UserError(_(
+                    "Missing oil product on shrinkage tank %s.")
+                    % shrinkage_loc.display_name)
+            if not shrinkage_product.shrinkage_prodlot_id:
                 raise UserError(_(
                     "Missing shrinkage production lot on product '%s'.")
-                    % oil_product.display_name)
+                    % shrinkage_product.display_name)
             shrinkage_move = smo.create({
-                'product_id': oil_product.id,
+                'product_id': shrinkage_product.id,
                 'name': _('Olive Oil Production %s: Shrinkage') % self.name,
-                'location_id': oil_product.property_stock_production.id,
-                'location_dest_id': self.shrinkage_location_id.id,
-                'product_uom': oil_product.uom_id.id,
+                'location_id': shrinkage_product.property_stock_production.id,
+                'location_dest_id': shrinkage_loc.id,
+                'product_uom': shrinkage_product.uom_id.id,
                 'origin': self.name,
                 'product_uom_qty': to_shrinkage_tank_oil_qty,
-                'restrict_lot_id': oil_product.shrinkage_prodlot_id.id,
+                'restrict_lot_id': shrinkage_product.shrinkage_prodlot_id.id,
                 })
             shrinkage_move.action_done()
             prod_vals['shrinkage_move_id'] = shrinkage_move.id

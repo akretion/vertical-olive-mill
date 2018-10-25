@@ -15,7 +15,7 @@
         <group groups="stock.group_adv_location" position="after">
             <group name="olive" string="Olive Oil">
                 <field name="olive_tank_type"/>
-                <field name="oil_product_id" attrs="{'invisible': ['|', ('olive_tank_type', '=', False), ('olive_tank_type', '=', 'shrinkage')]}"/>
+                <field name="oil_product_id" attrs="{'required': [('olive_tank_type', '=', 'shrinkage')]}"/>
                 <field name="olive_shrinkage_oil_product_ids" attrs="{'invisible': [('olive_tank_type', '!=', 'shrinkage')]}" widget="many2many_tags"/>
                 <field name="olive_season_id" attrs="{'invisible': [('olive_tank_type', '=', False)]}"/>
             </group>

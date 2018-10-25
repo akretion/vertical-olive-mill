@@ -72,7 +72,7 @@
             <field name="name" filter_domain="['|', ('name', 'ilike', self), ('label', 'ilike', self)]" string="Number or Label"/>
             <field name="borrower_partner_id"/>
             <separator/>
-            <filter name="full" string="Full" domain="[('oil_product_id', '!=', False)]"/>
+            <filter name="not_empty" string="Not Empty" domain="[('oil_product_id', '!=', False)]"/>
             <filter name="empty" string="Empty" domain="[('oil_product_id', '=', False)]"/>
             <separator/>
             <filter name="lended" domain="[('borrower_partner_id', '!=', False)]" string="Lended"/>

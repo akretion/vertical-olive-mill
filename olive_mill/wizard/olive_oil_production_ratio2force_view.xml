@@ -16,6 +16,7 @@
                 <field name="production_id" invisible="1"/>
                 <field name="season_id" invisible="1"/>
                 <field name="palox_id"/>
+                <field name="farmers"/>
                 <field name="oil_destination" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}"/>
                 <field name="oil_product_id"/>
                 <field name="sale_location_id" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank_type', '=', 'regular'), ('oil_product_id', '=', oil_product_id), ('olive_season_id', '=', season_id)]"/>

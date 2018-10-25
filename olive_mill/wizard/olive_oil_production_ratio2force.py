@@ -18,6 +18,8 @@ class OliveOilProductionRatio2force(models.TransientModel):
 
     production_id = fields.Many2one(
         'olive.oil.production', string='Olive Oil Production', required=True)
+    farmers = fields.Char(
+        related='production_id.farmers', readonly=True)
     palox_id = fields.Many2one(
         related='production_id.palox_id', readonly=True)
     season_id = fields.Many2one(

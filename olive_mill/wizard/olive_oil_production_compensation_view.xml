@@ -17,6 +17,7 @@
                 <field name="warehouse_id" invisible="1"/>
                 <field name="season_id" invisible="1"/>
                 <field name="palox_id"/>
+                <field name="farmers"/>
                 <field name="compensation_type"/>
                 <field name="compensation_location_id" attrs="{'invisible': [('compensation_type', 'not in', ('first', 'last'))], 'required': [('compensation_type', 'in', ('first', 'last'))]}" domain="[('olive_tank_type', '=', 'compensation'), ('olive_season_id', '=', season_id)]"/>
                 <label for="compensation_last_olive_qty" attrs="{'invisible': [('compensation_type', '!=', 'last')]}"/>
