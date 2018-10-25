@@ -39,6 +39,7 @@
                     </group>
                     <group name="right">
                         <field name="date"/>
+                        <field name="harvest_start_date"/>
                         <label for="olive_qty" string="Total Quantity"/>
                         <div name="olive_qty">
                             <field name="olive_qty" class="oe_inline"/>

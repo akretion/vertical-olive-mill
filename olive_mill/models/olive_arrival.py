@@ -4,7 +4,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 from odoo.tools import float_compare, float_is_zero, float_round
 from odoo.tools.misc import formatLang
 from babel.dates import format_date
@@ -75,8 +75,12 @@ class OliveArrival(models.Model):
         track_visibility='onchange')
     date = fields.Date(
         string='Arrival Date', track_visibility='onchange',
-        default=fields.Date.context_today,
+        default=fields.Date.context_today, required=True,
         states={'done': [('readonly', True)]})
+    harvest_start_date = fields.Date(
+        string='Harvest Start Date', required=True)
+    # TODO uncomment once set in prod db
+    # states={'done': [('readonly', True)]})
     done_datetime = fields.Datetime(string='Date Done', readonly=True)
     line_ids = fields.One2many(
         'olive.arrival.line', 'arrival_id', string='Arrival Lines',
@@ -108,6 +112,16 @@ class OliveArrival(models.Model):
             ['arrival_id', 'olive_qty'], ['arrival_id'])
         for re in res:
             self.browse(re['arrival_id'][0]).olive_qty = re['olive_qty']
+
+    @api.constrains('date', 'harvest_start_date')
+    def arrival_check(self):
+        for arrival in self:
+            if arrival.harvest_start_date > arrival.date:
+                raise ValidationError(_(
+                    "On arrival %s, the harvest start date (%s) cannot be "
+                    "after the arrival date (%s)!") % (
+                        arrival.name, arrival.harvest_start_date,
+                        arrival.date))
 
     @api.onchange('partner_id')
     def partner_id_change(self):
