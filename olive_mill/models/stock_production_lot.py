@@ -10,20 +10,20 @@ from odoo.exceptions import ValidationError
 class StockProductionLot(models.Model):
     _inherit = 'stock.production.lot'
 
-    arrival_line_id = fields.Many2one(
-        'olive.arrival.line', 'Arrival Line', ondelete='restrict',
+    olive_production_id = fields.Many2one(
+        'olive.oil.production', 'Olive Oil Production', ondelete='restrict',
         readonly=True)
 #    oil_merge_lot = fields.Boolean(string='Oil Merge Lot', readonly=False)
 
-    @api.depends('name', 'expiry_date', 'oil_merge_lot')
+    @api.depends('name', 'expiry_date', 'olive_production_id')
     def name_get(self):
         res = []
         for lot in self:
             dname = lot.name
             if lot.expiry_date:
                 dname = '[%s] %s' % (lot.expiry_date, dname)
-            if lot.arrival_line_id:
-                dname = u'%s (%s, %s)' % (dname, lot.arrival_line_id.commercial_partner_id.name, lot.arrival_line_id.variant_id.name)
+            if lot.olive_production_id:
+                dname = u'%s (%s)' % (dname, lot.olive_production_id.farmers)
             #if lot.oil_merge_lot:
             #    dname = '%s %s' % (u'\u2180', dname)
             res.append((lot.id, dname))

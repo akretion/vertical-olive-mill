@@ -79,6 +79,9 @@ class OliveOilProduction(models.Model):
         string='Olive Qty', compute='_compute_lines',
         digits=dp.get_precision('Olive Weight'), readonly=True, store=True,
         help='Olive quantity without compensation in kg')
+    to_sale_tank_oil_qty = fields.Float(
+        string='Oil Qty to Sale Tank (L)', compute='_compute_lines',
+        digits=dp.get_precision('Olive Oil Volume'), readonly=True, store=True)
     compensation_oil_qty = fields.Float(
         string='Oil Compensation (L)',
         digits=dp.get_precision('Olive Oil Volume'), readonly=True)
@@ -135,6 +138,10 @@ class OliveOilProduction(models.Model):
         string='Date Done', readonly=True, copy=False)
     shrinkage_move_id = fields.Many2one(
         'stock.move', string='Shrinkage Stock Move', readonly=True, copy=False)
+    sale_move_id = fields.Many2one(
+        'stock.move', string='Sale Move', readonly=True)
+    compensation_last_move_id = fields.Many2one(
+        'stock.move', string='Compensation Last of the Day Move', readonly=True)
     line_ids = fields.One2many(
         'olive.arrival.line', 'production_id', string='Arrival Lines',
         readonly=True)
@@ -171,14 +178,16 @@ class OliveOilProduction(models.Model):
         else:
             self.oil_product_id = False
 
-    @api.depends('line_ids.olive_qty')
+    @api.depends('line_ids.olive_qty', 'line_ids.to_sale_tank_oil_qty')
     def _compute_lines(self):
         res = self.env['olive.arrival.line'].read_group(
             [('production_id', 'in', self.ids)],
-            ['production_id', 'olive_qty'], ['production_id'])
+            ['production_id', 'olive_qty', 'to_sale_tank_oil_qty'],
+            ['production_id'])
         for re in res:
             production = self.browse(re['production_id'][0])
             production.olive_qty = re['olive_qty']
+            production.to_sale_tank_oil_qty = re['to_sale_tank_oil_qty']
 
     @api.depends('line_ids.oil_destination')
     def _compute_oil_destination(self):
@@ -477,25 +486,20 @@ class OliveOilProduction(models.Model):
         to_shrinkage_tank_oil_qty = 0.0
         ctype = self.compensation_type
 
-        if self.oil_destination in ('sale', 'mix'):
-            if not sale_loc:
-                raise UserError(_(
-                    "Sale tank is not set on oil production %s.") % self.name)
-            sale_loc.olive_oil_tank_compatibility_check(oil_product, season)
         self.compensation_check_tank()
         if ctype == 'last':
             if float_compare(self.compensation_oil_qty, 0, precision_digits=pr_oil) <= 0:
                 raise UserError(_(
                     "The production %s uses last of day compensation, so the "
                     "'Oil Compensation' should be positive.") % self.name)
+        # create prod lot
+        # No expiry date on olive oil in tanks
+        prodlot = splo.create({
+            'olive_production_id': self.id,
+            'product_id': oil_product.id,
+            'name': self.name,
+            })
         for line in self.line_ids:
-            # create prod lot
-            # No expiry date on olive oil in tanks
-            prodlot = splo.create({
-                'arrival_line_id': line.id,
-                'product_id': oil_product.id,
-                'name': line.name,
-                })
             if float_compare(line.withdrawal_oil_qty, 0, precision_digits=pr_oil) > 0:
                 # create move from virtual prod > Withdrawal loc
                 wmove = smo.create({
@@ -512,39 +516,6 @@ class OliveOilProduction(models.Model):
                 wmove.action_done()
                 assert wmove.state == 'done'
                 line.withdrawal_move_id = wmove.id
-            if float_compare(line.to_sale_tank_oil_qty, 0, precision_digits=pr_oil) > 0:
-                # Create move to sale tank
-                sale_move = smo.create({
-                    'product_id': oil_product.id,
-                    'name': _('Olive oil production %s: sale related to arrival line %s') % (self.name, line.name),
-                    'location_id': oil_product.property_stock_production.id,
-                    'location_dest_id': sale_loc.id,
-                    'product_uom': oil_product.uom_id.id,
-                    'origin': self.name,
-                    'product_uom_qty': line.to_sale_tank_oil_qty,
-                    'restrict_lot_id': prodlot.id,
-                    })
-                sale_move.action_done()
-                assert sale_move.state == 'done'
-                line.sale_move_id = sale_move.id
-            if (
-                    ctype == 'last' and
-                    float_compare(line.compensation_oil_qty, 0, precision_digits=pr_oil) > 0):
-                cmove = smo.create({
-                    'product_id': oil_product.id,
-                    'name': _('Olive oil production %s: compensation related to arrival line %s') % (self.name, line.name),
-                    'location_id': oil_product.property_stock_production.id,
-                    'location_dest_id': cloc.id,
-                    'product_uom': oil_product.uom_id.id,
-                    'origin': self.name,
-                    'product_uom_qty': line.compensation_oil_qty,
-                    'restrict_lot_id': prodlot.id,
-                    })
-                cmove.action_done()
-                assert cmove.state == 'done'
-                line.compensation_move_id = cmove.id
-                cloc.oil_product_id = oil_product.id
-
             for extra in line.extra_ids:
                 if extra.product_id.tracking and extra.product_id.tracking != 'none':
                     raise UserError(_(
@@ -565,15 +536,55 @@ class OliveOilProduction(models.Model):
                 assert extra_move.state == 'done'
             if line.oil_destination == 'withdrawal':
                 to_shrinkage_tank_oil_qty += line.shrinkage_oil_qty
-        if not oil_product.shrinkage_prodlot_id:
-            raise UserError(_(
-                "Missing shrinkage production lot on product '%s'.")
-                % oil_product.display_name)
         prod_vals = {
             'state': 'done',
             'done_datetime': fields.Datetime.now(),
             }
+        # Move to sale tank
+        if float_compare(self.to_sale_tank_oil_qty, 0, precision_digits=pr_oil) > 0:
+            if not sale_loc:
+                raise UserError(_(
+                    "Sale tank is not set on oil production %s.") % self.name)
+            sale_loc.olive_oil_tank_compatibility_check(oil_product, season)
+            sale_move = smo.create({
+                'product_id': oil_product.id,
+                'name': _('Olive oil production %s to sale tank') % self.name,
+                'location_id': oil_product.property_stock_production.id,
+                'location_dest_id': sale_loc.id,
+                'product_uom': oil_product.uom_id.id,
+                'origin': self.name,
+                'product_uom_qty': self.to_sale_tank_oil_qty,
+                'restrict_lot_id': prodlot.id,
+                })
+            sale_move.action_done()
+            assert sale_move.state == 'done'
+            prod_vals['sale_move_id'] = sale_move.id
+
+        # Compensation LAST move
+        if (
+                ctype == 'last' and
+                float_compare(self.compensation_oil_qty, 0, precision_digits=pr_oil) > 0):
+            cmove = smo.create({
+                'product_id': oil_product.id,
+                'name': _('Olive oil production %s to compensation tank') % self.name,
+                'location_id': oil_product.property_stock_production.id,
+                'location_dest_id': cloc.id,
+                'product_uom': oil_product.uom_id.id,
+                'origin': self.name,
+                'product_uom_qty': self.compensation_oil_qty,
+                'restrict_lot_id': prodlot.id,
+                })
+            cmove.action_done()
+            assert cmove.state == 'done'
+            prod_vals['compensation_last_move_id'] = cmove.id
+            cloc.oil_product_id = oil_product.id
+
+        # Shrinkage move
         if float_compare(to_shrinkage_tank_oil_qty, 0, precision_digits=pr_oil) > 0:
+            if not oil_product.shrinkage_prodlot_id:
+                raise UserError(_(
+                    "Missing shrinkage production lot on product '%s'.")
+                    % oil_product.display_name)
             shrinkage_move = smo.create({
                 'product_id': oil_product.id,
                 'name': _('Olive Oil Production %s: Shrinkage') % self.name,

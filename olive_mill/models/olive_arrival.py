@@ -475,14 +475,8 @@ class OliveArrivalLine(models.Model):
     filter_loss_oil_qty = fields.Float(
         string='Oil Qty Lost in Filter (L)',
         readonly=True, digits=dp.get_precision('Olive Oil Volume'))
-    # Moves
-    sale_move_id = fields.Many2one(
-        'stock.move', string='Sale Move', readonly=True)
     withdrawal_move_id = fields.Many2one(
         'stock.move', string='Withdrawal Move', readonly=True)
-    compensation_last_move_id = fields.Many2one(
-        'stock.move', string='Compensation Last of the Day Move', readonly=True)
-    # Invoicing
     out_invoice_id = fields.Many2one(
         'account.invoice', string="Customer Invoice", readonly=True)
     in_invoice_id = fields.Many2one(

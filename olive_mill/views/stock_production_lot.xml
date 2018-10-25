@@ -13,7 +13,7 @@
     <field name="inherit_id" ref="stock.view_production_lot_form"/>
     <field name="arch" type="xml">
         <field name="product_id" position="after">
-            <field name="arrival_line_id"/>
+            <field name="olive_production_id"/>
             <!--            <field name="oil_merge_lot"/> -->
         </field>
     </field>

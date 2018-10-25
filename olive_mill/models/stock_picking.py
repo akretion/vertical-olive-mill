@@ -19,12 +19,11 @@ class StockPicking(models.Model):
         for pack in self.pack_operation_ids:
             if pack.product_id and pack.product_id.olive_type == 'oil':
                 for pack_lot in pack.pack_lot_ids:
-                    # also check partner to remove first-of-day compensation lots
-                    if (
-                            pack_lot.lot_id and
-                            pack_lot.lot_id.arrival_line_id and
-                            pack_lot.lot_id.arrival_line_id.commercial_partner_id == cpartner):
-                        arrivals |= pack_lot.lot_id.arrival_line_id.arrival_id
+                    if pack_lot.lot_id and pack_lot.lot_id.olive_production_id:
+                        for line in pack_lot.lot_id.olive_production_id.line_ids:
+                            # also check partner to remove first-of-day compensation lots
+                            if line.commercial_partner_id == cpartner:
+                                arrivals |= line.arrival_id
         compute = {}
         tot_olive_qty = tot_oil_net = tot_compensation_oil_qty = 0.0
         for arrival in arrivals:

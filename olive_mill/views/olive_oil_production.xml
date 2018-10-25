@@ -78,6 +78,11 @@
                             <field name="ratio" class="oe_inline"/>
                             <label string=" % (L)" class="oe_inline"/>
                         </div>
+                        <label for="to_sale_tank_oil_qty" string="To Sale Tank Oil Qty"/>
+                        <div name="to_sale_tank_oil_qty">
+                            <field name="to_sale_tank_oil_qty" class="oe_inline"/>
+                            <label string=" L"/>
+                        </div>
                         <field name="sale_location_id" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank_type', '=', 'regular'), ('oil_product_id', '=', oil_product_id), ('olive_season_id', '=', season_id)]"/>
                         <field name="shrinkage_location_id" domain="[('olive_tank_type', '=', 'shrinkage'), ('olive_season_id', '=', season_id)]"/>
                         <field name="withdrawal_location_id" attrs="{'invisible': [('oil_destination', '=', 'sale')]}"/>
@@ -123,6 +128,8 @@
                             <field name="company_id" groups="base.group_multi_company"/>
                             <field name="done_datetime" states="done"/>
                             <field name="shrinkage_move_id" states="done"/>
+                            <field name="sale_move_id" attrs="{'invisible': ['|', ('state', '!=', 'done'), ('oil_destination', '=', 'withdrawal')]}"/>
+                            <field name="compensation_last_move_id" attrs="{'invisible': ['|', ('state', '!=', 'done'), ('compensation_type', '!=', 'last')]}"/>
                         </group>
                     </page>
                 </notebook>
@@ -145,6 +152,7 @@
             <field name="date"/>
             <field name="palox_id"/>
             <field name="compensation_type"/>
+            <field name="oil_destination"/>
             <field name="farmers"/>
             <field name="olive_qty" string="Total Olive Qty (kg)"/>
             <field name="oil_qty" string="Oil Qty (L)"/>

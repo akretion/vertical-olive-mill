@@ -56,10 +56,12 @@
     <field name="model">olive.parcel</field>
     <field name="arch" type="xml">
         <search string="Search Olive Parcels">
+            <field name="partner_id"/>
             <field name="ochard_id"/>
             <group string="Group By" name="groupby">
-                <filter name="ochard_groupby" string="Ochard" context="{'group_by': 'ochard_id'}"/>
                 <filter name="partner_groupby" string="Farmer" context="{'group_by': 'partner_id'}"/>
+                <filter name="ochard_groupby" string="Ochard" context="{'group_by': 'ochard_id'}"/>
+                <filter name="irrigation_groupby" string="Irrigation" context="{'group_by': 'irrigation'}"/>
             </group>
         </search>
     </field>

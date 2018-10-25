@@ -264,9 +264,7 @@
                         <group name="other_stock">
                             <field name="season_id"/>
                             <field name="warehouse_id"/>
-                            <field name="sale_move_id"/>
                             <field name="withdrawal_move_id"/>
-                            <field name="compensation_last_move_id"/>
                         </group>
                         <group name="invoice">
                             <field name="out_invoice_id"/>
