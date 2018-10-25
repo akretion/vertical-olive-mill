@@ -88,6 +88,11 @@
                         <field name="shrinkage_location_id" domain="[('olive_tank_type', '=', 'shrinkage'), ('olive_season_id', '=', season_id)]"/>
                         <field name="withdrawal_location_id" attrs="{'invisible': [('oil_destination', '=', 'sale')]}"/>
                         <field name="compensation_location_id" attrs="{'invisible': [('compensation_type', 'not in', ('first', 'last'))]}" domain="[('olive_tank_type', '=', 'compensation'), ('olive_season_id', '=', season_id)]"/>
+                        <label for="to_compensation_sale_tank_oil_qty" string="To Compensation Sale Tank Oil Qty"/>
+                        <div name="to_compensation_sale_tank_oil_qty">
+                            <field name="to_compensation_sale_tank_oil_qty" class="oe_inline"/>
+                            <label string=" L"/>
+                        </div>
                         <field name="compensation_sale_location_id" attrs="{'invisible': ['|', ('compensation_type', '!=', 'first'), ('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank_type', '=', 'regular'), ('oil_product_id', '=', compensation_oil_product_id), ('olive_season_id', '=', season_id)]"/>
                         <field name="oil_destination"/>
                         <field name="sample"/>

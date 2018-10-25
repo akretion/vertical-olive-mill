@@ -147,7 +147,7 @@ class StockLocation(models.Model):
 
     def olive_oil_transfer(
             self, dest_loc, transfer_type, warehouse, dest_partner=False,
-            origin=False, auto_validate=False, partial_transfer_qty=False):
+            partial_transfer_qty=False, origin=False, auto_validate=False):
         self.ensure_one()
         assert transfer_type in ('partial', 'full'), 'wrong transfer_type arg'
         sqo = self.env['stock.quant']
@@ -231,9 +231,16 @@ class StockLocation(models.Model):
                 }
             move = smo.create(mvals)
             # No need to reserve a particular quant, because we only have 1 lot
+            # Hack for dest_partner is at the end of the method
         pick.action_confirm()
         pick.action_assign()
         pick.action_pack_operation_auto_fill()
         if auto_validate:
             pick.do_transfer()
+            if transfer_type == 'partial' and dest_partner:
+                move.quant_ids.sudo().write({'owner_id': dest_partner.id})
+        elif transfer_type == 'partial' and dest_partner:
+            raise UserError(
+                "We don't support partial transferts without auto_validate and "
+                "with dest_partner")
         return pick

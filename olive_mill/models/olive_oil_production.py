@@ -78,6 +78,9 @@ class OliveOilProduction(models.Model):
     to_sale_tank_oil_qty = fields.Float(
         string='Oil Qty to Sale Tank (L)', compute='_compute_lines',
         digits=dp.get_precision('Olive Oil Volume'), readonly=True, store=True)
+    to_compensation_sale_tank_oil_qty = fields.Float(
+        string='Oil Qty to Compensation Sale Tank (L)', compute='_compute_lines',
+        digits=dp.get_precision('Olive Oil Volume'), readonly=True, store=True)
     compensation_oil_qty = fields.Float(
         string='Oil Compensation (L)',
         digits=dp.get_precision('Olive Oil Volume'), readonly=True)
@@ -176,7 +179,9 @@ class OliveOilProduction(models.Model):
         else:
             self.oil_product_id = False
 
-    @api.depends('line_ids.olive_qty', 'line_ids.to_sale_tank_oil_qty')
+    @api.depends(
+            'line_ids.olive_qty', 'line_ids.to_sale_tank_oil_qty',
+            'line_ids.oil_destination', 'line_ids.compensation_oil_qty')
     def _compute_lines(self):
         res = self.env['olive.arrival.line'].read_group(
             [('production_id', 'in', self.ids)],
@@ -186,6 +191,14 @@ class OliveOilProduction(models.Model):
             production = self.browse(re['production_id'][0])
             production.olive_qty = re['olive_qty']
             production.to_sale_tank_oil_qty = re['to_sale_tank_oil_qty']
+        cres = self.env['olive.arrival.line'].read_group(
+            [('production_id', 'in', self.ids),
+             ('oil_destination', 'in', ('sale', 'mix'))],
+            ['production_id', 'compensation_oil_qty'],
+            ['production_id'])
+        for cre in cres:
+            production = self.browse(cre['production_id'][0])
+            production.to_compensation_sale_tank_oil_qty = cre['compensation_oil_qty']
 
     @api.depends('line_ids.oil_destination')
     def _compute_oil_destination(self):
@@ -308,7 +321,6 @@ class OliveOilProduction(models.Model):
                     if extra.product_olive_type == 'analysis':
                         sample = True
                         break
-        self.check_first_of_day_scenario()
         sloc = self.warehouse_id.olive_get_shrinkage_tank(oil_product)
 
         self.write({
@@ -319,17 +331,9 @@ class OliveOilProduction(models.Model):
             'shrinkage_location_id': sloc and sloc.id or False
             })
 
-    def check_first_of_day_scenario(self):
-        if self.compensation_type == 'first':
-            withdrawals = [l.id for l in self.line_ids if l.oil_destination == 'withdrawal']
-            if len(withdrawals) > 1:
-                raise UserError(_(
-                    "This first-of-day compensation scenario is not implemented yet."))
-
     def start_ratio2force(self):
         self.ensure_one()
         assert self.state == 'ratio'
-        self.check_first_of_day_scenario()
         cloc = self.compensation_location_id
         # We cannot do that in the wizard olive.oil.production.compensation
         # because, at the time of the wizard, the previous last of day
@@ -472,6 +476,7 @@ class OliveOilProduction(models.Model):
         stock_loc = self.warehouse_id.lot_stock_id
         sale_loc = self.sale_location_id
         cloc = self.compensation_location_id
+        csale_loc = self.compensation_sale_location_id
         oil_product = self.oil_product_id
         season = self.season_id
         to_shrinkage_tank_oil_qty = 0.0
@@ -602,25 +607,48 @@ class OliveOilProduction(models.Model):
             prod_vals['shrinkage_move_id'] = shrinkage_move.id
         # Distribute compensation
         if ctype == 'first':
+            # In sale and mix, the compensation is always sold
             if all([line.oil_destination in ('sale', 'mix') for line in self.line_ids]):
-                if not self.compensation_sale_location_id:
+                # full trf
+                if not csale_loc:
                     raise UserError(_(
                         "On oil production %s which has first-of-day "
                         "compensation, you must set a compensation sale tank.") % self.name)
-                self.compensation_sale_location_id.olive_oil_tank_compatibility_check(
-                    self.compensation_oil_product_id, season)
                 cloc.olive_oil_transfer(
-                    self.compensation_sale_location_id, 'full', self.warehouse_id,
+                    csale_loc, 'full', self.warehouse_id,
                     origin=_('Empty compensation tank to sale tank'), auto_validate=True)
-            elif self.oil_destination == 'withdrawal' and len(self.line_ids) == 1:
-                cloc.olive_oil_transfer(
-                    wloc, 'full', self.warehouse_id,
-                    dest_partner=self.line_ids[0].commercial_partner_id,
-                    origin=_('Empty compensation tank to withdrawal location'),
-                    auto_validate=True)
             else:
-                raise UserError(_(
-                    "This first-of-day compensation scenario is not implemented yet."))
+                # partial trf
+                if float_compare(self.to_compensation_sale_tank_oil_qty, 0, precision_digits=pr_oil) >= 0:
+                    if not csale_loc:
+                        raise UserError(_(
+                            "On oil production %s which has first-of-day "
+                            "compensation, you must set a compensation sale tank.") % self.name)
+                    cloc.olive_oil_transfer(
+                        csale_loc, 'partial', self.warehouse_id,
+                        partial_transfer_qty=self.to_compensation_sale_tank_oil_qty,
+                        origin=_('Partial transfer of compensation tank to sale tank'),
+                        auto_validate=True)
+                wlines = [l for l in self.line_ids if l.oil_destination == 'withdrawal']
+                origin = _('Transfer of compensation tank to withdrawal location')
+                while wlines:
+                    # work on 1st line of wlines
+                    if len(wlines) == 1:
+                        # full trf for the last withdrawal line
+                        cloc.olive_oil_transfer(
+                            wloc, 'full', self.warehouse_id,
+                            dest_partner=wlines[0].commercial_partner_id,
+                            origin=origin, auto_validate=True)
+                    else:
+                        cloc.olive_oil_transfer(
+                            wloc, 'partial', self.warehouse_id,
+                            dest_partner=wlines[0].commercial_partner_id,
+                            partial_transfer_qty=wlines[0].compensation_oil_qty,
+                            origin=origin, auto_validate=True)
+
+                    # remove first line of wlines
+                    wlines.pop(0)
+            # free compensation tank
             cloc.oil_product_id = False
 
         self.write(prod_vals)
