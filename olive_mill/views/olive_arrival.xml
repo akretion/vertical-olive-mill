@@ -97,6 +97,7 @@
         <tree string="Olive Arrivals" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
             <field name="name"/>
             <field name="date"/>
+            <field name="harvest_start_date"/>
             <field name="partner_id"/>
             <field name="commercial_partner_id" invisible="1"/>
             <field name="olive_qty" sum="1"/>

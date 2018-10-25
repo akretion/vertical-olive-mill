@@ -312,14 +312,7 @@ class OliveOilProduction(models.Model):
                         sample = True
                         break
         self.check_first_of_day_scenario()
-        sloc = slo.search([
-            ('olive_tank_type', '=', 'shrinkage'),
-            ('id', 'child_of', self.warehouse_id.view_location_id.id),
-            '|',
-            ('oil_product_id', '=', oil_product.id),
-            ('oil_product_id', '=', False)],
-            order='oil_product_id', limit=1)
-        # when you order by oil_product_id, null values are at the end
+        sloc = self.warehouse_id.olive_get_shrinkage_tank(oil_product)
 
         self.write({
             'farmers': u' / '.join(farmers),

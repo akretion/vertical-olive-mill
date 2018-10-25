@@ -15,6 +15,8 @@ class OliveConfigSettings(models.TransientModel):
     company_id = fields.Many2one(
         'res.company', string='Company',
         default=lambda self: self.env.user.company_id, required=True)
+    olive_harvest_arrival_max_delta_days = fields.Integer(
+        related='company_id.olive_harvest_arrival_max_delta_days')
     olive_max_qty_per_palox = fields.Integer(
         related='company_id.olive_max_qty_per_palox')
     olive_appointment_qty_per_palox = fields.Integer(

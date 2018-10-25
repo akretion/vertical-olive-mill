@@ -23,8 +23,9 @@ class OliveCultivation(models.Model):
     company_id = fields.Many2one(
         related='season_id.company_id', store=True, readonly=True, string='Company',
         compute_sudo=True)
-    date = fields.Date(string="Date", required=True)
+    date = fields.Date(string="Date")
     treatment_type = fields.Selection([
+        ('none', 'No Treatment'),
         ('treatment', 'Treatment'),
         ('fertilisation', 'Fertilisation'),
         ('weeding', 'Weeding'),  # désherbage
@@ -38,12 +39,23 @@ class OliveCultivation(models.Model):
     def check_cultivation(self):
         today = fields.Date.context_today(self)
         for cult in self:
-            if cult.date > cult.season_id.end_date:
-                raise ValidationError(_(
-                    "On the cultivation form of ochard '%s', the date (%s) is after the "
-                    "end of the season (%s)")
-                    % (cult.ochard_id.display_name, cult.date, cult.season_id.end_date))
-            if cult.date > today:
-                raise ValidationError(_(
-                    "On the cultivation form of ochard '%s', the date (%s) is in the future!")
-                    % (cult.ochard_id.display_name, cult.date))
+            if cult.date:
+                if cult.date > cult.season_id.end_date:
+                    raise ValidationError(_(
+                        "On the cultivation form of ochard '%s', "
+                        "the date (%s) is after the end of the "
+                        "season (%s)") % (
+                            cult.ochard_id.display_name, cult.date,
+                             cult.season_id.end_date))
+                if cult.date > today:
+                    raise ValidationError(_(
+                        "On the cultivation form of ochard '%s', "
+                        "the date (%s) is in the future!")
+                        % (cult.ochard_id.display_name, cult.date))
+
+    @api.onchange('treatment_type')
+    def treatment_type_change(self):
+        if self.treatment_type == 'none':
+            self.date = False
+            self.treatment_id = False
+            self.quantity = False

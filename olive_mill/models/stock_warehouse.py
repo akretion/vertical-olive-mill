@@ -3,8 +3,9 @@
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 import odoo.addons.decimal_precision as dp
+from odoo.exceptions import UserError
 from dateutil.relativedelta import relativedelta
 import logging
 logger = logging.getLogger(__name__)
@@ -93,3 +94,18 @@ class StockWarehouse(models.Model):
         logger.info(
             'Oil compensation ratio updated to %s on warehouse %s '
             'start_date %s ', ratio, self.name, start_date)
+
+    def olive_get_shrinkage_tank(self, oil_product, raise_if_not_found=True):
+        self.ensure_one()
+        assert oil_product, 'oil_product is a required arg'
+        sloc = self.env['stock.location'].search([
+            ('olive_tank_type', '=', 'shrinkage'),
+            ('id', 'child_of', self.view_location_id.id),
+            ('olive_shrinkage_oil_product_ids', '=', oil_product.id)],
+            limit=1)
+        if not sloc and raise_if_not_found:
+            raise UserError(_(
+                "Could not find a shrinkage tank in warehouse '%s' "
+                "that accepts '%s'.") % (
+                    self.display_name, oil_product.name))
+        return sloc or False

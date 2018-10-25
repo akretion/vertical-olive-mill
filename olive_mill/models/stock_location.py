@@ -24,6 +24,10 @@ class StockLocation(models.Model):
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Product',
         domain=[('olive_type', '=', 'oil')])
+    olive_shrinkage_oil_product_ids = fields.Many2many(
+        'product.product', 'stock_location_shrinkage_oil_product_rel',
+        'location_id', 'product_id', domain=[('olive_type', '=', 'oil')],
+        string='Allowed Oil Products')
 
     @api.onchange('olive_tank_type')
     def olive_tank_type_change(self):

@@ -27,7 +27,6 @@ class OliveOilProductionCompensation(models.TransientModel):
         domain=[('olive_type', '=', 'oil')], required=True)
     sale_location_id = fields.Many2one(
         'stock.location', string='New Sale Tank')
-    # TODO also update Shrinkage tank ??
 
     def validate(self):
         self.ensure_one()
@@ -48,9 +47,11 @@ class OliveOilProductionCompensation(models.TransientModel):
             raise UserError(_(
                 "You cannot swap oil type from a regular or organic "
                 "culture type to a conversion culture type."))
+        sloc = prod.warehouse_id.olive_get_shrinkage_tank(new_product)
         prod_vals = {
             'oil_product_id': new_product.id,
             'sale_location_id': self.sale_location_id.id or False,
+            'shrinkage_location_id': sloc.id,
             }
         prod.write(prod_vals)
         prod.line_ids.write({'oil_product_id': new_product.id})

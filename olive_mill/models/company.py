@@ -13,6 +13,13 @@ class ResCompany(models.Model):
 
     olive_max_qty_per_palox = fields.Integer(
         string='Maximum Quantity of Olives per Palox', default=500)
+    olive_harvest_arrival_max_delta_days = fields.Integer(
+        string='Maximum Delay Between Harvest Start Date and Arrival Date',
+        default=3,
+        help="If the delay between the harvest start date and the arrival "
+        "date is superior to the number of days indicated here, Odoo will "
+        "display a warning upon arrival validation when the oil destination "
+        "is sale or mix.")
     # START APPOINTMENTS
     olive_appointment_qty_per_palox = fields.Integer(
         string='Quantity of Olives per Palox', default=380)

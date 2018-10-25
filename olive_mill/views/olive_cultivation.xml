@@ -16,11 +16,11 @@
                 <field name="ochard_id" invisible="not context.get('olive_cultivation_main_view')"/>
                 <field name="partner_id" invisible="not context.get('olive_cultivation_main_view')"/>
                 <field name="season_id"/>
-                <field name="date"/>
                 <field name="company_id" groups="base.group_multi_company"/>
                 <field name="treatment_type"/>
-                <field name="treatment_id"/>
-                <field name="quantity"/>
+                <field name="date" attrs="{'required': [('treatment_type', '!=', 'none')], 'invisible': [('treatment_type', '=', 'none')]}"/>
+                <field name="treatment_id" attrs="{'invisible': [('treatment_type', '=', 'none')]}"/>
+                <field name="quantity" attrs="{'invisible': [('treatment_type', '=', 'none')]}"/>
                 <field name="notes"/>
             </group>
         </form>
@@ -34,10 +34,11 @@
         <tree string="Cultivation Methods">
             <field name="ochard_id" invisible="not context.get('olive_cultivation_main_view')"/>
             <field name="partner_id" invisible="not context.get('olive_cultivation_main_view')"/>
-            <field name="date"/>
             <field name="treatment_type"/>
+            <field name="date"/>
             <field name="treatment_id"/>
             <field name="quantity"/>
+            <field name="notes"/>
         </tree>
     </field>
 </record>

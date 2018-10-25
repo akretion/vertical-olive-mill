@@ -78,9 +78,8 @@ class OliveArrival(models.Model):
         default=fields.Date.context_today, required=True,
         states={'done': [('readonly', True)]})
     harvest_start_date = fields.Date(
-        string='Harvest Start Date', required=True)
-    # TODO uncomment once set in prod db
-    # states={'done': [('readonly', True)]})
+        string='Harvest Start Date', required=True,
+        states={'done': [('readonly', True)]})
     done_datetime = fields.Datetime(string='Date Done', readonly=True)
     line_ids = fields.One2many(
         'olive.arrival.line', 'arrival_id', string='Arrival Lines',
@@ -186,12 +185,15 @@ class OliveArrival(models.Model):
         i = 0
         warn_msgs = []
         returned_palox = self.env['olive.palox']
+        has_sale_or_mix = False
         for line in self.line_ids:
             i += 1
             if float_is_zero(line.olive_qty, precision_digits=pr_oli):
                 raise UserError(_(
                     "On arrival line number %d, the olive quantity is null.")
                     % i)
+            if line.oil_destination in ('sale', 'mix'):
+                has_sale_or_mix = True
             if line.palox_id.borrower_partner_id:
                 returned_palox |= line.palox_id
             for palox in self.returned_palox_ids:
@@ -277,9 +279,22 @@ class OliveArrival(models.Model):
                         line.palox_id.name,
                         same_palox_different_oil_destination[0].display_name,
                         same_palox_different_oil_destination[0].oil_destination))
+
             # Set line number
             line.name = '%s/%s' % (self.name, i)
 
+        # for mix/sale, warn if delay between harvest and arrival is too long
+        arrival_date_dt = fields.Date.from_string(self.date)
+        harvest_st_date_dt = fields.Date.from_string(self.harvest_start_date)
+        delta_days = (arrival_date_dt - harvest_st_date_dt).days
+        max_delta_days = self.company_id.olive_harvest_arrival_max_delta_days
+        if has_sale_or_mix and delta_days > max_delta_days:
+            warn_msgs.append(_(
+                "This arrival has sale or mix oil destination and the delay "
+                "between the harvest start date (%s) and the arrival date "
+                "(%s) is %d days (maximum allowed is %d days).") % (
+                    self.harvest_start_date, self.date,
+                    delta_days, max_delta_days))
         if warn_msgs:
             if not self._context.get('olive_no_warning'):
                 action = self.env['ir.actions.act_window'].for_xml_id(

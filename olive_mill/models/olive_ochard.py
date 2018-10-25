@@ -27,7 +27,7 @@ class OliveOchard(models.Model):
         compute='_compute_totals', string='Total Area', readonly=True, store=True,
         digits=dp.get_precision('Olive Parcel Area'))
     cultivation_ids = fields.One2many(
-        'olive.cultivation', 'ochard_id', string='Cultivation Methods')
+        'olive.cultivation', 'ochard_id', string='Cultivation Forms')
 
     _sql_constraints = [(
         'name_partner_id_unique',

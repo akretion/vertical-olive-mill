@@ -39,6 +39,11 @@
                     <field name="olive_filter_ratio" class="oe_inline"/>
                     <label string=" %" class="oe_inline"/>
                 </div>
+                <label for="olive_harvest_arrival_max_delta_days"/>
+                <div name="olive_harvest_arrival_max_delta_days">
+                    <field name="olive_harvest_arrival_max_delta_days" class="oe_inline"/>
+                    <label string=" days" class="oe_inline"/>
+                </div>
             </group>
             <group name="appointment" string="Appointments">
                 <label for="olive_appointment_qty_per_palox"/>
