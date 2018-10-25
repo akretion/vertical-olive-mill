@@ -95,7 +95,8 @@ class OliveOilProduction(models.Model):
         ], string='Oil Destination', compute='_compute_oil_destination',
         readonly=True)
     oil_product_id = fields.Many2one(
-        'product.product', string='Oil Type', readonly=True)
+        'product.product', string='Oil Type', readonly=True,
+        track_visibility='onchange')
     olive_culture_type = fields.Selection(
         related='oil_product_id.olive_culture_type', readonly=True, store=True)
     olive_culture_type_logo = fields.Binary(
