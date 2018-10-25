@@ -35,6 +35,10 @@ class OliveConfigSettings(models.TransientModel):
         related='company_id.olive_shrinkage_ratio')
     olive_filter_ratio = fields.Float(
         related='company_id.olive_filter_ratio')
+    olive_min_ratio = fields.Float(
+        related='company_id.olive_min_ratio')
+    olive_max_ratio = fields.Float(
+        related='company_id.olive_max_ratio')
     olive_oil_density = fields.Float(
         related='company_id.olive_oil_density')
     olive_oil_leaf_removal_product_id = fields.Many2one(

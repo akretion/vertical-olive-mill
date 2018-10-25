@@ -10,10 +10,6 @@ from odoo.tools import float_compare, float_is_zero, float_round
 from dateutil.relativedelta import relativedelta
 
 
-MIN_RATIO = 5
-MAX_RATIO = 35
-
-
 class OliveOilProduction(models.Model):
     _name = 'olive.oil.production'
     _description = 'Olive Oil Production'
@@ -112,7 +108,7 @@ class OliveOilProduction(models.Model):
         string='Gross Ratio (% L)', digits=dp.get_precision('Olive Oil Ratio'),
         readonly=True,
         help="This ratio gives the number of liters of olive oil for "
-        "100 Kg of olives.")  # Yes, it's a ratio between liters and kg !!!
+        "100 kg of olives.")  # Yes, it's a ratio between liters and kg !!!
     date = fields.Date(
         string='Date', default=fields.Date.context_today, required=True,
         states={'done': [('readonly', True)]}, track_visibility='onchange')
@@ -156,9 +152,10 @@ class OliveOilProduction(models.Model):
     @api.constrains('compensation_ratio', 'compensation_type')
     def check_production(self):
         for prod in self:
+            min_ratio, max_ratio = prod.company_id.olive_min_max_ratio()
             if prod.compensation_type == 'last':
                 cratio = prod.compensation_ratio
-                if cratio < MIN_RATIO or cratio > MAX_RATIO:
+                if cratio < min_ratio or cratio > max_ratio:
                     raise ValidationError(_(
                         "The compensation ratio (%s %%) is not realistic.")
                         % cratio)
@@ -258,7 +255,7 @@ class OliveOilProduction(models.Model):
             draft_lines = oalo.search([
                 ('palox_id', '=', self.palox_id.id),
                 ('warehouse_id', '=', self.warehouse_id.id),
-                ('arrival_state', '=', 'draft'),
+                ('state', '=', 'draft'),
                 ('production_id', '=', False)])
             if draft_lines:
                 raise UserError(_(
@@ -270,7 +267,7 @@ class OliveOilProduction(models.Model):
             done_lines = oalo.search([
                 ('palox_id', '=', self.palox_id.id),
                 ('warehouse_id', '=', self.warehouse_id.id),
-                ('arrival_state', '=', 'done'),
+                ('state', '=', 'done'),
                 ('production_id', '=', False)])
             if not done_lines:
                 raise UserError(_(

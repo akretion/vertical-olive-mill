@@ -7,9 +7,6 @@ from odoo import fields, models, _
 import odoo.addons.decimal_precision as dp
 from odoo.exceptions import UserError
 
-MIN_RATIO = 5
-MAX_RATIO = 35
-
 
 class OliveOilProductionForceRatio(models.TransientModel):
     _name = 'olive.oil.production.force.ratio'
@@ -37,7 +34,8 @@ class OliveOilProductionForceRatio(models.TransientModel):
         assert prod.state == 'force'
         line = self.arrival_line_id
         assert line.production_id == prod, 'Line not attached to production'
-        if self.force_ratio > MAX_RATIO or self.force_ratio < MIN_RATIO:
+        min_ratio, max_ratio = prod.company_id.olive_min_max_ratio()
+        if self.force_ratio > max_ratio or self.force_ratio < min_ratio:
             raise UserError(_(
                 "The ratio (%s %%) is not realistic.") % self.force_ratio)
         prod.set_qty_on_lines(

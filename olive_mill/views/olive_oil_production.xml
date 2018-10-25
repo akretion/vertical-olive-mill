@@ -113,6 +113,7 @@
                                     <field name="to_sale_tank_oil_qty" sum="1"/>
                                     <field name="sale_oil_qty" sum="1"/>
                                     <field name="oil_ratio_net"/>
+                                    <field name="state" invisible="1"/>
                                 </tree>
                             </field>
                         </group>

@@ -8,9 +8,6 @@ import odoo.addons.decimal_precision as dp
 from odoo.tools import float_round
 from odoo.exceptions import UserError
 
-MIN_RATIO = 5
-MAX_RATIO = 35
-
 
 class OliveOilProductionRatio2force(models.TransientModel):
     _name = 'olive.oil.production.ratio2force'
@@ -93,7 +90,8 @@ class OliveOilProductionRatio2force(models.TransientModel):
     def validate(self):
         self.ensure_one()
         prod = self.production_id
-        if self.ratio > MAX_RATIO or self.ratio < MIN_RATIO:
+        min_ratio, max_ratio = prod.company_id.olive_min_max_ratio()
+        if self.ratio > max_ratio or self.ratio < min_ratio:
             raise UserError(_(
                 "The ratio (%s %%) of production %s is not realistic.")
                 % (self.ratio, prod.name))

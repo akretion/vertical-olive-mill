@@ -18,6 +18,11 @@
                 <field name="src_location_id" domain="[('olive_tank_type', '!=', False), ('olive_season_id', '=', season_id)]"/>
                 <field name="dest_location_id" domain="[('olive_tank_type', '!=', False), ('olive_season_id', '=', season_id)]"/>
                 <field name="transfer_type"/>
+                <label for="quantity" attrs="{'invisible': [('transfer_type', '!=', 'partial')]}"/>
+                <div name="quantity" attrs="{'invisible': [('transfer_type', '!=', 'partial')]}">
+                    <field name="quantity" class="oe_inline"/>
+                    <label string=" L"/>
+                </div>
             </group>
             <footer>
                 <button name="validate" type="object" string="Validate" class="btn-primary"/>

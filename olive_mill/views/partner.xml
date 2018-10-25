@@ -12,7 +12,7 @@
     <field name="res_model">olive.arrival.line</field>
     <field name="view_mode">pivot,graph</field>
     <field name="view_id" ref="partner_olive_arrival_line_pivot"/>
-    <field name="domain">[('arrival_state', '!=', 'cancel')]</field>
+    <field name="domain">[('state', '!=', 'cancel')]</field>
     <field name="context">{'search_default_commercial_partner_id': active_id}</field>
 </record>
 

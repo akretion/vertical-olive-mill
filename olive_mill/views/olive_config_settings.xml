@@ -39,6 +39,16 @@
                     <field name="olive_filter_ratio" class="oe_inline"/>
                     <label string=" %" class="oe_inline"/>
                 </div>
+                <label for="olive_min_ratio"/>
+                <div name="olive_min_ratio">
+                    <field name="olive_min_ratio" class="oe_inline"/>
+                    <label string=" %" class="oe_inline"/>
+                </div>
+                <label for="olive_max_ratio"/>
+                <div name="olive_max_ratio">
+                    <field name="olive_max_ratio" class="oe_inline"/>
+                    <label string=" %" class="oe_inline"/>
+                </div>
                 <label for="olive_harvest_arrival_max_delta_days"/>
                 <div name="olive_harvest_arrival_max_delta_days">
                     <field name="olive_harvest_arrival_max_delta_days" class="oe_inline"/>

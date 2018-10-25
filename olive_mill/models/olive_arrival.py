@@ -253,7 +253,7 @@ class OliveArrival(models.Model):
             # Warn if not same variant
             same_palox_different_variant = oalo.search([
                 ('palox_id', '=', line.palox_id.id),
-                ('arrival_state', '=', 'done'),
+                ('state', '=', 'done'),
                 ('production_id', '=', False),
                 ('variant_id', '!=', line.variant_id.id)])
             if same_palox_different_variant:
@@ -268,7 +268,7 @@ class OliveArrival(models.Model):
             # Warn if not same oil destination
             same_palox_different_oil_destination = oalo.search([
                 ('palox_id', '=', line.palox_id.id),
-                ('arrival_state', '=', 'done'),
+                ('state', '=', 'done'),
                 ('production_id', '=', False),
                 ('oil_destination', '!=', line.oil_destination)])
             if same_palox_different_oil_destination:
@@ -369,11 +369,12 @@ class OliveArrivalLine(models.Model):
         string='Arrival Line Number', required=True, readonly=True,
         default='/')
     arrival_id = fields.Many2one(
-        'olive.arrival', string='Arrival', ondelete='cascade')
+        'olive.arrival', string='Arrival', ondelete='cascade',
+        states={'done': [('readonly', True)]})
     # START RELATED fields for arrival
     company_id = fields.Many2one(
         related='arrival_id.company_id', store=True, readonly=True)
-    arrival_state = fields.Selection(
+    state = fields.Selection(
         related='arrival_id.state', string='Arrival State',
         readonly=True, store=True)
     arrival_date = fields.Date(
@@ -389,43 +390,53 @@ class OliveArrivalLine(models.Model):
         related='arrival_id.partner_id.commercial_partner_id.olive_culture_type',
         readonly=True, store=True)
     # END RELATED fields for arrival
-    leaf_removal = fields.Boolean(string='Leaf Removal')
+    leaf_removal = fields.Boolean(
+        string='Leaf Removal', states={'done': [('readonly', True)]})
     variant_id = fields.Many2one(
-        'olive.variant', string='Olive Variant', required=True)
+        'olive.variant', string='Olive Variant', required=True,
+        states={'done': [('readonly', True)]})
     olive_qty = fields.Float(
-        string='Olive Qty (kg)', help="Olive Quantity in Kg", required=True,
-        digits=dp.get_precision('Olive Weight'))
+        string='Olive Qty (kg)', help="Olive Quantity in kg", required=True,
+        digits=dp.get_precision('Olive Weight'),
+        states={'done': [('readonly', True)]})
     ochard_id = fields.Many2one(
-        'olive.ochard', string='Ochard', required=True)
+        'olive.ochard', string='Ochard', required=True,
+        states={'done': [('readonly', True)]})
     palox_id = fields.Many2one(
-        'olive.palox', string='Palox', required=True)
+        'olive.palox', string='Palox', required=True,
+        states={'done': [('readonly', True)]})
     oil_destination = fields.Selection([
         ('withdrawal', 'Withdrawal'),
         ('sale', 'Sale'),
         ('mix', 'Mix'),
-        ], string='Oil Destination', required=True)
+        ], string='Oil Destination', required=True,
+        states={'done': [('readonly', True)]})
     mix_withdrawal_oil_qty = fields.Float(
         string='Requested Withdrawal Qty (L)',
         digits=dp.get_precision('Olive Oil Volume'),
+        states={'done': [('readonly', True)]},
         help="Quantity of olive oil withdrawn by the farmer in liters")
     ripeness = fields.Selection([  # maturité
         ('green', 'Green'),
         ('in_between', 'In Between'),  # Tournantes
         ('optimal', 'Optimal'),
         ('overripen', 'Over Ripen'),  # surmatures
-        ], string='Ripeness', required=True)
+        ], string='Ripeness', required=True,
+        states={'done': [('readonly', True)]})
     sanitary_state = fields.Selection([
         ('good', 'Good'),
         ('average', 'Average'),
         ('fair', 'Fair'),  # Passable
-        ], string='Sanitary State', required=True)
+        ], string='Sanitary State', required=True,
+        states={'done': [('readonly', True)]})
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Type', required=True,
-        domain=[('olive_type', '=', 'oil')])
+        domain=[('olive_type', '=', 'oil')],
+        states={'done': [('readonly', True)]})
     product_olive_culture_type = fields.Selection(
         related='oil_product_id.olive_culture_type', readonly=True, store=True)
     production_id = fields.Many2one(
-        'olive.oil.production', string='Production')
+        'olive.oil.production', string='Production', readonly=True)
     # START related fields for production
     production_date = fields.Date(
         related='production_id.date', string='Production Date', readonly=True,
@@ -447,16 +458,22 @@ class OliveArrivalLine(models.Model):
     extra_count = fields.Integer(
         compute='_compute_extra_count', string='Extra Item Lines', readonly=True)
 
-    # Shrinkage: NOT deducted
-    # filter loss: NOT deducted
-    # Compensation last : already deducted
-    # Compensation first: not included
     oil_qty_kg = fields.Float(
         string='Oil Qty (kg)',
-        readonly=True, digits=dp.get_precision('Olive Oil Volume'))
+        readonly=True, digits=dp.get_precision('Olive Oil Volume'),
+        help="Oil quantity in kg."
+        "\nFirst-of-day compensation: not included."
+        "\nLast-of-day compensation: already deducted."
+        "\nShrinkage: not deducted."
+        "\nFilter loss: not deducted.")
     oil_qty = fields.Float(
         string='Oil Qty (L)',
-        readonly=True, digits=dp.get_precision('Olive Oil Volume'))
+        readonly=True, digits=dp.get_precision('Olive Oil Volume'),
+        help="Oil quantity in liters."
+        "\nFirst-of-day compensation: not included."
+        "\nLast-of-day compensation: already deducted."
+        "\nShrinkage: not deducted."
+        "\nFilter loss: not deducted.")
     # We don't have the field 'compensation_last_olive_qty'
     # because it would add un-needed complexity to have it on lines (it would also
     # required to have the compensation ratio on lines, etc...)
@@ -466,7 +483,8 @@ class OliveArrivalLine(models.Model):
         string='Compensation Oil Qty (L)',
         readonly=True, digits=dp.get_precision('Olive Oil Volume'),
         help="This field is used both for last of the day and first of "
-        "the day compensations.")
+        "the day compensations. The quantity is always positive, "
+        "even for last-of-day compensations.")
 
     shrinkage_oil_qty = fields.Float(  # Sale and withdrawal
         string='Shrinkage Oil Qty (L)',
@@ -475,31 +493,39 @@ class OliveArrivalLine(models.Model):
         string='Shrinkage Oil Qty (kg)',
         readonly=True, digits=dp.get_precision('Olive Weight'))
 
-    # Shrinkage: already deducted
-    # Filter loss: not applicable
-    # Compensation last : already deducted
-    # Compensation first: not included
     withdrawal_oil_qty_kg = fields.Float(
-        string='Withdrawal Oil Qty (Kg)',
-        readonly=True, digits=dp.get_precision('Olive Weight'))
+        string='Withdrawal Oil Qty (kg)',
+        readonly=True, digits=dp.get_precision('Olive Weight'),
+        help="Withdrawal oil quantity in kg."
+        "\nFirst-of-day compensation: not included."
+        "\nLast-of-day compensation: already deducted."
+        "\nShrinkage: already deducted."
+        "\nFilter loss: not applicable.")
     withdrawal_oil_qty = fields.Float(
         string='Withdrawal Oil Qty (L)',
-        readonly=True, digits=dp.get_precision('Olive Oil Volume'))
+        readonly=True, digits=dp.get_precision('Olive Oil Volume'),
+        help="Withdrawal oil quantity in liters."
+        "\nFirst-of-day compensation: not included."
+        "\nLast-of-day compensation: already deducted."
+        "\nShrinkage: already deducted."
+        "\nFilter loss: not applicable.")
 
-    # Shrinkage: not deducted (because we take shrinkage in sale tank)
-    # Filter loss: already deducted
-    # Compensation last : already deduced
-    # Compensation first: not included
     to_sale_tank_oil_qty = fields.Float(
         string='Oil Qty to Sale Tank (L)',
-        readonly=True, digits=dp.get_precision('Olive Oil Volume'))
-    # Shrinkage: already deducted
-    # Filter loss: already deducted
-    # Compensation last : already deduced
-    # Compensation first: included
+        readonly=True, digits=dp.get_precision('Olive Oil Volume'),
+        help="Oil sent to sale tank in liters."
+        "\nFirst-of-day compensation: not included."
+        "\nLast-of-day compensation: already deducted."
+        "\nShrinkage: not deducted (because we take shrinkage in sale tank)."
+        "\nFilter loss: already deducted.")
     sale_oil_qty = fields.Float(
         string='Oil Qty Sold (L)',
-        readonly=True, digits=dp.get_precision('Olive Oil Volume'))
+        readonly=True, digits=dp.get_precision('Olive Oil Volume'),
+        help="Oil quantity sold in liters."
+        "\nFirst-of-day compensation: not included."
+        "\nLast-of-day compensation: already deducted."
+        "\nShrinkage: already deducted."
+        "\nFilter loss: already deducted.")
 
     filter_loss_oil_qty = fields.Float(
         string='Oil Qty Lost in Filter (L)',

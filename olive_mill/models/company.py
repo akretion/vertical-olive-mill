@@ -39,12 +39,20 @@ class ResCompany(models.Model):
     # END APPOINTMENTS
     olive_shrinkage_ratio = fields.Float(
         string='Shrinkage Ratio', default=0.4,
-        digits=dp.get_precision('Olive Oil Ratio'),
-        help='Shrinkage in percentage')
+        digits=dp.get_precision('Olive Oil Ratio'))
     olive_filter_ratio = fields.Float(
         string='Filter Loss Ratio', default=1.0,
+        digits=dp.get_precision('Olive Oil Ratio'))
+    olive_min_ratio = fields.Float(
+        string='Minimum Ratio', default=5,
         digits=dp.get_precision('Olive Oil Ratio'),
-        help='Filter loss in percentage')
+        help="A ratio under that value would be considered as not realistic "
+        "and would trigger a blocking error message.")
+    olive_max_ratio = fields.Float(
+        string='Maximum Ratio', default=35,
+        digits=dp.get_precision('Olive Oil Ratio'),
+        help="A ratio above that value would be considered as not realistic "
+        "and would trigger a blocking error message.")
     olive_oil_density = fields.Float(
         string='Olive Oil Density', default=0.916,
         digits=dp.get_precision('Olive Oil Density'),
@@ -79,6 +87,12 @@ class ResCompany(models.Model):
         'olive_filter_ratio_positive',
         'CHECK(olive_filter_ratio >= 0)',
         'Filter Ratio must be positive.'), (
+        'olive_min_ratio_positive',
+        'CHECK(olive_min_ratio >= 0)',
+        'Olive Min Ratio must be positive.'), (
+        'olive_max_ratio_positive',
+        'CHECK(olive_max_ratio >= 0)',
+        'Olive Max Ratio must be positive.'), (
         'olive_oil_tax_price_unit_positive',
         'CHECK(olive_oil_tax_price_unit >= 0)',
         'Tax unit price must be positive or null.'), (
@@ -109,3 +123,7 @@ class ResCompany(models.Model):
     @api.model
     def olive_oil_kg2liter(self, qty):
         return qty * 1.0 / self.olive_oil_density
+
+    def olive_min_max_ratio(self):
+        self.ensure_one()
+        return (self.olive_min_ratio, self.olive_max_ratio)

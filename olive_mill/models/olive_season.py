@@ -65,16 +65,12 @@ class OliveSeason(models.Model):
                         oseasons[0].name, oseasons[0].start_date,
                         oseasons[0].end_date, season.name))
 
-    @api.onchange('end_date')
-    def end_date_change(self):
-        if self.end_date and not self.default_expiry_date:
-            end_date_dt = fields.Date.from_string(self.end_date)
-            if end_date_dt.month == 12:
-                expiry_date_dt = end_date_dt + relativedelta(
-                    month=1, years=3, day=1)
-            else:
-                expiry_date_dt = end_date_dt + relativedelta(
-                    month=1, years=2, day=1)
+    @api.onchange('start_date')
+    def start_date_change(self):
+        if self.start_date:
+            start_date_dt = fields.Date.from_string(self.start_date)
+            expiry_date_dt = start_date_dt + relativedelta(
+                month=1, years=3, day=1)
             self.default_expiry_date = fields.Date.to_string(expiry_date_dt)
 
     @api.model

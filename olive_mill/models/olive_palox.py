@@ -44,12 +44,12 @@ class OlivePalox(models.Model):
         string='Farmers', compute='_compute_other', readonly=True)
     line_ids = fields.One2many(
         'olive.arrival.line', 'palox_id', string='Content', readonly=True,
-        domain=[('arrival_state', '=', 'done'), ('production_id', '=', False)])
+        domain=[('state', '=', 'done'), ('production_id', '=', False)])
 
     def _compute_weight(self):
         res = self.env['olive.arrival.line'].read_group([
             ('palox_id', 'in', self.ids),
-            ('arrival_state', '=', 'done'),
+            ('state', '=', 'done'),
             ('production_id', '=', False),
             ], ['palox_id', 'olive_qty'], ['palox_id'])
         for re in res:
@@ -61,7 +61,7 @@ class OlivePalox(models.Model):
     def _compute_other(self):
         lines = self.env['olive.arrival.line'].search([
             ('palox_id', 'in', self.ids),
-            ('arrival_state', '=', 'done'),
+            ('state', '=', 'done'),
             ('production_id', '=', False),
             ])
         paloxes = {}

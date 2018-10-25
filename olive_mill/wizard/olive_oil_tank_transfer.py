@@ -4,6 +4,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import fields, models, _
+import odoo.addons.decimal_precision as dp
 from odoo.exceptions import UserError
 
 
@@ -17,8 +18,11 @@ class OliveOilTankTransfer(models.TransientModel):
         'stock.location', string='Destination Olive Tank', required=True)
     transfer_type = fields.Selection([
         ('full', 'Full Transfer'),
-        ('partial', 'Partial Transfer (Not implemented yet)'),
+        ('partial', 'Partial Transfer'),
         ], default='full', required=True, string='Transfer Type')
+    quantity = fields.Float(
+        string='Oil Quantity to Transfer (L)',
+        digits=dp.get_precision('Olive Oil Volume'))
     warehouse_id = fields.Many2one(
         'stock.warehouse', string='Warehouse', required=True,
         domain=[('olive_mill', '=', True)],
@@ -29,13 +33,13 @@ class OliveOilTankTransfer(models.TransientModel):
 
     def validate(self):
         self.ensure_one()
-        if self.transfer_type == 'partial':
-            raise UserError(_(
-                "Partial transfer is not implemented yet"))
         origin = _('Olive oil tank transfer wizard')
+        partial_transfer_qty = False
+        if self.transfer_type == 'partial':
+            partial_transfer_qty = self.quantity
         pick = self.src_location_id.olive_oil_transfer(
             self.dest_location_id, self.transfer_type, self.warehouse_id,
-            origin=origin)
+            origin=origin, partial_transfer_qty=partial_transfer_qty)
         action = self.env['ir.actions.act_window'].for_xml_id(
             'stock', 'action_picking_tree_all')
         action.update({

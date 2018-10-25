@@ -10,10 +10,6 @@ from odoo.exceptions import UserError
 from dateutil.relativedelta import relativedelta
 
 
-MIN_RATIO = 5
-MAX_RATIO = 35
-
-
 class OliveOilProductionCompensation(models.TransientModel):
     _name = 'olive.oil.production.compensation'
     _description = 'Enter compensation on olive oil production'
@@ -125,7 +121,8 @@ class OliveOilProductionCompensation(models.TransientModel):
                 raise UserError(_(
                     "For a last-of-day compensation, the compensation ratio "
                     "must be strictly positive."))
-            if cratio < MIN_RATIO or cratio > MAX_RATIO:
+            min_ratio, max_ratio = prod.company_id.olive_min_max_ratio()
+            if cratio < min_ratio or cratio > max_ratio:
                 raise UserError(_(
                     "The compensation ratio (%s %%) is not realistic.") % cratio)
             compensation_oil_qty = float_round(

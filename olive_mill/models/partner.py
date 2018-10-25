@@ -27,7 +27,7 @@ class ResPartner(models.Model):
         compute='_compute_olive_total', string='Lended Organic Case', readonly=True)
     olive_qty_current_season = fields.Integer(
         compute='_compute_olive_total', string='Olive Qty', readonly=True,
-        help="Olive qty for the current season in Kg")
+        help="Olive qty for the current season in kg")
     olive_organic_certification_ids = fields.One2many(
         'partner.organic.certification', 'partner_id', 'Organic Certifications')
     olive_culture_type = fields.Selection([
@@ -81,7 +81,7 @@ class ResPartner(models.Model):
             arrival_res = self.env['olive.arrival.line'].read_group([
                 ('season_id', '=', season.id),
                 ('commercial_partner_id', 'in', self.ids),
-                ('arrival_state', '!=', 'cancel')],
+                ('state', '!=', 'cancel')],
                 ['commercial_partner_id', 'olive_qty'], ['commercial_partner_id'])
             for arrival_re in arrival_res:
                 partner = self.browse(arrival_re['commercial_partner_id'][0])
