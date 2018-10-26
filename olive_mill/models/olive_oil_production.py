@@ -664,6 +664,7 @@ class OliveOilProduction(models.Model):
     def detach_lines(self):
         self.ensure_one()
         self.line_ids.write({'production_id': False})
+        self.palox_id.oil_product_id = self.oil_product_id.id
 
     def _compute_day_position(self):
         for prod in self:

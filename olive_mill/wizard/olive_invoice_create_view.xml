@@ -14,6 +14,7 @@
         <form string="Olive Invoice Create">
             <group name="main">
                 <field name="partner_id"/>
+                <field name="olive_sale_pricelist_id" attrs="{'invisible': [('invoice_type', '=', 'out')], 'required': [('invoice_type', '!=', 'out')]}"/>
                 <field name="warehouse_id"/>
                 <field name="invoice_type"/>
             </group>

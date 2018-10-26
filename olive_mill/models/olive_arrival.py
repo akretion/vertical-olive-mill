@@ -272,13 +272,15 @@ class OliveArrival(models.Model):
                 ('production_id', '=', False),
                 ('oil_destination', '!=', line.oil_destination)])
             if same_palox_different_oil_destination:
+                fg = dict(oalo.fields_get(
+                    'oil_destination', 'selection')['oil_destination']['selection'])
                 warn_msgs.append(_(
-                    "You selected %s for palox %s but arrival line %s in "
-                    "the same palox has %s.") % (
-                        line.oil_destination,
+                    "You selected '%s' for palox %s but arrival line %s in "
+                    "the same palox has '%s'.") % (
+                        fg[line.oil_destination],
                         line.palox_id.name,
                         same_palox_different_oil_destination[0].display_name,
-                        same_palox_different_oil_destination[0].oil_destination))
+                        fg[same_palox_different_oil_destination[0].oil_destination]))
 
             # Set line number
             line.name = '%s/%s' % (self.name, i)
@@ -522,7 +524,7 @@ class OliveArrivalLine(models.Model):
         string='Oil Qty Sold (L)',
         readonly=True, digits=dp.get_precision('Olive Oil Volume'),
         help="Oil quantity sold in liters."
-        "\nFirst-of-day compensation: not included."
+        "\nFirst-of-day compensation: included."
         "\nLast-of-day compensation: already deducted."
         "\nShrinkage: already deducted."
         "\nFilter loss: already deducted.")
@@ -536,6 +538,9 @@ class OliveArrivalLine(models.Model):
         'account.invoice', string="Customer Invoice", readonly=True)
     in_invoice_id = fields.Many2one(
         'account.invoice', string="Vendor Bill", readonly=True)
+#    company_currency_id = fields.Many2one(
+#            related='arrival_id.company_id.currency_id', store=True, readonly=True)
+# oil_in_invoice_amount = fields.Monetary(string='', compute='_compute_xxx', readonly=True, store=True, currency_field='company_currency_id', help='')
 
     _sql_constraints = [(
         'olive_qty_positive',

@@ -42,6 +42,11 @@
             <filter name="olive_mill" string="Olive Mill" domain="[('olive_type', '!=', False)]"/>
             <separator/>
         </filter>
+        <field name="pricelist_id" position="after">
+            <group name="groupbyolive">
+                <filter name="olive_type_groupby" string="Olive Type" context="{'group_by': 'olive_type'}"/>
+            </group>
+        </field>
     </field>
 </record>
 
