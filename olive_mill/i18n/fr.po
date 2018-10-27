@@ -588,7 +588,7 @@ msgstr "Créé le"
 #: model:ir.model.fields,field_description:olive_mill.field_olive_ochard_cultivation_ids
 #: model:ir.ui.view,arch_db:olive_mill.olive_ochard_form
 msgid "Cultivation Forms"
-msgstr "Formulaires culture"
+msgstr "Fiches de culture"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_parcel_cultivation_method
