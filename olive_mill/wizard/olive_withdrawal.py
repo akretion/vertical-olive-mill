@@ -14,6 +14,9 @@ class OliveWithdrawal(models.TransientModel):
     partner_id = fields.Many2one(
         'res.partner', string='Olive Farmer', required=True,
         domain=[('olive_farmer', '=', True)])
+    partner_olive_cultivation_form = fields.Boolean(
+        related='partner_id.commercial_partner_id.olive_cultivation_form',
+        readonly=True)
     warehouse_id = fields.Many2one(
         'stock.warehouse', string='Olive Mill', required=True,
         default=lambda self: self.env.user._default_olive_mill_wh())

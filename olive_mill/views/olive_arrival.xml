@@ -17,9 +17,18 @@
                 <button name="validate" string="Validate" class="btn-primary" states="draft" type="object"/>
                 <button name="cancel" string="Cancel" class="btn-default" states="draft,done" confirm="Are you sure you want to cancel this arrival ?" type="object"/>
                 <button name="back2draft" string="Back to Draft" class="btn-default" states="cancel" type="object"/>
+                <span name="partner_olive_cultivation_form" attrs="{'invisible': ['|', ('partner_olive_cultivation_form', '=', True), ('partner_id', '=', False)]}" class="label label-danger">Cultivation Form not Provided</span>
                 <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
             </header>
             <sheet>
+                <div name="button_box" class="oe_button_box">
+                    <button class="oe_stat_button" type="action"
+                        name="%(olive_mill.olive_ochard_action)d"
+                        icon="fa-pagelines"
+                        context="{'default_partner_id': commercial_partner_id, 'search_default_partner_id': commercial_partner_id}">
+                        <field string="Olive Trees" name="partner_olive_tree_total" widget="statinfo"/>
+                    </button>
+                </div>
                 <field name="partner_organic_certified_logo" widget="image" class="oe_avatar" attrs="{'invisible': [('partner_organic_certified_logo', '=', False)]}"/>
                 <div class="oe_title">
                     <label for="name"/>
@@ -31,6 +40,7 @@
                     <group name="left">
                         <field name="partner_id"/>
                         <field name="commercial_partner_id" invisible="1"/>
+                        <field name="partner_olive_cultivation_form" invisible="1"/>
                         <field name="partner_olive_culture_type" invisible="0"/>
                         <field name="default_ochard_id" domain="[('partner_id', '=', commercial_partner_id)]" context="{'default_partner_id': commercial_partner_id}"/>
                         <field name="default_variant_id" widget="selection"/>
@@ -331,11 +341,13 @@
             <field name="arrival_id"/>
             <field name="production_id"/>
             <field name="commercial_partner_id"/>
-            <field name="olive_qty" string="Olive Quantity (kg)"/>
-            <field name="palox_id"/>
+            <field name="oil_destination"/>
             <field name="oil_product_id"/>
-            <field name="oil_ratio"/>
-            <field name="oil_destination" string="Olive Quantity (kg)"/>
+            <field name="olive_qty" sum="1"/>
+            <field name="compensation_oil_qty" sum="1"/>
+            <field name="withdrawal_oil_qty" sum="1"/>
+            <field name="sale_oil_qty" sum="1"/>
+            <field name="oil_ratio_net"/>
             <field name="state"/>
             <field name="production_state"/>
         </tree>

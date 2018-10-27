@@ -23,11 +23,11 @@ class OliveOilProduction(models.Model):
         default=lambda self: self.env['res.company']._company_default_get(
             'olive.arrival'))
     season_id = fields.Many2one(
-        'olive.season', string='Season', required=True,
+        'olive.season', string='Season', required=True, index=True,
         default=lambda self: self.env['olive.season'].get_current_season(),
         states={'done': [('readonly', True)]})
     warehouse_id = fields.Many2one(
-        'stock.warehouse', string='Warehouse', required=True,
+        'stock.warehouse', string='Warehouse', required=True, index=True,
         domain=[('olive_mill', '=', True)],
         default=lambda self: self.env.user._default_olive_mill_wh(),
         track_visibility='onchange')

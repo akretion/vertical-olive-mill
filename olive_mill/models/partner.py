@@ -25,9 +25,19 @@ class ResPartner(models.Model):
         compute='_compute_olive_total', string='Lended Regular Case', readonly=True)
     olive_lended_organic_case = fields.Integer(
         compute='_compute_olive_total', string='Lended Organic Case', readonly=True)
+    olive_current_season_id = fields.Many2one(
+        'olive.season', compute='_compute_olive_total', readonly=True,
+        string='Current Olive Season')
     olive_qty_current_season = fields.Integer(
         compute='_compute_olive_total', string='Olive Qty', readonly=True,
-        help="Olive qty for the current season in kg")
+        help="Olive quantity for the current season in kg")
+    olive_sale_oil_qty_current_season = fields.Float(
+        compute='_compute_olive_total', string='Oil Qty Sold (L)', readonly=True,
+        digits=dp.get_precision('Olive Oil Volume'),
+        help="Olive oil sale quantity for the current season in liters")
+    olive_cultivation_form = fields.Boolean(
+        compute='_compute_olive_total',
+        string='Cultivation Form Provided', readonly=True)
     olive_organic_certification_ids = fields.One2many(
         'partner.organic.certification', 'partner_id', 'Organic Certifications')
     olive_culture_type = fields.Selection([
@@ -81,12 +91,21 @@ class ResPartner(models.Model):
             arrival_res = self.env['olive.arrival.line'].read_group([
                 ('season_id', '=', season.id),
                 ('commercial_partner_id', 'in', self.ids),
-                ('state', '!=', 'cancel')],
-                ['commercial_partner_id', 'olive_qty'], ['commercial_partner_id'])
+                ('state', '=', 'done')],
+                ['commercial_partner_id', 'olive_qty', 'sale_oil_qty'],
+                ['commercial_partner_id'])
             for arrival_re in arrival_res:
                 partner = self.browse(arrival_re['commercial_partner_id'][0])
                 partner.olive_qty_current_season = int(arrival_re['olive_qty'])
-
+                partner.olive_sale_oil_qty_current_season = arrival_re['sale_oil_qty']
+                partner.olive_current_season_id = season.id
+            cultivation_res = self.env['olive.cultivation'].read_group([
+                ('season_id', '=', season.id),
+                ('partner_id', 'in', self.ids)],
+                ['partner_id'], ['partner_id'])
+            for cultivation_re in cultivation_res:
+                partner = self.browse(cultivation_re['partner_id'][0])
+                partner.olive_cultivation_form = True
 
     def _compute_olive_organic_certified(self):
         season = self.env['olive.season'].get_current_season()

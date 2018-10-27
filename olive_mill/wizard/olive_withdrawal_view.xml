@@ -12,8 +12,12 @@
     <field name="model">olive.withdrawal</field>
     <field name="arch" type="xml">
         <form string="Olive Withdrawal">
+            <header>
+                <span name="partner_olive_cultivation_form" attrs="{'invisible': ['|', ('partner_olive_cultivation_form', '=', True), ('partner_id', '=', False)]}" class="label label-danger">Cultivation Form not Provided</span>
+            </header>
             <group name="main">
                 <field name="partner_id"/>
+                <field name="partner_olive_cultivation_form" invisible="1"/>
                 <field name="warehouse_id"/>
             </group>
             <footer>

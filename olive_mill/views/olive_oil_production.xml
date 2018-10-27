@@ -193,10 +193,30 @@
     </field>
 </record>
 
+<record id="olive_oil_production_pivot" model="ir.ui.view">
+    <field name="name">olive.oil.production.pivot</field>
+    <field name="model">olive.oil.production</field>
+    <field name="arch" type="xml">
+        <pivot string="Olive Oil Productions">
+            <field name="date" type="row" interval="day"/>
+        </pivot>
+    </field>
+</record>
+
+<record id="olive_oil_production_graph" model="ir.ui.view">
+    <field name="name">olive.oil.production.graph</field>
+    <field name="model">olive.oil.production</field>
+    <field name="arch" type="xml">
+        <graph string="Olive Oil Productions">
+            <field name="date" type="row" interval="day"/>
+        </graph>
+    </field>
+</record>
+
 <record id="olive_oil_production_action" model="ir.actions.act_window">
     <field name="name">Oil Productions</field>
     <field name="res_model">olive.oil.production</field>
-    <field name="view_mode">tree,form</field>
+    <field name="view_mode">tree,form,pivot,graph</field>
     <field name="context">{'search_default_progress': True}</field>
 </record>
 

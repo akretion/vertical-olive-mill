@@ -25,11 +25,11 @@ class OliveArrival(models.Model):
         default=lambda self: self.env['res.company']._company_default_get(
             'olive.arrival'))
     season_id = fields.Many2one(
-        'olive.season', string='Season', required=True,
+        'olive.season', string='Season', required=True, index=True,
         default=lambda self: self.env['olive.season'].get_current_season(),
         states={'done': [('readonly', True)]})
     partner_id = fields.Many2one(
-        'res.partner', string='Olive Farmer', required=True,
+        'res.partner', string='Olive Farmer', required=True, index=True,
         domain=[('parent_id', '=', False), ('olive_farmer', '=', True)],
         states={'done': [('readonly', True)]},
         track_visibility='onchange')
@@ -39,10 +39,15 @@ class OliveArrival(models.Model):
         related='partner_id.commercial_partner_id.olive_organic_certified_logo',
         readonly=True)
     partner_olive_culture_type = fields.Selection(
-        related='partner_id.commercial_partner_id.olive_culture_type', readonly=True,
-        compute_sudo=True)
+        related='partner_id.commercial_partner_id.olive_culture_type', readonly=True)
+    partner_olive_cultivation_form = fields.Boolean(
+        related='partner_id.commercial_partner_id.olive_cultivation_form',
+        readonly=True)
+    partner_olive_tree_total = fields.Integer(
+        related='partner_id.commercial_partner_id.olive_tree_total',
+        readonly=True)
     warehouse_id = fields.Many2one(
-        'stock.warehouse', string='Warehouse', required=True,
+        'stock.warehouse', string='Warehouse', required=True, index=True,
         domain=[('olive_mill', '=', True)],
         default=lambda self: self.env.user._default_olive_mill_wh(),
         states={'done': [('readonly', True)]},
@@ -382,12 +387,12 @@ class OliveArrivalLine(models.Model):
     arrival_date = fields.Date(
         related='arrival_id.date', readonly=True, store=True)
     season_id = fields.Many2one(
-        related='arrival_id.season_id', readonly=True, store=True)
+        related='arrival_id.season_id', readonly=True, store=True, index=True)
     warehouse_id = fields.Many2one(
-        related='arrival_id.warehouse_id', readonly=True, store=True)
+        related='arrival_id.warehouse_id', readonly=True, store=True, index=True)
     commercial_partner_id = fields.Many2one(
         related='arrival_id.partner_id.commercial_partner_id',
-        string='Olive Farmer', readonly=True, store=True)
+        string='Olive Farmer', readonly=True, store=True, index=True)
     partner_olive_culture_type = fields.Selection(
         related='arrival_id.partner_id.commercial_partner_id.olive_culture_type',
         readonly=True, store=True)
@@ -432,7 +437,7 @@ class OliveArrivalLine(models.Model):
         ], string='Sanitary State', required=True,
         states={'done': [('readonly', True)]})
     oil_product_id = fields.Many2one(
-        'product.product', string='Oil Type', required=True,
+        'product.product', string='Oil Type', required=True, index=True,
         domain=[('olive_type', '=', 'oil')],
         states={'done': [('readonly', True)]})
     product_olive_culture_type = fields.Selection(

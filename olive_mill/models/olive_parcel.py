@@ -13,10 +13,10 @@ class OliveParcel(models.Model):
     _description = 'Olive Tree Parcel'
 
     ochard_id = fields.Many2one(
-        'olive.ochard', string='Ochard', ondelete='cascade')
+        'olive.ochard', string='Ochard', ondelete='cascade', index=True)
     partner_id = fields.Many2one(
         related='ochard_id.partner_id', string='Farmer',
-        store=True, readonly=True, compute_sudo=True)
+        index=True, store=True, readonly=True)
     land_registry_ref = fields.Char(string='Land Registry Ref')
     area = fields.Float(
         string='Area', digits=dp.get_precision('Olive Parcel Area'),

@@ -12,16 +12,16 @@ class PartnerOrganicCertification(models.Model):
     _order = 'season_id desc'
 
     partner_id = fields.Many2one(
-        'res.partner', string='Farmer', ondelete='cascade',
+        'res.partner', string='Farmer', ondelete='cascade', index=True,
         domain=[('parent_id', '=', False), ('olive_farmer', '=', True)],
         states={'done': [('readonly', True)]})
     season_id = fields.Many2one(
-        'olive.season', string='Season', required=True,
+        'olive.season', string='Season', required=True, index=True,
         default=lambda self: self.env['olive.season'].get_current_season(),
         states={'done': [('readonly', True)]})
     company_id = fields.Many2one(
-        related='season_id.company_id', store=True, readonly=True, string='Company',
-        compute_sudo=True)
+        related='season_id.company_id', store=True, readonly=True,
+        string='Company')
     certifying_entity_id = fields.Many2one(
         'organic.certifying.entity', string='Certifying Entity', required=True,
         ondelete='restrict', states={'done': [('readonly', True)]},
