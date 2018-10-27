@@ -43,6 +43,7 @@
             <field name="land_registry_ref"/>
             <field name="area" sum="1"/>
             <field name="tree_qty" sum="1"/>
+            <field name="variant_label"/>
             <field name="density"/>
             <field name="planted_year"/>
             <field name="irrigation"/>

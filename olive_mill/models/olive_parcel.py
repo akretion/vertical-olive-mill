@@ -23,6 +23,9 @@ class OliveParcel(models.Model):
         help="Area in hectare")
     tree_qty = fields.Integer(string='Number of Trees')
     variant_ids = fields.Many2many('olive.variant', string='Olive Variants')
+    variant_label = fields.Char(
+        compute='_compute_variant_label', string='Olive Variants',
+        store=True, readonly=True)
     density = fields.Char('Density', size=64)
     planted_year = fields.Char(string='Planted Year')
     irrigation = fields.Selection([
@@ -42,3 +45,9 @@ class OliveParcel(models.Model):
         'CHECK(tree_qty >= 0)',
         "The number of trees must be positive or null."),
         ]
+
+    @api.depends('variant_ids.name')
+    def _compute_variant_label(self):
+        for parcel in self:
+            parcel.variant_label = u', '.join([
+                p.name for p in parcel.variant_ids])

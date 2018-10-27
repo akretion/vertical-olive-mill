@@ -10,7 +10,7 @@ from odoo.exceptions import UserError, ValidationError
 
 class OliveCultivation(models.Model):
     _name = 'olive.cultivation'
-    _description = 'Olive Cultivation'
+    _description = 'Olive Cultivation Form'
 
     ochard_id = fields.Many2one(
         'olive.ochard', string='Ochard', ondelete='restrict')
@@ -26,19 +26,25 @@ class OliveCultivation(models.Model):
     date = fields.Date(string="Date")
     treatment_type = fields.Selection([
         ('none', 'No Treatment'),
+        ('scan', 'See Scan'),
         ('treatment', 'Treatment'),
         ('fertilisation', 'Fertilisation'),
         ('weeding', 'Weeding'),  # désherbage
-        ], string='Treatment Type')
+        ], string='Treatment Type', required=True)
     treatment_id = fields.Many2one(
         'olive.treatment', string='Treatment Product', ondelete='restrict')
     quantity = fields.Char(string='Quantity')
     notes = fields.Text(string='Notes')
+    scan = fields.Binary(string='Cultivation Form Scan')
+    scan_filename = fields.Char(string='Filename')
 
     @api.constrains('date', 'season_id')
     def check_cultivation(self):
         today = fields.Date.context_today(self)
         for cult in self:
+            if cult.treatment_type == 'scan' and not cult.scan:
+                raise ValidationError(_(
+                    "You must upload a scan of the cultivation method."))
             if cult.date:
                 if cult.date > cult.season_id.end_date:
                     raise ValidationError(_(
@@ -55,7 +61,7 @@ class OliveCultivation(models.Model):
 
     @api.onchange('treatment_type')
     def treatment_type_change(self):
-        if self.treatment_type == 'none':
+        if self.treatment_type in ('none', 'scan'):
             self.date = False
             self.treatment_id = False
             self.quantity = False

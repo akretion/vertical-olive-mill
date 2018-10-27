@@ -1809,7 +1809,7 @@ msgstr "Quantité d'huile à transférer (L)"
 #: model:ir.actions.act_window,name:olive_mill.olive_oil_tank_transfer_action
 #: model:ir.ui.menu,name:olive_mill.olive_oil_tank_transfer_menu
 msgid "Oil Tank Transfer"
-msgstr "Cuve de transfert"
+msgstr "Transfert de cuve"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_oil_product_id

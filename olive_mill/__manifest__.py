@@ -43,7 +43,7 @@
         'wizard/olive_arrival_warning_view.xml',
         'wizard/olive_oil_production_compensation_view.xml',
         'wizard/olive_oil_production_product_swap_view.xml',
-#        'wizard/olive_oil_tank_merge_view.xml',
+        'wizard/olive_oil_tank_merge_view.xml',
         'views/olive_config_settings.xml',
         'views/stock_location.xml',
         'views/stock_warehouse.xml',

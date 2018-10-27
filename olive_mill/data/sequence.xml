@@ -22,5 +22,15 @@
     <field name="company_id" eval="False"/>
 </record>
 
+<record id="olive_oil_merge_lot_seq" model="ir.sequence">
+    <field name="name">Olive Oil Merge Lot</field>
+    <field name="code">olive.oil.merge.lot</field>
+    <field name="prefix">FUSION</field>
+    <field name="padding">4</field>
+    <field name="number_next">1</field>
+    <field name="company_id" eval="False"/>
+</record>
+
+
 
 </odoo>

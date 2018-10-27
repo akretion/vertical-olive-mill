@@ -18,10 +18,12 @@
                 <field name="season_id"/>
                 <field name="company_id" groups="base.group_multi_company"/>
                 <field name="treatment_type"/>
-                <field name="date" attrs="{'required': [('treatment_type', '!=', 'none')], 'invisible': [('treatment_type', '=', 'none')]}"/>
-                <field name="treatment_id" attrs="{'invisible': [('treatment_type', '=', 'none')]}"/>
-                <field name="quantity" attrs="{'invisible': [('treatment_type', '=', 'none')]}"/>
+                <field name="scan" attrs="{'required': [('treatment_type', '=', 'scan')], 'invisible': [('treatment_type', '!=', 'scan')]}" filename="scan_filename"/>
+                <field name="date" attrs="{'required': [('treatment_type', 'not in', ('none', 'scan'))], 'invisible': [('treatment_type', 'in', ('none', 'scan'))]}"/>
+                <field name="treatment_id" attrs="{'invisible': [('treatment_type', 'in', ('none', 'scan'))]}"/>
+                <field name="quantity" attrs="{'invisible': [('treatment_type', 'in', ('none', 'scan'))]}"/>
                 <field name="notes"/>
+                <field name="scan_filename" invisible="1"/>
             </group>
         </form>
     </field>
