@@ -65,6 +65,6 @@
     <field name="context">{'olive_lended_case_main_view': True}</field>
 </record>
 
-<menuitem id="olive_lended_case_menu" action="olive_lended_case_action" parent="olive_data_menu" sequence="70"/>
+<menuitem id="olive_lended_case_menu" action="olive_lended_case_action" parent="olive_data_menu" sequence="80"/>
 
 </odoo>

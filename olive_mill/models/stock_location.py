@@ -88,7 +88,8 @@ class StockLocation(models.Model):
                     self.olive_season_id.name))
 
     def olive_oil_tank_check(
-            self, raise_if_empty=False, raise_if_multi_lot=False):
+            self, raise_if_empty=False, raise_if_multi_lot=False,
+            raise_if_reservation=False):
         '''Returns quantity'''
         self.ensure_one()
         sqo = self.env['stock.quant']
@@ -142,6 +143,14 @@ class StockLocation(models.Model):
                 raise UserError(_(
                     "There are several different lots in tank '%s'. "
                     "You may have to merge this tank first.")
+                    % self.name)
+        if raise_if_reservation:
+            reserved_quants_count = sqo.search([
+                ('location_id', '=', self.id), ('reservation_id', '!=', False)],
+                count=True)
+            if reserved_quants_count:
+                raise UserError(_(
+                    "There are some reserved quants in tank '%s'.")
                     % self.name)
         return qty
 

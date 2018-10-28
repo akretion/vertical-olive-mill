@@ -13,7 +13,8 @@ class ProductTemplate(models.Model):
     olive_type = fields.Selection([
         # Olives are not handled as products
         ('oil', 'Olive Oil'),
-        ('bottle', 'Oil Bottle'),
+        ('bottle', 'Empty Oil Bottle'),
+        ('bottle_full', 'Full Oil Bottle'),
         ('analysis', 'Analysis'),
         ('extra_service', 'Extra Service'),
         ('service', 'Production Service'),
@@ -41,6 +42,8 @@ class ProductTemplate(models.Model):
                 self.uom_id = liter_uom
                 self.uom_po_id = liter_uom
             self.tracking = 'lot'
+        elif self.olive_type == 'bottle_full':
+            self.tracking = 'lot'
         if self.olive_type in ('service', 'extra_service'):
             self.type = 'service'
         elif self.olive_type == 'analysis':
@@ -67,11 +70,14 @@ class ProductTemplate(models.Model):
                         % (pt.display_name, pt.uom_id.display_name))
                 if pt.tracking != 'lot':
                     raise ValidationError(_(
-                        "Product '%s' has an Olive Type (%s) that require "
-                        "tracking by lots.") % (
-                            pt.display_name, pt.olive_type))
+                        "Product '%s' has an Olive Type 'Oil' that require "
+                        "tracking by lots.") % pt.display_name)
+            if pt.olive_type == 'bottle_full' and pt.tracking != 'lot':
+                raise ValidationError(_(
+                    "Product '%s' has an Olive Type 'Full Oil Bottle' "
+                    "that require tracking by lots."))
             if (
-                    pt.olive_type in ('bottle', 'analysis') and
+                    pt.olive_type in ('bottle', 'bottle_full', 'analysis') and
                     pt.uom_id.category_id != unit_categ_uom):
                 raise ValidationError(_(
                     "Product '%s' has an Olive Type 'Bottle' or 'Analysis' "
@@ -117,3 +123,48 @@ class ProductProduct(models.Model):
             self.type == 'consu'
         if not self.olive_type:
             self.olive_culture_type = False
+
+    def olive_create_merge_bom(self):
+        mbo = self.env['mrp.bom']
+        for product in self.filtered(lambda p: p.olive_type == 'oil'):
+            mbo.create({
+                'product_id': product.id,
+                'product_tmpl_id': product.product_tmpl_id.id,
+                'product_uom_id': product.uom_id.id,
+                'product_qty': 1,
+                'ready_to_produce': 'all_available',
+                'bom_line_ids': [(0, 0, {
+                    'product_id': product.id,
+                    'product_uom_id': product.uom_id.id,
+                    'product_qty': 1,
+                    })],
+                })
+
+    def oil_bottle_full_get_bom_and_oil_product(self):
+        self.ensure_one()
+        assert self.olive_type == 'bottle_full'
+        boms = self.env['mrp.bom'].search([
+            ('product_tmpl_id', '=', self.product_tmpl_id.id),
+            ('type', '=', 'normal'),
+            ('product_uom_id', '=', self.uom_id.id),
+            ])
+        if not boms:
+            raise UserError(_(
+                "No bill of material for product '%s'.") % self.display_name)
+        if len(boms) > 1:
+            raise UserError(_(
+                "There are several bill of materials for product '%s'. "
+                "This scenario is not supported.") % self.display_name)
+        bom = boms[0]
+        oil_bom_lines = self.env['mrp.bom.line'].search([
+            ('product_id.olive_type', '=', 'oil'), ('bom_id', '=', bom.id)])
+        if not oil_bom_lines:
+            raise UserError(_(
+                "The bill of material '%s' (ID %d) doesn't have any "
+                "line with an oil product.") % (bom.display_name, bom.id))
+        if len(oil_bom_lines) > 1:
+            raise UserError(_(
+                "The bill of material '%s' (ID %d) has several lines "
+                "with an oil product. This scenario is not supported for "
+                "the moment.") % (bom.display_name, bom.id))
+        return (bom, oil_bom_lines[0].product_id)

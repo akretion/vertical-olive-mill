@@ -26,14 +26,14 @@ class OliveOilTankMerge(models.TransientModel):
         splo = self.env['stock.production.lot']
         sqo = self.env['stock.quant']
         loc = self.location_id
-        qty = loc.olive_oil_tank_check(raise_if_empty=True)
+        qty = loc.olive_oil_tank_check(
+            raise_if_empty=True, raise_if_reservation=True)
         quant_lot_rg = sqo.read_group(
                 [('location_id', '=', loc.id)],
                 ['qty', 'lot_id'], ['lot_id'])
-        if quant_lot_rg <= 1:
+        if len(quant_lot_rg) <= 1:
             raise UserError(_(
-                "Oil tank %s is already merged.") % loc.name)
-        # TODO check that no quants are reserved
+                "Oil tank '%s' is already merged.") % loc.name)
         product = loc.oil_product_id
         assert product.tracking == 'lot'
         assert product.olive_type == 'oil'
@@ -45,7 +45,12 @@ class OliveOilTankMerge(models.TransientModel):
         bom = False
         for bom in boms:
             if (
-                    len(bom.bom_line_ids) == 1 and bom.bom_line_ids[0].product_id == product and bom.bom_line_ids[0].product_uom_id == product.uom_id and not float_compare(bom.bom_line_ids[0].product_qty, bom.product_qty, precision_digits=pr_oil)):
+                    len(bom.bom_line_ids) == 1 and
+                    bom.bom_line_ids[0].product_id == product and
+                    bom.bom_line_ids[0].product_uom_id == product.uom_id and
+                    not float_compare(
+                        bom.bom_line_ids[0].product_qty, bom.product_qty,
+                        precision_digits=pr_oil)):
                 break
         if not bom:
             raise UserError(_(
@@ -71,12 +76,12 @@ class OliveOilTankMerge(models.TransientModel):
                 "Could not reserve the oil to merge the tank %s. "
                 "This should never happen.")
                 % self.location_id.name)
-        assert mo.move_raw_ids[0].active_move_lot_ids, 'No active_move_lot_ids'
-        for move_lot in mo.move_raw_ids[0].active_move_lot_ids:
+        assert mo.move_raw_ids[0].move_lot_ids, 'No move_lot_ids'
+        for move_lot in mo.move_raw_ids[0].move_lot_ids:
             assert move_lot.lot_id
             move_lot.quantity_done = move_lot.quantity
         # raw lines should be green at this step
-        # Create finished move
+        # Create finished lot
         merge_lot_name = self.env['ir.sequence'].next_by_code('olive.oil.merge.lot')
         new_lot = splo.create({
             'product_id': product.id,
@@ -101,13 +106,14 @@ class OliveOilTankMerge(models.TransientModel):
         mo.post_inventory()
         assert mo.check_to_done == True
         mo.button_mark_done()
-        final_quants = self.env['stock.quant'].search([('location_id', '=', loc.id)])
-        if len(final_quants) != 1:
-            raise UserError(_(
-                "There are %d quants in tank %s after the merge operation. "
-                "There should have only one.") % (len(final_quants), loc.name))
-        assert final_quants[0].product_id == product, 'wrong product on final quant'
-        assert final_quants[0].lot_id == new_lot, 'wrong lot on final quant'
+        post_mo_qty = loc.olive_oil_tank_check(
+            raise_if_reservation=True, raise_if_multi_lot=True)
+        if float_compare(qty, post_mo_qty, precision_digits=pr_oil):
+            raise (_(
+                "In tank '%s', the oil quantity after the merge (%s) "
+                "is different from the oil quantity before the merge (%s). "
+                "This should never happen.") % (
+                    loc.name, post_mo_qty, qty))
         action = self.env['ir.actions.act_window'].for_xml_id(
             'mrp', 'mrp_production_action')
         action.update({

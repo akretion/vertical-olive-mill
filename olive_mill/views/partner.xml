@@ -17,7 +17,7 @@
 </record>
 
 <record id="view_partner_form" model="ir.ui.view">
-    <field name="name">olive.mill.partner.form</field>
+    <field name="name">olive.mill.olive_farmer.partner.form</field>
     <field name="model">res.partner</field>
     <field name="inherit_id" ref="base.view_partner_form"/>
     <field name="arch" type="xml">
@@ -27,6 +27,15 @@
         <field name="child_ids" position="attributes">
             <attribute name="context" operation="python_dict" key="default_olive_farmer">olive_farmer</attribute>
         </field>
+    </field>
+</record>
+
+<record id="olive_tab_button_partner_form" model="ir.ui.view">
+    <field name="name">olive.mill.tab.button.partner.form</field>
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="base.view_partner_form"/>
+    <field name="groups_id" eval="[(4, ref('stock.group_stock_user'))]"/>
+    <field name="arch" type="xml">
         <xpath expr="//page[@name='sales_purchases']//field[@name='customer']" position="after">
             <field name="olive_farmer"/>
         </xpath>

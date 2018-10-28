@@ -71,6 +71,6 @@
     <field name="context">{'partner_organic_certification_main_view': True}</field>
 </record>
 
-<menuitem id="partner_organic_certification_menu" action="partner_organic_certification_action" parent="olive_data_menu" sequence="80"/>
+<menuitem id="partner_organic_certification_menu" action="partner_organic_certification_action" parent="olive_data_menu" sequence="100"/>
 
 </odoo>

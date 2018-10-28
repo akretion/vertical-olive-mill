@@ -93,6 +93,6 @@
     <field name="context">{'olive_ochard_main_view': True}</field>
 </record>
 
-<menuitem id="olive_ochard_menu" action="olive_ochard_action" parent="olive_config_menu" sequence="30"/>
+<menuitem id="olive_ochard_menu" action="olive_ochard_action" parent="olive_data_menu" sequence="20"/>
 
 </odoo>

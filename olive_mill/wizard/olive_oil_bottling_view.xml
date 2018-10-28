@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="olive_oil_bottling_form" model="ir.ui.view">
+    <field name="name">olive.oil.bottling.form</field>
+    <field name="model">olive.oil.bottling</field>
+    <field name="arch" type="xml">
+        <form string="Olive Oil Bottling">
+            <header>
+                <field name="state" widget="statusbar"/>
+            </header>
+            <group name="main">
+                <field name="bottle_product_id"/>
+                <field name="season_id"/>
+                <field name="warehouse_id"/>
+            </group>
+            <group name="production" string="Production" states="produce">
+                <field name="bom_id"/>
+                <field name="oil_product_id"/>
+                <field name="quantity" attrs="{'required': [('state', '=', 'produce')]}"/>
+                <field name="src_location_id" domain="[('oil_product_id', '=', oil_product_id), ('olive_season_id', '=', season_id)]" attrs="{'required': [('state', '=', 'produce')]}"/>
+                <field name="other_src_location_id" attrs="{'required': [('state', '=', 'produce')]}"/>
+                <field name="dest_location_id" attrs="{'required': [('state', '=', 'produce')]}"/>
+                <field name="expiry_date" attrs="{'required': [('state', '=', 'produce')]}"/>
+                <field name="lot_name" attrs="{'required': [('state', '=', 'produce')]}"/>
+            </group>
+            <footer>
+                <button name="select2produce" type="object" string="Next" class="btn-primary" states="select"/>
+                <button name="validate" type="object" string="Validate" class="btn-primary" states="produce"/>
+                <button special="cancel" string="Cancel" class="btn-default"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+<record id="olive_oil_bottling_action" model="ir.actions.act_window">
+    <field name="name">Olive Oil Bottling</field>
+    <field name="res_model">olive.oil.bottling</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+</record>
+
+<menuitem id="olive_oil_bottling_menu" action="olive_oil_bottling_action" parent="olive_operations_menu" sequence="220"/>
+
+</odoo>

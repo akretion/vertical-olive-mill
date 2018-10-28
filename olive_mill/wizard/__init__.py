@@ -10,5 +10,6 @@ from . import olive_oil_production_pack2check
 from . import olive_invoice_create
 from . import olive_oil_tank_transfer
 from . import olive_oil_tank_merge
+from . import olive_oil_bottling
 from . import olive_oil_production_compensation
 from . import olive_oil_production_product_swap

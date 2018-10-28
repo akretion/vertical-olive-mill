@@ -57,6 +57,6 @@
     <field name="context">{'default_type': 'product', 'search_default_olive_mill': True}</field>
 </record>
 
-<menuitem id="olive_product_menu" action="olive_product_action" parent="olive_data_menu" sequence="30"/>
+<menuitem id="olive_product_menu" action="olive_product_action" parent="olive_data_menu" sequence="120"/>
 
 </odoo>
