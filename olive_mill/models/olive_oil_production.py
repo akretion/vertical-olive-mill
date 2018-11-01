@@ -7,7 +7,6 @@ from odoo import api, fields, models, tools, _
 from odoo.exceptions import UserError, ValidationError
 import odoo.addons.decimal_precision as dp
 from odoo.tools import float_compare, float_is_zero, float_round
-from dateutil.relativedelta import relativedelta
 
 
 class OliveOilProduction(models.Model):
@@ -180,8 +179,8 @@ class OliveOilProduction(models.Model):
             self.oil_product_id = False
 
     @api.depends(
-            'line_ids.olive_qty', 'line_ids.to_sale_tank_oil_qty',
-            'line_ids.oil_destination', 'line_ids.compensation_oil_qty')
+        'line_ids.olive_qty', 'line_ids.to_sale_tank_oil_qty',
+        'line_ids.oil_destination', 'line_ids.compensation_oil_qty')
     def _compute_lines(self):
         res = self.env['olive.arrival.line'].read_group(
             [('production_id', 'in', self.ids)],
@@ -262,7 +261,6 @@ class OliveOilProduction(models.Model):
         self.ensure_one()
         assert self.state == 'draft'
         oalo = self.env['olive.arrival.line']
-        slo = self.env['stock.location']
         pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
         if not self.line_ids:
             draft_lines = oalo.search([
@@ -301,8 +299,8 @@ class OliveOilProduction(models.Model):
                         "The oil type of arrival line %s is %s, "
                         "but it is %s on the first arrival line "
                         "of palox %s.") % (
-                            line.name,
-                            line.oil_product_id.name,
+                            l.name,
+                            l.oil_product_id.name,
                             oil_product.name,
                             self.palox_id.name))
             else:
@@ -351,7 +349,6 @@ class OliveOilProduction(models.Model):
             'olive_mill', 'olive_oil_production_ratio2force_action')
         action['context'] = {'default_production_id': self.id}
         return action
-
 
     def ratio2force(self):
         self.ensure_one()
@@ -469,8 +466,6 @@ class OliveOilProduction(models.Model):
         assert self.state == 'check'
         splo = self.env['stock.production.lot']
         smo = self.env['stock.move']
-        sqo = self.env['stock.quant']
-        pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
         pr_oil = self.env['decimal.precision'].precision_get('Olive Oil Volume')
         wloc = self.warehouse_id.olive_withdrawal_loc_id
         stock_loc = self.warehouse_id.lot_stock_id

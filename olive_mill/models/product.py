@@ -4,7 +4,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl)
 
 from odoo import api, fields, models, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 
 
 class ProductTemplate(models.Model):
@@ -36,7 +36,6 @@ class ProductTemplate(models.Model):
     @api.onchange('olive_type')
     def olive_type_change(self):
         liter_uom = self.env.ref('product.product_uom_litre')
-        pce_uom = self.env.ref('product.product_uom_unit')
         if self.olive_type == 'oil':
             if self.uom_id != liter_uom:
                 self.uom_id = liter_uom
@@ -111,7 +110,6 @@ class ProductProduct(models.Model):
     @api.onchange('olive_type')
     def olive_type_change(self):
         liter_uom = self.env.ref('product.product_uom_litre')
-        pce_uom = self.env.ref('product.product_uom_unit')
         if self.olive_type == 'oil':
             if self.uom_id != liter_uom:
                 self.uom_id = liter_uom

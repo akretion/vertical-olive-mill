@@ -247,13 +247,13 @@ class OliveArrival(models.Model):
                     line.oil_destination == 'mix' and
                     line.mix_withdrawal_oil_qty > wh.olive_oil_compensation_ratio * line.olive_qty / 100.0):
                 warn_msgs.append(_(
-                        "On arrival line number %d that has a mixed oil "
-                        "destination, the requested withdraway quantity "
-                        "(%s L) is superior to the olive quantity of the "
-                        "line (%s kg) multiplied by the average ratio "
-                        "(%s %%).") % (
-                            i, line.mix_withdrawal_oil_qty,
-                            line.olive_qty, wh.olive_oil_compensation_ratio))
+                    "On arrival line number %d that has a mixed oil "
+                    "destination, the requested withdraway quantity "
+                    "(%s L) is superior to the olive quantity of the "
+                    "line (%s kg) multiplied by the average ratio "
+                    "(%s %%).") % (
+                        i, line.mix_withdrawal_oil_qty,
+                        line.olive_qty, wh.olive_oil_compensation_ratio))
 
             # Warn if not same variant
             same_palox_different_variant = oalo.search([
@@ -492,6 +492,15 @@ class OliveArrivalLine(models.Model):
         help="This field is used both for last of the day and first of "
         "the day compensations. The quantity is always positive, "
         "even for last-of-day compensations.")
+    oil_qty_with_compensation = fields.Float(
+        compute='_compute_oil_qty_with_compensation',
+        string='Oil Qty with Compensation (L)', store=True,
+        readonly=True, digits=dp.get_precision('Olive Oil Volume'),
+        help="Oil quantity with compensation in liters."
+        "\nFirst-of-day compensation: included."
+        "\nLast-of-day compensation: already deducted."
+        "\nShrinkage: not deducted."
+        "\nFilter loss: not deducted.")
 
     shrinkage_oil_qty = fields.Float(  # Sale and withdrawal
         string='Shrinkage Oil Qty (L)',
@@ -562,6 +571,14 @@ class OliveArrivalLine(models.Model):
             [('line_id', 'in', self.ids)], ['line_id'], ['line_id'])
         for re in res:
             self.browse(re['line_id'][0]).extra_count = re['line_id_count']
+
+    @api.depends('oil_qty', 'compensation_type', 'compensation_oil_qty')
+    def _compute_oil_qty_with_compensation(self):
+        for line in self:
+            oil_qty_with_compensation = line.oil_qty
+            if line.compensation_type == 'first':
+                oil_qty_with_compensation += line.compensation_oil_qty
+            line.oil_qty_with_compensation = oil_qty_with_compensation
 
     @api.onchange('oil_destination')
     def oil_destination_change(self):
@@ -697,7 +714,6 @@ class OliveArrivalLine(models.Model):
         pr_pri = self.env['decimal.precision'].precision_get(
             'Product Price')
         aio = self.env['account.invoice']
-        pplo = self.env['product.pricelist']
         ppo = self.env['product.product']
         partner = self[0].commercial_partner_id
         company = self.env.user.company_id

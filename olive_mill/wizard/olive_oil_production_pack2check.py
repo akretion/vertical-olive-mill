@@ -4,8 +4,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models
-import odoo.addons.decimal_precision as dp
-# from odoo.exceptions import UserError
 
 
 class OliveOilProductionPack2Check(models.TransientModel):
@@ -50,7 +48,6 @@ class OliveOilProductionPack2Check(models.TransientModel):
     def validate(self):
         self.ensure_one()
         prod = self.production_id
-        line = self.arrival_line_id
         if self.todo_arrival_line_ids:
             new_line_id = self.todo_arrival_line_ids[0].id
             self.write({

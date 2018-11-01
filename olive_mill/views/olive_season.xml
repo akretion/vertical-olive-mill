@@ -56,4 +56,111 @@
 
 <menuitem id="olive_season_menu" action="olive_season_action" parent="olive_config_menu" sequence="40"/>
 
+<!-- DASHBOARD -->
+<record id="dashboard_olive_season_kanban" model="ir.ui.view">
+    <field name="name">olive.season.dashboard.kanban</field>
+    <field name="model">olive.season</field>
+    <field name="arch" type="xml">
+        <kanban create="false" class="oe_background_grey o_kanban_dashboard o_account_kanban">
+            <field name="id"/>
+            <field name="name"/>
+            <field name="olive_qty_arrived"/>
+            <field name="olive_qty"/>
+            <field name="oil_qty_with_compensation"/>
+            <field name="gross_ratio"/>
+            <field name="sale_oil_qty"/>
+            <field name="withdrawal_oil_qty"/>
+            <templates>
+                <t t-name="kanban-box">
+                    <div t-attf-class="#{kanban_color(0)}">
+                        <t t-call="SeasonTop"/>
+                        <div class="container o_kanban_card_content o_visible">
+                            <div class="row">
+                                <t t-call="SeasonBody"/>
+                            </div>
+                            <t t-call="SeasonBodyGraph"/>
+                        </div>
+                        <!--
+                        <div class="container o_kanban_card_manage_pane o_invisible">
+                            <t t-call="SeasonManage"/>
+                        </div> -->
+                    </div>
+                </t>
+
+                <t t-name="SeasonTop">
+                    <div class="o_kanban_card_header">
+                        <div class="o_kanban_card_header_title">
+                            <div class="o_primary">
+                                <a type="object" name="dashboard_open_action"><field name="name"/></a>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+                <t t-name="SeasonBody">
+                    <div class="col-xs-6 o_kanban_primary_left">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <span title="Total Olive">Total Olive Arrived</span>
+                            </div>
+                            <div class="col-xs-6 text-right">
+                                <span><t t-esc="record.olive_qty_arrived.raw_value"/> kg</span>
+                            </div>
+                            <div class="col-xs-6">
+                                <span title="Total Olive">Total Olive Pressed</span>
+                            </div>
+                            <div class="col-xs-6 text-right">
+                                <span><t t-esc="record.olive_qty.raw_value"/> kg</span>
+                            </div>
+                            <div class="col-xs-6">
+                                <span title="Total Olive">Gross Ratio</span>
+                            </div>
+                            <div class="col-xs-6 text-right">
+                                <span><t t-esc="record.gross_ratio.raw_value"/> %</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 o_kanban_primary_right">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <span title="Total Olive">Total Oil</span>
+                            </div>
+                            <div class="col-xs-6 text-right">
+                                <span><t t-esc="record.oil_qty_with_compensation.raw_value"/> L</span>
+                            </div>
+                            <div class="col-xs-6">
+                                <span title="Total Olive">Total Sale Oil</span>
+                            </div>
+                            <div class="col-xs-6 text-right">
+                                <span><t t-esc="record.sale_oil_qty.raw_value"/> L</span>
+                            </div>
+                            <div class="col-xs-6">
+                                <span title="Total Olive">Total Withdrawal Oil</span>
+                            </div>
+                            <div class="col-xs-6 text-right">
+                                <span><t t-esc="record.withdrawal_oil_qty.raw_value"/> L</span>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+                <t t-name="SeasonBodyGraph">
+                    <div class="o_kanban_graph_section">
+                        <field name="kanban_dashboard_graph" t-att-graph_type="'line'" widget="dashboard_graph"/>
+                    </div>
+                </t>
+            </templates>
+        </kanban>
+    </field>
+</record>
+
+
+<record id="dashboard_olive_season_action" model="ir.actions.act_window">
+    <field name="name">Dashboard</field>
+    <field name="res_model">olive.season</field>
+    <field name="view_mode">kanban,form</field>
+    <field name="usage">menu</field>
+</record>
+
+<menuitem id="dashboard_olive_season_menu" action="dashboard_olive_season_action" parent="olive_root_menu" sequence="1"/>
+
+
 </odoo>

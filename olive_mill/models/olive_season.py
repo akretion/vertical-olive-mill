@@ -7,6 +7,8 @@ from odoo import models, fields, api, _
 import odoo.addons.decimal_precision as dp
 from odoo.exceptions import ValidationError
 from dateutil.relativedelta import relativedelta
+from babel.dates import format_date
+import json
 
 
 class OliveSeason(models.Model):
@@ -24,6 +26,20 @@ class OliveSeason(models.Model):
     year = fields.Char(compute='_compute_year', string='Year', store=True)
     early_bird_date = fields.Date(string='Early Bird Limit Date')
     default_expiry_date = fields.Date(string='Default Oil Expiry Date')
+    olive_qty_arrived = fields.Integer(
+        compute='_compute_totals', string='Arrived Olive Qty (kg)', readonly=True)
+    olive_qty = fields.Integer(
+        compute='_compute_totals', string='Pressed Olive Qty (kg)', readonly=True)
+    sale_oil_qty = fields.Integer(
+        compute='_compute_totals', string='Sale Oil Qty (L)', readonly=True)
+    oil_qty_with_compensation = fields.Integer(
+        compute='_compute_totals', string='Oil Qty with Compensation (L)', readonly=True)
+    withdrawal_oil_qty = fields.Integer(
+        compute='_compute_totals', string='Withdrawal Oil Qty (L)', readonly=True)
+    gross_ratio = fields.Float(
+        compute='_compute_totals', string='Gross Ratio (%)', readonly=True,
+        digits=dp.get_precision('Olive Oil Ratio'))
+    kanban_dashboard_graph = fields.Text(compute='_compute_kanban_dashboard_graph')
 
     _sql_constrains = [(
         'name_unique',
@@ -34,6 +50,33 @@ class OliveSeason(models.Model):
     def _compute_year(self):
         for season in self:
             season.year = season.start_date[:4]
+
+    def _compute_totals(self):
+        oalo = self.env['olive.arrival.line']
+        arrival_res = oalo.read_group([
+            ('season_id', 'in', self.ids),
+            ('state', '=', 'done')],
+            ['season_id', 'olive_qty'], ['season_id'])
+        for arrival_re in arrival_res:
+            season = self.browse(arrival_re['season_id'][0])
+            season.olive_qty_arrived = arrival_re['olive_qty']
+        arrival_prod_done_res = oalo.read_group([
+            ('season_id', 'in', self.ids),
+            ('production_state', '=', 'done')],
+            ['season_id', 'olive_qty', 'oil_qty_with_compensation', 'sale_oil_qty', 'withdrawal_oil_qty'],
+            ['season_id'])
+        for re in arrival_prod_done_res:
+            season = self.browse(re['season_id'][0])
+            olive_qty = re['olive_qty']
+            oil_qty_with_compensation = re['oil_qty_with_compensation']
+            gross_ratio = 0
+            if olive_qty:
+                gross_ratio = 100 * oil_qty_with_compensation / olive_qty
+            season.olive_qty = int(olive_qty)
+            season.oil_qty_with_compensation = int(oil_qty_with_compensation)
+            season.gross_ratio = gross_ratio
+            season.sale_oil_qty = int(re['sale_oil_qty'])
+            season.withdrawal_oil_qty = int(re['withdrawal_oil_qty'])
 
     @api.constrains('start_date', 'end_date', 'early_bird_date')
     def season_check(self):
@@ -88,3 +131,50 @@ class OliveSeason(models.Model):
             ('company_id', '=', self.env.user.company_id.id)],
             order='start_date desc', limit=1)
         return seasons and seasons[0] or False
+
+    def _compute_kanban_dashboard_graph(self):
+        for season in self:
+            data = []
+            start_date_dt = fields.Date.from_string(season.start_date)
+            end_date_dt = fields.Date.from_string(season.end_date)
+            today_dt = fields.Date.from_string(fields.Date.context_today(self))
+            if today_dt < end_date_dt:
+                end_date_dt = today_dt
+            query = """
+            SELECT date, sum(olive_qty) as olive_qty
+            FROM olive_arrival
+            WHERE date >= %s
+            AND date <= %s
+            AND season_id = %s
+            GROUP BY date
+            ORDER BY date
+            """
+            self.env.cr.execute(query, (start_date_dt, end_date_dt, season.id))
+            sql_res = self.env.cr.dictfetchall()
+            locale = self._context.get('lang') or 'en_US'
+            for sql_re in sql_res:
+                show_date = fields.Date.from_string(sql_re['date'])
+                name = format_date(show_date, 'd LLLL Y', locale=locale)
+                short_name = format_date(show_date, 'd MMM', locale=locale)
+                data.append({
+                    'x': short_name,
+                    'y': sql_re['olive_qty'],
+                    'name': name,
+                    })
+            # from pprint import pprint
+            # pprint(data)
+            res = [{'values': data, 'area': True}]
+            season.kanban_dashboard_graph = json.dumps(res)
+
+    def dashboard_open_action(self):
+        self.ensure_one()
+        action = self.env['ir.actions.act_window'].for_xml_id(
+            'olive_mill', 'olive_arrival_line_action')
+        action.update({
+            'context': {
+                'search_default_season_id': self.id,
+                'search_default_production_done': True,
+                },
+            'views': False,
+            })
+        return action

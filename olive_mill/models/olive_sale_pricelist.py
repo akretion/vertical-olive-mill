@@ -53,7 +53,7 @@ class OliveSalePricelistLine(models.Model):
         related='pricelist_id.company_id.currency_id', readonly=True,
         store=True)
 
-    _sql_constraints = [
-        ('pricelist_product_uniq',
+    _sql_constraints = [(
+        'pricelist_product_uniq',
         'unique(pricelist_id, product_id)',
         'There is already a line with the same product on this pricelist.')]

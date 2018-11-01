@@ -3,8 +3,7 @@
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError
+from odoo import models, fields, api
 
 
 class StockProductionLot(models.Model):
@@ -13,7 +12,6 @@ class StockProductionLot(models.Model):
     olive_production_id = fields.Many2one(
         'olive.oil.production', 'Olive Oil Production', ondelete='restrict',
         readonly=True)
-#    oil_merge_lot = fields.Boolean(string='Oil Merge Lot', readonly=False)
 
     @api.depends('name', 'expiry_date', 'olive_production_id')
     def name_get(self):
@@ -24,18 +22,5 @@ class StockProductionLot(models.Model):
                 dname = '[%s] %s' % (lot.expiry_date, dname)
             if lot.olive_production_id:
                 dname = u'%s (%s)' % (dname, lot.olive_production_id.farmers)
-            #if lot.oil_merge_lot:
-            #    dname = '%s %s' % (u'\u2180', dname)
             res.append((lot.id, dname))
         return res
-
-#    @api.constrains('oil_merge_lot', 'product_id')
-#    def check_oil_merge_lot(self):
-#        for lot in self:
-#            if (
-#                    lot.oil_merge_lot and
-#                    lot.product_id.olive_type not in ('oil', 'olive')):
-#                raise ValidationError(_(
-#                    u"Oil Merge Lot can only apply on Olive or Oil products, "
-#                    u"which is not the case of product '%s'")
-#                    % lot.product_id.display_name)

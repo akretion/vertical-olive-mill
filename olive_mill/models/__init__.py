@@ -23,6 +23,5 @@ from . import olive_sale_pricelist
 from . import stock_location
 from . import stock_production_lot
 from . import stock_picking
-#from . import stock_quant
 # from . import mrp_production
 from . import mrp_bom

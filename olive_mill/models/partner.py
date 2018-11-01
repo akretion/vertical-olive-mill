@@ -4,7 +4,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl)
 
 from odoo import api, fields, models, tools, _
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import UserError
 import odoo.addons.decimal_precision as dp
 
 
@@ -60,8 +60,6 @@ class ResPartner(models.Model):
             self.supplier = True
 
     def _compute_olive_total(self):
-        cases_rg = []
-        parcels_rg = []
         company = self.env.user.company_id
         cases_res = self.env['olive.lended.case'].read_group([
             ('company_id', '=', company.id),

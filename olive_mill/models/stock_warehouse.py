@@ -72,7 +72,6 @@ class StockWarehouse(models.Model):
             wh.olive_oil_compensation_ratio_update()
 
     def olive_oil_compensation_ratio_update(self):
-        oalo = self.env['olive.arrival.line']
         today = fields.Date.context_today(self)
         today_dt = fields.Date.from_string(today)
         if not self.olive_mill:
@@ -80,10 +79,10 @@ class StockWarehouse(models.Model):
         start_date_dt = today_dt - relativedelta(
             days=self.olive_oil_compensation_ratio_days)
         start_date = fields.Date.to_string(start_date_dt)
-        rg = oalo.read_group([
-            ('production_state', '=', 'done'),
-            ('production_date', '<=', today),
-            ('production_date', '>=', start_date),
+        rg = self.env['olive.oil.production'].read_group([
+            ('state', '=', 'done'),
+            ('date', '<=', today),
+            ('date', '>=', start_date),
             ], ['olive_qty', 'oil_qty'], [])
         if rg[0]['olive_qty']:
             ratio = 100 * rg[0]['oil_qty'] / rg[0]['olive_qty']
