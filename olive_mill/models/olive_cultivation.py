@@ -12,16 +12,15 @@ class OliveCultivation(models.Model):
     _name = 'olive.cultivation'
     _description = 'Olive Cultivation Form'
 
-    ochard_id = fields.Many2one(
-        'olive.ochard', string='Ochard', ondelete='restrict')
     partner_id = fields.Many2one(
-        related='ochard_id.partner_id', string='Farmer',
-        store=True, readonly=True, index=True)
+        'res.partner', string='Farmer', index=True)
     season_id = fields.Many2one(
         'olive.season', string='Season', required=True, index=True,
         default=lambda self: self.env['olive.season'].get_current_season())
     company_id = fields.Many2one(
         related='season_id.company_id', store=True, readonly=True, string='Company')
+    ochard_ids = fields.Many2many(
+        'olive.ochard', string='Ochards')
     date = fields.Date(string="Date")
     treatment_type = fields.Selection([
         ('none', 'No Treatment'),

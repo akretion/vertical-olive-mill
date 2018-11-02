@@ -7,14 +7,6 @@
 
 <odoo>
 
-<record id="partner_olive_arrival_line_action" model="ir.actions.act_window">
-    <field name="name">Olive Arrival Lines</field>
-    <field name="res_model">olive.arrival.line</field>
-    <field name="view_mode">pivot,graph</field>
-    <field name="view_id" ref="partner_olive_arrival_line_pivot"/>
-    <field name="domain">[('state', '!=', 'cancel')]</field>
-    <field name="context">{'search_default_commercial_partner_id': active_id}</field>
-</record>
 
 <record id="view_partner_form" model="ir.ui.view">
     <field name="name">olive.mill.olive_farmer.partner.form</field>
@@ -60,10 +52,11 @@
                         </div>
                         <button type="action" name="%(olive_appointment_action)d" string="Appointments" context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}" colspan="2"/>
                         <button type="action" name="%(olive_palox_lend_action)d" string="Lend Palox and/or Cases" context="{'default_partner_id': active_id}" colspan="2"/>
+                        <button type="action" name="%(olive_cultivation_action)d" string="Cultivation Form" context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}" colspan="2"/>
                         <button type="action" name="%(olive_arrival_action)d" string="Arrivals" context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}" colspan="2"/>
                         <button type="action" name="%(olive_withdrawal_action)d" string="New Olive Oil Withdrawal" context="{'default_partner_id': active_id}" colspan="2"/>
                         <button type="action" name="%(olive_invoice_create_action)d" string="Create Invoice" context="{'default_partner_id': active_id}" colspan="2"/>
-                        <button type="action" name="%(partner_olive_arrival_line_action)d" string="Show statistics" colspan="2"/>
+                        <button type="action" name="%(olive_arrival_line_action)d" string="Show statistics" colspan="2" context="{'search_default_commercial_partner_id': active_id, 'search_default_arrival_done': True}"/>
                     </group>
                     <group name="olive_organic_certification" string="Organic Certifications" col="1">
                         <field name="olive_organic_certification_ids" nolabel="1" readonly="1"/>

@@ -13,10 +13,10 @@
     <field name="arch" type="xml">
         <form string="Cultivation Method">
             <group name="main">
-                <field name="ochard_id" invisible="not context.get('olive_cultivation_main_view')"/>
                 <field name="partner_id" invisible="not context.get('olive_cultivation_main_view')"/>
                 <field name="season_id"/>
                 <field name="company_id" groups="base.group_multi_company"/>
+                <field name="ochard_ids" widget="many2many_tags" domain="[('partner_id', '=', partner_id)]"/>
                 <field name="treatment_type"/>
                 <field name="scan" attrs="{'required': [('treatment_type', '=', 'scan')], 'invisible': [('treatment_type', '!=', 'scan')]}" filename="scan_filename"/>
                 <field name="date" attrs="{'required': [('treatment_type', 'not in', ('none', 'scan'))], 'invisible': [('treatment_type', 'in', ('none', 'scan'))]}"/>
@@ -34,8 +34,8 @@
     <field name="model">olive.cultivation</field>
     <field name="arch" type="xml">
         <tree string="Cultivation Methods">
-            <field name="ochard_id" invisible="not context.get('olive_cultivation_main_view')"/>
             <field name="partner_id" invisible="not context.get('olive_cultivation_main_view')"/>
+            <field name="season_id"/>
             <field name="treatment_type"/>
             <field name="date"/>
             <field name="treatment_id"/>
@@ -50,10 +50,11 @@
     <field name="model">olive.cultivation</field>
     <field name="arch" type="xml">
         <search string="Search Cultivation Methods">
-            <field name="ochard_id"/>
+            <field name="partner_id"/>
+            <field name="season_id"/>
             <group string="Group By" name="groupby">
-                <filter name="ochard_groupby" string="Ochard" context="{'group_by': 'ochard_id'}"/>
                 <filter name="partner_groupby" string="Farmer" context="{'group_by': 'partner_id'}"/>
+                <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>
                 <filter name="date_groupby" string="Date" context="{'group_by': 'date'}"/>
             </group>
         </search>
