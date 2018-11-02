@@ -151,16 +151,20 @@ class OliveSeason(models.Model):
             """
             self.env.cr.execute(query, (start_date_dt, end_date_dt, season.id))
             sql_res = self.env.cr.dictfetchall()
-            locale = self._context.get('lang') or 'en_US'
+            date2qty = {}
             for sql_re in sql_res:
-                show_date = fields.Date.from_string(sql_re['date'])
-                name = format_date(show_date, 'd LLLL Y', locale=locale)
-                short_name = format_date(show_date, 'd MMM', locale=locale)
+                date2qty[fields.Date.from_string(sql_re['date'])] = sql_re['olive_qty']
+            locale = self._context.get('lang') or 'en_US'
+            cur_date_dt = start_date_dt
+            while cur_date_dt <= end_date_dt:
+                name = format_date(cur_date_dt, 'd LLLL Y', locale=locale)
+                short_name = format_date(cur_date_dt, 'd MMM', locale=locale)
                 data.append({
                     'x': short_name,
-                    'y': sql_re['olive_qty'],
+                    'y': date2qty.get(cur_date_dt, 0),
                     'name': name,
                     })
+                cur_date_dt += relativedelta(days=1)
             # from pprint import pprint
             # pprint(data)
             res = [{'values': data, 'area': True}]

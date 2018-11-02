@@ -104,11 +104,6 @@
                 <div name="olive_oil_tax_product_id">
                     <field name="olive_oil_tax_product_id" class="oe_inline"/>
                 </div>
-                <label for="olive_oil_tax_price_unit"/>
-                <div name="olive_oil_tax_price_unit">
-                    <field name="olive_oil_tax_price_unit" class="oe_inline"/>
-                    <label string=" / L" class="oe_inline"/>
-                </div>
             </group>
         </form>
     </field>

@@ -371,6 +371,8 @@ class OliveArrival(models.Model):
 class OliveArrivalLine(models.Model):
     _name = 'olive.arrival.line'
     _description = 'Olive Arrival Line'
+    _order = 'arrival_id desc, id'  # TODO STRANGE odoo doesn't take it into account !
+                                    # it seems it is because arrival_id is a M2O...
 
     name = fields.Char(
         string='Arrival Line Number', required=True, readonly=True,
@@ -703,6 +705,10 @@ class OliveArrivalLine(models.Model):
             }
         il_vals = ailo.play_onchanges(il_vals, ['product_id'])
         il_vals.pop('invoice_id')
+        if not il_vals.get('account_id'):
+            raise UserError(_(
+                "Missing account on product '%s' or on it's related product category.")
+                % product.display_name)
         return il_vals
 
     def prepare_invoice(self, invoice_type, invoice_reference=False):
@@ -711,8 +717,8 @@ class OliveArrivalLine(models.Model):
         pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
         pr_tax = self.env['decimal.precision'].precision_get(
             'Olive Oil Tax Price Unit')
-        pr_pri = self.env['decimal.precision'].precision_get(
-            'Product Price')
+        # pr_pri = self.env['decimal.precision'].precision_get(
+        #    'Product Price')
         aio = self.env['account.invoice']
         ppo = self.env['product.product']
         partner = self[0].commercial_partner_id
@@ -779,8 +785,8 @@ class OliveArrivalLine(models.Model):
             season = self[0].season_id
             totals = self.read_group(
                 [('id', 'in', self.ids)],
-                ['olive_qty', 'oil_qty', 'shrinkage_oil_qty',
-                 'filter_loss_oil_qty'], [])[0]
+                ['olive_qty', 'oil_qty', 'oil_qty_with_compensation',
+                 'shrinkage_oil_qty', 'filter_loss_oil_qty'], [])[0]
             if float_compare(
                     totals['oil_qty'], 0, precision_digits=pr_oil) <= 0:
                 return False
@@ -857,33 +863,35 @@ class OliveArrivalLine(models.Model):
                     qty, partner)
                 vals['invoice_line_ids'].append((0, 0, il_vals))
             # AFIDOL Tax
-            il_vals = self.pre_prepare_invoice_line(
-                company.olive_oil_tax_product_id, vals)
-            qty = totals['oil_qty'] - totals['shrinkage_oil_qty']\
+            tax_product = company.olive_oil_tax_product_id
+            if tax_product.uom_id != self.env.ref('product.product_uom_kgm'):
+                raise UserError(_(
+                    "The unit of measure of the oil tax product (%s) should be in kg.")
+                    % tax_product.display_name)
+            il_vals = self.pre_prepare_invoice_line(tax_product, vals)
+            qty = totals['oil_qty_with_compensation'] - totals['shrinkage_oil_qty']\
                 - totals['filter_loss_oil_qty']
-            total_comp = self.read_group(
-                [('id', 'in', self.ids), ('compensation_type', '=', 'first')],
-                ['compensation_oil_qty'], [])
-            if total_comp and total_comp[0]['compensation_oil_qty']:
-                qty += total_comp[0]['compensation_oil_qty']
-            if float_is_zero(company.olive_oil_tax_price_unit, precision_digits=pr_tax):
-                price_unit = pricelist.get_product_price(
-                    company.olive_oil_tax_product_id, qty, partner)
-            else:
-                price_unit = company.olive_oil_tax_price_unit
-            if pr_tax > pr_pri:
-                il_vals['quantity'] = 1
-                il_vals['price_unit'] = float_round(
-                    price_unit * qty, precision_rounding=currency.rounding)
-                qty_formatted = formatLang(
-                    self.env, qty, dp='Olive Oil Volume')
-                price_unit_formatted = formatLang(
-                    self.env, price_unit, dp='Olive Oil Tax Price Unit')
-                il_vals['name'] += _(u" (%s L x %s %s / L)") % (
-                    qty_formatted, price_unit_formatted, currency.symbol)
-            else:
-                il_vals['quantity'] = qty
-                il_vals['price_unit'] = price_unit
+            # if float_is_zero(company.olive_oil_tax_price_unit, precision_digits=pr_tax):
+            price_unit_kg = pricelist.get_product_price(
+                tax_product, qty, partner)
+            # if pr_tax > pr_pri:
+            #    il_vals['quantity'] = 1
+            #    il_vals['price_unit'] = float_round(
+            #        price_unit * qty, precision_rounding=currency.rounding)
+            #    qty_formatted = formatLang(
+            #        self.env, qty, dp='Olive Oil Volume')
+            #    price_unit_formatted = formatLang(
+            #        self.env, price_unit, dp='Olive Oil Tax Price Unit')
+            #    il_vals['name'] += _(u" (%s L x %s %s / L)") % (
+            #        qty_formatted, price_unit_formatted, currency.symbol)
+            #else:
+            qty_kg = float_round(
+                qty * company.olive_oil_density, precision_digits=pr_oil)
+            il_vals['quantity'] = qty_kg
+            il_vals['price_unit'] = price_unit_kg
+            il_vals['name'] += _(u" (%s L = %s kg)") % (
+                formatLang(self.env, qty, dp='Olive Oil Volume'),
+                formatLang(self.env, qty_kg, dp='Olive Oil Volume'))
             vals['invoice_line_ids'].append((0, 0, il_vals))
             # Extra items
             extra_totals = self.env['olive.arrival.line.extra'].read_group(

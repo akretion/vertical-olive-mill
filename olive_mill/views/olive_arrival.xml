@@ -227,6 +227,12 @@
                     <field name="compensation_oil_qty" class="oe_inline"/>
                     <label string=" L"/>
                 </div>
+                <label for="oil_qty_with_compensation" string="Oil Qty with Compensation"/>
+                <div name="oil_qty_with_compensation">
+                    <field name="oil_qty_with_compensation" class="oe_inline"/>
+                    <label string=" L"/>
+                </div>
+
                 <label for="shrinkage_oil_qty" string="Shrinkage Oil Qty"/>
                 <div name="shrinkage_oil_qty">
                     <field name="shrinkage_oil_qty" class="oe_inline"/>

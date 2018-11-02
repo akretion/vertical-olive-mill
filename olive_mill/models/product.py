@@ -74,7 +74,7 @@ class ProductTemplate(models.Model):
             if pt.olive_type == 'bottle_full' and pt.tracking != 'lot':
                 raise ValidationError(_(
                     "Product '%s' has an Olive Type 'Full Oil Bottle' "
-                    "that require tracking by lots."))
+                    "that require tracking by lots.") % pt.display_name)
             if (
                     pt.olive_type in ('bottle', 'bottle_full', 'analysis') and
                     pt.uom_id.category_id != unit_categ_uom):
@@ -114,6 +114,8 @@ class ProductProduct(models.Model):
             if self.uom_id != liter_uom:
                 self.uom_id = liter_uom
                 self.uom_po_id = liter_uom
+            self.tracking = 'lot'
+        elif self.olive_type == 'bottle_full':
             self.tracking = 'lot'
         if self.olive_type in ('service', 'extra_service'):
             self.type = 'service'

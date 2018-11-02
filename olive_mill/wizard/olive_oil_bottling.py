@@ -82,6 +82,7 @@ class OliveOilBottling(models.TransientModel):
         splo = self.env['stock.production.lot']
         sqo = self.env['stock.quant']
         smo = self.env['stock.move']
+        mblo = self.env['mrp.bom.line']
         oil_product = self.oil_product_id
         bottle_product = self.bottle_product_id
         bom = self.bom_id
@@ -93,16 +94,48 @@ class OliveOilBottling(models.TransientModel):
         assert self.dest_location_id
         assert self.expiry_date
         assert self.lot_name
+        assert oil_product.tracking == 'lot'
+        assert bottle_product.tracking == 'lot'
         if self.expiry_date < fields.Date.context_today(self):
             raise UserError(_(
                 "The expiry date should not be in the past."))
-        qty = self.src_location_id.olive_oil_tank_check(
+        oil_start_qty_in_tank = self.src_location_id.olive_oil_tank_check(
             raise_if_empty=True, raise_if_reservation=True,
             raise_if_multi_lot=True)
-        assert oil_product.tracking == 'lot'
-        assert bottle_product.tracking == 'lot'
-        # TODO Check we have enogh oil qty ?
-        # TODO also check for empty bottles ?
+        # Check we have enough oil
+        oil_bom_line = mblo.search([
+            ('bom_id', '=', bom.id),
+            ('product_id', '=', oil_product.id)])
+        assert len(oil_bom_line) == 1
+        oil_required_qty = self.quantity * oil_bom_line.product_qty
+        if float_compare(oil_start_qty_in_tank, oil_required_qty, precision_digits=pr_oil) <= 0:
+            raise UserError(_(
+                "The tank %s currently contains %s liters. This is not "
+                "enough for this bottling (%s liters required).") % (
+                    self.src_location_id.name,
+                    oil_start_qty_in_tank,
+                    oil_required_qty))
+        # Check we have enough empty bottles
+        other_product_bom_lines = mblo.search([
+            ('bom_id', '=', bom.id),
+            ('product_id', '!=', oil_product.id)])
+        for bom_line in other_product_bom_lines:
+            qty_required = self.quantity * bom_line.product_qty
+            qrg = sqo.read_group(
+                [('location_id', '=', self.other_src_location_id.id),
+                 ('product_id', '=', bom_line.product_id.id),
+                 ('reservation_id', '=', False)],
+                ['qty'], [])
+
+            free_start_qty = qrg and qrg[0]['qty'] or 0
+            uom = bom_line.product_id.uom_id
+            if float_compare(free_start_qty, qty_required, precision_digits=0) <= 0:
+                raise UserError(_(
+                    "The stock location '%s' contains %s %s '%s' without reservation. "
+                    "This is not enough for this bottling (%s %s required).") % (
+                        self.other_src_location_id.display_name,
+                        free_start_qty, uom.name, bom_line.product_id.name,
+                        qty_required, uom.name))
         mo = mpo.create({
             'product_id': bottle_product.id,
             'product_qty': self.quantity,
@@ -170,6 +203,16 @@ class OliveOilBottling(models.TransientModel):
         mo.post_inventory()
         assert mo.check_to_done == True
         mo.button_mark_done()
+
+        # Check oil end qty
+        oil_end_qty_in_tank = self.src_location_id.olive_oil_tank_check()
+        if float_compare(
+                oil_end_qty_in_tank, oil_start_qty_in_tank - oil_required_qty,
+                precision_digits=pr_oil):
+            raise UserError(_(
+                "The end quantity in tank (%s L) is wrong. This should never happen.")
+                % oil_end_qty_in_tank)
+
         action = self.env['ir.actions.act_window'].for_xml_id(
             'mrp', 'mrp_production_action')
         action.update({

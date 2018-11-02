@@ -48,5 +48,3 @@ class OliveConfigSettings(models.TransientModel):
         related='company_id.olive_oil_tax_product_id')
     olive_oil_early_bird_discount_product_id = fields.Many2one(
         related='company_id.olive_oil_early_bird_discount_product_id')
-    olive_oil_tax_price_unit = fields.Float(
-        related='company_id.olive_oil_tax_price_unit')

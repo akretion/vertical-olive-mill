@@ -69,10 +69,10 @@ class ResCompany(models.Model):
     olive_oil_early_bird_discount_product_id = fields.Many2one(
         'product.product', string='Early Bird Discount Product',
         domain=[('olive_type', '=', 'service')])
-    olive_oil_tax_price_unit = fields.Float(
-        string='AFIDOL Tax Unit Price',
-        digits=dp.get_precision('Olive Oil Tax Price Unit'), default=0.129,
-        help='Tax unit price per liter of olive oil')
+    # olive_oil_tax_price_unit = fields.Float(
+    #    string='AFIDOL Tax Unit Price',
+    #    digits=dp.get_precision('Olive Oil Tax Price Unit'), default=0.129,
+    #    help='Tax unit price per liter of olive oil')
 
     _sql_constraints = [(
         'olive_max_qty_per_palox_positive',
@@ -93,9 +93,6 @@ class ResCompany(models.Model):
         'olive_max_ratio_positive',
         'CHECK(olive_max_ratio >= 0)',
         'Olive Max Ratio must be positive.'), (
-        'olive_oil_tax_price_unit_positive',
-        'CHECK(olive_oil_tax_price_unit >= 0)',
-        'Tax unit price must be positive or null.'), (
         'olive_appointment_qty_per_palox_positive',
         'CHECK(olive_appointment_qty_per_palox >= 0)',
         'The Quantity of Olives per Palox must be positive.'), (
