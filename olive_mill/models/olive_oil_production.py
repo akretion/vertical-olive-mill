@@ -614,7 +614,7 @@ class OliveOilProduction(models.Model):
                     origin=_('Empty compensation tank to sale tank'), auto_validate=True)
             else:
                 # partial trf
-                if float_compare(self.to_compensation_sale_tank_oil_qty, 0, precision_digits=pr_oil) >= 0:
+                if float_compare(self.to_compensation_sale_tank_oil_qty, 0, precision_digits=pr_oil) > 0:
                     if not csale_loc:
                         raise UserError(_(
                             "On oil production %s which has first-of-day "
