@@ -715,8 +715,8 @@ class OliveArrivalLine(models.Model):
         pr_oil = self.env['decimal.precision'].precision_get(
             'Olive Oil Volume')
         pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
-        pr_tax = self.env['decimal.precision'].precision_get(
-            'Olive Oil Tax Price Unit')
+        # pr_tax = self.env['decimal.precision'].precision_get(
+        #    'Olive Oil Tax Price Unit')
         # pr_pri = self.env['decimal.precision'].precision_get(
         #    'Product Price')
         aio = self.env['account.invoice']
@@ -832,7 +832,7 @@ class OliveArrivalLine(models.Model):
                     [('id', 'in', self.ids),
                      ('arrival_date', '<=', season.early_bird_date)],
                     ['olive_qty'], [])
-                if total_disc and float_compare(
+                if total_disc and total_disc[0]['olive_qty'] and float_compare(
                         total_disc[0]['olive_qty'], 0,
                         precision_digits=pr_oli) > 0:
                     il_vals = self.pre_prepare_invoice_line(
