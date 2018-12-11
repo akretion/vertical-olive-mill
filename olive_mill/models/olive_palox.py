@@ -43,6 +43,10 @@ class OlivePalox(models.Model):
         readonly=True)
     farmers = fields.Char(
         string='Farmers', compute='_compute_other', readonly=True)
+    arrival_date = fields.Date(
+        string='Arrival Date', compute='_compute_other', readonly=True,
+        help="If there are multiple arrivals in this palox, this field contains "
+        "the oldest arrival date.")
     line_ids = fields.One2many(
         'olive.arrival.line', 'palox_id', string='Content', readonly=True,
         domain=[('state', '=', 'done'), ('production_id', '=', False)])
@@ -71,10 +75,13 @@ class OlivePalox(models.Model):
                 paloxes[l.palox_id] = {
                     'oil_dests': [l.oil_destination],
                     'farmers': [l.commercial_partner_id.name],
+                    'arrival_date': l.arrival_date,
                     }
             else:
                 paloxes[l.palox_id]['oil_dests'].append(l.oil_destination)
                 paloxes[l.palox_id]['farmers'].append(l.commercial_partner_id.name)
+                if l.arrival_date < paloxes[l.palox_id]['arrival_date']:
+                    paloxes[l.palox_id]['arrival_date'] = l.arrival_date
         for palox, rdict in paloxes.iteritems():
             oil_destination = 'mix'
             if all([dest == 'sale' for dest in rdict['oil_dests']]):
@@ -83,6 +90,7 @@ class OlivePalox(models.Model):
                 oil_destination = 'withdrawal'
             palox.oil_destination = oil_destination
             palox.farmers = u' / '.join(rdict['farmers'])
+            palox.arrival_date = rdict['arrival_date']
 
     @api.constrains('borrower_partner_id', 'borrowed_date')
     def palox_check(self):

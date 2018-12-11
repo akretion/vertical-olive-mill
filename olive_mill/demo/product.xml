@@ -265,7 +265,7 @@
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="False"/>
     <field name="type">service</field>
-    <field name="olive_type">service</field>
+    <field name="olive_type">tax</field>
     <field name="list_price">0.129</field>
     <field name="uom_id" ref="product.product_uom_litre"/>
     <field name="uom_po_id" ref="product.product_uom_litre"/>

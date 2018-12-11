@@ -39,7 +39,7 @@ class OliveInvoiceCreate(models.TransientModel):
                 ('commercial_partner_id', '=', commercial_partner.id),
                 ('warehouse_id', '=', self.warehouse_id.id),
                 ('production_state', '=', 'done'),
-                ('in_invoice_id', '=', False),
+                ('in_invoice_line_id', '=', False),
                 ('oil_destination', 'in', ('sale', 'mix')),
                 ('sale_oil_qty', '>', 0),
                 ])

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+
+<record id="olive_palox_generate_production_form" model="ir.ui.view">
+    <field name="name">olive.palox.generate.production.form</field>
+    <field name="model">olive.palox.generate.production</field>
+    <field name="arch" type="xml">
+        <form string="Generate Oil Productions">
+            <group name="main">
+                <field name="palox_ids" widget="many2many_tags"/>
+                <field name="warehouse_id"/>
+                <field name="date"/>
+            </group>
+            <footer>
+                <button name="generate" type="object" string="Generate" class="btn-primary"/>
+                <button special="cancel" string="Cancel" class="btn-default"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+<act_window id="olive_palox_generate_production_action"
+            multi="True"
+            key2="client_action_multi"
+            name="Generate Oil Productions"
+            res_model="olive.palox.generate.production"
+            src_model="olive.palox"
+            view_mode="form"
+            target="new" />
+
+
+</odoo>

@@ -155,17 +155,19 @@ class OliveArrival(models.Model):
 
     def cancel(self):
         for arrival in self:
-            if (
-                    arrival.state == 'done' and
-                    any([line.production_id for line in arrival.line_ids])):
+            if all([line.production_id for line in arrival.line_ids]):
                 raise UserError(_(
-                    "Cannot cancel arrival %s because it has lines already "
-                    "selected in a production.") % arrival.name)
+                    "Cannot cancel arrival %s because all its lines are "
+                    "currently selected in productions.") % arrival.name)
+            arrival.line_ids.filtered(
+                lambda l: not l.production_id).write({'state': 'cancel'})
         self.write({'state': 'cancel'})
 
     def back2draft(self):
         for arrival in self:
             assert arrival.state == 'cancel'
+            arrival.line_ids.filtered(
+                lambda l: l.state == 'cancel').write({'state': 'draft'})
         self.write({'state': 'draft'})
 
     def validate(self):
@@ -288,7 +290,10 @@ class OliveArrival(models.Model):
                         fg[same_palox_different_oil_destination[0].oil_destination]))
 
             # Set line number
-            line.name = '%s/%s' % (self.name, i)
+            line.write({
+                'name': '%s/%s' % (self.name, i),
+                'state': 'done',
+                })
 
         # for mix/sale, warn if delay between harvest and arrival is too long
         arrival_date_dt = fields.Date.from_string(self.date)
@@ -361,9 +366,9 @@ class OliveArrival(models.Model):
 
     def unlink(self):
         for arrival in self:
-            if arrival.state == 'done':
+            if any([l.state == 'done' for l in arrival.line_ids]):
                 raise UserError(_(
-                    "Cannot delete arrival %s which is in 'Done' state.")
+                    "Cannot delete arrival %s which has some lines in 'Done' state.")
                     % arrival.name)
         return super(OliveArrival, self).unlink()
 
@@ -371,19 +376,27 @@ class OliveArrival(models.Model):
 class OliveArrivalLine(models.Model):
     _name = 'olive.arrival.line'
     _description = 'Olive Arrival Line'
-    _order = 'arrival_id desc, id'  # TODO STRANGE odoo doesn't take it into account !
-                                    # it seems it is because arrival_id is a M2O...
+    # TODO STRANGE odoo doesn't take _order into account !
+    # it seems it is because arrival_id is a M2O...
+    _order = 'arrival_id desc, id'  
 
     name = fields.Char(
         string='Arrival Line Number', required=True, readonly=True,
         default='/')
+    # The "state" field cannot be a related field because we want to be able to
+    # "partially" cancel an arrival
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('done', 'Done'),
+        ('cancel', 'Cancel'),
+        ], required=True, readonly=True, default='draft', string="State")
     arrival_id = fields.Many2one(
         'olive.arrival', string='Arrival', ondelete='cascade',
         states={'done': [('readonly', True)]})
     # START RELATED fields for arrival
     company_id = fields.Many2one(
         related='arrival_id.company_id', store=True, readonly=True)
-    state = fields.Selection(
+    arrival_state = fields.Selection(
         related='arrival_id.state', string='Arrival State',
         readonly=True, store=True)
     arrival_date = fields.Date(
@@ -405,9 +418,12 @@ class OliveArrivalLine(models.Model):
         'olive.variant', string='Olive Variant', required=True,
         states={'done': [('readonly', True)]})
     olive_qty = fields.Float(
-        string='Olive Qty (kg)', help="Olive Quantity in kg", required=True,
+        string='Olive Qty (kg)', required=True,
         digits=dp.get_precision('Olive Weight'),
-        states={'done': [('readonly', True)]})
+        states={'done': [('readonly', True)]},
+        help="Olive quantity in kg."
+        "\nFirst-of-day compensation: not included."
+        "\nLast-of-day compensation: not deducted.")
     ochard_id = fields.Many2one(
         'olive.ochard', string='Ochard', required=True,
         states={'done': [('readonly', True)]})
@@ -544,6 +560,14 @@ class OliveArrivalLine(models.Model):
         "\nLast-of-day compensation: already deducted."
         "\nShrinkage: already deducted."
         "\nFilter loss: already deducted.")
+    oil_qty_net = fields.Float(
+        string='Net Oil Qty (L)',
+        readonly=True, digits=dp.get_precision('Olive Oil Volume'),
+        help="Net oil quantity produced in liters."
+        "\nFirst-of-day compensation: included."
+        "\nLast-of-day compensation: already deducted."
+        "\nShrinkage: already deducted."
+        "\nFilter loss: already deducted.")
 
     filter_loss_oil_qty = fields.Float(
         string='Oil Qty Lost in Filter (L)',
@@ -552,11 +576,27 @@ class OliveArrivalLine(models.Model):
         'stock.move', string='Withdrawal Move', readonly=True)
     out_invoice_id = fields.Many2one(
         'account.invoice', string="Customer Invoice", readonly=True)
-    in_invoice_id = fields.Many2one(
-        'account.invoice', string="Vendor Bill", readonly=True)
-#    company_currency_id = fields.Many2one(
-#            related='arrival_id.company_id.currency_id', store=True, readonly=True)
-# oil_in_invoice_amount = fields.Monetary(string='', compute='_compute_xxx', readonly=True, store=True, currency_field='company_currency_id', help='')
+    in_invoice_line_id = fields.Many2one(
+        'account.invoice.line', string='Vendor Bill Line', readonly=True)
+    #in_invoice_id = fields.Many2one(  # we can restore this field after migration
+    #    related='in_invoice_line_id.invoice_id',
+    #    string="Vendor Bill", readonly=True, store=True)
+    company_currency_id = fields.Many2one(
+        related='arrival_id.company_id.currency_id', store=True, readonly=True)
+    oil_sale_price_unit = fields.Monetary(
+        string='Oil Sale Unit Price',
+        readonly=True, currency_field='company_currency_id',
+        help="Oil sale price per liter without taxes in company currency.")
+    oil_service_sale_price_unit = fields.Monetary(
+        string='Oil Service Unit Price (Sale Only)',
+        readonly=True, currency_field='company_currency_id',
+        help='TODO')
+    oil_sale_price_total = fields.Monetary(
+        string='Oil Sale Price Total',
+        readonly=True, store=True, currency_field='company_currency_id')
+    oil_service_sale_price_total = fields.Monetary(
+        string='Oil Service Price Total (Sale Only)',
+        readonly=True, store=True, currency_field='company_currency_id')
 
     _sql_constraints = [(
         'olive_qty_positive',
@@ -581,6 +621,13 @@ class OliveArrivalLine(models.Model):
             if line.compensation_type == 'first':
                 oil_qty_with_compensation += line.compensation_oil_qty
             line.oil_qty_with_compensation = oil_qty_with_compensation
+
+    @api.depends('sale_oil_qty', 'oil_service_sale_price_unit', 'oil_sale_price_unit')
+    def _compute_oil_price_total(self):
+        for line in self:
+            qty = line.sale_oil_qty
+            line.oil_sale_price_total = line.oil_sale_price_unit * qty
+            line.oil_service_sale_price_total = line.oil_service_sale_price_unit * qty
 
     @api.onchange('oil_destination')
     def oil_destination_change(self):
@@ -673,11 +720,11 @@ class OliveArrivalLine(models.Model):
                 # Nothing more to do for ctype == 'first':
             withdrawal_oil_qty_kg = withdrawal_oil_qty * density
         # Compute net ratio, with compensations
-        oil_qty_for_net_ratio = oil_minus_shrinkage - filter_loss_oil_qty
+        oil_qty_net = oil_minus_shrinkage - filter_loss_oil_qty
         if ctype == 'first':
-            oil_qty_for_net_ratio += compensation_oil_qty
+            oil_qty_net += compensation_oil_qty
         ratio_net = float_round(
-            100 * oil_qty_for_net_ratio / self.olive_qty,
+            100 * oil_qty_net / self.olive_qty,
             precision_digits=pr_ratio)
 
         vals = {
@@ -694,17 +741,17 @@ class OliveArrivalLine(models.Model):
             'sale_oil_qty': sale_oil_qty,
             'to_sale_tank_oil_qty': to_sale_tank_oil_qty,
             'compensation_oil_qty': compensation_oil_qty,
+            'oil_qty_net': oil_qty_net,
             }
         return vals
 
-    def pre_prepare_invoice_line(self, product, invoice_vals):
+    def pre_prepare_invoice_line(self, product, invoice):
         ailo = self.env['account.invoice.line']
         il_vals = {
             'product_id': product.id,
-            'invoice_id': invoice_vals,
+            'invoice_id': invoice.id,
             }
         il_vals = ailo.play_onchanges(il_vals, ['product_id'])
-        il_vals.pop('invoice_id')
         if not il_vals.get('account_id'):
             raise UserError(_(
                 "Missing account on product '%s' or on it's related product category.")
@@ -712,23 +759,18 @@ class OliveArrivalLine(models.Model):
         return il_vals
 
     def prepare_invoice(self, invoice_type, invoice_reference=False):
-        pr_oil = self.env['decimal.precision'].precision_get(
-            'Olive Oil Volume')
-        pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
         # pr_tax = self.env['decimal.precision'].precision_get(
         #    'Olive Oil Tax Price Unit')
         # pr_pri = self.env['decimal.precision'].precision_get(
         #    'Product Price')
         aio = self.env['account.invoice']
-        ppo = self.env['product.product']
         partner = self[0].commercial_partner_id
         company = self.env.user.company_id
         origin = [line.name for line in self]
         if len(origin) > 3:
             origin = origin[:3] + ['...']
         origin = ', '.join(origin)
-        pricelist = partner.property_product_pricelist
-        currency = pricelist.currency_id
+        currency = partner.property_product_pricelist.currency_id
         vals = {
             'partner_id': partner.id,
             'currency_id': currency.id,
@@ -736,195 +778,218 @@ class OliveArrivalLine(models.Model):
             'company_id': company.id,
             'origin': origin,
             'reference': invoice_reference,
-            'invoice_line_ids': [],
         }
         vals = aio.play_onchanges(vals, ['partner_id'])
-        lang = partner.lang or self.env.user.lang
-        if invoice_type == 'in_invoice':
-            saledict = {}  # key = arrival, value = {'product': sale_oil_qty}
-            # I can't do a double groupby via read_group()
-            if partner.olive_sale_pricelist_id:
-                product2price = partner.olive_sale_pricelist_id.prepare_speeddict()
-            else:
-                product2price = {}
-            for line in self:
-                arrival = line.arrival_id
-                product = line.oil_product_id
-                if float_compare(
-                        line.sale_oil_qty, 0, precision_digits=pr_oli) > 0:
-                    if line.arrival_id in saledict:
-                        if product in saledict[arrival]:
-                            saledict[arrival][product] += line.sale_oil_qty
-                        else:
-                            saledict[arrival][product] = line.sale_oil_qty
-                    else:
-                        saledict[arrival] = {product: line.sale_oil_qty}
-            for arrival, pdict in saledict.items():
-                for product, quantity in pdict.items():
-                    il_vals = self.pre_prepare_invoice_line(product, vals)
-                    il_vals['origin'] = arrival.name
-                    arrival_date_formatted = format_date(
-                        fields.Date.from_string(arrival.date),
-                        format='short', locale=self.env.user.lang or 'en_US')
-                    il_vals['name'] = _('%s (Arrival %s dated %s)') % (
-                        product.with_context(lang=lang).name,
-                        arrival.name, arrival_date_formatted)
-                    il_vals['quantity'] = quantity
-                    seller = product._select_seller(
-                        partner, quantity=quantity, uom_id=product.uom_id)
-                    if seller:
-                        price_unit = seller.currency_id.compute(
-                            seller.price, currency)
-                    elif product in product2price:
-                        price_unit = product2price[product]
-                    else:
-                        price_unit = 0.0
-                    il_vals['price_unit'] = price_unit
-                vals['invoice_line_ids'].append((0, 0, il_vals))
-        elif invoice_type == 'out_invoice':
-            season = self[0].season_id
-            totals = self.read_group(
-                [('id', 'in', self.ids)],
-                ['olive_qty', 'oil_qty', 'oil_qty_with_compensation',
-                 'shrinkage_oil_qty', 'filter_loss_oil_qty'], [])[0]
-            if float_compare(
-                    totals['oil_qty'], 0, precision_digits=pr_oil) <= 0:
-                return False
-            if not company.olive_oil_production_product_id:
-                raise UserError(_(
-                    "Missing production product on company %s.")
-                    % company.name)
-            if not company.olive_oil_leaf_removal_product_id:
-                raise UserError(_(
-                    "Missing leaf removal product on company %s.")
-                    % company.name)
-            if not company.olive_oil_tax_product_id:
-                raise UserError(_(
-                    "Missing tax product on company %s.") % company.name)
-            if season.early_bird_date and not company.olive_oil_early_bird_discount_product_id:
-                raise UserError(_(
-                    "Missing early bird discount product on company %s.")
-                    % company.name)
-            # Production
-            il_vals = self.pre_prepare_invoice_line(
-                company.olive_oil_production_product_id, vals)
-            il_vals['quantity'] = totals['olive_qty']
-            il_vals['price_unit'] = pricelist.get_product_price(
-                company.olive_oil_production_product_id,
-                totals['olive_qty'], partner)
-            vals['invoice_line_ids'].append((0, 0, il_vals))
-            # additionnal service options are only invoiced on withdrawal
-            # cf ('oil_destination', '=', 'withdrawal') in domain
-            product_totals = self.read_group(
-                [('id', 'in', self.ids), ('oil_destination', '=', 'withdrawal')],
-                ['olive_qty', 'oil_product_id'], ['oil_product_id'])
-            for product_total in product_totals:
-                product = ppo.browse(product_total['oil_product_id'][0])
-                for srv_product in product.olive_invoice_service_ids:
-                    il_vals = self.pre_prepare_invoice_line(srv_product, vals)
-                    il_vals['quantity'] = product_total['olive_qty']
-                    il_vals['price_unit'] = pricelist.get_product_price(
-                        srv_product, product_total['olive_qty'], partner)
-                    vals['invoice_line_ids'].append((0, 0, il_vals))
-            # Discount
-            if season.early_bird_date:
-                total_disc = self.read_group(
-                    [('id', 'in', self.ids),
-                     ('arrival_date', '<=', season.early_bird_date)],
-                    ['olive_qty'], [])
-                if total_disc and total_disc[0]['olive_qty'] and float_compare(
-                        total_disc[0]['olive_qty'], 0,
-                        precision_digits=pr_oli) > 0:
-                    il_vals = self.pre_prepare_invoice_line(
-                        company.olive_oil_early_bird_discount_product_id, vals)
-                    # with Factur-X, we can't have negative prices
-                    # so I put a negative qty
-                    qty = total_disc[0]['olive_qty']
-                    il_vals['quantity'] = qty * -1
-                    il_vals['price_unit'] = pricelist.get_product_price(
-                        company.olive_oil_early_bird_discount_product_id,
-                        qty, partner)
-                    vals['invoice_line_ids'].append((0, 0, il_vals))
-            # leaf removal
-            total_leaf = self.read_group(
-                [('id', 'in', self.ids), ('leaf_removal', '=', True)],
-                ['olive_qty'], [])
-            if (
-                    total_leaf and total_leaf[0]['olive_qty'] and
-                    float_compare(
-                        total_leaf[0]['olive_qty'], 0,
-                        precision_digits=pr_oli) > 0):
-                il_vals = self.pre_prepare_invoice_line(
-                    company.olive_oil_leaf_removal_product_id, vals)
-                qty = total_leaf[0]['olive_qty']
-                il_vals['quantity'] = qty
-                il_vals['price_unit'] = pricelist.get_product_price(
-                    company.olive_oil_leaf_removal_product_id,
-                    qty, partner)
-                vals['invoice_line_ids'].append((0, 0, il_vals))
-            # AFIDOL Tax
-            tax_product = company.olive_oil_tax_product_id
-            if tax_product.uom_id != self.env.ref('product.product_uom_kgm'):
-                raise UserError(_(
-                    "The unit of measure of the oil tax product (%s) should be in kg.")
-                    % tax_product.display_name)
-            il_vals = self.pre_prepare_invoice_line(tax_product, vals)
-            qty = totals['oil_qty_with_compensation'] - totals['shrinkage_oil_qty']\
-                - totals['filter_loss_oil_qty']
-            # if float_is_zero(company.olive_oil_tax_price_unit, precision_digits=pr_tax):
-            price_unit_kg = pricelist.get_product_price(
-                tax_product, qty, partner)
-            # if pr_tax > pr_pri:
-            #    il_vals['quantity'] = 1
-            #    il_vals['price_unit'] = float_round(
-            #        price_unit * qty, precision_rounding=currency.rounding)
-            #    qty_formatted = formatLang(
-            #        self.env, qty, dp='Olive Oil Volume')
-            #    price_unit_formatted = formatLang(
-            #        self.env, price_unit, dp='Olive Oil Tax Price Unit')
-            #    il_vals['name'] += _(u" (%s L x %s %s / L)") % (
-            #        qty_formatted, price_unit_formatted, currency.symbol)
-            #else:
-            qty_kg = float_round(
-                qty * company.olive_oil_density, precision_digits=pr_oil)
-            il_vals['quantity'] = qty_kg
-            il_vals['price_unit'] = price_unit_kg
-            il_vals['name'] += _(u" (%s L = %s kg)") % (
-                formatLang(self.env, qty, dp='Olive Oil Volume'),
-                formatLang(self.env, qty_kg, dp='Olive Oil Volume'))
-            vals['invoice_line_ids'].append((0, 0, il_vals))
-            # Extra items
-            extra_totals = self.env['olive.arrival.line.extra'].read_group(
-                [
-                    ('line_id', 'in', self.ids),
-                    '|', ('fillup', '=', False),
-                         ('olive_bottle_free_full', '=', False)],
-                ['product_id', 'qty'], ['product_id'])
-            for extra_total in extra_totals:
-                product_id = extra_total['product_id'][0]
-                product = ppo.browse(product_id)
-                qty = extra_total['qty']
-                il_vals = self.pre_prepare_invoice_line(product, vals)
-                il_vals['quantity'] = qty
-                il_vals['price_unit'] = pricelist.get_product_price(
-                    product, qty, partner)
-                vals['invoice_line_ids'].append((0, 0, il_vals))
         return vals
+
+    def create_in_invoice_line(self, invoice):
+        ailo = self.env['account.invoice.line'].with_context(type='in_invoice')
+        pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
+        partner = invoice.partner_id
+        lang = partner.lang or self.env.user.lang
+        pricelist = partner.property_product_pricelist
+        currency = pricelist.currency_id
+        saledict = {}  # key = arrival, value = {'product': sale_oil_qty}
+        # I can't do a double groupby via read_group()
+        if partner.olive_sale_pricelist_id:
+            product2price = partner.olive_sale_pricelist_id.prepare_speeddict()
+        else:
+            product2price = {}
+        for line in self:
+            arrival = line.arrival_id
+            product = line.oil_product_id
+            if float_compare(
+                    line.sale_oil_qty, 0, precision_digits=pr_oli) > 0:
+                if line.arrival_id in saledict:
+                    if product in saledict[arrival]:
+                        saledict[arrival][product] += line.sale_oil_qty
+                    else:
+                        saledict[arrival][product] = line.sale_oil_qty
+                else:
+                    saledict[arrival] = {product: line.sale_oil_qty}
+        total_oil_qty = 0.0
+        for arrival, pdict in saledict.items():
+            for product, quantity in pdict.items():
+                total_oil_qty += quantity
+                # TODO: move to prepare line method
+                il_vals = self.pre_prepare_invoice_line(product, invoice)
+                il_vals['origin'] = arrival.name
+                # TODO: translate in right language
+                arrival_date_formatted = format_date(
+                    fields.Date.from_string(arrival.date),
+                    format='short', locale=lang or 'en_US')
+                il_vals['name'] = _('%s (Arrival %s dated %s)') % (
+                    product.with_context(lang=lang).name,
+                    arrival.name, arrival_date_formatted)
+                il_vals['quantity'] = quantity
+                seller = product._select_seller(
+                    partner, quantity=quantity, uom_id=product.uom_id)
+                if seller:
+                    price_unit = seller.currency_id.compute(
+                        seller.price, currency)
+                elif product in product2price:
+                    price_unit = product2price[product]
+                else:
+                    price_unit = 0.0
+                il_vals['price_unit'] = price_unit
+                iline = ailo.create(il_vals)
+                arrival.line_ids.write({
+                    'in_invoice_line_id': iline.id})
+        # TODO translate in right language
+        invoice.comment = _(
+            "Total oil quantity: %s L") % formatLang(
+                self.env, total_oil_qty, dp='Olive Oil Volume')
+
+    def create_out_invoice_line(self, invoice):
+        ailo = self.env['account.invoice.line'].with_context(type='out_invoice')
+        ppo = self.env['product.product']
+        pr_oil = self.env['decimal.precision'].precision_get(
+            'Olive Oil Volume')
+        pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
+        company = invoice.company_id
+        partner = invoice.partner_id
+        pricelist = partner.property_product_pricelist
+        season = self[0].season_id
+        totals = self.read_group(
+            [('id', 'in', self.ids)],
+            ['olive_qty', 'oil_qty', 'oil_qty_with_compensation',
+             'shrinkage_oil_qty', 'filter_loss_oil_qty'], [])[0]
+        if float_compare(
+                totals['oil_qty'], 0, precision_digits=pr_oil) <= 0:
+            return False
+        if not company.olive_oil_production_product_id:
+            raise UserError(_(
+                "Missing production product on company %s.")
+                % company.name)
+        if not company.olive_oil_leaf_removal_product_id:
+            raise UserError(_(
+                "Missing leaf removal product on company %s.")
+                % company.name)
+        if not company.olive_oil_tax_product_id:
+            raise UserError(_(
+                "Missing tax product on company %s.") % company.name)
+        if season.early_bird_date and not company.olive_oil_early_bird_discount_product_id:
+            raise UserError(_(
+                "Missing early bird discount product on company %s.")
+                % company.name)
+        # Production
+        il_vals = self.pre_prepare_invoice_line(
+            company.olive_oil_production_product_id, invoice)
+        il_vals['quantity'] = totals['olive_qty']
+        il_vals['price_unit'] = pricelist.get_product_price(
+            company.olive_oil_production_product_id,
+            totals['olive_qty'], partner)
+        ailo.create(il_vals)
+        # additionnal service options are only invoiced on withdrawal
+        # cf ('oil_destination', '=', 'withdrawal') in domain
+        product_totals = self.read_group(
+            [('id', 'in', self.ids), ('oil_destination', '=', 'withdrawal')],
+            ['olive_qty', 'oil_product_id'], ['oil_product_id'])
+        for product_total in product_totals:
+            product = ppo.browse(product_total['oil_product_id'][0])
+            for srv_product in product.olive_invoice_service_ids:
+                il_vals = self.pre_prepare_invoice_line(srv_product, invoice)
+                il_vals['quantity'] = product_total['olive_qty']
+                il_vals['price_unit'] = pricelist.get_product_price(
+                    srv_product, product_total['olive_qty'], partner)
+                ailo.create(il_vals)
+        # Discount
+        if season.early_bird_date:
+            total_disc = self.read_group(
+                [('id', 'in', self.ids),
+                 ('arrival_date', '<=', season.early_bird_date)],
+                ['olive_qty'], [])
+            if total_disc and total_disc[0]['olive_qty'] and float_compare(
+                    total_disc[0]['olive_qty'], 0,
+                    precision_digits=pr_oli) > 0:
+                il_vals = self.pre_prepare_invoice_line(
+                    company.olive_oil_early_bird_discount_product_id, invoice)
+                # with Factur-X, we can't have negative prices
+                # so I put a negative qty
+                qty = total_disc[0]['olive_qty']
+                il_vals['quantity'] = qty * -1
+                il_vals['price_unit'] = pricelist.get_product_price(
+                    company.olive_oil_early_bird_discount_product_id,
+                    qty, partner)
+                ailo.create(il_vals)
+        # leaf removal
+        total_leaf = self.read_group(
+            [('id', 'in', self.ids), ('leaf_removal', '=', True)],
+            ['olive_qty'], [])
+        if (
+                total_leaf and total_leaf[0]['olive_qty'] and
+                float_compare(
+                    total_leaf[0]['olive_qty'], 0,
+                    precision_digits=pr_oli) > 0):
+            il_vals = self.pre_prepare_invoice_line(
+                company.olive_oil_leaf_removal_product_id, invoice)
+            qty = total_leaf[0]['olive_qty']
+            il_vals['quantity'] = qty
+            il_vals['price_unit'] = pricelist.get_product_price(
+                company.olive_oil_leaf_removal_product_id,
+                qty, partner)
+            ailo.create(il_vals)
+        # AFIDOL Tax
+        tax_product = company.olive_oil_tax_product_id
+        if tax_product.uom_id != self.env.ref('product.product_uom_kgm'):
+            raise UserError(_(
+                "The unit of measure of the oil tax product (%s) should be in kg.")
+                % tax_product.display_name)
+        il_vals = self.pre_prepare_invoice_line(tax_product, invoice)
+        qty = totals['oil_qty_with_compensation'] - totals['shrinkage_oil_qty']\
+            - totals['filter_loss_oil_qty']
+        # if float_is_zero(company.olive_oil_tax_price_unit, precision_digits=pr_tax):
+        price_unit_kg = pricelist.get_product_price(
+            tax_product, qty, partner)
+        # if pr_tax > pr_pri:
+        #    il_vals['quantity'] = 1
+        #    il_vals['price_unit'] = float_round(
+        #        price_unit * qty, precision_rounding=currency.rounding)
+        #    qty_formatted = formatLang(
+        #        self.env, qty, dp='Olive Oil Volume')
+        #    price_unit_formatted = formatLang(
+        #        self.env, price_unit, dp='Olive Oil Tax Price Unit')
+        #    il_vals['name'] += _(u" (%s L x %s %s / L)") % (
+        #        qty_formatted, price_unit_formatted, currency.symbol)
+        #else:
+        qty_kg = float_round(
+            qty * company.olive_oil_density, precision_digits=pr_oil)
+        il_vals['quantity'] = qty_kg
+        il_vals['price_unit'] = price_unit_kg
+        il_vals['name'] += _(u" (%s L = %s kg)") % (
+            formatLang(self.env, qty, dp='Olive Oil Volume'),
+            formatLang(self.env, qty_kg, dp='Olive Oil Volume'))
+        ailo.create(il_vals)
+        # Extra items
+        extra_totals = self.env['olive.arrival.line.extra'].read_group(
+            [
+                ('line_id', 'in', self.ids),
+                '|', ('fillup', '=', False),
+                     ('olive_bottle_free_full', '=', False)],
+            ['product_id', 'qty'], ['product_id'])
+        for extra_total in extra_totals:
+            product_id = extra_total['product_id'][0]
+            product = ppo.browse(product_id)
+            qty = extra_total['qty']
+            il_vals = self.pre_prepare_invoice_line(product, invoice)
+            il_vals['quantity'] = qty
+            il_vals['price_unit'] = pricelist.get_product_price(
+                product, qty, partner)
+            ailo.create(il_vals)
 
     def in_invoice_create(self):
         aio = self.env['account.invoice']
         vals = self.prepare_invoice('in_invoice')
-        if vals and vals['invoice_line_ids']:
-            invoice = aio.with_context(type='in_invoice').create(vals)
-            self.write({'in_invoice_id': invoice.id})
+        invoice = aio.with_context(type='in_invoice').create(vals)
+        self.create_in_invoice_line(invoice)
         return invoice
 
     def out_invoice_create(self):
         aio = self.env['account.invoice']
         vals = self.prepare_invoice('out_invoice')
-        if vals and vals['invoice_line_ids']:
-            invoice = aio.with_context(type='out_invoice').create(vals)
-            self.write({'out_invoice_id': invoice.id})
+        invoice = aio.with_context(type='out_invoice').create(vals)
+        self.create_out_invoice_line(invoice)
+        self.write({'out_invoice_id': invoice.id})
         return invoice
 
 

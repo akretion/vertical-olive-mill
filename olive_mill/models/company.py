@@ -65,7 +65,7 @@ class ResCompany(models.Model):
         domain=[('olive_type', '=', 'service')])
     olive_oil_tax_product_id = fields.Many2one(
         'product.product', string='AFIDOL Tax Product',
-        domain=[('olive_type', '=', 'service')])
+        domain=[('olive_type', '=', 'tax')])
     olive_oil_early_bird_discount_product_id = fields.Many2one(
         'product.product', string='Early Bird Discount Product',
         domain=[('olive_type', '=', 'service')])

@@ -78,7 +78,7 @@
                                 <field name="oil_destination"/>
                                 <field name="mix_withdrawal_oil_qty" string="Withdrawal (L)" sum="1"/>
                                 <field name="extra_count" string="Extras"/>
-                                <field name="state" invisible="1"/>
+                                <field name="state"/>
                             </tree>
                         </field>
                     </page>
@@ -181,12 +181,14 @@
     <field name="model">olive.arrival.line</field>
     <field name="arch" type="xml">
         <form string="Olive Arrival Lines">
+            <header>
+                <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+            </header>
             <group name="main">
             <group name="main-left" string="Arrival">
                 <field name="name"/>
                 <field name="arrival_id"/>
                 <field name="arrival_date"/>
-                <field name="state"/>
                 <field name="commercial_partner_id"/>
                 <field name="partner_olive_culture_type"/>
                 <label for="olive_qty" string="Olive Qty"/>
@@ -262,6 +264,11 @@
                     <field name="sale_oil_qty" class="oe_inline"/>
                     <label string=" L" class="oe_inline"/>
                 </div>
+                <label for="oil_qty_net" string="Net Oil Qty"/>
+                <div name="oil_qty_net">
+                    <field name="oil_qty_net" class="oe_inline"/>
+                    <label string=" L" class="oe_inline"/>
+                </div>
                 <label for="oil_ratio" string="Oil Gross Ratio"/>
                 <div name="oil_ratio">
                     <field name="oil_ratio" class="oe_inline"/>
@@ -287,8 +294,13 @@
                         </group>
                         <group name="invoice">
                             <field name="out_invoice_id"/>
-                            <field name="in_invoice_id"/>
+                            <field name="in_invoice_line_id"/>
+                            <field name="oil_sale_price_unit"/>
+                            <field name="oil_sale_price_total"/>
+                            <field name="oil_service_sale_price_unit"/>
+                            <field name="oil_service_sale_price_total"/>
                             <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="company_currency_id" invisible="1"/>
                         </group>
                     </group>
                 </page>
@@ -304,8 +316,10 @@
     <field name="priority">1000</field>
     <field name="arch" type="xml">
         <form string="Olive Arrival Line">
+            <header>
+                <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+            </header>
             <group name="main">
-                <field name="state" invisible="1"/>
                 <field name="name"/>
                 <field name="commercial_partner_id" invisible="1"/>
                 <field name="partner_olive_culture_type" invisible="1"/>
@@ -355,6 +369,7 @@
             <field name="sale_oil_qty" sum="1"/>
             <field name="oil_ratio_net"/>
             <field name="state"/>
+            <field name="arrival_state"/>
             <field name="production_state"/>
         </tree>
     </field>
@@ -365,6 +380,7 @@
     <field name="model">olive.arrival.line</field>
     <field name="arch" type="xml">
         <search string="Search Arrival Lines">
+            <field name="name"/>
             <field name="commercial_partner_id"/>
             <field name="season_id"/>
             <field name="warehouse_id"/>
@@ -384,8 +400,8 @@
             <filter name="to_invoice" string="To Invoice" domain="[('out_invoice_id', '=', False), ('state', '=', 'done'), ('production_state', '=', 'done')]"/>
             <filter name="invoiced" string="Invoiced" domain="[('out_invoice_id', '!=', False), ('state', '=', 'done'), ('production_state', '=', 'done')]"/>
             <separator/>
-            <filter name="to_purchase" string="To Purchase" domain="[('oil_destination', 'in', ('sale', 'mix')), ('in_invoice_id', '=', False), ('state', '=', 'done'), ('production_state', '=', 'done')]"/>
-            <filter name="purchased" string="Purchased" domain="[('oil_destination', 'in', ('sale', 'mix')), ('in_invoice_id', '!=', False), ('state', '=', 'done'), ('production_state', '=', 'done')]"/>
+            <filter name="to_purchase" string="To Purchase" domain="[('oil_destination', 'in', ('sale', 'mix')), ('in_invoice_line_id', '=', False), ('state', '=', 'done'), ('production_state', '=', 'done')]"/>
+            <filter name="purchased" string="Purchased" domain="[('oil_destination', 'in', ('sale', 'mix')), ('in_invoice_line_id', '!=', False), ('state', '=', 'done'), ('production_state', '=', 'done')]"/>
             <group string="Group By" name="groupby">
                 <filter name="commercial_partner_groupby" string="Farmer" context="{'group_by': 'commercial_partner_id'}"/>
                 <filter name="arrival_day_groupby" string="Arrival Day" context="{'group_by': 'arrival_date:day'}"/>

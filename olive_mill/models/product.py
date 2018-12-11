@@ -18,6 +18,7 @@ class ProductTemplate(models.Model):
         ('analysis', 'Analysis'),
         ('extra_service', 'Extra Service'),
         ('service', 'Production Service'),
+        ('tax', 'Federation Tax'),
         ], string='Olive Type')
     olive_culture_type = fields.Selection([
         ('regular', 'Regular'),
@@ -43,7 +44,7 @@ class ProductTemplate(models.Model):
             self.tracking = 'lot'
         elif self.olive_type == 'bottle_full':
             self.tracking = 'lot'
-        if self.olive_type in ('service', 'extra_service'):
+        if self.olive_type in ('service', 'extra_service', 'tax'):
             self.type = 'service'
         elif self.olive_type == 'analysis':
             self.type == 'consu'
@@ -89,11 +90,12 @@ class ProductTemplate(models.Model):
                     "it must be configured as a consumable.")
                     % pt.display_name)
             if (
-                    pt.olive_type in ('service', 'extra_service') and
+                    pt.olive_type in ('service', 'extra_service', 'tax') and
                     pt.type != 'service'):
                 raise ValidationError(_(
-                    "Product '%s' has an Olive Type 'Production Service' or "
-                    "'Extra Service' so it must be configured as a Service.") % (
+                    "Product '%s' has an Olive Type 'Production Service', "
+                    "'Extra Service' or 'Federation Tax', so it must be "
+                    "configured as a Service.") % (
                         pt.display_name))
 
 
