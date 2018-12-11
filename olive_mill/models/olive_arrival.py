@@ -292,7 +292,6 @@ class OliveArrival(models.Model):
             # Set line number
             line.write({
                 'name': '%s/%s' % (self.name, i),
-                'state': 'done',
                 })
 
         # for mix/sale, warn if delay between harvest and arrival is too long
@@ -363,6 +362,7 @@ class OliveArrival(models.Model):
             'borrowed_date': False,
             })
         self.write(arrival_vals)
+        self.line_ids.write({'state': 'done'})
 
     def unlink(self):
         for arrival in self:
@@ -578,9 +578,8 @@ class OliveArrivalLine(models.Model):
         'account.invoice', string="Customer Invoice", readonly=True)
     in_invoice_line_id = fields.Many2one(
         'account.invoice.line', string='Vendor Bill Line', readonly=True)
-    #in_invoice_id = fields.Many2one(  # we can restore this field after migration
-    #    related='in_invoice_line_id.invoice_id',
-    #    string="Vendor Bill", readonly=True, store=True)
+    in_invoice_id = fields.Many2one(  # TEMPO RESTORE FOR MIG SCRIPT
+        'account.invoice', string="Vendor Bill", readonly=True)
     company_currency_id = fields.Many2one(
         related='arrival_id.company_id.currency_id', store=True, readonly=True)
     oil_sale_price_unit = fields.Monetary(

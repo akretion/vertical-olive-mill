@@ -67,14 +67,13 @@ class OliveOilProductionRatio2force(models.TransientModel):
                 oil_qty = wiz.oil_qty_kg / density
                 oil_qty = float_round(oil_qty, precision_digits=pr_oil)
             # Compute ratio, with compensations
-            olive_qty_for_ratio = wiz.olive_qty
             oil_qty_for_ratio = oil_qty
             if wiz.compensation_type == 'last':
-                olive_qty_for_ratio += wiz.compensation_last_olive_qty
+                oil_qty_for_ratio -= wiz.compensation_oil_qty
             elif wiz.compensation_type == 'first':
                 oil_qty_for_ratio += wiz.compensation_oil_qty
-            if olive_qty_for_ratio:
-                ratio = 100 * oil_qty_for_ratio / olive_qty_for_ratio
+            if wiz.olive_qty:
+                ratio = 100 * oil_qty_for_ratio / wiz.olive_qty
                 ratio = float_round(ratio, precision_digits=pr_ratio)
             wiz.ratio = ratio
             wiz.oil_qty = oil_qty

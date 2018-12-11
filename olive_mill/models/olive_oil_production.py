@@ -247,8 +247,9 @@ class OliveOilProduction(models.Model):
             'state': 'cancel',
             'oil_qty': 0,
             'oil_qty_kg': 0,
-            'compensation_oil_qty': 0,
-            'compensation_oil_qty_kg': 0,
+            'ratio': 0,
+            'to_sale_tank_oil_qty': 0,
+            'to_compensation_sale_tank_oil_qty': 0,
             })
 
     def back2draft(self):
@@ -423,12 +424,10 @@ class OliveOilProduction(models.Model):
             # and total_olive_prorata
             oil_qty = line.olive_qty * total_oil_prorata / total_olive_prorata
             compensation_oil_qty = False
+            oil_qty_for_ratio = oil_qty
             if total_compensation_oil_qty:
                 compensation_oil_qty = total_compensation_oil_qty * oil_qty / total_oil_qty
-            oil_qty_for_ratio = oil_qty
-            if ctype == 'last':
-                oil_qty_for_ratio -= compensation_oil_qty
-            elif ctype == 'first':
+            if ctype == 'first':
                 oil_qty_for_ratio += compensation_oil_qty
             ratio = float_round(
                 100 * oil_qty_for_ratio / line.olive_qty, precision_digits=pr_ratio)
