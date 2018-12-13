@@ -646,6 +646,35 @@ class OliveOilProduction(models.Model):
             cloc.oil_product_id = False
 
         self.write(prod_vals)
+        self.update_arrival_production_done()
+
+    def update_arrival_production_done(self):
+        self.ensure_one()
+        oalo = self.env['olive.arrival.line']
+        oao = self.env['olive.arrival']
+        arrivals = oao
+        for line in self.line_ids:
+            arrivals |= line.arrival_id
+        assert arrivals
+        arrivals_res = oalo.read_group(
+            [('production_state', '=', 'done'), ('arrival_id', 'in', arrivals.ids)],
+            ['oil_qty_net', 'olive_qty', 'arrival_id'],
+            ['arrival_id'])
+        for arrival_re in arrivals_res:
+            arrival = oao.browse(arrival_re['arrival_id'][0])
+            olive_qty_pressed = arrival_re['olive_qty']
+            oil_qty_net = arrival_re['oil_qty_net']
+            oil_ratio_net = olive_ratio_net = 0.0
+            if olive_qty_pressed:
+                oil_ratio_net = 100 * oil_qty_net / olive_qty_pressed
+            if oil_qty_net:
+                olive_ratio_net = olive_qty_pressed / oil_qty_net
+            arrival.write({
+                'olive_qty_pressed': olive_qty_pressed,
+                'oil_qty_net': oil_qty_net,
+                'oil_ratio_net': oil_ratio_net,
+                'olive_ratio_net': olive_ratio_net,
+                })
 
     def unlink(self):
         for production in self:

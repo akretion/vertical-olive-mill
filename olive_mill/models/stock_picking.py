@@ -24,61 +24,26 @@ class StockPicking(models.Model):
                             # also check partner to remove first-of-day compensation lots
                             if line.commercial_partner_id == cpartner:
                                 arrivals |= line.arrival_id
-        compute = {}
-        tot_olive_qty = tot_oil_net = tot_compensation_oil_qty = 0.0
-        for arrival in arrivals:
-            for l in arrival.line_ids:
-                ctype = l.compensation_type
-                compensation_oil_qty = False
-                if ctype == 'first':
-                    compensation_oil_qty = l.compensation_oil_qty
-                olive_qty = l.olive_qty
-                oil_net = l.oil_qty - l.shrinkage_oil_qty - l.filter_loss_oil_qty
-                if l.arrival_id in compute:
-                    compute[arrival]['olive_qty'] += olive_qty
-                    compute[arrival]['oil_net'] += oil_net
-                    compute[arrival]['compensation_oil_qty'] += compensation_oil_qty
-                else:
-                    compute[arrival] = {
-                        'olive_qty': olive_qty,
-                        'oil_net': oil_net,
-                        'compensation_oil_qty': compensation_oil_qty,
-                        }
-                tot_olive_qty += olive_qty
-                tot_oil_net += oil_net
-                tot_compensation_oil_qty += compensation_oil_qty
-        res = []
-        for arrival, cdict in compute.iteritems():
-            oil_with_compensation = cdict['oil_net'] + cdict['compensation_oil_qty']
-            oil_ratio_net = olive_ratio_net = False
-            if cdict['olive_qty'] > 0:
-                oil_ratio_net = float_round(
-                    100 * oil_with_compensation / cdict['olive_qty'], precision_digits=pr_ratio)
-            if oil_with_compensation > 0:
-                olive_ratio_net = float_round(
-                    cdict['olive_qty'] / oil_with_compensation, precision_digits=2)
-            cdict.update({
-                'arrival': arrival,
-                'oil_ratio_net': oil_ratio_net,
-                'olive_ratio_net': olive_ratio_net,
-            })
-            res.append(cdict)
+        res = [arrival for arrival in arrivals]
         res_sorted = []
         if res:
-            res_sorted = sorted(res, key=lambda to_sort: to_sort['arrival'].name)
+            res_sorted = sorted(res, key=lambda to_sort: to_sort.name)
+        rg = self.env['olive.arrival'].read_group(
+            [('id', 'in', arrivals.ids)],
+            ['olive_qty_pressed', 'oil_qty_net'], [])
         tot_oil_ratio_net = tot_olive_ratio_net = False
-        tot_oil_with_compensation = tot_oil_net + tot_compensation_oil_qty
+        tot_olive_qty = rg[0]['olive_qty_pressed']
+        tot_oil_qty_net = rg[0]['oil_qty_net']
         if tot_olive_qty > 0:
             tot_oil_ratio_net = float_round(
-                100 * tot_oil_with_compensation / tot_olive_qty,
+                100 * tot_oil_qty_net / tot_olive_qty,
                 precision_digits=pr_ratio)
-        if tot_oil_with_compensation > 0:
+        if tot_oil_qty_net > 0:
             tot_olive_ratio_net = float_round(
-                tot_olive_qty / tot_oil_with_compensation, precision_digits=2)
+                tot_olive_qty / tot_oil_qty_net, precision_digits=2)
         totals = {
             'olive_qty': tot_olive_qty,
-            'oil_net': tot_oil_net,
-            'compensation_oil_qty': tot_compensation_oil_qty,
+            'oil_qty_net': tot_oil_qty_net,
             'oil_ratio_net': tot_oil_ratio_net,
             'olive_ratio_net': tot_olive_ratio_net,
             }

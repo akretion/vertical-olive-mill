@@ -100,6 +100,23 @@ class OliveArrival(models.Model):
         states={'done': [('readonly', True)]},
         help="Select returned palox other than those used in the arrival "
         "lines")
+    olive_qty_pressed = fields.Float(
+        string='Olive Qty Pressed (kg)',
+        digits=dp.get_precision('Olive Weight'), readonly=True)
+    oil_qty_net = fields.Float(
+        string='Net Oil Qty (L)',
+        readonly=True, digits=dp.get_precision('Olive Oil Volume'),
+        help="Net oil quantity produced in liters."
+        "\nFirst-of-day compensation: included."
+        "\nLast-of-day compensation: already deducted."
+        "\nShrinkage: already deducted."
+        "\nFilter loss: already deducted.")
+    oil_ratio_net = fields.Float(
+        string='Oil Net Ratio (% L)', digits=dp.get_precision('Olive Oil Ratio'),
+        readonly=True)
+    olive_ratio_net = fields.Float(
+        string='Olive Net Ratio (kg / L)', digits=(16, 2),
+        readonly=True)
 
     _sql_constraints = [(
         'returned_regular_case_positive',
@@ -781,7 +798,7 @@ class OliveArrivalLine(models.Model):
         vals = aio.play_onchanges(vals, ['partner_id'])
         return vals
 
-    def create_in_invoice_line(self, invoice):
+    def create_in_invoice_lines(self, invoice):
         ailo = self.env['account.invoice.line'].with_context(type='in_invoice')
         pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
         partner = invoice.partner_id
@@ -838,8 +855,9 @@ class OliveArrivalLine(models.Model):
         invoice.comment = _(
             "Total oil quantity: %s L") % formatLang(
                 self.env, total_oil_qty, dp='Olive Oil Volume')
+        invoice.compute_taxes()
 
-    def create_out_invoice_line(self, invoice):
+    def create_out_invoice_lines(self, invoice):
         ailo = self.env['account.invoice.line'].with_context(type='out_invoice')
         ppo = self.env['product.product']
         pr_oil = self.env['decimal.precision'].precision_get(
@@ -975,19 +993,20 @@ class OliveArrivalLine(models.Model):
             il_vals['price_unit'] = pricelist.get_product_price(
                 product, qty, partner)
             ailo.create(il_vals)
+        invoice.compute_taxes()
 
     def in_invoice_create(self):
         aio = self.env['account.invoice']
         vals = self.prepare_invoice('in_invoice')
         invoice = aio.with_context(type='in_invoice').create(vals)
-        self.create_in_invoice_line(invoice)
+        self.create_in_invoice_lines(invoice)
         return invoice
 
     def out_invoice_create(self):
         aio = self.env['account.invoice']
         vals = self.prepare_invoice('out_invoice')
         invoice = aio.with_context(type='out_invoice').create(vals)
-        self.create_out_invoice_line(invoice)
+        self.create_out_invoice_lines(invoice)
         self.write({'out_invoice_id': invoice.id})
         return invoice
 

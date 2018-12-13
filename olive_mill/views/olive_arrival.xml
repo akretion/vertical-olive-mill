@@ -82,13 +82,37 @@
                             </tree>
                         </field>
                     </page>
-                    <page name="additional" string="Additional Info">
-                        <group name="tech">
-                            <field name="warehouse_id"/>
-                            <field name="season_id"/>
-                            <field name="lended_case_id" context="{'olive_lended_case_main_view': True}"/>
-                            <field name="done_datetime" states="done"/>
-                            <field name="company_id" groups="base.group_multi_company"/>
+                    <page name="additional" string="Results and Additional Info">
+                        <group name="additional">
+                            <group name="results" string="Production Results">
+                                <label for="olive_qty_pressed" string="Olive Qty Pressed"/>
+                                <div name="olive_qty_pressed">
+                                    <field name="olive_qty_pressed" class="oe_inline"/>
+                                    <label string=" kg"/>
+                                </div>
+                                <label for="oil_qty_net" string="Net Oil Qty"/>
+                                <div name="oil_qty_net">
+                                    <field name="oil_qty_net" class="oe_inline"/>
+                                    <label string=" L"/>
+                                </div>
+                                <label for="oil_ratio_net" string="Oil Net Ratio"/>
+                                <div name="oil_ratio_net">
+                                    <field name="oil_ratio_net" class="oe_inline"/>
+                                    <label string=" %"/>
+                                </div>
+                                <label for="olive_ratio_net" string="Olive Net Ratio"/>
+                                <div name="olive_ratio_net">
+                                    <field name="olive_ratio_net" class="oe_inline"/>
+                                    <label string=" kg / L"/>
+                                </div>
+                            </group>
+                            <group name="tech" string="Additional Info">
+                                <field name="warehouse_id"/>
+                                <field name="season_id"/>
+                                <field name="lended_case_id" context="{'olive_lended_case_main_view': True}"/>
+                                <field name="done_datetime" states="done"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
                         </group>
                     </page>
                 </notebook>
