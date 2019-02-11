@@ -47,7 +47,10 @@ class OliveOilPicking(models.TransientModel):
             'Olive Oil Volume')
         pr_prod = self.env['decimal.precision'].precision_get(
             'Product Unit of Measure')
-        origin = _('Ship loose olive oil wizard')
+        origin = _('Ship loose oil wizard')
+        if self.picking_id:
+            origin = _(
+                'Ship loose oil from picking %s') % self.picking_id.name
         spo = self.env['stock.picking']
         sqo = self.env['stock.quant']
         smo = self.env['stock.move']
