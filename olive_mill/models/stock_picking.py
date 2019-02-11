@@ -3,12 +3,48 @@
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import models
+from odoo import api, fields, models, _
 from odoo.tools import float_round
+from odoo.exceptions import UserError
 
 
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
+
+    olive_oil_picking_wizard_next_move_id = fields.Many2one(
+        'stock.move', compute='_compute_show_start_olive_oil_picking_wizard',
+        string='Next Move for Olive Oil Picking Wizard', readonly=True)
+
+    @api.depends('move_lines.product_id.olive_type', 'move_lines.state')
+    def _compute_show_start_olive_oil_picking_wizard(self):
+        for pick in self:
+            move_id = False
+            for move in pick.move_lines:
+                if (
+                        move.state == 'confirmed' and
+                        move.product_id.olive_type == 'oil'):
+                    move_id = move.id
+                    break
+            pick.olive_oil_picking_wizard_next_move_id = move_id
+
+    def start_olive_oil_picking_wizard(self):
+        self.ensure_one()
+        if self.state not in ('confirmed', 'partially_available'):
+            raise UserError(_(
+                "This wizard can only be started when the picking "
+                "is in state 'Confirmed' or 'Partially Available."))
+        action = {}
+        if self.olive_oil_picking_wizard_next_move_id:
+            move = self.olive_oil_picking_wizard_next_move_id
+            action = self.env['ir.actions.act_window'].for_xml_id(
+                'olive_mill', 'olive_oil_picking_action')
+            action['context'] = {
+                'default_move_id': move.id,
+                'default_oil_product_id': move.product_id.id,
+                'default_oil_qty': move.product_uom_qty,
+                'default_dest_location_id': move.location_id.id,
+                }
+        return action
 
     def olive_delivery_report_arrival(self):
         self.ensure_one()

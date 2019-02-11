@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+
+<record id="view_picking_form" model="ir.ui.view">
+    <field name="name">olive.mill.stock.picking.form</field>
+    <field name="model">stock.picking</field>
+    <field name="inherit_id" ref="stock.view_picking_form"/>
+    <field name="arch" type="xml">
+        <button name="action_cancel" position="before">
+            <button name="start_olive_oil_picking_wizard" string="Get Loose Olive Oil" type="object" attrs="{'invisible': [('olive_oil_picking_wizard_next_move_id', '=', False)]}" />
+        </button>
+        <field name="priority" position="after">
+            <field name="olive_oil_picking_wizard_next_move_id" invisible="1"/>
+        </field>
+    </field>
+</record>
+
+
+</odoo>

@@ -69,10 +69,11 @@ class OliveOilProduction(models.Model):
         track_visibility='onchange', help="Olive compensation in kg")
     compensation_ratio = fields.Float(
         string='Compensation Ratio', digits=dp.get_precision('Olive Oil Ratio'),
-        readonly=True)
+        readonly=True, track_visibility='onchange')
     olive_qty = fields.Float(
         string='Olive Qty', compute='_compute_lines',
         digits=dp.get_precision('Olive Weight'), readonly=True, store=True,
+        track_visibility='onchange',
         help='Olive quantity without compensation in kg')
     to_sale_tank_oil_qty = fields.Float(
         string='Oil Qty to Sale Tank (L)', compute='_compute_lines',
@@ -82,7 +83,8 @@ class OliveOilProduction(models.Model):
         digits=dp.get_precision('Olive Oil Volume'), readonly=True, store=True)
     compensation_oil_qty = fields.Float(
         string='Oil Compensation (L)',
-        digits=dp.get_precision('Olive Oil Volume'), readonly=True)
+        digits=dp.get_precision('Olive Oil Volume'), readonly=True,
+        track_visibility='onchange')
     compensation_oil_qty_kg = fields.Float(
         string='Oil Compensation (kg)',
         digits=dp.get_precision('Olive Weight'), readonly=True)
@@ -102,10 +104,10 @@ class OliveOilProduction(models.Model):
         string='Olive Culture Type Logo', readonly=True)
     oil_qty_kg = fields.Float(
         string='Oil Quantity (kg)', digits=dp.get_precision('Olive Weight'),
-        readonly=True)  # written by ratio2force wizard
+        readonly=True, track_visibility='onchange')  # written by ratio2force wizard
     oil_qty = fields.Float(
         string='Oil Quantity (L)', digits=dp.get_precision('Olive Oil Volume'),
-        readonly=True)  # written by ratio2force wizard
+        readonly=True, track_visibility='onchange')  # written by ratio2force wizard
     ratio = fields.Float(
         string='Gross Ratio (% L)', digits=dp.get_precision('Olive Oil Ratio'),
         readonly=True,
