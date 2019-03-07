@@ -4,8 +4,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models, _
-import odoo.addons.decimal_precision as dp
-from odoo.tools import float_compare, float_is_zero, float_round
+from odoo.tools import float_compare
 from odoo.exceptions import UserError
 from datetime import datetime
 
@@ -184,7 +183,7 @@ class OliveOilBottling(models.TransientModel):
             'name': self.lot_name,
             'expiry_date': self.expiry_date,
             })
-        new_move_lots = self.env['stock.move.lots'].create({
+        self.env['stock.move.lots'].create({
             'move_id': mo.move_finished_ids[0].id,
             'product_id': bottle_product.id,
             'production_id': mo.id,
@@ -199,9 +198,9 @@ class OliveOilBottling(models.TransientModel):
             'state': 'progress',
             'date_start': datetime.now(),
             })
-        assert mo.post_visible == True
+        assert mo.post_visible is True
         mo.post_inventory()
-        assert mo.check_to_done == True
+        assert mo.check_to_done is True
         mo.button_mark_done()
 
         # Check oil end qty

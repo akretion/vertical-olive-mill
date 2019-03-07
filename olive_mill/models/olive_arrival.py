@@ -395,7 +395,7 @@ class OliveArrivalLine(models.Model):
     _description = 'Olive Arrival Line'
     # TODO STRANGE odoo doesn't take _order into account !
     # it seems it is because arrival_id is a M2O...
-    _order = 'arrival_id desc, id'  
+    _order = 'arrival_id desc, id'
 
     name = fields.Char(
         string='Arrival Line Number', required=True, readonly=True,

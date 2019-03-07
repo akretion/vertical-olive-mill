@@ -27,9 +27,6 @@ class OliveOilTankTransfer(models.TransientModel):
         'stock.warehouse', string='Warehouse', required=True,
         domain=[('olive_mill', '=', True)],
         default=lambda self: self.env.user._default_olive_mill_wh())
-    season_id = fields.Many2one(
-        'olive.season', string='Season', required=True,
-        default=lambda self: self.env['olive.season'].get_current_season())
 
     def validate(self):
         self.ensure_one()

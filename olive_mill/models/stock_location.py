@@ -15,6 +15,7 @@ class StockLocation(models.Model):
         ('regular', 'Regular'),
         ('compensation', 'Compensation'),
         ('shrinkage', 'Shrinkage'),
+        ('risouletto', 'Risouletto'),
         ], string='Olive Oil Tank Type')
     olive_season_id = fields.Many2one(
         'olive.season', string='Olive Season', ondelete='restrict')
@@ -65,26 +66,27 @@ class StockLocation(models.Model):
             raise UserError(_(
                 "Oil product is not configured on stock location '%s'.")
                 % self.display_name)
-        if not self.olive_season_id:
-            raise UserError(_(
-                "Olive season is not configured on stock location '%s'.")
-                % self.display_name)
-        if self.oil_product_id != oil_product:
-            raise UserError(_(
-                "You are working with oil product '%s', "
-                "but the olive tank '%s' is configured "
-                "with oil product '%s'.") % (
-                    oil_product.display_name,
-                    self.name,
-                    self.oil_product_id.display_name))
-        if self.olive_season_id != season:
-            raise UserError(_(
-                "You are working with olive season '%s', "
-                "but the olive tank '%s' is configured "
-                "with olive season '%s'.") % (
-                    season.name,
-                    self.display_name,
-                    self.olive_season_id.name))
+        if self.olive_tank_type != 'risouletto':
+            if not self.olive_season_id:
+                raise UserError(_(
+                    "Olive season is not configured on stock location '%s'.")
+                    % self.display_name)
+            if self.oil_product_id != oil_product:
+                raise UserError(_(
+                    "You are working with oil product '%s', "
+                    "but the olive tank '%s' is configured "
+                    "with oil product '%s'.") % (
+                        oil_product.display_name,
+                        self.name,
+                        self.oil_product_id.display_name))
+            if self.olive_season_id != season:
+                raise UserError(_(
+                    "You are working with olive season '%s', "
+                    "but the olive tank '%s' is configured "
+                    "with olive season '%s'.") % (
+                        season.name,
+                        self.display_name,
+                        self.olive_season_id.name))
 
     def olive_oil_tank_check(
             self, raise_if_empty=False, raise_if_multi_lot=False,
@@ -94,25 +96,46 @@ class StockLocation(models.Model):
         sqo = self.env['stock.quant']
         ppo = self.env['product.product']
         pr_oil = self.env['decimal.precision'].precision_get('Olive Oil Volume')
-        if not self.olive_tank_type:
+        tank_type = self.olive_tank_type
+        if not tank_type:
             raise UserError(_(
                 "The stock location '%s' is not an olive oil tank.")
                 % self.display_name)
+        if not self.oil_product_id:
+            raise UserError(_(
+                "Missing Oil Product on tank '%s'.") % self.name)
         quant_rg = sqo.read_group(
             [('location_id', '=', self.id)],
             ['qty', 'product_id'], ['product_id'])
         # TODO: handle negative quants ?
-        if not quant_rg:
-            if raise_if_empty:
+        if tank_type != 'risouletto':
+            if not self.olive_season_id:
                 raise UserError(_(
-                    "The tank '%s' is empty.") % self.display_name)
-            else:
-                return 0
-        if len(quant_rg) > 1:
-            raise UserError(_(
-                "There are several different products in tank '%s'. "
-                "This should never happen.") % self.name)
-        qty = quant_rg[0]['qty']
+                    "Olive season is not configured on stock location '%s'.")
+                    % self.display_name)
+            if len(quant_rg) > 1:
+                raise UserError(_(
+                    "There are several different products in tank '%s'. "
+                    "This should never happen in an oil tank which is "
+                    "not a risouletto tank.") % self.name)
+        qty = 0.0
+        for qrg in quant_rg:
+            qty += qrg['qty']
+            oil_product_id = qrg['product_id'][0]
+            oil_product = ppo.browse(oil_product_id)
+            if not oil_product.olive_type:
+                raise UserError(_(
+                    "The olive tank '%s' contains product '%s' "
+                    "which has no olive type.") % (
+                        self.display_name, oil_product.display_name))
+            if tank_type != 'risouletto' and oil_product != self.oil_product_id:
+                raise UserError(_(
+                    "The tank '%s' (type '%s') contains '%s' but it is "
+                    "configured to contain '%s'. This should never "
+                    "happen.") % (
+                        self.name, tank_type, oil_product.display_name,
+                        self.oil_product_id.display_name))
+
         if raise_if_empty and float_compare(qty, 0, precision_digits=pr_oil) <= 0:
             raise UserError(_(
                 "The tank '%s' is empty.") % self.name)
@@ -120,20 +143,6 @@ class StockLocation(models.Model):
             raise UserError(_(
                 "Oil product is not configured on tank '%s'.")
                 % self.display_name)
-        if self.oil_product_id.uom_id != self.env.ref('product.product_uom_litre'):
-            raise UserError(_(
-                "The unit of measure of product '%s' is '%s' "
-                "(it should be liters).") % (
-                    self.oil_product_id.display_name,
-                    self.oil_product_id.uom_id.name))
-        oil_product_id = quant_rg[0]['product_id'][0]
-        oil_product = ppo.browse(oil_product_id)
-        if oil_product != self.oil_product_id:
-            raise UserError(_(
-                "The tank '%s' contains '%s' but it is configured "
-                "to contain '%s'. This should never happen.") % (
-                    self.name, oil_product.display_name,
-                    self.oil_product_id.display_name))
         if raise_if_multi_lot:
             quant_lot_rg = sqo.read_group(
                 [('location_id', '=', self.id)],

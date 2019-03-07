@@ -99,13 +99,11 @@ class OliveOilProductionCompensation(models.TransientModel):
         self.ensure_one()
         pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
         pr_ratio = self.env['decimal.precision'].precision_get('Olive Oil Ratio')
-        pr_oil = self.env['decimal.precision'].precision_get('Olive Oil Volume')
         prod = self.production_id
         ctype = self.compensation_type
         cloc = self.compensation_location_id
         density = prod.company_id.olive_oil_density
         compensation_oil_qty = False
-        compensation_oil_qty_kg = False
         if ctype in ('first', 'last'):
             if not cloc:
                 raise UserError(_(

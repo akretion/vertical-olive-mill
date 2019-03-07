@@ -11,5 +11,5 @@ class MrpBom(models.Model):
 
     @api.constrains('product_id', 'product_tmpl_id', 'bom_line_ids')
     def _check_product_recursion(self):
-        for bom in self.filtered(lambda b: b.product_id.olive_type != 'oil'):
+        for bom in self.filtered(lambda b: b.product_tmpl_id.olive_type != 'oil'):
             super(MrpBom, bom)._check_product_recursion()

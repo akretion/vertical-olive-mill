@@ -4,8 +4,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import fields, models, _
-import odoo.addons.decimal_precision as dp
-from odoo.tools import float_compare, float_is_zero, float_round
+from odoo.tools import float_compare
 from odoo.exceptions import UserError
 from datetime import datetime
 
@@ -22,6 +21,7 @@ class OliveOilTankMerge(models.TransientModel):
         self.ensure_one()
         pr_oil = self.env['decimal.precision'].precision_get('Olive Oil Volume')
         origin = _('Olive oil tank merge wizard')
+        ppo = self.env['product.product']
         mpo = self.env['mrp.production']
         splo = self.env['stock.production.lot']
         sqo = self.env['stock.quant']
@@ -29,8 +29,8 @@ class OliveOilTankMerge(models.TransientModel):
         qty = loc.olive_oil_tank_check(
             raise_if_empty=True, raise_if_reservation=True)
         quant_lot_rg = sqo.read_group(
-                [('location_id', '=', loc.id)],
-                ['qty', 'lot_id'], ['lot_id'])
+            [('location_id', '=', loc.id)],
+            ['qty', 'lot_id'], ['lot_id'])
         if len(quant_lot_rg) <= 1:
             raise UserError(_(
                 "Oil tank '%s' is already merged.") % loc.name)
@@ -42,20 +42,36 @@ class OliveOilTankMerge(models.TransientModel):
             ('type', '=', 'normal'),
             ('product_uom_id', '=', product.uom_id.id),
             ])
-        bom = False
-        for bom in boms:
-            if (
-                    len(bom.bom_line_ids) == 1 and
-                    bom.bom_line_ids[0].product_id == product and
-                    bom.bom_line_ids[0].product_uom_id == product.uom_id and
-                    not float_compare(
-                        bom.bom_line_ids[0].product_qty, bom.product_qty,
-                        precision_digits=pr_oil)):
-                break
-        if not bom:
+        if len(boms) != 1:
             raise UserError(_(
-                "Could not find a bill of material for oil product '%s' to merge "
-                "the oil tank.") % product.name)
+                "The oil product '%s' should only have a single bill "
+                "of material.") % product.display_name)
+        liter_uom = self.env.ref('product.product_uom_litre')
+        bom = boms[0]
+        if bom.product_uom_id != liter_uom:
+            raise UserError(_(
+                "The unit of measure of the bill of material of product "
+                "'%s' should be liters.") % product.display_name)
+        bom_lines_qty = 0.0
+        for bom_line in bom.bom_line_ids:
+            if bom_line.product_id.olive_type != 'oil':
+                raise UserError(_(
+                    "The bill of material of the oil product '%s' "
+                    "should only have oil components.")
+                    % product.display_name)
+            if bom_line.product_uom_id != liter_uom:
+                raise UserError(_(
+                    "On the bill of material of product '%s', the line with "
+                    "product '%s' should have liters as unit of measure.") % (
+                        product.display_name, bom_line.product_id.display_name))
+            bom_lines_qty += bom_line.product_qty
+        p_prec = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+        if float_compare(bom_lines_qty, bom.product_qty, precision_digits=p_prec):
+            raise UserError(_(
+                "The bill of material of the oil product '%s' is wrong: "
+                "the sum of the quantity of lines (%s) should be the quantity "
+                "of the bill of material (%s).")
+                % (product.display_name, bom_lines_qty, bom.product_qty))
         mo = mpo.create({
             'product_id': product.id,
             'product_qty': qty,
@@ -66,8 +82,42 @@ class OliveOilTankMerge(models.TransientModel):
             'bom_id': bom.id,
         })
         assert mo.state == 'confirmed'
-        assert len(mo.move_raw_ids) == 1, 'Wrong raw moves'
-        assert mo.move_raw_ids[0].product_id == product, 'Wrong product on raw move'
+        if loc.olive_tank_type != 'risouletto':
+            if len(mo.move_raw_ids) != 1:
+                raise UserError(_(
+                    "Wrong bill of material for olive product '%s' "
+                    "configured on oil tank '%s': it should have a single "
+                    "component and this component should be the same product.")
+                    % (product.display_name, loc.name))
+            if mo.move_raw_ids[0].product_id != product:
+                raise UserError(_(
+                    "Wrong bill of material for olive product '%s' "
+                    "configured on oil tank '%s': it's single component "
+                    "should be the same product.") % (
+                        product.display_name, loc.name))
+        else:
+            # Write qty on raw moves
+            productid2rawmoves = {}
+            for rmove in mo.move_raw_ids:
+                assert rmove.product_id not in productid2rawmoves, 'Double product in raw moves'
+                productid2rawmoves[rmove.product_id.id] = rmove
+            quant_rg = sqo.read_group(
+                [('location_id', '=', loc.id)],
+                ['qty', 'product_id'], ['product_id'])
+            for qrg in quant_rg:
+                ris_tank_product_id = qrg['product_id'][0]
+                if ris_tank_product_id not in productid2rawmoves:
+                    ris_tank_product = ppo.browse(ris_tank_product_id)
+                    raise UserError(_(
+                        "Product '%s' is not present on the bill of material "
+                        "of product '%s'.") % (ris_tank_product.display_name, product.display_name))
+                raw_move = productid2rawmoves[ris_tank_product_id]
+                raw_move.product_uom_qty = qrg['qty']
+                productid2rawmoves.pop(ris_tank_product_id)
+            for empty_raw_move in productid2rawmoves.values():
+                empty_raw_move.product_uom_qty = 0
+                empty_raw_move.action_cancel()
+
         assert len(mo.move_finished_ids) == 1, 'Wrong finished moves'
         assert mo.move_finished_ids[0].product_id == product, 'Wrong product on finished move'
         mo.action_assign()
@@ -76,10 +126,11 @@ class OliveOilTankMerge(models.TransientModel):
                 "Could not reserve the oil to merge the tank %s. "
                 "This should never happen.")
                 % self.location_id.name)
-        assert mo.move_raw_ids[0].move_lot_ids, 'No move_lot_ids'
-        for move_lot in mo.move_raw_ids[0].move_lot_ids:
-            assert move_lot.lot_id
-            move_lot.quantity_done = move_lot.quantity
+        for raw_move in mo.move_raw_ids.filtered(lambda r: r.state != 'cancel'):
+            assert raw_move.move_lot_ids, 'No move_lot_ids'
+            for move_lot in raw_move.move_lot_ids:
+                assert move_lot.lot_id
+                move_lot.quantity_done = move_lot.quantity
         # raw lines should be green at this step
         # Create finished lot
         merge_lot_name = self.env['ir.sequence'].next_by_code('olive.oil.merge.lot')
@@ -87,7 +138,7 @@ class OliveOilTankMerge(models.TransientModel):
             'product_id': product.id,
             'name': merge_lot_name,
             })
-        new_move_lots = self.env['stock.move.lots'].create({
+        self.env['stock.move.lots'].create({
             'move_id': mo.move_finished_ids[0].id,
             'product_id': product.id,
             'production_id': mo.id,
@@ -95,16 +146,17 @@ class OliveOilTankMerge(models.TransientModel):
             'quantity_done': qty,
             'lot_id': new_lot.id,
             })
-        for raw_move_lot in mo.move_raw_ids[0].move_lot_ids:
-            assert not raw_move_lot.lot_produced_id
-        mo.move_raw_ids[0].move_lot_ids.write({'lot_produced_id': new_lot.id})
+        for raw_move in mo.move_raw_ids.filtered(lambda r: r.state != 'cancel'):
+            for raw_move_lot in raw_move.move_lot_ids:
+                assert not raw_move_lot.lot_produced_id
+            raw_move.move_lot_ids.write({'lot_produced_id': new_lot.id})
         mo.write({
             'state': 'progress',
             'date_start': datetime.now(),
             })
-        assert mo.post_visible == True
+        assert mo.post_visible is True
         mo.post_inventory()
-        assert mo.check_to_done == True
+        assert mo.check_to_done is True
         mo.button_mark_done()
         post_mo_qty = loc.olive_oil_tank_check(
             raise_if_reservation=True, raise_if_multi_lot=True)
