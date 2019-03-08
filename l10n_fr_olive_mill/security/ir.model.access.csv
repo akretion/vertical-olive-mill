@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_olive_agrimer_report_user,Full access on olive.agrimer.report,model_olive_agrimer_report,stock.group_stock_user,1,1,1,1

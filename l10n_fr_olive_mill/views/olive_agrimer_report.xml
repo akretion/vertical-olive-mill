@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2019 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+
+<record id="olive_agrimer_report_form" model="ir.ui.view">
+    <field name="name">olive.agrimer.report.form</field>
+    <field name="model">olive.agrimer.report</field>
+    <field name="arch" type="xml">
+        <form string="Agrimer Report">
+            <header>
+                <button name="generate_report" type="object" string="Generate Report" states="draft"/>
+                <button name="draft2done" string="Mark as Done" class="btn-primary" states="draft" type="object"/>
+                <button name="back2draft" string="Back to Draft" class="btn-default" states="done" type="object"/>
+                <field name="state" widget="statusbar"/>
+            </header>
+            <sheet>
+                <group name="main">
+                <group name="dates" string="Period" colspan="2">
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="date_range_id"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                </group>
+                <group name="olive_in" string="Olive In">
+                    <label for="olive_arrival_qty" string="Olive Arrival"/>
+                    <div name="olive_arrival_qty">
+                        <field name="olive_arrival_qty" class="oe_inline"/>
+                        <label string=" kg"/>
+                    </div>
+                </group>
+                <group name="olive_out" string="Olive Out">
+                    <label for="olive_pressed_qty" string="Olive Pressed"/>
+                    <div name="olive_pressed_qty">
+                        <field name="olive_pressed_qty" class="oe_inline"/>
+                        <label string=" kg"/>
+                    </div>
+                </group>
+                <group name="oil_in" string="Oil In">
+                    <label for="organic_virgin_oil_produced" string="Organic Virgin Olive Oil Produced"/>
+                    <div name="organic_virgin_oil_produced">
+                        <field name="organic_virgin_oil_produced" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                    <label for="organic_extravirgin_oil_produced" string="Organic Extra Virgin Olive Oil Produced"/>
+                    <div name="organic_extravirgin_oil_produced">
+                        <field name="organic_extravirgin_oil_produced" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                    <label for="regular_virgin_oil_produced" string="Regular Virgin Olive Oil Produced"/>
+                    <div name="regular_virgin_oil_produced">
+                        <field name="regular_virgin_oil_produced" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                    <label for="regular_extravirgin_oil_produced" string="Regular Extra Virgin Olive Oil Produced"/>
+                    <div name="regular_extravirgin_oil_produced">
+                        <field name="regular_extravirgin_oil_produced" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                </group>
+                <group name="oil_out" string="Oil Out">
+                    <label for="shrinkage_organic_virgin_oil" string="Shrinkage Organic Virgin Oil"/>
+                    <div name="shrinkage_organic_virgin_oil">
+                        <field name="shrinkage_organic_virgin_oil" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                    <label for="shrinkage_organic_extravirgin_oil" string="Shrinkage Organic Extra Virgin Oil"/>
+                    <div name="shrinkage_organic_extravirgin_oil">
+                        <field name="shrinkage_organic_extravirgin_oil" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                    <label for="shrinkage_regular_virgin_oil" string="Shrinkage Regular Virgin Oil"/>
+                    <div name="shrinkage_regular_virgin_oil">
+                        <field name="shrinkage_regular_virgin_oil" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                    <label for="shrinkage_regular_extravirgin_oil" string="Shrinkage Regular Extra Virgin Oil"/>
+                    <div name="shrinkage_regular_extravirgin_oil">
+                        <field name="shrinkage_regular_extravirgin_oil" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+
+                </group>
+                </group>
+            </sheet>
+            <div class="oe_chatter">
+                <field name="message_follower_ids" widget="mail_followers"/>
+                <field name="message_ids" widget="mail_thread"/>
+            </div>
+        </form>
+    </field>
+</record>
+
+<record id="olive_agrimer_report_tree" model="ir.ui.view">
+    <field name="name">olive.agrimer.report.tree</field>
+    <field name="model">olive.agrimer.report</field>
+    <field name="arch" type="xml">
+        <tree string="Agrimer Reports" decoration-info="state == 'draft'">
+            <field name="date_range_id"/>
+            <field name="date_start"/>
+            <field name="date_end"/>
+            <field name="state"/>
+            <field name="company_id" groups="base.group_multi_company"/>
+        </tree>
+    </field>
+</record>
+
+<record id="olive_agrimer_report_search" model="ir.ui.view">
+    <field name="name">olive.agrimer.report.search</field>
+    <field name="model">olive.agrimer.report</field>
+    <field name="arch" type="xml">
+        <search string="Search Agrimer Reports">
+            <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+            <filter name="done" string="Done" domain="[('state', '=', 'done')]"/>
+            <group string="Group By" name="groupby">
+                <filter name="date_groupby" string="Year" context="{'group_by': 'date:year'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<record id="olive_agrimer_report_action" model="ir.actions.act_window">
+    <field name="name">AgriMer</field>
+    <field name="res_model">olive.agrimer.report</field>
+    <field name="view_mode">tree,form</field>
+</record>
+
+<menuitem id="olive_agrimer_report_menu" action="olive_agrimer_report_action" parent="olive_mill.olive_report_menu" sequence="50"/>
+
+
+</odoo>
