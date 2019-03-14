@@ -169,4 +169,21 @@ class ProductProduct(models.Model):
                 "The bill of material '%s' (ID %d) has several lines "
                 "with an oil product. This scenario is not supported for "
                 "the moment.") % (bom.display_name, bom.id))
-        return (bom, oil_bom_lines[0].product_id)
+        oil_bom_line = oil_bom_lines[0]
+        liter_uom = self.env.ref('product.product_uom_litre')
+        if oil_bom_line.product_uom_id != liter_uom:
+            raise UserError(_(
+                "The component line with product '%s' of the "
+                "bill of material '%s' (ID %d) should have "
+                "liters as the unit of measure.") % (
+                    oil_bom_line.product_id.display_name,
+                    bom.display_name, bom.id))
+        volume = oil_bom_line.product_qty
+        prec = self.env['decimal.precision'].precision_get(
+            'Product Unit of Measure')
+        if float_compare(volume, 0, precision_digits=prec) <= 0:
+            raise UserError(_(
+                "The oil volume (%s) can't negative on bill of "
+                "material '%s' (ID %d).") % (
+                    volume, bom.display_name, bom.id))
+        return (bom, oil_bom_lines[0].product_id, volume)

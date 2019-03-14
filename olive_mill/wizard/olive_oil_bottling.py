@@ -5,6 +5,7 @@
 
 from odoo import api, fields, models, _
 from odoo.tools import float_compare
+import odoo.addons.decimal_precision as dp
 from odoo.exceptions import UserError
 from datetime import datetime
 
@@ -17,6 +18,9 @@ class OliveOilBottling(models.TransientModel):
         'product.product', string='Oil Bottle to Produce',
         domain=[('olive_type', '=', 'bottle_full')], required=True,
         states={'produce': [('readonly', True)]})
+    bottle_volume = fields.Float(
+        string='Bottle Volume (L)',
+        digits=dp.get_precision('Product Unit of Measure'), readonly=True)
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Type', readonly=True)
     bom_id = fields.Many2one(
@@ -61,12 +65,13 @@ class OliveOilBottling(models.TransientModel):
 
     def select2produce(self):
         self.ensure_one()
-        bom, oil_product_id = self.bottle_product_id.oil_bottle_full_get_bom_and_oil_product()
+        bom, oil_product_id, bottle_volume = self.bottle_product_id.oil_bottle_full_get_bom_and_oil_product()
         assert oil_product_id.olive_type == 'oil'
         self.write({
             'state': 'produce',
             'bom_id': bom.id,
             'oil_product_id': oil_product_id.id,
+            'bottle_volume': bottle_volume,
             })
         action = self.env.ref('olive_mill.olive_oil_bottling_action').read()[0]
         action['res_id'] = self.id
@@ -102,11 +107,7 @@ class OliveOilBottling(models.TransientModel):
             raise_if_empty=True, raise_if_reservation=True,
             raise_if_multi_lot=True)
         # Check we have enough oil
-        oil_bom_line = mblo.search([
-            ('bom_id', '=', bom.id),
-            ('product_id', '=', oil_product.id)])
-        assert len(oil_bom_line) == 1
-        oil_required_qty = self.quantity * oil_bom_line.product_qty
+        oil_required_qty = self.quantity * self.bottle_volume
         if float_compare(oil_start_qty_in_tank, oil_required_qty, precision_digits=pr_oil) <= 0:
             raise UserError(_(
                 "The tank %s currently contains %s liters. This is not "

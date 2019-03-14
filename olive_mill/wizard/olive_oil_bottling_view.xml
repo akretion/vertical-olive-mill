@@ -21,6 +21,11 @@
                 <field name="warehouse_id"/>
             </group>
             <group name="production" string="Production" states="produce">
+                <label for="bottle_volume" string="Bottle Volume"/>
+                <div name="bottle_volume">
+                    <field name="bottle_volume" class="oe_inline"/>
+                    <label string=" L"/>
+                </div>
                 <field name="bom_id"/>
                 <field name="oil_product_id"/>
                 <field name="quantity" attrs="{'required': [('state', '=', 'produce')]}"/>

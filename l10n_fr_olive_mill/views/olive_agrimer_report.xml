@@ -63,30 +63,117 @@
                         <label string=" L"/>
                     </div>
                 </group>
-                <group name="oil_out" string="Oil Out">
-                    <label for="shrinkage_organic_virgin_oil" string="Shrinkage Organic Virgin Oil"/>
+                <group name="oil_out_shrinkage" string="Oil Out - Shrinkage">
+                    <label for="shrinkage_organic_virgin_oil" string="Organic Virgin Oil"/>
                     <div name="shrinkage_organic_virgin_oil">
                         <field name="shrinkage_organic_virgin_oil" class="oe_inline"/>
                         <label string=" L"/>
                     </div>
-                    <label for="shrinkage_organic_extravirgin_oil" string="Shrinkage Organic Extra Virgin Oil"/>
+                    <label for="shrinkage_organic_extravirgin_oil" string="Organic Extra Virgin Oil"/>
                     <div name="shrinkage_organic_extravirgin_oil">
                         <field name="shrinkage_organic_extravirgin_oil" class="oe_inline"/>
                         <label string=" L"/>
                     </div>
-                    <label for="shrinkage_regular_virgin_oil" string="Shrinkage Regular Virgin Oil"/>
+                    <label for="shrinkage_regular_virgin_oil" string="Regular Virgin Oil"/>
                     <div name="shrinkage_regular_virgin_oil">
                         <field name="shrinkage_regular_virgin_oil" class="oe_inline"/>
                         <label string=" L"/>
                     </div>
-                    <label for="shrinkage_regular_extravirgin_oil" string="Shrinkage Regular Extra Virgin Oil"/>
+                    <label for="shrinkage_regular_extravirgin_oil" string="Regular Extra Virgin Oil"/>
                     <div name="shrinkage_regular_extravirgin_oil">
                         <field name="shrinkage_regular_extravirgin_oil" class="oe_inline"/>
                         <label string=" L"/>
                     </div>
-
                 </group>
+                <group name="oil_out_withdrawal" string="Oil Out - Withdrawal">
+                    <label for="withdrawal_organic_virgin_oil" string="Organic Virgin Oil"/>
+                    <div name="withdrawal_organic_virgin_oil">
+                        <field name="withdrawal_organic_virgin_oil" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                    <label for="withdrawal_organic_extravirgin_oil" string="Organic Extra Virgin Oil"/>
+                    <div name="withdrawal_organic_extravirgin_oil">
+                        <field name="withdrawal_organic_extravirgin_oil" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                    <label for="withdrawal_regular_virgin_oil" string="Regular Virgin Oil"/>
+                    <div name="withdrawal_regular_virgin_oil">
+                        <field name="withdrawal_regular_virgin_oil" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                    <label for="withdrawal_regular_extravirgin_oil" string="Regular Extra Virgin Oil"/>
+                    <div name="withdrawal_regular_extravirgin_oil">
+                        <field name="withdrawal_regular_extravirgin_oil" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
                 </group>
+                <group name="oil_out_sale_consumer" string="Oil Out - Sale to Consumers">
+                    <label for="sale_consumer_organic_virgin_oil" string="Organic Virgin Oil"/>
+                    <div name="sale_consumer_organic_virgin_oil">
+                        <field name="sale_consumer_organic_virgin_oil" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                    <label for="sale_consumer_organic_extravirgin_oil" string="Organic Extra Virgin Oil"/>
+                    <div name="sale_consumer_organic_extravirgin_oil">
+                        <field name="sale_consumer_organic_extravirgin_oil" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                    <label for="sale_consumer_regular_virgin_oil" string="Regular Virgin Oil"/>
+                    <div name="sale_consumer_regular_virgin_oil">
+                        <field name="sale_consumer_regular_virgin_oil" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                    <label for="sale_consumer_regular_extravirgin_oil" string="Regular Extra Virgin Oil"/>
+                    <div name="sale_consumer_regular_extravirgin_oil">
+                        <field name="sale_consumer_regular_extravirgin_oil" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                </group>
+                <group name="oil_out_sale_distributor" string="Oil Out - Sale to Distributors">
+                    <label for="sale_distributor_organic_virgin_oil" string="Organic Virgin Oil"/>
+                    <div name="sale_distributor_organic_virgin_oil">
+                        <field name="sale_distributor_organic_virgin_oil" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                    <label for="sale_distributor_organic_extravirgin_oil" string="Organic Extra Virgin Oil"/>
+                    <div name="sale_distributor_organic_extravirgin_oil">
+                        <field name="sale_distributor_organic_extravirgin_oil" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                    <label for="sale_distributor_regular_virgin_oil" string="Regular Virgin Oil"/>
+                    <div name="sale_distributor_regular_virgin_oil">
+                        <field name="sale_distributor_regular_virgin_oil" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                    <label for="sale_distributor_regular_extravirgin_oil" string="Regular Extra Virgin Oil"/>
+                    <div name="sale_distributor_regular_extravirgin_oil">
+                        <field name="sale_distributor_regular_extravirgin_oil" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                </group>
+                <group name="oil_out_sale_loose" string="Oil Out - Loose Sale">
+                    <label for="sale_loose_organic_virgin_oil" string="Organic Virgin Oil"/>
+                    <div name="sale_loose_organic_virgin_oil">
+                        <field name="sale_loose_organic_virgin_oil" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                    <label for="sale_loose_organic_extravirgin_oil" string="Organic Extra Virgin Oil"/>
+                    <div name="sale_loose_organic_extravirgin_oil">
+                        <field name="sale_loose_organic_extravirgin_oil" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                    <label for="sale_loose_regular_virgin_oil" string="Regular Virgin Oil"/>
+                    <div name="sale_loose_regular_virgin_oil">
+                        <field name="sale_loose_regular_virgin_oil" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                    <label for="sale_loose_regular_extravirgin_oil" string="Regular Extra Virgin Oil"/>
+                    <div name="sale_loose_regular_extravirgin_oil">
+                        <field name="sale_loose_regular_extravirgin_oil" class="oe_inline"/>
+                        <label string=" L"/>
+                    </div>
+                </group>
+            </group>
             </sheet>
             <div class="oe_chatter">
                 <field name="message_follower_ids" widget="mail_followers"/>

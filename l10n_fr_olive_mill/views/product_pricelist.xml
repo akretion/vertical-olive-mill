@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2019 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+
+<record id="product_pricelist_view" model="ir.ui.view">
+    <field name="name">fr.olive.mill.product.pricelist.form</field>
+    <field name="model">product.pricelist</field>
+    <field name="inherit_id" ref="product.product_pricelist_view"/>
+    <field name="arch" type="xml">
+        <field name="currency_id" position="after">
+            <field name="olive_oil_distributor"/>
+        </field>
+    </field>
+</record>
+
+<record id="product_pricelist_view_tree" model="ir.ui.view">
+    <field name="name">fr.olive.mill.product.pricelist.tree</field>
+    <field name="model">product.pricelist</field>
+    <field name="inherit_id" ref="product.product_pricelist_view_tree"/>
+    <field name="arch" type="xml">
+        <field name="currency_id" position="after">
+            <field name="olive_oil_distributor"/>
+        </field>
+    </field>
+</record>
+
+<record id="product_pricelist_view_search" model="ir.ui.view">
+    <field name="name">fr.olive.mill.product.pricelist.search</field>
+    <field name="model">product.pricelist</field>
+    <field name="inherit_id" ref="product.product_pricelist_view_search"/>
+    <field name="arch" type="xml">
+        <filter name="inactive" position="after">
+            <separator/>
+            <filter name="olive_oil_distributor" string="Olive Oil Distributor"
+                    domain="[('olive_oil_distributor', '=', True)]"/>
+        </filter>
+    </field>
+</record>
+
+
+</odoo>
