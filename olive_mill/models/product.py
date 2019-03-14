@@ -5,6 +5,7 @@
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
+from odoo.tools import float_compare
 
 
 class ProductTemplate(models.Model):
