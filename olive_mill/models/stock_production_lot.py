@@ -28,7 +28,9 @@ class StockProductionLot(models.Model):
 
     @api.model
     def browse_recursive_tree(self, root_quant, lines):
-        if root_quant.product_id and root_quant.product_id.olive_type == 'oil':
+        if (
+                root_quant.product_id and
+                root_quant.product_id.olive_type in ('oil', 'bottle_full')):
             lot = root_quant.lot_id
             if not lot:
                     raise UserError(_(
@@ -59,7 +61,19 @@ class StockProductionLot(models.Model):
                 "The production lot '%s' is not linked to a quant.")
                 % self.display_name)
         quant = self.quant_ids[0]
-        lines = {}
+        lines = {}  # dict to avoid double entries in arrival lines
         self.browse_recursive_tree(quant, lines)
-        res = sorted(lines.keys(), key=lambda to_sort: to_sort.arrival_date)
+        tmp_list = sorted(lines.keys(), key=lambda to_sort: to_sort.arrival_date)
+        res = {}
+        for line in tmp_list:
+            if line.commercial_partner_id in res:
+                res[line.commercial_partner_id]['lines'] += line
+                res[line.commercial_partner_id]['subtotal'] += line.olive_qty
+            else:
+                res[line.commercial_partner_id] = {
+                    'lines': line,
+                    'subtotal': line.olive_qty,
+                    }
+        # from pprint import pprint
+        # pprint(res)
         return res
