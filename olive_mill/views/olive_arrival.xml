@@ -226,7 +226,7 @@
                 <field name="sanitary_state"/>
                 <field name="oil_product_id"
                    domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', partner_olive_culture_type)]"/>
-                <field name="ochard_id" domain="[('partner_id', '=', commercial_partner_id)]"/>
+                <field name="ochard_id" domain="[('partner_id', '=', commercial_partner_id)]" context="{'default_partner_id': commercial_partner_id}"/>
                 <field name="palox_id" domain="['|', ('oil_product_id', '=', False), ('oil_product_id', '=', oil_product_id), '|', ('borrower_partner_id', '=', False), ('borrower_partner_id', '=', commercial_partner_id)]"/>
                 <field name="oil_destination"/>
                 <label for="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}" string="Requested Withdrawal Qty"/>
@@ -358,7 +358,7 @@
                 <field name="sanitary_state"/>
                 <field name="oil_product_id"
                    domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', partner_olive_culture_type)]"/>
-                <field name="ochard_id" domain="[('partner_id', '=', commercial_partner_id)]"/>
+                <field name="ochard_id" domain="[('partner_id', '=', commercial_partner_id)]" context="{'default_partner_id': commercial_partner_id}"/>
                 <field name="palox_id" domain="['|', ('oil_product_id', '=', False), ('oil_product_id', '=', oil_product_id), '|', ('borrower_partner_id', '=', False), ('borrower_partner_id', '=', commercial_partner_id)]"/>
                 <field name="oil_destination"/>
                 <label for="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}" string="Requested Withdrawal Qty"/>

@@ -514,6 +514,9 @@ class OliveOilProduction(models.Model):
                         "Can't select the product '%s' in extra items of "
                         "line %s because it is tracked by lot or serial.")
                         % (extra.product_id.display_name, line.name))
+                # Cannot use 'restrict_partner_id'
+                # because it would create a negative quant with owner
+                # on src location
                 extra_move = smo.create({
                     'product_id': extra.product_id.id,
                     'name': _('Olive oil production %s: extra item withdrawal related to arrival line %s') % (self.name, line.name),
@@ -522,9 +525,11 @@ class OliveOilProduction(models.Model):
                     'product_uom': extra.product_id.uom_id.id,
                     'origin': self.name,
                     'product_uom_qty': extra.qty,
-                    'restrict_partner_id': line.commercial_partner_id.id,
                     })
                 extra_move.action_done()
+                # set owner on quants
+                extra_move.sudo().quant_ids.write(
+                    {'owner_id': line.commercial_partner_id.id})
                 assert extra_move.state == 'done'
             if line.oil_destination == 'withdrawal':
                 to_shrinkage_tank_oil_qty += line.shrinkage_oil_qty
