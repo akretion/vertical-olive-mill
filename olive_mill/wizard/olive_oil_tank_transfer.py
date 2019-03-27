@@ -5,7 +5,6 @@
 
 from odoo import fields, models, _
 import odoo.addons.decimal_precision as dp
-from odoo.exceptions import UserError
 
 
 class OliveOilTankTransfer(models.TransientModel):

@@ -16,7 +16,7 @@
         'account',
         'product_expiry_simple',
         'base_location',
-        #'stock_no_negative',  # ??
+        # 'stock_no_negative',  # ??
         'stock_pack_operation_auto_fill',
         'report_py3o',
         'base_usability',  # for reports
@@ -32,7 +32,6 @@
         'data/cron.xml',
         'report/report.xml',
         'views/menu.xml',
-        # 'wizard/mrp_product_produce_view.xml',
         'wizard/olive_palox_case_lend_view.xml',
         'wizard/olive_palox_generate_production_view.xml',
         'wizard/olive_withdrawal_view.xml',
@@ -68,7 +67,6 @@
         'views/partner.xml',
         'views/product.xml',
         'views/stock_production_lot.xml',
-#        'views/mrp_production.xml',
     ],
     'demo': [
         'demo/product.xml',

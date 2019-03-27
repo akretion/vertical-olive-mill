@@ -6,7 +6,7 @@
 from odoo import api, fields, models, tools, _
 from odoo.exceptions import UserError, ValidationError
 import odoo.addons.decimal_precision as dp
-from odoo.tools import float_compare, float_is_zero, float_round
+from odoo.tools import float_compare, float_round
 
 
 class OliveOilProduction(models.Model):

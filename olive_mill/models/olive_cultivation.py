@@ -49,7 +49,7 @@ class OliveCultivation(models.Model):
                         "the date (%s) is after the end of the "
                         "season (%s)") % (
                             cult.ochard_id.display_name, cult.date,
-                             cult.season_id.end_date))
+                            cult.season_id.end_date))
                 if cult.date > today:
                     raise ValidationError(_(
                         "On the cultivation form of ochard '%s', "

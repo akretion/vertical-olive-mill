@@ -150,7 +150,7 @@ class OliveAgrimerReport(models.Model):
     _sql_constraints = [(
         'date_company_uniq',
         'unique(date_start, company_id)',
-        'A DEB of the same type already exists for this month !')]
+        'An AgriMer report with the same start date already exists!')]
 
     @api.onchange('date_range_id')
     def onchange_date_range_id(self):
@@ -202,8 +202,7 @@ class OliveAgrimerReport(models.Model):
                 rg and rg[0]['shrinkage_oil_qty'] or 0.0
 
     def _compute_oil_out(
-            self, vals, oiltype2oilproducts, oiltype2bottleproducts,
-            bottle2volume):
+            self, vals, oiltype2oilproducts, bottle2oiltypevol):
         # Withdrawal
         olive_whs = self.env['stock.warehouse'].search([
             ('olive_mill', '=', True),
@@ -244,36 +243,38 @@ class OliveAgrimerReport(models.Model):
         distri_pricelists = self.env['product.pricelist'].search([
             ('olive_oil_distributor', '=', True)])
 
-        for oil_type, bottles in oiltype2bottleproducts.items():
-            distributor_fieldname = 'sale_distributor_%s_oil' % oil_type
-            consumer_fieldname = 'sale_consumer_%s_oil' % oil_type
-            distributor_qty = 0.0
-            consumer_qty = 0.0
-            for bottle in bottles:
-                move_rg = self.env['stock.move'].read_group([
-                    ('product_id', '=', bottle.id),
-                    ('state', '=', 'done'),
-                    ('date', '>=', self.date_start + ' 00:00:00'),
-                    ('date', '<=', self.date_end + ' 23:59:59'),
-                    ('company_id', '=', self.company_id.id),
-                    ('location_id.usage', '=', 'internal'),
-                    ('location_dest_id.usage', '=', 'customer'),
-                    ], ['product_uom_qty', 'partner_id'], ['partner_id'])
-                vol = bottle2volume[bottle]
-                for r in move_rg:
-                    if r['partner_id'] and distri_pricelists:
-                        partner = rpo.browse(r['partner_id'][0])
-                        if (
-                                partner.property_product_pricelist and
-                                partner.property_product_pricelist in
-                                distri_pricelists):
-                            distributor_qty += r['product_uom_qty'] * vol
-                        else:
-                            consumer_qty += r['product_uom_qty'] * vol
+        for bottle, props in bottle2oiltypevol.items():
+            move_rg = self.env['stock.move'].read_group([
+                ('product_id', '=', bottle.id),
+                ('state', '=', 'done'),
+                ('date', '>=', self.date_start + ' 00:00:00'),
+                ('date', '<=', self.date_end + ' 23:59:59'),
+                ('company_id', '=', self.company_id.id),
+                ('location_id.usage', '=', 'internal'),
+                ('location_dest_id.usage', '=', 'customer'),
+                ], ['product_uom_qty', 'partner_id'], ['partner_id'])
+            for r in move_rg:
+                product_qty = r['product_uom_qty']
+                if r['partner_id'] and distri_pricelists:
+                    partner = rpo.browse(r['partner_id'][0])
+                    if (
+                            partner.property_product_pricelist and
+                            partner.property_product_pricelist in
+                            distri_pricelists):
+                        self._oil_out_sale_final_compute(
+                            'distributor', vals, props, product_qty)
                     else:
-                        consumer_qty += r['product_uom_qty'] * vol
-            vals[distributor_fieldname] = distributor_qty
-            vals[consumer_fieldname] = consumer_qty
+                        self._oil_out_sale_final_compute(
+                            'consumer', vals, props, product_qty)
+                else:
+                    self._oil_out_sale_final_compute(
+                        'consumer', vals, props, product_qty)
+
+    def _oil_out_sale_final_compute(
+            self, partner_type, vals, props, product_qty):
+        for oil_type, vol in props.items():
+            fieldname = 'sale_%s_%s_oil' % (partner_type, oil_type)
+            vals[fieldname] += product_qty * vol
 
     def report_compute_values(self):
         oil_product_domain = {
@@ -291,18 +292,16 @@ class OliveAgrimerReport(models.Model):
                 ('olive_culture_type', '=', 'regular')],
             }
         oiltype2oilproducts = {}
-        oiltype2bottleproducts = {}
-        bottle2volume = {}
+        bottle2oiltypevol = {}
         ppo = self.env['product.product']
         for oil_type, domain in oil_product_domain.items():
             oiltype2oilproducts[oil_type] = ppo.search(
                 domain + [('olive_type', '=', 'oil')])
 
-        bottles = ppo.search([('olive_type', '=', 'bottle_full')])
-        for bottle in bottles:
+        regular_bottles = ppo.search([('olive_type', '=', 'bottle_full')])
+        for bottle in regular_bottles:
             bom, oil_product, bottle_volume =\
                 bottle.oil_bottle_full_get_bom_and_oil_product()
-            bottle2volume[bottle] = bottle_volume
             if not oil_product.olive_oil_type:
                 raise UserError(_(
                     "Oil type not configured on oil product '%s'.")
@@ -315,18 +314,34 @@ class OliveAgrimerReport(models.Model):
             if culture_type == 'conversion':
                 culture_type = 'organic'
             oil_type = '%s_%s' % (culture_type, oil_product.olive_oil_type)
-            if oil_type in oiltype2bottleproducts:
-                oiltype2bottleproducts[oil_type] += bottle
-            else:
-                oiltype2bottleproducts[oil_type] = bottle
+            bottle2oiltypevol[bottle] = {oil_type: bottle_volume}
+
+        pack_bottles = ppo.search([('olive_type', '=', 'bottle_full_pack')])
+        for bottle in pack_bottles:
+            bottle2oiltypevol[bottle] = {}
+            cbottles = bottle.oil_bottle_full_pack_get_bottles()
+            for cbottle in cbottles:
+                oil_type, bottle_volume = bottle2oiltypevol[cbottle].items()[0]
+                if oil_type in bottle2oiltypevol[bottle]:
+                    bottle2oiltypevol[bottle][oil_type] += bottle_volume
+                else:
+                    bottle2oiltypevol[bottle][oil_type] = bottle_volume
 
         vals = {}
+        self._reset_values(vals)
         self._compute_olive_arrival_qty(vals)
         self._compute_olive_pressed_qty(vals)
         self._compute_oil_produced(vals, oiltype2oilproducts)
         self._compute_oil_out(
-            vals, oiltype2oilproducts, oiltype2bottleproducts, bottle2volume)
+            vals, oiltype2oilproducts, bottle2oiltypevol)
         return vals
+
+    def _reset_values(self, vals):
+        ffields = self.env['ir.model.fields'].search([
+            ('model', '=', self._name),
+            ('ttype', '=', 'float')])
+        for ffield in ffields:
+            vals[ffield.name] = 0.0
 
     def generate_report(self):
         vals = self.report_compute_values()

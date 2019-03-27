@@ -955,20 +955,8 @@ class OliveArrivalLine(models.Model):
         il_vals = self.pre_prepare_invoice_line(tax_product, invoice)
         qty = totals['oil_qty_with_compensation'] - totals['shrinkage_oil_qty']\
             - totals['filter_loss_oil_qty']
-        # if float_is_zero(company.olive_oil_tax_price_unit, precision_digits=pr_tax):
         price_unit_kg = pricelist.get_product_price(
             tax_product, qty, partner)
-        # if pr_tax > pr_pri:
-        #    il_vals['quantity'] = 1
-        #    il_vals['price_unit'] = float_round(
-        #        price_unit * qty, precision_rounding=currency.rounding)
-        #    qty_formatted = formatLang(
-        #        self.env, qty, dp='Olive Oil Volume')
-        #    price_unit_formatted = formatLang(
-        #        self.env, price_unit, dp='Olive Oil Tax Price Unit')
-        #    il_vals['name'] += _(u" (%s L x %s %s / L)") % (
-        #        qty_formatted, price_unit_formatted, currency.symbol)
-        #else:
         qty_kg = float_round(
             qty * company.olive_oil_density, precision_digits=pr_oil)
         il_vals['quantity'] = qty_kg

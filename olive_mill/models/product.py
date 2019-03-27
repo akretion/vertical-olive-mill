@@ -16,6 +16,7 @@ class ProductTemplate(models.Model):
         ('oil', 'Olive Oil'),
         ('bottle', 'Empty Oil Bottle'),
         ('bottle_full', 'Full Oil Bottle'),
+        ('bottle_full_pack', 'Pack of Full Oil Bottles'),
         ('analysis', 'Analysis'),
         ('extra_service', 'Extra Service'),
         ('service', 'Production Service'),
@@ -188,3 +189,30 @@ class ProductProduct(models.Model):
                 "material '%s' (ID %d).") % (
                     volume, bom.display_name, bom.id))
         return (bom, oil_bom_lines[0].product_id, volume)
+
+    def oil_bottle_full_pack_get_bottles(self):
+        self.ensure_one()
+        assert self.olive_type == 'bottle_full_pack'
+        boms = self.env['mrp.bom'].search([
+            ('product_tmpl_id', '=', self.product_tmpl_id.id),
+            ('type', '=', 'normal'),
+            ('product_uom_id', '=', self.uom_id.id),
+            ])
+        if not boms:
+            raise UserError(_(
+                "No bill of material for product '%s'.") % self.display_name)
+        if len(boms) > 1:
+            raise UserError(_(
+                "There are several bill of materials for product '%s'. "
+                "This scenario is not supported.") % self.display_name)
+        bom = boms[0]
+        full_bottle_lines = self.env['mrp.bom.line'].search([
+            ('product_id.olive_type', '=', 'bottle_full'), ('bom_id', '=', bom.id)])
+        if not full_bottle_lines:
+            raise UserError(_(
+                "The bill of material '%s' (ID %d) doesn't have any "
+                "line with a full oil bottle.") % (bom.display_name, bom.id))
+        bottles = []
+        for full_bottle_line in full_bottle_lines:
+            bottles.append(full_bottle_line.product_id)
+        return bottles
