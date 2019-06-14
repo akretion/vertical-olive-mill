@@ -1,19 +1,21 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* olive_mill
+# 	* olive_mill
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-03-15 23:32+0000\n"
-"PO-Revision-Date: 2019-03-15 23:32+0000\n"
+"PO-Revision-Date: 2019-03-16 16:07+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: \n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
+"Language: fr\n"
+"X-Generator: Poedit 1.8.12\n"
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/olive_arrival.py:976
@@ -264,7 +266,7 @@ msgstr "Numéro d'apport"
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_arrival_state
 msgid "Arrival State"
-msgstr "Arrival State"
+msgstr "Etat apport"
 
 #. module: olive_mill
 #: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_search
@@ -336,12 +338,12 @@ msgstr "Emprunteur"
 #. module: olive_mill
 #: model:ir.ui.view,arch_db:olive_mill.olive_oil_bottling_form
 msgid "Bottle Volume"
-msgstr "Bottle Volume"
+msgstr "Volume bouteille"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_bottling_bottle_volume
 msgid "Bottle Volume (L)"
-msgstr "Bottle Volume (L)"
+msgstr "Volume bouteille (L)"
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/olive_oil_production.py:513
@@ -372,8 +374,7 @@ msgid "Cancel"
 msgstr "Annuler"
 
 #. module: olive_mill
-#: selection:olive.arrival,state:0
-#: selection:olive.oil.production,state:0
+#: selection:olive.arrival,state:0 selection:olive.oil.production,state:0
 msgid "Cancelled"
 msgstr "Annulé"
 
@@ -391,7 +392,7 @@ msgstr "Presse annulée"
 #: code:addons/olive_mill/models/olive_arrival.py:176
 #, python-format
 msgid "Cannot cancel arrival %s because all its lines are currently selected in productions."
-msgstr "Cannot cancel arrival %s because all its lines are currently selected in productions."
+msgstr "L'apport %s ne peut être annulé parce que toutes lignes sont actuellement sélectionnées dans des presses."
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/olive_oil_production.py:245
@@ -403,7 +404,7 @@ msgstr "Impossible d'annule une presse %s qui est à l'état 'Terminé'."
 #: code:addons/olive_mill/models/olive_arrival.py:387
 #, python-format
 msgid "Cannot delete arrival %s which has some lines in 'Done' state."
-msgstr "Cannot delete arrival %s which has some lines in 'Done' state."
+msgstr "L'apport %s ne peut être annulé parce que des lignes sont dans l'état 'Fait'."
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/olive_oil_production.py:684
@@ -542,25 +543,25 @@ msgstr "Configurer l'entrepôt"
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_picking_container_product_id
 msgid "Container"
-msgstr "Container"
+msgstr "Contenant"
 
 #. module: olive_mill
 #: code:addons/olive_mill/wizard/olive_oil_picking.py:199
 #, python-format
 msgid "Container for loose olive oil: %s"
-msgstr "Container for loose olive oil: %s"
+msgstr "Contenant pour huile d'olive en vrac : %s"
 
 #. module: olive_mill
 #: code:addons/olive_mill/wizard/olive_oil_picking.py:153
 #, python-format
 msgid "Container to prepare loose olive oil: %s"
-msgstr "Container to prepare loose olive oil: %s"
+msgstr "Contenant pour préparer de l'huile d'olive en vrac : %s"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_picking_container_ids
 #: model:ir.ui.view,arch_db:olive_mill.olive_oil_picking_form
 msgid "Containers Used"
-msgstr "Containers Used"
+msgstr "Contenants utilisés"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_palox_line_ids
@@ -586,7 +587,7 @@ msgstr "Impossible de trouver une cuve de freinte pour l'entrepôt '%s' qui acce
 #: code:addons/olive_mill/wizard/olive_oil_picking.py:172
 #, python-format
 msgid "Could not move the containers for this loose olive oil preparation."
-msgstr "Could not move the containers for this loose olive oil preparation."
+msgstr "Impossible de transférer les contenants pour cette préparation d'huile d'olive en vrac."
 
 #. module: olive_mill
 #: code:addons/olive_mill/wizard/olive_oil_tank_merge.py:125
@@ -604,7 +605,7 @@ msgstr "Impossible de réserver la matière première pour cette opération de m
 #: code:addons/olive_mill/wizard/olive_oil_picking.py:179
 #, python-format
 msgid "Could not reserve the stock for this loose olive oil preparation. Check that you have enough oil."
-msgstr "Could not reserve the stock for this loose olive oil preparation. Check that you have enough oil."
+msgstr "Impossible de réserver le stock pour cette préparation d'huile d'olive en vrac. Vérifiez que vous avez assez d'huile."
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_warning_count
@@ -956,8 +957,7 @@ msgstr "Nom affiché"
 #. module: olive_mill
 #: model:ir.ui.view,arch_db:olive_mill.olive_arrival_search
 #: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_search
-#: selection:olive.arrival,state:0
-#: selection:olive.arrival.line,state:0
+#: selection:olive.arrival,state:0 selection:olive.arrival.line,state:0
 #: selection:olive.oil.production,state:0
 msgid "Done"
 msgstr "Fait"
@@ -975,8 +975,7 @@ msgstr "Presse terminée"
 #. module: olive_mill
 #: model:ir.ui.view,arch_db:olive_mill.olive_arrival_search
 #: model:ir.ui.view,arch_db:olive_mill.partner_organic_certification_search
-#: selection:olive.arrival,state:0
-#: selection:olive.arrival.line,state:0
+#: selection:olive.arrival,state:0 selection:olive.arrival.line,state:0
 #: selection:partner.organic.certification,state:0
 msgid "Draft"
 msgstr "Brouillon"
@@ -1160,7 +1159,7 @@ msgstr "Oléiculteurs"
 #. module: olive_mill
 #: selection:product.template,olive_type:0
 msgid "Federation Tax"
-msgstr "Federation Tax"
+msgstr "Taxe AFIDOL"
 
 #. module: olive_mill
 #: selection:olive.cultivation,treatment_type:0
@@ -1253,7 +1252,7 @@ msgstr "Générer"
 #: model:ir.actions.act_window,name:olive_mill.olive_palox_generate_production_action
 #: model:ir.ui.view,arch_db:olive_mill.olive_palox_generate_production_form
 msgid "Generate Oil Productions"
-msgstr "Generate Oil Productions"
+msgstr "Générer les presses d'huile"
 
 #. module: olive_mill
 #: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
@@ -1263,7 +1262,7 @@ msgstr "Récupérer les lignes d'apport"
 #. module: olive_mill
 #: model:ir.ui.view,arch_db:olive_mill.view_picking_form
 msgid "Get Loose Olive Oil"
-msgstr "Get Loose Olive Oil"
+msgstr "Obtenir de l'huile d'olive en vrac"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force_ratio_global_ratio
@@ -1373,7 +1372,7 @@ msgstr "Si le délai entre le début de récolte et la date d'apport est supéri
 #. module: olive_mill
 #: model:ir.model.fields,help:olive_mill.field_olive_palox_arrival_date
 msgid "If there are multiple arrivals in this palox, this field contains the oldest arrival date."
-msgstr "If there are multiple arrivals in this palox, this field contains the oldest arrival date."
+msgstr "S'il y a plusieurs apports dans ce palox, ce champ contient l'apport le plus ancien."
 
 #. module: olive_mill
 #: selection:olive.arrival.line,ripeness:0
@@ -1412,7 +1411,7 @@ msgstr "Facture"
 #: code:addons/olive_mill/models/account_invoice.py:59
 #, python-format
 msgid "Invoice Line '%s' has an olive oil product so it should have liter as unit of measure."
-msgstr "Invoice Line '%s' has an olive oil product so it should have liter as unit of measure."
+msgstr "La ligne de facture '%s' a un article 'huile d'olive'. Aussi, il doit avoir Litre comme unité de mesure."
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_invoice_create_invoice_type
@@ -1423,7 +1422,7 @@ msgstr "Type de facture"
 #: code:addons/olive_mill/models/account_invoice.py:31
 #, python-format
 msgid "Invoice line '%s' has a production product so it's unit of measure should be kg."
-msgstr "Invoice line '%s' has a production product so it's unit of measure should be kg."
+msgstr "La ligne de facture '%s' a un article 'presse'. Aussi, son unité de mesure doit être kg."
 
 #. module: olive_mill
 #: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_search
@@ -1693,7 +1692,7 @@ msgstr "Emplacements"
 #. module: olive_mill
 #: model:ir.model,name:olive_mill.model_olive_oil_picking_container
 msgid "Loose Olive Oil: Container Lines"
-msgstr "Loose Olive Oil: Container Lines"
+msgstr "Huile d'olive en vrac : Lignes du contenant"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_bottling_lot_name
@@ -1731,7 +1730,7 @@ msgstr "La quantité maxi d'olives par palox doit être positive."
 #: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_olive_max_ratio
 #: model:ir.model.fields,field_description:olive_mill.field_res_company_olive_max_ratio
 msgid "Maximum Ratio"
-msgstr "Maximum Ratio"
+msgstr "Taux maximum"
 
 #. module: olive_mill
 #: selection:olive.parcel,irrigation:0
@@ -1742,13 +1741,13 @@ msgstr "Micro-jet"
 #: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_olive_min_ratio
 #: model:ir.model.fields,field_description:olive_mill.field_res_company_olive_min_ratio
 msgid "Minimum Ratio"
-msgstr "Minimum Ratio"
+msgstr "Taux minimum"
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/stock_location.py:105
 #, python-format
 msgid "Missing Oil Product on tank '%s'."
-msgstr "Missing Oil Product on tank '%s'."
+msgstr "L'article Huile manque dans la cuve '%s'."
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/olive_arrival.py:685
@@ -1790,7 +1789,7 @@ msgstr "L'apport '%s' n'a aucune ligne."
 #: code:addons/olive_mill/wizard/olive_palox_generate_production.py:36
 #, python-format
 msgid "Missing oil product on palox '%s'."
-msgstr "Missing oil product on palox '%s'."
+msgstr "L'article Huile manque pour le palox '%s'."
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/olive_oil_production.py:585
@@ -1848,27 +1847,29 @@ msgstr "Nom ou code"
 #: model:ir.ui.view,arch_db:olive_mill.olive_arrival_form
 #: model:ir.ui.view,arch_db:olive_mill.olive_arrival_line_form
 msgid "Net Oil Qty"
-msgstr "Net Oil Qty"
+msgstr "Qté nette d'huile"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_oil_qty_net
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_oil_qty_net
 msgid "Net Oil Qty (L)"
-msgstr "Net Oil Qty (L)"
+msgstr "Qté nette d'huile (L)"
 
 #. module: olive_mill
 #: model:ir.model.fields,help:olive_mill.field_olive_arrival_line_oil_qty_net
 #: model:ir.model.fields,help:olive_mill.field_olive_arrival_oil_qty_net
-msgid "Net oil quantity produced in liters.\n"
+msgid ""
+"Net oil quantity produced in liters.\n"
 "First-of-day compensation: included.\n"
 "Last-of-day compensation: already deducted.\n"
 "Shrinkage: already deducted.\n"
 "Filter loss: already deducted."
-msgstr "Net oil quantity produced in liters.\n"
-"First-of-day compensation: included.\n"
-"Last-of-day compensation: already deducted.\n"
-"Shrinkage: already deducted.\n"
-"Filter loss: already deducted."
+msgstr ""
+"Quantité nette d'huile produite en litres.\n"
+"Compensation début de journée : incluse.\n"
+"Compensation fin de journée : déià déduite.\n"
+"Freinte : déjà déduite.\n"
+"Perte filtrage : déjà déduite."
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_product_swap_new_oil_product_id
@@ -1898,7 +1899,7 @@ msgstr "Suivant"
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_stock_picking_olive_oil_picking_wizard_next_move_id
 msgid "Next Move for Olive Oil Picking Wizard"
-msgstr "Next Move for Olive Oil Picking Wizard"
+msgstr "Prochain mouvement pour le Wizard Choix huile d'olive"
 
 #. module: olive_mill
 #: selection:olive.oil.production,compensation_type:0
@@ -1927,7 +1928,7 @@ msgstr "Aucune facture créée"
 #: code:addons/olive_mill/wizard/olive_palox_generate_production.py:32
 #, python-format
 msgid "No palox selected."
-msgstr "No palox selected."
+msgstr "Pas de palox sélectionné."
 
 #. module: olive_mill
 #: model:ir.ui.view,arch_db:olive_mill.olive_arrival_search
@@ -2172,22 +2173,22 @@ msgstr "Quantité d'huile à transférer (L)"
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_oil_sale_price_total
 msgid "Oil Sale Price Total"
-msgstr "Oil Sale Price Total"
+msgstr "Prix total huile vendue"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_oil_sale_price_unit
 msgid "Oil Sale Unit Price"
-msgstr "Oil Sale Unit Price"
+msgstr "Prix à l'unité d'huile vendue"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_oil_service_sale_price_total
 msgid "Oil Service Price Total (Sale Only)"
-msgstr "Oil Service Price Total (Sale Only)"
+msgstr "Prix total Service huile (Vente seulement)"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_oil_service_sale_price_unit
 msgid "Oil Service Unit Price (Sale Only)"
-msgstr "Oil Service Unit Price (Sale Only)"
+msgstr "Prix à l'unité Service huile (vente seulement)"
 
 #. module: olive_mill
 #: model:ir.actions.act_window,name:olive_mill.olive_oil_tank_merge_action
@@ -2243,12 +2244,14 @@ msgstr "L'article Huile n'est pas configuré dans la cuve '%s'."
 
 #. module: olive_mill
 #: model:ir.model.fields,help:olive_mill.field_olive_arrival_line_oil_qty_kg
-msgid "Oil quantity in kg.\n"
+msgid ""
+"Oil quantity in kg.\n"
 "First-of-day compensation: not included.\n"
 "Last-of-day compensation: already deducted.\n"
 "Shrinkage: not deducted.\n"
 "Filter loss: not deducted."
-msgstr "Quantité d'huile en kg.\n"
+msgstr ""
+"Quantité d'huile en kg.\n"
 "Compensation début de journée : non inclue.\n"
 "Compensation fin de journée : déjà déduite.\n"
 "Freinte : non déduite.\n"
@@ -2257,12 +2260,14 @@ msgstr "Quantité d'huile en kg.\n"
 #. module: olive_mill
 #: model:ir.model.fields,help:olive_mill.field_olive_arrival_line_oil_qty
 #: model:ir.model.fields,help:olive_mill.field_olive_oil_production_pack2check_line_oil_qty
-msgid "Oil quantity in liters.\n"
+msgid ""
+"Oil quantity in liters.\n"
 "First-of-day compensation: not included.\n"
 "Last-of-day compensation: already deducted.\n"
 "Shrinkage: not deducted.\n"
 "Filter loss: not deducted."
-msgstr "Quantité d'huile en litres.\n"
+msgstr ""
+"Quantité d'huile en litres.\n"
 "Compensation début de journée : non inclue.\n"
 "Compensation fin de journée : déjà déduite.\n"
 "Freinte : non déduite.\n"
@@ -2270,12 +2275,14 @@ msgstr "Quantité d'huile en litres.\n"
 
 #. module: olive_mill
 #: model:ir.model.fields,help:olive_mill.field_olive_arrival_line_sale_oil_qty
-msgid "Oil quantity sold in liters.\n"
+msgid ""
+"Oil quantity sold in liters.\n"
 "First-of-day compensation: included.\n"
 "Last-of-day compensation: already deducted.\n"
 "Shrinkage: already deducted.\n"
 "Filter loss: already deducted."
-msgstr "Quantité d'huile vendue en litres.\n"
+msgstr ""
+"Quantité d'huile vendue en litres.\n"
 "Compensation début de journée : inclue.\n"
 "Compensation fin de journée : déjà déduite.\n"
 "Freinte : déjà déduite.\n"
@@ -2283,12 +2290,14 @@ msgstr "Quantité d'huile vendue en litres.\n"
 
 #. module: olive_mill
 #: model:ir.model.fields,help:olive_mill.field_olive_arrival_line_oil_qty_with_compensation
-msgid "Oil quantity with compensation in liters.\n"
+msgid ""
+"Oil quantity with compensation in liters.\n"
 "First-of-day compensation: included.\n"
 "Last-of-day compensation: already deducted.\n"
 "Shrinkage: not deducted.\n"
 "Filter loss: not deducted."
-msgstr "Quantité d'huile avec compensation en litres.\n"
+msgstr ""
+"Quantité d'huile avec compensation en litres.\n"
 "Compensation début de journée : inclue.\n"
 "Compensation fin de journée : déjà déduite.\n"
 "Freinte : non déduite.\n"
@@ -2297,16 +2306,18 @@ msgstr "Quantité d'huile avec compensation en litres.\n"
 #. module: olive_mill
 #: model:ir.model.fields,help:olive_mill.field_olive_arrival_line_oil_sale_price_unit
 msgid "Oil sale price per liter without taxes in company currency."
-msgstr "Oil sale price per liter without taxes in company currency."
+msgstr "Prix de vente huile au litre hors taxes dans la devise de la société."
 
 #. module: olive_mill
 #: model:ir.model.fields,help:olive_mill.field_olive_arrival_line_to_sale_tank_oil_qty
-msgid "Oil sent to sale tank in liters.\n"
+msgid ""
+"Oil sent to sale tank in liters.\n"
 "First-of-day compensation: not included.\n"
 "Last-of-day compensation: already deducted.\n"
 "Shrinkage: not deducted (because we take shrinkage in sale tank).\n"
 "Filter loss: already deducted."
-msgstr "Qté d'huile envoyée vers la cuve de vente en litres.\n"
+msgstr ""
+"Qté d'huile envoyée vers la cuve de vente en litres.\n"
 "Compensation début de journée : non inclue.\n"
 "Compensation fin de journée : déjà déduite.\n"
 "Freinte : non déduite (la freinte est envoyée dans la cuve de vente).\n"
@@ -2466,12 +2477,12 @@ msgstr "Le rendement mini doit être positif."
 #. module: olive_mill
 #: model:ir.ui.view,arch_db:olive_mill.olive_arrival_form
 msgid "Olive Net Ratio"
-msgstr "Olive Net Ratio"
+msgstr "Taux net d'olives"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_olive_ratio_net
 msgid "Olive Net Ratio (kg / L)"
-msgstr "Olive Net Ratio (kg / L)"
+msgstr "Taux net d'olives (kg / L)"
 
 #. module: olive_mill
 #: model:ir.model,name:olive_mill.model_olive_ochard
@@ -2597,7 +2608,7 @@ msgstr "Type de cuve d'huile d'olive"
 #. module: olive_mill
 #: model:ir.actions.report.xml,name:olive_mill.olive_prodlot_tracability_report
 msgid "Olive Oil Tracability"
-msgstr "Olive Oil Tracability"
+msgstr "Traçabilité huile d'olive"
 
 #. module: olive_mill
 #: model:ir.actions.report.xml,name:olive_mill.olive_oil_delivery_report
@@ -2649,12 +2660,12 @@ msgstr "Qté d'olives (kg)"
 #. module: olive_mill
 #: model:ir.ui.view,arch_db:olive_mill.olive_arrival_form
 msgid "Olive Qty Pressed"
-msgstr "Olive Qty Pressed"
+msgstr "Qté d'olives pressées"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_olive_qty_pressed
 msgid "Olive Qty Pressed (kg)"
-msgstr "Olive Qty Pressed (kg)"
+msgstr "Qté d'olives pressées (kg)"
 
 #. module: olive_mill
 #: model:ir.model,name:olive_mill.model_olive_sale_pricelist
@@ -2862,12 +2873,14 @@ msgstr "Qté d'olives en kg"
 
 #. module: olive_mill
 #: model:ir.model.fields,help:olive_mill.field_olive_arrival_line_olive_qty
-msgid "Olive quantity in kg.\n"
+msgid ""
+"Olive quantity in kg.\n"
 "First-of-day compensation: not included.\n"
 "Last-of-day compensation: not deducted."
-msgstr "Olive quantity in kg.\n"
-"First-of-day compensation: not included.\n"
-"Last-of-day compensation: not deducted."
+msgstr ""
+"Quantité d'olives en kg.\n"
+"Compensation début de journée : non incluse.\n"
+"Compensation fin de journée : non déduite."
 
 #. module: olive_mill
 #: model:ir.model.fields,help:olive_mill.field_olive_oil_production_olive_qty
@@ -2947,7 +2960,7 @@ msgstr "Sur la campagne '%s', la date d'apport précoce (%s) doit être antérie
 #: code:addons/olive_mill/wizard/olive_oil_tank_merge.py:63
 #, python-format
 msgid "On the bill of material of product '%s', the line with product '%s' should have liters as unit of measure."
-msgstr "On the bill of material of product '%s', the line with product '%s' should have liters as unit of measure."
+msgstr "Sur la nomenclature de l'article '%s', la ligne de l'article '%s' doit avoir Litre comme unité de mesure."
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/olive_cultivation.py:47
@@ -2965,7 +2978,7 @@ msgstr "Sur le formulaire de culture du verger '%s', la date (%s) est dans le fu
 #: code:addons/olive_mill/wizard/olive_oil_picking.py:148
 #, python-format
 msgid "Only containers that are not tracked by lots or serial are accepted in this wizard. The container '%s' is tracked by lot or serial."
-msgstr "Only containers that are not tracked by lots or serial are accepted in this wizard. The container '%s' is tracked by lot or serial."
+msgstr "Seuls les contenants qui ne sont pas suivis par lot ou série sont acceptés dans ce wizard. Le contenant '%s' est suivi par lot ou série."
 
 #. module: olive_mill
 #: model:ir.ui.menu,name:olive_mill.olive_operations_menu
@@ -3092,7 +3105,7 @@ msgstr "Sélection de palox"
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_palox_generate_production_palox_ids
 msgid "Paloxes"
-msgstr "Paloxes"
+msgstr "Palox"
 
 #. module: olive_mill
 #: model:ir.actions.act_window,name:olive_mill.olive_parcel_action
@@ -3133,13 +3146,13 @@ msgstr "Année de plantation"
 #. module: olive_mill
 #: model:ir.actions.act_window,name:olive_mill.olive_oil_picking_action
 msgid "Prepare Loose Olive Oil"
-msgstr "Prepare Loose Olive Oil"
+msgstr "Préparer huile d'olive en vrac"
 
 #. module: olive_mill
 #: code:addons/olive_mill/wizard/olive_oil_picking.py:121
 #, python-format
 msgid "Prepare loose olive oil: %s"
-msgstr "Prepare loose olive oil: %s"
+msgstr "Préparer huile d'olive en vrac : %s"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_season_olive_qty
@@ -3212,18 +3225,18 @@ msgstr "L'article '%s' a un type olive 'Huile d'olive', aussi un type de culture
 #: code:addons/olive_mill/models/product.py:96
 #, python-format
 msgid "Product '%s' has an Olive Type 'Production Service', 'Extra Service' or 'Federation Tax', so it must be configured as a Service."
-msgstr "Product '%s' has an Olive Type 'Production Service', 'Extra Service' or 'Federation Tax', so it must be configured as a Service."
+msgstr "L'article '%s' a un type olive 'Service trituration', 'Service supplémentaire' ou 'Taxe AFIDOL', il doit donc être configuré comme Service."
 
 #. module: olive_mill
 #: code:addons/olive_mill/wizard/olive_oil_tank_merge.py:111
 #, python-format
 msgid "Product '%s' is not present on the bill of material of product '%s'."
-msgstr "Product '%s' is not present on the bill of material of product '%s'."
+msgstr "L'article '%s' n'est pas présent dans la nomenclature de l'article '%s'."
 
 #. module: olive_mill
 #: model:ir.model,name:olive_mill.model_product_template
 msgid "Product Template"
-msgstr "Product Template"
+msgstr "Modèle d'article"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_production_id
@@ -3257,12 +3270,12 @@ msgstr "Article presse"
 #. module: olive_mill
 #: model:ir.ui.view,arch_db:olive_mill.olive_arrival_form
 msgid "Production Results"
-msgstr "Production Results"
+msgstr "Résultats de la presse"
 
 #. module: olive_mill
 #: selection:product.template,olive_type:0
 msgid "Production Service"
-msgstr "Service presse"
+msgstr "Service trituration"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_production_state
@@ -3362,7 +3375,7 @@ msgstr "Qté de retrait demandée (L)"
 #. module: olive_mill
 #: model:ir.ui.view,arch_db:olive_mill.olive_arrival_form
 msgid "Results and Additional Info"
-msgstr "Results and Additional Info"
+msgstr "Résultats et info additionnelle"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_returned_organic_case
@@ -3382,7 +3395,7 @@ msgstr "Maturité"
 #. module: olive_mill
 #: selection:stock.location,olive_tank_type:0
 msgid "Risouletto"
-msgstr "Risouletto"
+msgstr "Risouleto"
 
 #. module: olive_mill
 #: selection:olive.appointment,oil_destination:0
@@ -3589,19 +3602,19 @@ msgstr "Configuration"
 #. module: olive_mill
 #: model:ir.ui.view,arch_db:olive_mill.olive_oil_picking_form
 msgid "Ship Loose Olive Oil"
-msgstr "Ship Loose Olive Oil"
+msgstr "Expédier de l'huile d'olive en vrac"
 
 #. module: olive_mill
 #: code:addons/olive_mill/wizard/olive_oil_picking.py:52
 #, python-format
 msgid "Ship loose oil from picking %s"
-msgstr "Ship loose oil from picking %s"
+msgstr "Expédier de l'huile d'olive en vrac depuis la sélection %s"
 
 #. module: olive_mill
 #: code:addons/olive_mill/wizard/olive_oil_picking.py:50
 #, python-format
 msgid "Ship loose oil wizard"
-msgstr "Ship loose oil wizard"
+msgstr "Wizard expédition d'huile d'olive en vrac"
 
 #. module: olive_mill
 #: model:ir.ui.view,arch_db:olive_mill.olive_tab_button_partner_form
@@ -3672,7 +3685,7 @@ msgstr "Emplacement source pour les bouteilles vides"
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_picking_container_src_location_id
 msgid "Source Location for Empty Containers"
-msgstr "Source Location for Empty Containers"
+msgstr "Emplacement source pour les contenants vides"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_tank_transfer_src_location_id
@@ -3775,13 +3788,13 @@ msgstr "La nomenclature comprend le composant '%s' qui est suivi par lot ou sér
 #: code:addons/olive_mill/wizard/olive_oil_tank_merge.py:70
 #, python-format
 msgid "The bill of material of the oil product '%s' is wrong: the sum of the quantity of lines (%s) should be the quantity of the bill of material (%s)."
-msgstr "The bill of material of the oil product '%s' is wrong: the sum of the quantity of lines (%s) should be the quantity of the bill of material (%s)."
+msgstr "La nomenclature de l'article Huile '%s' est erronée : le nombre de lignes (%s) doit être la quantité de la nomenclature (%s)."
 
 #. module: olive_mill
 #: code:addons/olive_mill/wizard/olive_oil_tank_merge.py:58
 #, python-format
 msgid "The bill of material of the oil product '%s' should only have oil components."
-msgstr "The bill of material of the oil product '%s' should only have oil components."
+msgstr "La nomenclature de l'article Huile '%s' ne doit comporter que des composants huile."
 
 #. module: olive_mill
 #: sql_constraint:olive.oil.production:0
@@ -3804,7 +3817,7 @@ msgstr "Le rendement de compensation (%s %%) semble incorrect."
 #: code:addons/olive_mill/models/product.py:176
 #, python-format
 msgid "The component line with product '%s' of the bill of material '%s' (ID %d) should have liters as the unit of measure."
-msgstr "The component line with product '%s' of the bill of material '%s' (ID %d) should have liters as the unit of measure."
+msgstr "La ligne de l'article '%s' de la nomenclature '%s' (ID %d) doit avoir Litres comme unité de mesure."
 
 #. module: olive_mill
 #: code:addons/olive_mill/wizard/olive_oil_bottling.py:212
@@ -3846,7 +3859,7 @@ msgstr "Le nombre d'arbres doit être positif ou nul."
 #: code:addons/olive_mill/wizard/olive_oil_tank_merge.py:46
 #, python-format
 msgid "The oil product '%s' should only have a single bill of material."
-msgstr "The oil product '%s' should only have a single bill of material."
+msgstr "L'article huile '%s' ne doit avoir qu'une unique nomenclature."
 
 #. module: olive_mill
 #: sql_constraint:olive.oil.production:0
@@ -3863,7 +3876,7 @@ msgstr "Le type d'huile de la ligne d'apport %s est %s, mais il est %s sur la pr
 #: code:addons/olive_mill/models/product.py:186
 #, python-format
 msgid "The oil volume (%s) can't negative on bill of material '%s' (ID %d)."
-msgstr "The oil volume (%s) can't negative on bill of material '%s' (ID %d)."
+msgstr "Le volume d'huile (%s) ne peut être négatif dans la nomenclature '%s' (ID %d)."
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/olive_arrival.py:344
@@ -3886,7 +3899,7 @@ msgstr "La quantité d'olives doit être positive ou nulle."
 #: code:addons/olive_mill/models/stock_location.py:127
 #, python-format
 msgid "The olive tank '%s' contains product '%s' which has no olive type."
-msgstr "The olive tank '%s' contains product '%s' which has no olive type."
+msgstr "La cuve '%s' contient l'article '%s' qui n'a pas de type olive."
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/olive_oil_production.py:287
@@ -3898,13 +3911,13 @@ msgstr "Le palox %s est vide ou en cours de production."
 #: code:addons/olive_mill/models/stock_production_lot.py:54
 #, python-format
 msgid "The product '%s' has an olive type '%s'. This report is only for products with olive type 'Full Oil Bottle' or Olive Oil'."
-msgstr "The product '%s' has an olive type '%s'. This report is only for products with olive type 'Full Oil Bottle' or Olive Oil'."
+msgstr "L'article '%s' a un type olive '%s'. Ce rapport n'est destiné qu'aux articles 'Bouteille d'huile pleine' ou 'Huile d'olive'."
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/stock_production_lot.py:50
 #, python-format
 msgid "The product '%s' has no olive type."
-msgstr "The product '%s' has no olive type."
+msgstr "L'article '%s' n'a pas de type olive."
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/olive_oil_production.py:450
@@ -3934,13 +3947,13 @@ msgstr "La presse %s utilise la compensation de fin de journée, aussi la cuve d
 #: code:addons/olive_mill/models/stock_production_lot.py:60
 #, python-format
 msgid "The production lot '%s' is not linked to a quant."
-msgstr "The production lot '%s' is not linked to a quant."
+msgstr "Le lot produit '%s' n'est pas lié à un quant."
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/stock_production_lot.py:36
 #, python-format
 msgid "The quant ID %d of the olive oil product '%s' is not linked to a lot !"
-msgstr "The quant ID %d of the olive oil product '%s' is not linked to a lot !"
+msgstr "Le quant ID %d de l'article huile d'olive '%s' n'est pas relié à un lot !"
 
 #. module: olive_mill
 #: model:ir.model.fields,help:olive_mill.field_olive_lended_case_organic_qty
@@ -3974,7 +3987,7 @@ msgstr "La quantité d'huile en retrait doit être positive ou nulle."
 #: code:addons/olive_mill/wizard/olive_oil_picking.py:67
 #, python-format
 msgid "The quantity of olive oil must be positive."
-msgstr "The quantity of olive oil must be positive."
+msgstr "La quantité d'huile doit être positive."
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/stock_location.py:234
@@ -4031,7 +4044,7 @@ msgstr "L'emplacement de stock '%s' contient %s %s '%s' sans réservation. Ce n'
 #: code:addons/olive_mill/wizard/olive_oil_picking.py:102
 #, python-format
 msgid "The stock location '%s' contains %s %s '%s' without reservation. This is not enough to prepare this loose olive oil (%s %s required)."
-msgstr "The stock location '%s' contains %s %s '%s' without reservation. This is not enough to prepare this loose olive oil (%s %s required)."
+msgstr "L'emplacement de stock '%s' contient %s %s '%s' sans réservation. Ce n'est pas suffisant pour préparer cette huile d'olive en vrac (%s %s nécessaire)."
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/stock_location.py:62
@@ -4044,7 +4057,7 @@ msgstr "L'emplacement de stock '%s' n'est pas une cuve d'huile d'olive."
 #: code:addons/olive_mill/wizard/olive_oil_picking.py:59
 #, python-format
 msgid "The stock move '%s' ID %d is in %s state. This wizard is designed to work only when the move is in confirmed state."
-msgstr "The stock move '%s' ID %d is in %s state. This wizard is designed to work only when the move is in confirmed state."
+msgstr "Le mouvement de stock '%s' ID %d est à l'état %s. Ce wizard ne peut être utilisé que si le mouvement est à l'état confirmé."
 
 #. module: olive_mill
 #: code:addons/olive_mill/wizard/olive_oil_bottling.py:112
@@ -4056,13 +4069,13 @@ msgstr "La cuve %s contient actuellement %s litres. C'est insuffisant pour cette
 #: code:addons/olive_mill/wizard/olive_oil_picking.py:80
 #, python-format
 msgid "The tank %s currently contains %s liters. This is not enough for this operation (%s liters required)."
-msgstr "The tank %s currently contains %s liters. This is not enough for this operation (%s liters required)."
+msgstr "La cuve %s contient actuellement %s litres. Ce n'est pas suffisant pour cette opération (%s litres nécessaires)."
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/stock_location.py:132
 #, python-format
 msgid "The tank '%s' (type '%s') contains '%s' but it is configured to contain '%s'. This should never happen."
-msgstr "The tank '%s' (type '%s') contains '%s' but it is configured to contain '%s'. This should never happen."
+msgstr "La cuve '%s' (type '%s') contient '%s' mais est configurée pour contenir '%s'. Cela ne devrait jamais arriver."
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/stock_location.py:140
@@ -4074,7 +4087,7 @@ msgstr "La cuve '%s' est vide."
 #: code:addons/olive_mill/wizard/olive_oil_tank_merge.py:52
 #, python-format
 msgid "The unit of measure of the bill of material of product '%s' should be liters."
-msgstr "The unit of measure of the bill of material of product '%s' should be liters."
+msgstr "L'unité de mesure de la nomenclature de l'article '%s' doit être litres."
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/olive_arrival.py:952
@@ -4104,7 +4117,7 @@ msgstr "Il y a plusieurs lots dans la cuve '%s'. Vous devriez fusionner cette cu
 #: code:addons/olive_mill/models/stock_location.py:117
 #, python-format
 msgid "There are several different products in tank '%s'. This should never happen in an oil tank which is not a risouletto tank."
-msgstr "There are several different products in tank '%s'. This should never happen in an oil tank which is not a risouletto tank."
+msgstr "Il y a plusieurs articles différents dans la cuve '%s'. Cela ne devrait jamais arriver dans un cuve d'huile autre qu'une cuve risouletto."
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/stock_location.py:160
@@ -4190,7 +4203,7 @@ msgstr "Ce produit de traitement existe déjà."
 #: code:addons/olive_mill/models/stock_picking.py:33
 #, python-format
 msgid "This wizard can only be started when the picking is in state 'Confirmed' or 'Partially Available."
-msgstr "This wizard can only be started when the picking is in state 'Confirmed' or 'Partially Available."
+msgstr "Ce wizard ne peut être lancé que si la picking est à l'état 'Confirmé' or 'Partiellement disponible'."
 
 #. module: olive_mill
 #: model:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
@@ -4267,7 +4280,7 @@ msgstr "Total des arbres"
 #: code:addons/olive_mill/models/olive_arrival.py:855
 #, python-format
 msgid "Total oil quantity: %s L"
-msgstr "Total oil quantity: %s L"
+msgstr "Qté totale d'huile : %s L"
 
 #. module: olive_mill
 #: model:ir.model.fields,help:olive_mill.field_olive_arrival_olive_qty
@@ -4277,7 +4290,7 @@ msgstr "Qté totale d'olives (kg)"
 #. module: olive_mill
 #: model:ir.model,name:olive_mill.model_stock_picking
 msgid "Transfer"
-msgstr "Transfer"
+msgstr "Transfert"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_picking_picking_id
@@ -4384,7 +4397,7 @@ msgstr "Facture fournisseur"
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_in_invoice_line_id
 msgid "Vendor Bill Line"
-msgstr "Vendor Bill Line"
+msgstr "Ligne de facture fournisseur"
 
 #. module: olive_mill
 #: model:ir.actions.act_window,name:olive_mill.stock_warehouse_olive_mill_action
@@ -4487,12 +4500,14 @@ msgstr "Retrait d'huile"
 
 #. module: olive_mill
 #: model:ir.model.fields,help:olive_mill.field_olive_arrival_line_withdrawal_oil_qty_kg
-msgid "Withdrawal oil quantity in kg.\n"
+msgid ""
+"Withdrawal oil quantity in kg.\n"
 "First-of-day compensation: not included.\n"
 "Last-of-day compensation: already deducted.\n"
 "Shrinkage: already deducted.\n"
 "Filter loss: not applicable."
-msgstr "Quantité d'huile en retrait en kg.\n"
+msgstr ""
+"Quantité d'huile en retrait en kg.\n"
 "Compensation début de journée : non inclue.\n"
 "Compensation fin de journée : déjà déduite.\n"
 "Freinte : déjà déduite.\n"
@@ -4501,12 +4516,14 @@ msgstr "Quantité d'huile en retrait en kg.\n"
 #. module: olive_mill
 #: model:ir.model.fields,help:olive_mill.field_olive_arrival_line_withdrawal_oil_qty
 #: model:ir.model.fields,help:olive_mill.field_olive_oil_production_pack2check_line_withdrawal_oil_qty
-msgid "Withdrawal oil quantity in liters.\n"
+msgid ""
+"Withdrawal oil quantity in liters.\n"
 "First-of-day compensation: not included.\n"
 "Last-of-day compensation: already deducted.\n"
 "Shrinkage: already deducted.\n"
 "Filter loss: not applicable."
-msgstr "Quantité d'huile en retrait en litres.\n"
+msgstr ""
+"Quantité d'huile en retrait en litres.\n"
 "Compensation début de journée : non inclue.\n"
 "Compensation fin de journée : déjà déduite.\n"
 "Freinte : déjà déduite.\n"
@@ -4530,7 +4547,7 @@ msgstr "Wizard pour créer des factures moulin"
 #. module: olive_mill
 #: model:ir.model,name:olive_mill.model_olive_oil_bottling
 msgid "Wizard to fill-up olive oil bottles"
-msgstr "Wizard to fill-up olive oil bottles"
+msgstr "Wizard pour embouteillage"
 
 #. module: olive_mill
 #: model:ir.model,name:olive_mill.model_olive_palox_case_lend
@@ -4540,17 +4557,17 @@ msgstr "Wizard pour prêter des caisses et/ou des palox"
 #. module: olive_mill
 #: model:ir.model,name:olive_mill.model_olive_palox_generate_production
 msgid "Wizard to mass generation productions from palox"
-msgstr "Wizard to mass generation productions from palox"
+msgstr "Wizard pour la préparation des presses à partir des palox"
 
 #. module: olive_mill
 #: model:ir.model,name:olive_mill.model_olive_oil_tank_merge
 msgid "Wizard to merge an olive oil tank"
-msgstr "Wizard to merge an olive oil tank"
+msgstr "Wizard pour fusionner une cuve d'huile d'olive"
 
 #. module: olive_mill
 #: model:ir.model,name:olive_mill.model_olive_oil_picking
 msgid "Wizard to ship loose olive oil"
-msgstr "Wizard to ship loose olive oil"
+msgstr "Wizard pour expédier de l'huile d'olive en vrac"
 
 #. module: olive_mill
 #: model:ir.model,name:olive_mill.model_olive_withdrawal
@@ -4566,13 +4583,13 @@ msgstr "Saisir ici le nombre de palox"
 #: code:addons/olive_mill/wizard/olive_oil_tank_merge.py:87
 #, python-format
 msgid "Wrong bill of material for olive product '%s' configured on oil tank '%s': it should have a single component and this component should be the same product."
-msgstr "Wrong bill of material for olive product '%s' configured on oil tank '%s': it should have a single component and this component should be the same product."
+msgstr "Nomenclature erronée pour l'article olive '%s' configuré sur la cuve d'huile '%s' : il doit avoir un seul composant et ce composant doit être le même article."
 
 #. module: olive_mill
 #: code:addons/olive_mill/wizard/olive_oil_tank_merge.py:93
 #, python-format
 msgid "Wrong bill of material for olive product '%s' configured on oil tank '%s': it's single component should be the same product."
-msgstr "Wrong bill of material for olive product '%s' configured on oil tank '%s': it's single component should be the same product."
+msgstr "Nomenclature erronée pour l'article olive '%s' configuré sur la cuve d'huile '%s' : son seul composant doit être le même article."
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_season_year
@@ -4649,7 +4666,7 @@ msgstr "Vous devez sélectionner une cuve de compensation."
 #: code:addons/olive_mill/wizard/olive_oil_picking.py:89
 #, python-format
 msgid "You must select a source location for empty containers."
-msgstr "You must select a source location for empty containers."
+msgstr "Vous devez sélectionner un emplacement source pour les contenants vides."
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/olive_cultivation.py:43
@@ -4738,4 +4755,3 @@ msgstr "la société parente"
 #: model:ir.ui.view,arch_db:olive_mill.olive_arrival_warning_form
 msgid "warning(s)"
 msgstr "avertissement(s)"
-

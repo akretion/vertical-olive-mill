@@ -89,6 +89,8 @@ class OliveOilPicking(models.TransientModel):
                 raise UserError(_(
                     "You must select a source location for empty containers."))
         for cline in self.container_ids:
+            if cline.product_id.type != 'product':
+                continue
             qrg = sqo.read_group(
                 [('location_id', '=', self.container_src_location_id.id),
                  ('product_id', '=', cline.product_id.id),

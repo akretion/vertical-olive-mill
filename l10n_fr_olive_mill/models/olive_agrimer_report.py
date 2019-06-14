@@ -203,6 +203,13 @@ class OliveAgrimerReport(models.Model):
 
     def _compute_oil_out(
             self, vals, oiltype2oilproducts, bottle2oiltypevol):
+        smo = self.env['stock.move']
+        move_common_domain = [
+            ('state', '=', 'done'),
+            ('date', '>=', self.date_start + ' 00:00:00'),
+            ('date', '<=', self.date_end + ' 23:59:59'),
+            ('company_id', '=', self.company_id.id),
+            ]
         # Withdrawal
         olive_whs = self.env['stock.warehouse'].search([
             ('olive_mill', '=', True),
@@ -212,48 +219,63 @@ class OliveAgrimerReport(models.Model):
         for olive_wh in olive_whs:
             withdrawal_locs += olive_wh.olive_withdrawal_loc_id
         for oil_type, oil_products in oiltype2oilproducts.items():
-            move_rg = self.env['stock.move'].read_group([
-                ('product_id', 'in', oil_products.ids),
-                ('state', '=', 'done'),
-                ('date', '>=', self.date_start + ' 00:00:00'),
-                ('date', '<=', self.date_end + ' 23:59:59'),
-                ('company_id', '=', self.company_id.id),
-                ('location_id', 'in', withdrawal_locs.ids),
-                ('location_dest_id.usage', '=', 'customer'),
+            move_rg = smo.read_group(
+                move_common_domain + [
+                    ('product_id', 'in', oil_products.ids),
+                    ('location_id', 'in', withdrawal_locs.ids),
+                    ('location_dest_id.usage', '=', 'customer'),
                 ], ['product_uom_qty'], [])
+            return_move_rg = smo.read_group(
+                move_common_domain + [
+                    ('product_id', 'in', oil_products.ids),
+                    ('location_id.usage', '=', 'customer'),
+                    ('location_dest_id', 'in', withdrawal_locs.ids),
+                ], ['product_uom_qty'], [])
+            qty = move_rg and move_rg[0]['product_uom_qty'] or 0.0
+            return_qty = return_move_rg and\
+                return_move_rg[0]['product_uom_qty'] or 0.0
             withdrawal_fieldname = 'withdrawal_%s_oil' % oil_type
-            vals[withdrawal_fieldname] =\
-                move_rg and move_rg[0]['product_uom_qty'] or 0.0
+            vals[withdrawal_fieldname] = qty - return_qty
         # Loose
         for oil_type, oil_products in oiltype2oilproducts.items():
-            move_rg = self.env['stock.move'].read_group([
-                ('product_id', 'in', oil_products.ids),
-                ('state', '=', 'done'),
-                ('date', '>=', self.date_start + ' 00:00:00'),
-                ('date', '<=', self.date_end + ' 23:59:59'),
-                ('company_id', '=', self.company_id.id),
-                ('location_id', 'not in', withdrawal_locs.ids),
-                ('location_dest_id.usage', '=', 'customer'),
+            move_rg = smo.read_group(
+                move_common_domain + [
+                    ('product_id', 'in', oil_products.ids),
+                    ('location_id', 'not in', withdrawal_locs.ids),
+                    ('location_dest_id.usage', '=', 'customer'),
+                ], ['product_uom_qty'], [])
+            return_move_rg = smo.read_group(
+                move_common_domain + [
+                    ('product_id', 'in', oil_products.ids),
+                    ('location_id.usage', '=', 'customer'),
+                    ('location_dest_id', 'not in', withdrawal_locs.ids),
                 ], ['product_uom_qty'], [])
             loose_fieldname = 'sale_loose_%s_oil' % oil_type
-            vals[loose_fieldname] =\
-                move_rg and move_rg[0]['product_uom_qty'] or 0.0
+            qty = move_rg and move_rg[0]['product_uom_qty'] or 0.0
+            return_qty = return_move_rg and\
+                return_move_rg[0]['product_uom_qty'] or 0.0
+            vals[loose_fieldname] = qty - return_qty
         # Sale bottles
         rpo = self.env['res.partner']
         distri_pricelists = self.env['product.pricelist'].search([
             ('olive_oil_distributor', '=', True)])
 
         for bottle, props in bottle2oiltypevol.items():
-            move_rg = self.env['stock.move'].read_group([
-                ('product_id', '=', bottle.id),
-                ('state', '=', 'done'),
-                ('date', '>=', self.date_start + ' 00:00:00'),
-                ('date', '<=', self.date_end + ' 23:59:59'),
-                ('company_id', '=', self.company_id.id),
-                ('location_id.usage', '=', 'internal'),
-                ('location_dest_id.usage', '=', 'customer'),
+            move_rg = smo.read_group(
+                move_common_domain + [
+                    ('product_id', '=', bottle.id),
+                    ('location_id.usage', '=', 'internal'),
+                    ('location_dest_id.usage', '=', 'customer'),
                 ], ['product_uom_qty', 'partner_id'], ['partner_id'])
-            for r in move_rg:
+            return_move_rg = smo.read_group(
+                move_common_domain + [
+                    ('product_id', '=', bottle.id),
+                    ('location_id.usage', '=', 'customer'),
+                    ('location_dest_id.usage', '=', 'internal'),
+                ], ['product_uom_qty', 'partner_id'], ['partner_id'])
+            for return_r in return_move_rg:
+                return_r['product_uom_qty'] *= -1
+            for r in move_rg + return_move_rg:
                 product_qty = r['product_uom_qty']
                 if r['partner_id'] and distri_pricelists:
                     partner = rpo.browse(r['partner_id'][0])
@@ -297,7 +319,6 @@ class OliveAgrimerReport(models.Model):
         for oil_type, domain in oil_product_domain.items():
             oiltype2oilproducts[oil_type] = ppo.search(
                 domain + [('olive_type', '=', 'oil')])
-
         regular_bottles = ppo.search([('olive_type', '=', 'bottle_full')])
         for bottle in regular_bottles:
             bom, oil_product, bottle_volume =\
@@ -317,15 +338,15 @@ class OliveAgrimerReport(models.Model):
             bottle2oiltypevol[bottle] = {oil_type: bottle_volume}
 
         pack_bottles = ppo.search([('olive_type', '=', 'bottle_full_pack')])
-        for bottle in pack_bottles:
-            bottle2oiltypevol[bottle] = {}
-            cbottles = bottle.oil_bottle_full_pack_get_bottles()
-            for cbottle in cbottles:
+        for pbottle in pack_bottles:
+            bottle2oiltypevol[pbottle] = {}
+            pack_dict = pbottle.oil_bottle_full_pack_get_bottles()
+            for cbottle, qty in pack_dict.items():
                 oil_type, bottle_volume = bottle2oiltypevol[cbottle].items()[0]
-                if oil_type in bottle2oiltypevol[bottle]:
-                    bottle2oiltypevol[bottle][oil_type] += bottle_volume
+                if oil_type in bottle2oiltypevol[pbottle]:
+                    bottle2oiltypevol[pbottle][oil_type] += bottle_volume * qty
                 else:
-                    bottle2oiltypevol[bottle][oil_type] = bottle_volume
+                    bottle2oiltypevol[pbottle][oil_type] = bottle_volume * qty
 
         vals = {}
         self._reset_values(vals)

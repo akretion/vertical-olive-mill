@@ -212,7 +212,10 @@ class ProductProduct(models.Model):
             raise UserError(_(
                 "The bill of material '%s' (ID %d) doesn't have any "
                 "line with a full oil bottle.") % (bom.display_name, bom.id))
-        bottles = []
+        res = {}
         for full_bottle_line in full_bottle_lines:
-            bottles.append(full_bottle_line.product_id)
-        return bottles
+            if full_bottle_line.product_id in res:
+                res[full_bottle_line.product_id] += full_bottle_line.product_qty
+            else:
+                res[full_bottle_line.product_id] = full_bottle_line.product_qty
+        return res
