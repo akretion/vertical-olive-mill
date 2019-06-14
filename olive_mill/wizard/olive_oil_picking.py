@@ -215,7 +215,16 @@ class OliveOilPicking(models.TransientModel):
         # Oil : assign to move
         action = True
         if self.move_id:
-            assert not sqo.search([('reservation_id', '=', self.move_id.id)])
+            if sqo.search([('reservation_id', '=', self.move_id.id)]):
+                raise UserError(_(
+                    "The stock move with product '%s' already has a "
+                    "reservation. It is certainly due to the fact that "
+                    "there was some unreserved oil left on stock "
+                    "location '%s', which is probably caused by a "
+                    "previous execution of this wizard on a picking that "
+                    "was later cancelled.") % (
+                        self.move_id.product_id.display_name,
+                        self.move_id.location_id.display_name))
             for quant in oil_move.quant_ids:
                 quant.sudo().reservation_id = self.move_id.id
             if self.picking_id:
