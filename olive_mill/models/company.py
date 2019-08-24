@@ -20,6 +20,11 @@ class ResCompany(models.Model):
         "date is superior to the number of days indicated here, Odoo will "
         "display a warning upon arrival validation when the oil destination "
         "is sale or mix.")
+    # POLLS
+    olive_poll_average_season_count = fields.Integer(
+        string='Number of Past Seasons', default=3,
+        help="Number of past seasons taken into account to compute "
+        "the average quantities and ratios on the pre-season polls.")
     # START APPOINTMENTS
     olive_appointment_qty_per_palox = fields.Integer(
         string='Quantity of Olives per Palox', default=380)
@@ -75,6 +80,9 @@ class ResCompany(models.Model):
     #    help='Tax unit price per liter of olive oil')
 
     _sql_constraints = [(
+        'olive_poll_average_season_count_positive',
+        'CHECK(olive_poll_average_season_count >= 0)',
+        'Number of Past Seasons must be positive.'), (
         'olive_max_qty_per_palox_positive',
         'CHECK(olive_max_qty_per_palox >= 0)',
         'Maximum Quantity of Olives per Palox must be positive.'), (

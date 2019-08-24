@@ -11,7 +11,7 @@
     <field name="name">olive.appointment.form</field>
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
-        <form string="Olive Appointment">
+        <form string="Appointment">
             <header>
                 <button name="%(olive_palox_lend_action)d" type="action" string="Lend Palox/Cases" attrs="{'invisible': [('appointment_type', '!=', 'lend')]}" context="{'default_partner_id': partner_id}" class="btn-primary"/>
                 <button name="create_arrival" class="btn-primary" attrs="{'invisible': ['|', ('arrival_id', '!=', False), ('appointment_type', '!=', 'arrival')]}" string="Create Arrival" type="object"/>
@@ -62,7 +62,7 @@
     <field name="name">olive.appointment.tree</field>
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
-        <tree string="Olive Appointments">
+        <tree string="Appointments">
             <field name="start_datetime"/>
             <field name="end_datetime"/>
             <field name="appointment_type"/>
@@ -92,7 +92,7 @@
     <field name="name">olive.appointment.search</field>
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
-        <search string="Search Olive Appointments">
+        <search string="Search Appointments">
             <field name="partner_id" operator="child_of"/>
             <separator/>
             <filter name="today" string="Today" domain="[('start_datetime', '&lt;=', datetime.datetime.combine(context_today(), datetime.time(23, 59, 0))), ('start_datetime', '&gt;', datetime.datetime.combine(context_today(), datetime.time(0, 0, 0)))]"/>

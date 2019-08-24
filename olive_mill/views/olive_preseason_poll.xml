@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2019 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+
+<record id="olive_preseason_poll_form" model="ir.ui.view">
+    <field name="name">olive.preseason.poll.form</field>
+    <field name="model">olive.preseason.poll</field>
+    <field name="arch" type="xml">
+        <form string="Pre-season Poll">
+            <sheet>
+                <field name="partner_organic_certified_logo" widget="image" class="oe_avatar" attrs="{'invisible': [('partner_organic_certified_logo', '=', False)]}"/>
+                <group name="main">
+                    <group name="left" string="Poll">
+                        <field name="partner_id"/>
+                        <field name="partner_olive_culture_type" invisible="1"/>
+                        <label for="olive_qty" string="Olive Qty"/>
+                        <div name="olive_qty">
+                            <field name="olive_qty" class="oe_inline"/> kg
+                        </div>
+                        <label for="sale_olive_qty" string="Sale Olive Qty"/>
+                        <div name="sale_olive_qty">
+                            <field name="sale_olive_qty" class="oe_inline"/> kg
+                        </div>
+                        <field name="oil_product_id" domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', partner_olive_culture_type)]" attrs="{'required': [('sale_olive_qty', '>', 0)]}"/>
+                        <label for="oil_qty" string="Oil Qty"/>
+                        <div name="oil_qty">
+                            <field name="oil_qty" class="oe_inline"/> L
+                        </div>
+                        <label for="sale_oil_qty" string="Sale Oil Qty"/>
+                        <div name="sale_oil_qty">
+                            <field name="sale_oil_qty" class="oe_inline"/> L
+                        </div>
+                        <field name="season_id"/>
+                    </group>
+                    <group name="right" string="Past Data">
+                        <label for="past_average_ratio" string="Average Ratio"/>
+                        <div name="past_average_ratio">
+                            <field name="past_average_ratio" class="oe_inline"/> %
+                        </div>
+                        <label for="past_average_olive_qty" string="Average Olive Qty"/>
+                        <div name="past_average_olive_qty">
+                            <field name="past_average_olive_qty" class="oe_inline"/> kg
+                        </div>
+                        <label for="past_average_oil_qty" string="Average Oil Qty"/>
+                        <div name="past_average_oil_qty">
+                            <field name="past_average_oil_qty" class="oe_inline"/> L
+                        </div>
+                        <label for="past_average_sale_olive_qty" string="Average Sale Olive Qty"/>
+                        <div name="past_average_sale_olive_qty">
+                            <field name="past_average_sale_olive_qty" class="oe_inline"/> kg
+                        </div>
+                        <label for="past_average_sale_oil_qty" string="Average Sale Oil Qty"/>
+                        <div name="past_average_sale_oil_qty">
+                            <field name="past_average_sale_oil_qty" class="oe_inline"/> L
+                        </div>
+                    </group>
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<record id="olive_preseason_poll_tree" model="ir.ui.view">
+    <field name="name">olive.preseason.poll.tree</field>
+    <field name="model">olive.preseason.poll</field>
+    <field name="arch" type="xml">
+        <tree string="Pre-season Polls">
+            <field name="partner_id"/>
+            <field name="olive_qty" sum="1"/>
+            <field name="oil_qty" sum="1"/>
+            <field name="sale_olive_qty" sum="1"/>
+            <field name="sale_oil_qty" sum="1"/>
+            <field name="oil_product_id"/>
+            <field name="past_average_ratio"/>
+            <field name="past_average_olive_qty"/>
+            <field name="past_average_oil_qty"/>
+            <field name="past_average_sale_olive_qty"/>
+            <field name="past_average_sale_oil_qty"/>
+            <field name="season_id"/>
+        </tree>
+    </field>
+</record>
+
+<record id="olive_preseason_poll_pivot" model="ir.ui.view">
+    <field name="name">olive.preseason.poll.pivot</field>
+    <field name="model">olive.preseason.poll</field>
+    <field name="arch" type="xml">
+        <pivot string="Pre-season Polls">
+            <field name="oil_product_id" type="row"/>
+            <field name="olive_qty" type="measure"/>
+            <field name="sale_oil_qty" type="measure"/>
+        </pivot>
+    </field>
+</record>
+
+<record id="olive_preseason_poll_search" model="ir.ui.view">
+    <field name="name">olive.preseason.poll.search</field>
+    <field name="model">olive.preseason.poll</field>
+    <field name="arch" type="xml">
+        <search string="Pre-season Polls">
+            <field name="partner_id" operator="child_of"/>
+            <separator/>
+            <field name="oil_product_id"/>
+            <group string="Group By" name="groupby">
+                <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>
+                <filter name="commercial_partner_groupby" string="Partner" context="{'group_by': 'commercial_partner_id'}"/>
+                <filter name="oil_product_groupby" string="Oil Type" context="{'group_by': 'oil_product_id'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<record id="olive_preseason_poll_action" model="ir.actions.act_window">
+    <field name="name">Pre-season Polls</field>
+    <field name="res_model">olive.preseason.poll</field>
+    <field name="view_mode">tree,form,pivot</field>
+</record>
+
+<menuitem id="olive_preseason_poll_menu" action="olive_preseason_poll_action" parent="olive_operations_menu" sequence="5"/>
+
+</odoo>

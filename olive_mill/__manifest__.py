@@ -62,6 +62,7 @@
         'views/olive_oil_production.xml',
         'views/partner_organic_certification.xml',
         'views/olive_appointment.xml',
+        'views/olive_preseason_poll.xml',
         'views/olive_sale_pricelist.xml',
         'views/organic_certifying_entity.xml',
         'views/partner.xml',
