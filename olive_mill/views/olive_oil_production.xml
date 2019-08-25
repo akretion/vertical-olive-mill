@@ -184,6 +184,9 @@
             <separator/>
             <filter string="In Progress" domain="[('state', 'not in', ('done', 'cancel'))]" name="progress"/>
             <filter string="Done" domain="[('state', '=', 'done')]" name="done"/>
+            <separator/>
+            <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
+            <separator/>
             <group string="Group By" name="groupby">
                 <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>
                 <filter name="state_groupby" string="State" context="{'group_by': 'state'}"/>
@@ -217,7 +220,7 @@
     <field name="name">Oil Productions</field>
     <field name="res_model">olive.oil.production</field>
     <field name="view_mode">tree,form,pivot,graph</field>
-    <field name="context">{'search_default_progress': True}</field>
+    <field name="context">{'search_default_current_season': True, 'search_default_progress': True}</field>
 </record>
 
 <menuitem id="olive_oil_production_menu" action="olive_oil_production_action" parent="olive_operations_menu" sequence="30"/>

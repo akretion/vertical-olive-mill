@@ -14,6 +14,8 @@ class OliveConfigSettings(models.TransientModel):
     company_id = fields.Many2one(
         'res.company', string='Company',
         default=lambda self: self.env.user.company_id, required=True)
+    current_season_id = fields.Many2one(
+        related='company_id.current_season_id', readonly=True)
     olive_harvest_arrival_max_delta_days = fields.Integer(
         related='company_id.olive_harvest_arrival_max_delta_days')
     olive_poll_average_season_count = fields.Integer(

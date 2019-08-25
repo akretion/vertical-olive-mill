@@ -179,6 +179,8 @@
             <filter string="Done" domain="[('state', '=', 'done')]" name="done"/>
             <filter string="Not Cancelled" domain="[('state', '!=', 'cancel')]" name="not_cancelled"/>
             <separator/>
+            <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
+            <separator/>
             <filter name="today" string="Today" domain="[('date', '=', context_today().strftime('%Y-%m-%d'))]"/>
             <group string="Group By" name="groupby">
                 <filter name="commercial_partner_groupby" string="Farmer" context="{'group_by': 'commercial_partner_id'}"/>
@@ -195,7 +197,7 @@
     <field name="name">Arrivals</field>
     <field name="res_model">olive.arrival</field>
     <field name="view_mode">tree,form,pivot,graph</field>
-    <field name="context">{'search_default_not_cancelled': 1}</field>
+    <field name="context">{'search_default_not_cancelled': 1, 'search_default_current_season': 1}</field>
 </record>
 
 <menuitem id="olive_arrival_menu" action="olive_arrival_action" parent="olive_operations_menu" sequence="20"/>
@@ -426,6 +428,9 @@
             <separator/>
             <filter name="to_purchase" string="To Purchase" domain="[('oil_destination', 'in', ('sale', 'mix')), ('in_invoice_line_id', '=', False), ('state', '=', 'done'), ('production_state', '=', 'done')]"/>
             <filter name="purchased" string="Purchased" domain="[('oil_destination', 'in', ('sale', 'mix')), ('in_invoice_line_id', '!=', False), ('state', '=', 'done'), ('production_state', '=', 'done')]"/>
+            <separator/>
+            <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
+            <separator/>
             <group string="Group By" name="groupby">
                 <filter name="commercial_partner_groupby" string="Farmer" context="{'group_by': 'commercial_partner_id'}"/>
                 <filter name="arrival_day_groupby" string="Arrival Day" context="{'group_by': 'arrival_date:day'}"/>
@@ -488,7 +493,7 @@
     <field name="name">Arrival Lines</field>
     <field name="res_model">olive.arrival.line</field>
     <field name="view_mode">pivot,tree,form,graph</field>
-    <field name="context">{'search_default_arrival_done': True}</field>
+    <field name="context">{'search_default_current_season': True, 'search_default_arrival_done': True}</field>
 </record>
 
 <menuitem id="olive_arrival_line_menu" action="olive_arrival_line_action" parent="olive_report_menu" sequence="10" groups="stock.group_stock_manager"/>  <!-- maybe we will remove group once appropriate prodections are setup -->

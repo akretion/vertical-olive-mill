@@ -17,7 +17,7 @@ class PartnerOrganicCertification(models.Model):
         states={'done': [('readonly', True)]})
     season_id = fields.Many2one(
         'olive.season', string='Season', required=True, index=True,
-        default=lambda self: self.env['olive.season'].get_current_season(),
+        default=lambda self: self.env.user.company_id.current_season_id.id,
         states={'done': [('readonly', True)]})
     company_id = fields.Many2one(
         related='season_id.company_id', store=True, readonly=True,
@@ -61,3 +61,9 @@ class PartnerOrganicCertification(models.Model):
         'partner_season_unique',
         'unique(season_id, partner_id)',
         'This farmer already has a certification for that season.')]
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        res = super(PartnerOrganicCertification, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
+        return self.env.user.company_id.current_season_update(res, view_type)

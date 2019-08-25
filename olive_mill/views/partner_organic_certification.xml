@@ -55,6 +55,9 @@
             <separator/>
             <filter name="regular" domain="[('conversion', '=', False)]" string="Regular"/>
             <filter name="conversion" domain="[('conversion', '=', True)]" string="Conversion"/>
+            <separator/>
+            <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
+            <separator/>
             <group string="Group By" name="groupby">
                 <filter name="partner_groupby" string="Farmer" context="{'group_by': 'partner_id'}"/>
                 <filter name="certifying_entity_groupby" string="Certifying Entity" context="{'group_by': 'certifying_entity_id'}"/>
@@ -68,7 +71,7 @@
     <field name="name">Organic Certifications</field>
     <field name="res_model">partner.organic.certification</field>
     <field name="view_mode">tree,form</field>
-    <field name="context">{'partner_organic_certification_main_view': True}</field>
+    <field name="context">{'partner_organic_certification_main_view': True, 'search_default_current_season': True}</field>
 </record>
 
 <menuitem id="partner_organic_certification_menu" action="partner_organic_certification_action" parent="olive_data_menu" sequence="100"/>

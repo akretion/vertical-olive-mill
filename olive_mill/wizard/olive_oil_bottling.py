@@ -27,7 +27,7 @@ class OliveOilBottling(models.TransientModel):
         'mrp.bom', string='Bill of Material', readonly=True)
     season_id = fields.Many2one(
         'olive.season', string='Season', required=True,
-        default=lambda self: self.env['olive.season'].get_current_season(),
+        default=lambda self: self.env.user.company_id.current_season_id.id,
         states={'produce': [('readonly', True)]})
     quantity = fields.Integer(string='Qty of Bottles to Produce')
     warehouse_id = fields.Many2one(

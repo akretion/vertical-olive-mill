@@ -39,6 +39,7 @@ class OliveSeason(models.Model):
     gross_ratio = fields.Float(
         compute='_compute_totals', string='Gross Ratio (%)', readonly=True,
         digits=dp.get_precision('Olive Oil Ratio'))
+    show_on_dashboard = fields.Boolean(string='Show on Dashboard', default=True)
     kanban_dashboard_graph = fields.Text(compute='_compute_kanban_dashboard_graph')
 
     _sql_constrains = [(
@@ -118,19 +119,7 @@ class OliveSeason(models.Model):
 
     @api.model
     def get_current_season(self):
-        today = fields.Date.context_today(self)
-        seasons = self.search([
-            ('start_date', '<=', today),
-            ('end_date', '>=', today),
-            ('company_id', '=', self.env.user.company_id.id),
-            ])
-        if seasons:
-            return seasons[0]
-        seasons = self.search([
-            ('start_date', '<=', today),
-            ('company_id', '=', self.env.user.company_id.id)],
-            order='start_date desc', limit=1)
-        return seasons and seasons[0] or False
+        return self.env.user.company_id.get_current_season()
 
     def _compute_kanban_dashboard_graph(self):
         for season in self:

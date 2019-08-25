@@ -51,7 +51,8 @@
     <field name="arch" type="xml">
         <search string="Search Cultivation Methods">
             <field name="partner_id"/>
-            <field name="season_id"/>
+            <separator/>
+            <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
             <group string="Group By" name="groupby">
                 <filter name="partner_groupby" string="Farmer" context="{'group_by': 'partner_id'}"/>
                 <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>
@@ -65,7 +66,7 @@
     <field name="name">Cultivation Methods</field>
     <field name="res_model">olive.cultivation</field>
     <field name="view_mode">tree,form</field>
-    <field name="context">{'olive_cultivation_main_view': True}</field>
+    <field name="context">{'olive_cultivation_main_view': True, 'search_default_current_season': True}</field>
 </record>
 
 <menuitem id="olive_cultivation_menu" action="olive_cultivation_action" parent="olive_data_menu" sequence="40"/>

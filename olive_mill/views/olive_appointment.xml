@@ -30,6 +30,7 @@
                         <field name="start_datetime"/>
                         <field name="end_datetime"/>
                         <field name="arrival_id" attrs="{'invisible': [('appointment_type', '!=', 'arrival')]}"/>
+                        <field name="season_id"/>
                         <field name="company_id" groups="base.group_multi_company"/>
                     </group>
                     <group name="arrival" attrs="{'invisible': [('appointment_type', '!=', 'arrival')]}">
@@ -102,11 +103,15 @@
             <filter name="arrival" string="Arrival" domain="[('appointment_type', '=', 'arrival')]"/>
             <filter name="withdrawal" string="Withdrawal" domain="[('appointment_type', '=', 'withdrawal')]"/>
             <filter name="other" string="Other" domain="[('appointment_type', '=', 'other')]"/>
+            <separator/>
+            <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
+            <separator/>
             <group string="Group By" name="groupby">
                 <filter name="start_groupby" string="Day" context="{'group_by': 'start_datetime:day'}"/>
                 <filter name="commercial_partner_groupby" string="Partner" context="{'group_by': 'commercial_partner_id'}"/>
                 <filter name="appointment_type_groupby" string="Appointment Type" context="{'group_by': 'appointment_type'}"/>
                 <filter name="variant_groupby" string="Olive Variant" context="{'group_by': 'variant_id'}"/>
+                <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>
             </group>
         </search>
     </field>
@@ -116,6 +121,7 @@
     <field name="name">Appointments</field>
     <field name="res_model">olive.appointment</field>
     <field name="view_mode">tree,form,calendar</field>
+    <field name="context">{'search_default_current_season': 1}</field>
 </record>
 
 <menuitem id="olive_appointment_menu" action="olive_appointment_action" parent="olive_operations_menu" sequence="10"/>

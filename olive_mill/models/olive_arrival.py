@@ -26,7 +26,7 @@ class OliveArrival(models.Model):
             'olive.arrival'))
     season_id = fields.Many2one(
         'olive.season', string='Season', required=True, index=True,
-        default=lambda self: self.env['olive.season'].get_current_season(),
+        default=lambda self: self.env.user.company_id.current_season_id.id,
         states={'done': [('readonly', True)]})
     partner_id = fields.Many2one(
         'res.partner', string='Olive Farmer', required=True, index=True,
@@ -388,6 +388,12 @@ class OliveArrival(models.Model):
                     "Cannot delete arrival %s which has some lines in 'Done' state.")
                     % arrival.name)
         return super(OliveArrival, self).unlink()
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        res = super(OliveArrival, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
+        return self.env.user.company_id.current_season_update(res, view_type)
 
 
 class OliveArrivalLine(models.Model):
@@ -997,6 +1003,12 @@ class OliveArrivalLine(models.Model):
         self.create_out_invoice_lines(invoice)
         self.write({'out_invoice_id': invoice.id})
         return invoice
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        res = super(OliveArrivalLine, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
+        return self.env.user.company_id.current_season_update(res, view_type)
 
 
 class OliveArrivalLineExtra(models.Model):

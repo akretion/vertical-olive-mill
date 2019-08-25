@@ -20,6 +20,9 @@ class ResCompany(models.Model):
         "date is superior to the number of days indicated here, Odoo will "
         "display a warning upon arrival validation when the oil destination "
         "is sale or mix.")
+    current_season_id = fields.Many2one(
+        'olive.season', compute='_compute_current_season_id', readonly=True,
+        string='Current Season')
     # POLLS
     olive_poll_average_season_count = fields.Integer(
         string='Number of Past Seasons', default=3,
@@ -132,3 +135,35 @@ class ResCompany(models.Model):
     def olive_min_max_ratio(self):
         self.ensure_one()
         return (self.olive_min_ratio, self.olive_max_ratio)
+
+    def get_current_season(self):
+        self.ensure_one()
+        today = fields.Date.context_today(self)
+        season = self.env['olive.season'].search([
+            ('start_date', '<=', today),
+            ('end_date', '>=', today),
+            ('company_id', '=', self.id),
+            ], limit=1)
+        if season:
+            return season
+        season = self.env['olive.season'].search([
+            ('year', '=', today[:4]),
+            ('company_id', '=', self.id),
+            ], limit=1)
+        if season:
+            return season
+        season = self.env['olive.season'].search([
+            ('start_date', '<=', today),
+            ('company_id', '=', self.id)],
+            order='start_date desc', limit=1)
+        return season or False
+
+    def _compute_current_season_id(self):
+        for company in self:
+            company.current_season_id = company.get_current_season()
+
+    def current_season_update(self, fields_view_get_result, view_type):
+        self.ensure_one()
+        fields_view_get_result['arch'] = fields_view_get_result['arch'].replace(
+            "'CURRENT_SEASON_ID'", str(self.current_season_id.id))
+        return fields_view_get_result

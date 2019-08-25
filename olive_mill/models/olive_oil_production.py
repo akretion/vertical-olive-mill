@@ -23,7 +23,7 @@ class OliveOilProduction(models.Model):
             'olive.arrival'))
     season_id = fields.Many2one(
         'olive.season', string='Season', required=True, index=True,
-        default=lambda self: self.env['olive.season'].get_current_season(),
+        default=lambda self: self.env.user.company_id.current_season_id.id,
         states={'done': [('readonly', True)]})
     warehouse_id = fields.Many2one(
         'stock.warehouse', string='Warehouse', required=True, index=True,
@@ -709,3 +709,9 @@ class OliveOilProduction(models.Model):
                 index = same_day_reverse_order.index(prod)
                 day_position = index + 1
             prod.day_position = day_position
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        res = super(OliveOilProduction, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
+        return self.env.user.company_id.current_season_update(res, view_type)

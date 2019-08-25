@@ -107,6 +107,14 @@
             <field name="partner_id" operator="child_of"/>
             <separator/>
             <field name="oil_product_id"/>
+            <separator/>
+            <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
+            <!-- The above filter works together with inherit of fields_view_get().
+                Before using this solution, I tried to use an ir.actions.server
+                that inject a variable current_season_id in the context
+                and use a filter with
+                domain="[('season_id', '=', context.get('current_season_id'))]"
+                but it didn't work -->
             <group string="Group By" name="groupby">
                 <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>
                 <filter name="commercial_partner_groupby" string="Partner" context="{'group_by': 'commercial_partner_id'}"/>
@@ -120,6 +128,7 @@
     <field name="name">Pre-season Polls</field>
     <field name="res_model">olive.preseason.poll</field>
     <field name="view_mode">tree,form,pivot</field>
+    <field name="context">{'search_default_current_season': 1}</field>
 </record>
 
 <menuitem id="olive_preseason_poll_menu" action="olive_preseason_poll_action" parent="olive_operations_menu" sequence="5"/>

@@ -18,7 +18,7 @@ class OlivePreseasonPoll(models.Model):
         default=lambda self: self.env['res.company']._company_default_get())
     season_id = fields.Many2one(
         'olive.season', string='Season', required=True, index=True,
-        default=lambda self: self.env['olive.season'].get_current_season())
+        default=lambda self: self.env.user.company_id.current_season_id.id)
     partner_id = fields.Many2one(
         'res.partner', string='Olive Farmer', required=True, index=True,
         domain=[('parent_id', '=', False), ('olive_farmer', '=', True)])
@@ -129,3 +129,9 @@ class OlivePreseasonPoll(models.Model):
             name = '%s - %s' % (rec.season_id.name, rec.partner_id.display_name)
             res.append((rec.id, name))
         return res
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        res = super(OlivePreseasonPoll, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
+        return self.env.user.company_id.current_season_update(res, view_type)

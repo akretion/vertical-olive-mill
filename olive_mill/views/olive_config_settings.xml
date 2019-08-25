@@ -19,6 +19,7 @@
             </header>
             <group name="variables" string="Variables">
                 <field name="company_id" invisible="1"/>
+                <field name="current_season_id"/>
                 <label for="olive_oil_density"/>
                 <div name="olive_oil_density">
                     <field name="olive_oil_density" class="oe_inline"/>
