@@ -14,6 +14,7 @@
     <field name="report_type">py3o</field>
     <field name="py3o_filetype">odt</field>
     <field name="module">olive_mill</field>
+    <field name="py3o_multi_in_one" eval="True"/>
     <field name="py3o_template_fallback">report/olive_culture_form.odt</field>
     <field name="print_report_name">'Olive_culture_' + (object.commercial_partner_id.ref or (object.commercial_partner_id.name and object.commercial_partner_id.name.replace(' ', '_') or 'no-name')) + '.odt'</field>
 </record>
@@ -98,6 +99,24 @@
     <field name="model">stock.production.lot</field>
     <field name="name">Olive Oil Tracability</field>
     <field name="value" eval="'ir.actions.report.xml,%d'%olive_prodlot_tracability_report" />
+</record>
+
+<record id="olive_oil_analysis_report" model="ir.actions.report.xml">
+    <field name="name">Olive Oil Analysis</field>
+    <field name="model">olive.oil.analysis</field>
+    <field name="report_name">olive.oil.analysis</field>
+    <field name="report_type">py3o</field>
+    <field name="py3o_filetype">odt</field>
+    <field name="module">olive_mill</field>
+    <field name="py3o_template_fallback">report/olive_oil_analysis.odt</field>
+    <field name="print_report_name">'Analysis-' + object.name + '.odt'</field>
+</record>
+
+<record id="button_olive_oil_analysis_report" model="ir.values">
+    <field name="key2">client_print_multi</field>
+    <field name="model">olive.oil.analysis</field>
+    <field name="name">Olive Oil Analysis</field>
+    <field name="value" eval="'ir.actions.report.xml,%d'%olive_oil_analysis_report" />
 </record>
 
 

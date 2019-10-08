@@ -149,8 +149,8 @@ class OliveAgrimerReport(models.Model):
 
     _sql_constraints = [(
         'date_company_uniq',
-        'unique(date_start, company_id)',
-        'An AgriMer report with the same start date already exists!')]
+        'unique(date_start, date_end, company_id)',
+        'An AgriMer report with the same start/end date already exists!')]
 
     @api.onchange('date_range_id')
     def onchange_date_range_id(self):

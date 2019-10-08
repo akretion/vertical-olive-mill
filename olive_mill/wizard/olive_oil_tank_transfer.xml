@@ -16,7 +16,7 @@
                 <field name="warehouse_id"/>
                 <field name="src_location_id" domain="[('olive_tank_type', '!=', False)]"/>
                 <field name="dest_location_id" domain="[('olive_tank_type', '!=', False)]"/>
-                <field name="transfer_type"/>
+                <field name="transfer_type" widget="radio"/>
                 <label for="quantity" attrs="{'invisible': [('transfer_type', '!=', 'partial')]}"/>
                 <div name="quantity" attrs="{'invisible': [('transfer_type', '!=', 'partial')]}">
                     <field name="quantity" class="oe_inline"/>

@@ -69,6 +69,11 @@
     <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
 </record>
 
+<record id="olive_oil_analysis_rule" model="ir.rule">
+    <field name="name">Olive Oil Analysis multi-company</field>
+    <field name="model_id" ref="model_olive_oil_analysis"/>
+    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
+</record>
 
 
 </data>

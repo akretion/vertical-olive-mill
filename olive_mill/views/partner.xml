@@ -38,13 +38,65 @@
                 </div>
             </page>
             <page name="olive" string="Olive Mill" attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}">
+                <div name="olive_button_box" class="oe_button_box">
+                    <button class="oe_stat_button" type="action"
+                        name="%(olive_mill.olive_arrival_line_action)d"
+                        attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}"
+                        icon="fa-arrow-down"
+                        context="{'default_commercial_partner_id': active_id, 'search_default_commercial_partner_id': active_id, 'search_default_season_id': olive_current_season_id, 'search_default_arrival_done': 1}">  <!-- use fa-tractor when we'll have access to FA 5.4 -->
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="olive_qty_current_season" widget="statinfo" nolabel="1"/>
+                                kg
+                            </span>
+                            <span class="o_stat_text">Olives</span>
+                        </div>
+                    </button>
+                    <button class="oe_stat_button" type="action"
+                        name="%(olive_mill.olive_arrival_line_action)d"
+                        attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}"
+                        icon="fa-database"
+                        context="{'default_commercial_partner_id': active_id, 'search_default_commercial_partner_id': active_id, 'search_default_season_id': olive_current_season_id, 'search_default_arrival_done': 1}">  <!-- use fa-tractor when we'll have access to FA 5.4 -->
+                        <field name="olive_sale_oil_qty_current_season" widget="statinfo" string="L of Oil Sold"/>
+                    </button>
+                    <button class="oe_stat_button" type="action"
+                        name="%(olive_mill.olive_ochard_action)d"
+                        attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}"
+                        icon="fa-pagelines"
+                        context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}">
+                        <field string="Olive Trees" name="olive_tree_total" widget="statinfo"/>
+                    </button>
+                    <button class="oe_stat_button" type="action"
+                        name="%(olive_mill.olive_palox_action)d"
+                        attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}"
+                        context="{'default_borrower_partner_id': active_id, 'search_default_borrower_partner_id': active_id, 'no_create': True}"
+                        icon="fa-inbox">  <!-- use fa-pallet when we'll have access to FA 5.0.7, which is not the case in v10 -->
+                        <field string="Lended Palox" name="olive_lended_palox" widget="statinfo"/>
+                    </button>
+                    <button class="oe_stat_button" type="action"
+                        name="%(olive_mill.olive_lended_case_action)d"
+                        attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}"
+                        context="{'default_partner_id': active_id, 'search_default_partner_id': active_id, 'olive_lended_case_main_view': 1}"
+                        icon="fa-codepen">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="olive_lended_regular_case" widget="statinfo" nolabel="1"/>
+                                + <field name="olive_lended_organic_case" widget="statinfo" nolabel="1"/>
+                                organic
+                            </span>
+                            <span class="o_stat_text">Lended Cases</span>
+                        </div>
+                    </button>
+                </div>
+                <div class="oe_title">
+                    <field name="olive_cultivation_form" invisible="1"/>
+                    <div name="olive_cultivation_form" attrs="{'invisible': [('olive_cultivation_form', '=', True)]}" class="label label-danger" colspan="2">Cultivation Form not Provided</div>
+                </div>
                 <group name="olive_main">
                     <group name="left">
-                        <field name="olive_cultivation_form" invisible="1"/>
-                        <div name="olive_cultivation_form" attrs="{'invisible': [('olive_cultivation_form', '=', True)]}" class="label label-danger" colspan="2">Cultivation Form not Provided</div>
                         <field name="olive_culture_type" invisible="1"/>
                         <field name="olive_current_season_id" invisible="1"/>
-                        <field name="olive_sale_pricelist_id"/>
+                        <field name="olive_sale_pricelist_id" string="Sale Pricelist"/>
                         <label for="olive_area_total"/>
                         <div name="olive_area_total">
                             <field name="olive_area_total" class="oe_inline"/>
@@ -70,58 +122,6 @@
                 <field name="olive_organic_certified_logo" widget="image"/>
 
             </div>
-        </div>
-        <div name="button_box" position="inside">
-            <button class="oe_stat_button" type="action"
-                name="%(olive_mill.olive_arrival_line_action)d"
-                attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}"
-                icon="fa-arrow-down"
-                context="{'default_commercial_partner_id': active_id, 'search_default_commercial_partner_id': active_id, 'search_default_season_id': olive_current_season_id, 'search_default_arrival_done': 1}">  <!-- use fa-tractor when we'll have access to FA 5.4 -->
-                <div class="o_form_field o_stat_info">
-                    <span class="o_stat_value">
-                        <field name="olive_qty_current_season" widget="statinfo" nolabel="1"/>
-                        kg
-                    </span>
-                    <span class="o_stat_text">Olives</span>
-                </div>
-            </button>
-            <button class="oe_stat_button" type="action"
-                name="%(olive_mill.olive_arrival_line_action)d"
-                attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}"
-                icon="fa-database"
-                context="{'default_commercial_partner_id': active_id, 'search_default_commercial_partner_id': active_id, 'search_default_season_id': olive_current_season_id, 'search_default_arrival_done': 1}">  <!-- use fa-tractor when we'll have access to FA 5.4 -->
-                <field name="olive_sale_oil_qty_current_season" widget="statinfo" string="L of Oil Sold"/>
-            </button>
-
-
-            <button class="oe_stat_button" type="action"
-                name="%(olive_mill.olive_ochard_action)d"
-                attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}"
-                icon="fa-pagelines"
-                context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}">
-                <field string="Olive Trees" name="olive_tree_total" widget="statinfo"/>
-            </button>
-            <button class="oe_stat_button" type="action"
-                name="%(olive_mill.olive_palox_action)d"
-                attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}"
-                context="{'default_borrower_partner_id': active_id, 'search_default_borrower_partner_id': active_id, 'no_create': True}"
-                icon="fa-inbox">  <!-- use fa-pallet when we'll have access to FA 5.0.7, which is not the case in v10 -->
-                <field string="Lended Palox" name="olive_lended_palox" widget="statinfo"/>
-            </button>
-            <button class="oe_stat_button" type="action"
-                name="%(olive_mill.olive_lended_case_action)d"
-                attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}"
-                context="{'default_partner_id': active_id, 'search_default_partner_id': active_id, 'olive_lended_case_main_view': 1}"
-                icon="fa-codepen">
-                <div class="o_form_field o_stat_info">
-                    <span class="o_stat_value">
-                        <field name="olive_lended_regular_case" widget="statinfo" nolabel="1"/>
-                        + <field name="olive_lended_organic_case" widget="statinfo" nolabel="1"/>
-                        organic
-                    </span>
-                    <span class="o_stat_text">Lended Cases</span>
-                </div>
-            </button>
         </div>
     </field>
 </record>

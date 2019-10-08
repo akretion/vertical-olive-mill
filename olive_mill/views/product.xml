@@ -18,6 +18,10 @@
             <field name="olive_culture_type" attrs="{'invisible': [('olive_type', '!=', 'oil')], 'required': [('olive_type', '=', 'oil')]}"/>
             <field name="olive_bottle_free_full" attrs="{'invisible': [('olive_type', '!=', 'bottle')]}"/>
             <field name="olive_invoice_service_ids" widget="many2many_tags" attrs="{'invisible': [('olive_type', '!=', 'oil')]}"/>
+            <field name="olive_analysis_uom" attrs="{'invisible': [('olive_type', '!=', 'analysis')], 'required': [('olive_type', '=', 'analysis')]}"/>
+            <field name="olive_analysis_decimal_precision" attrs="{'invisible': [('olive_type', '!=', 'analysis')], 'required': [('olive_type', '=', 'analysis')]}"/>
+            <field name="olive_analysis_instrument" attrs="{'invisible': [('olive_type', '!=', 'analysis')]}"/>
+            <field name="olive_analysis_precision" attrs="{'invisible': [('olive_type', '!=', 'analysis')]}"/>
         </field>
     </field>
 </record>

@@ -113,6 +113,12 @@
                     <field name="olive_oil_tax_product_id" class="oe_inline"/>
                 </div>
             </group>
+            <group name="analysis" string="Analysis">
+                <label for="olive_oil_analysis_default_user_id"/>
+                <div name="olive_oil_analysis_default_user_id">
+                    <field name="olive_oil_analysis_default_user_id" class="oe_inline"/>
+                </div>
+            </group>
         </form>
     </field>
 </record>

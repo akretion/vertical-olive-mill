@@ -77,6 +77,8 @@ class ResCompany(models.Model):
     olive_oil_early_bird_discount_product_id = fields.Many2one(
         'product.product', string='Early Bird Discount Product',
         domain=[('olive_type', '=', 'service')])
+    olive_oil_analysis_default_user_id = fields.Many2one(
+        'res.users', string='Default User for Olive Oil Analysis')
     # olive_oil_tax_price_unit = fields.Float(
     #    string='AFIDOL Tax Unit Price',
     #    digits=dp.get_precision('Olive Oil Tax Price Unit'), default=0.129,

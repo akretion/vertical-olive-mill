@@ -26,3 +26,5 @@ access_olive_sale_pricelist_full,Full access on olive.sale.pricelist to Stock Ma
 access_olive_sale_pricelist_read,Read access on olive.sale.pricelist to Stock User,model_olive_sale_pricelist,stock.group_stock_user,1,0,0,0
 access_olive_sale_pricelist_line_full,Full access on olive.sale.pricelist.line to Stock Manager,model_olive_sale_pricelist_line,stock.group_stock_manager,1,1,1,1
 access_olive_sale_pricelist_line_read,Read access on olive.sale.pricelist.line to Employee,model_olive_sale_pricelist,stock.group_stock_user,1,0,0,0
+access_olive_oil_analysis_user,Full access on olive.oil.analysis,model_olive_oil_analysis,stock.group_stock_user,1,1,1,1
+access_olive_oil_analysis_line_user,Full access on olive.oil.analysis.line,model_olive_oil_analysis_line,stock.group_stock_user,1,1,1,1

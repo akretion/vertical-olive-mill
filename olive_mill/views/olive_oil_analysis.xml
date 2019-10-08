@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="olive_oil_analysis_form" model="ir.ui.view">
+    <field name="name">olive.oil.analysis.form</field>
+    <field name="model">olive.oil.analysis</field>
+    <field name="arch" type="xml">
+        <form string="Olive Oil Analysis">
+            <header>
+                <button name="validate" states="draft" string="Validate" type="object" class="btn-primary"/>
+                <button name="back2draft" states="cancel" string="Back to Draft" type="object"/>
+                <button name="print_report" states="done" string="Print Report" type="object" class="btn-primary"/>
+                <button name="cancel" states="done" string="Cancel" type="object" confirm="Are you sure you want to cancel this analysis?"/>
+                <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+            </header>
+            <sheet>
+                <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                <group name="main">
+                    <group name="main-left">
+                        <field name="arrival_line_id"/>
+                        <field name="partner_id"/>
+                        <field name="oil_product_id"/>
+                        <field name="date"/>
+                        <field name="user_id"/>
+                    </group>
+                    <group name="main-right">
+                        <field name="season_id"/>
+                        <field name="arrival_date"/>
+                        <field name="production_id"/>
+                        <field name="production_date"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                </group>
+                <group name="lines" string="Results">
+                    <field name="line_ids" nolabel="1"/>
+                </group>
+            </sheet>
+            <div class="oe_chatter">
+                <field name="message_follower_ids" widget="mail_followers"/>
+                <field name="message_ids" widget="mail_thread"/>
+            </div>
+        </form>
+    </field>
+</record>
+
+<record id="olive_oil_analysis_tree" model="ir.ui.view">
+    <field name="name">olive.oil.analysis.tree</field>
+    <field name="model">olive.oil.analysis</field>
+    <field name="arch" type="xml">
+        <tree string="Olive Oil Analysis" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
+            <field name="name"/>
+            <field name="partner_id"/>
+            <field name="oil_product_id"/>
+            <field name="date"/>
+            <field name="season_id"/>
+            <field name="state"/>
+        </tree>
+    </field>
+</record>
+
+<record id="olive_oil_analysis_search" model="ir.ui.view">
+    <field name="name">olive.oil.analysis.search</field>
+    <field name="model">olive.oil.analysis</field>
+    <field name="arch" type="xml">
+        <search string="Cultivation Methods">
+            <field name="name"/>
+            <field name="partner_id"/>
+            <field name="oil_product_id"/>
+            <separator/>
+            <filter name="draft" domain="[('state', '=', 'draft')]" string="Draft"/>
+            <filter name="done" domain="[('state', '=', 'done')]" string="Done"/>
+            <separator/>
+            <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
+            <separator/>
+            <group name="groupby">
+                <filter name="state_groupby" string="State" context="{'group_by': 'state'}"/>
+                <filter name="oil_product_groupby" string="Oil Product" context="{'group_by': 'oil_product_id'}"/>
+                <filter name="partner_groupby" string="Olive Farmer" context="{'group_by': 'partner_id'}"/>
+                <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>
+                <filter name="date_groupby" string="Date" context="{'group_by': 'date:month'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<record id="olive_oil_analysis_action" model="ir.actions.act_window">
+    <field name="name">Oil Analysis</field>
+    <field name="res_model">olive.oil.analysis</field>
+    <field name="view_mode">tree,form</field>
+    <field name="context">{'search_default_current_season': True}</field>
+</record>
+
+<menuitem id="olive_oil_analysis_menu" action="olive_oil_analysis_action" parent="olive_operations_menu" sequence="230"/>
+
+<record id="olive_oil_analysis_line_form" model="ir.ui.view">
+    <field name="name">olive.oil.analysis.line.form</field>
+    <field name="model">olive.oil.analysis.line</field>
+    <field name="arch" type="xml">
+        <form string="Olive Oil Analysis Line">
+            <group name="main">
+                <field name="analysis_id" invisible="not context.get('olive_oil_analysis_line_main_view')"/>
+                <field name="product_id"/>
+                <field name="result_p1" attrs="{'invisible': [('decimal_precision', '!=', 1)]}"/>
+                <field name="result_p2" attrs="{'invisible': [('decimal_precision', '!=', 2)]}"/>
+                <field name="result_int" attrs="{'invisible': [('decimal_precision', '!=', 0)]}"/>
+                <field name="uom"/>
+                <field name="precision"/>
+                <field name="instrument"/>
+                <field name="state" invisible="1"/>
+                <field name="decimal_precision" invisible="1"/>
+            </group>
+        </form>
+    </field>
+</record>
+
+<record id="olive_oil_analysis_line_tree" model="ir.ui.view">
+    <field name="name">olive.oil.analysis.line.tree</field>
+    <field name="model">olive.oil.analysis.line</field>
+    <field name="arch" type="xml">
+        <tree string="Olive Oil Analysis Lines">
+            <field name="analysis_id" invisible="not context.get('olive_oil_analysis_line_main_view')"/>
+            <field name="product_id"/>
+            <field name="oil_product_id" invisible="not context.get('olive_oil_analysis_line_main_view')"/>
+            <field name="partner_id" invisible="not context.get('olive_oil_analysis_line_main_view')"/>
+            <field name="date" invisible="not context.get('olive_oil_analysis_line_main_view')"/>
+            <field name="season_id" invisible="not context.get('olive_oil_analysis_line_main_view')"/>
+            <field name="result_string"/>
+            <field name="uom"/>
+            <field name="precision" invisible="context.get('olive_oil_analysis_line_main_view')"/>
+            <field name="instrument" invisible="context.get('olive_oil_analysis_line_main_view')"/>
+            <field name="state" invisible="1"/>
+        </tree>
+    </field>
+</record>
+
+<record id="olive_oil_analysis_line_search" model="ir.ui.view">
+    <field name="name">olive.oil.analysis.line.search</field>
+    <field name="model">olive.oil.analysis.line</field>
+    <field name="arch" type="xml">
+        <search>
+            <field name="oil_product_id"/>
+            <separator/>
+            <filter name="draft" domain="[('state', '=', 'draft')]" string="Draft"/>
+            <filter name="done" domain="[('state', '=', 'done')]" string="Done"/>
+            <separator/>
+            <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
+            <separator/>
+            <group name="groupby">
+                <filter name="state_groupby" string="State" context="{'group_by': 'state'}"/>
+                <filter name="oil_product_groupby" string="Oil Product" context="{'group_by': 'oil_product_id'}"/>
+                <filter name="partner_groupby" string="Olive Farmer" context="{'group_by': 'partner_id'}"/>
+                <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>
+                <filter name="date_groupby" string="Date" context="{'group_by': 'date:month'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<record id="olive_oil_analysis_line_pivot" model="ir.ui.view">
+    <field name="name">olive.oil.analysis.line.pivot</field>
+    <field name="model">olive.oil.analysis.line</field>
+    <field name="arch" type="xml">
+        <pivot>
+            <field name="oil_product_id" type="row"/>
+            <field name="product_id" type="col"/>
+            <field name="result_p1" type="measure"/>
+            <field name="result_p2" type="measure"/>
+            <field name="result_int" type="measure"/>
+        </pivot>
+    </field>
+</record>
+
+<record id="olive_oil_analysis_line_action" model="ir.actions.act_window">
+    <field name="name">Oil Analysis Lines</field>
+    <field name="res_model">olive.oil.analysis.line</field>
+    <field name="view_mode">pivot,tree,form</field>
+    <field name="context">{'search_default_current_season': True, 'search_default_done': True, 'olive_oil_analysis_line_main_view': True}</field>
+</record>
+
+<menuitem id="olive_oil_analysis_line_menu" action="olive_oil_analysis_line_action" parent="olive_report_menu" sequence="100"/>
+
+</odoo>

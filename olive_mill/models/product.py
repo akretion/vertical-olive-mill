@@ -34,6 +34,20 @@ class ProductTemplate(models.Model):
         'product_tmpl_id', 'product_id',
         string='Extra Production Services To Invoice',
         domain=[('olive_type', '=', 'service')])
+    olive_analysis_uom = fields.Char(
+        string='Unit of Measure of the Olive Oil Analysis')
+    olive_analysis_decimal_precision = fields.Integer(
+        string='Olive Oil Analysis Decimal Precision',
+        default=1)
+    olive_analysis_instrument = fields.Char(
+        string='Instrument used for the Olive Oil Analysis')
+    olive_analysis_precision = fields.Char(
+        string='Precision of the Olive Oil Analysis')
+
+    _sql_constraints = [(
+        'olive_analysis_decimal_precision_positive',
+        'CHECK(olive_analysis_decimal_precision >= 0)',
+        'The decimal precision of the olive oil analysis must be positive.')]
 
     # DUPLICATED in product product
     @api.onchange('olive_type')

@@ -28,12 +28,17 @@ class OliveOilTankMerge(models.TransientModel):
         loc = self.location_id
         qty = loc.olive_oil_tank_check(
             raise_if_empty=True, raise_if_reservation=True)
-        quant_lot_rg = sqo.read_group(
-            [('location_id', '=', loc.id)],
+        quant_lot_rg = sqo.read_group([
+            ('location_id', '=', loc.id),
+            ('product_id', '=', loc.oil_product_id.id)],
             ['qty', 'lot_id'], ['lot_id'])
-        if len(quant_lot_rg) <= 1:
+        if len(quant_lot_rg) == 1:
             raise UserError(_(
                 "Oil tank '%s' is already merged.") % loc.name)
+        if loc.olive_tank_type != 'risouletto' and not quant_lot_rg:
+            # a risouletto oil tank can contain another type of oil
+            raise UserError(_(
+                "Oil tank '%s' is empty.") % loc.name)
         product = loc.oil_product_id
         assert product.tracking == 'lot'
         assert product.olive_type == 'oil'

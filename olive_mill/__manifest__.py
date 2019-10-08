@@ -68,6 +68,7 @@
         'views/partner.xml',
         'views/product.xml',
         'views/stock_production_lot.xml',
+        'views/olive_oil_analysis.xml',
     ],
     'demo': [
         'demo/product.xml',

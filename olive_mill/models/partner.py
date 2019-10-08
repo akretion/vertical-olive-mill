@@ -50,7 +50,7 @@ class ResPartner(models.Model):
         compute='_compute_olive_organic_certified',
         string='Organic Certified Logo', readonly=True)
     olive_sale_pricelist_id = fields.Many2one(
-        'olive.sale.pricelist', string='Sale Pricelist',
+        'olive.sale.pricelist', string='Sale Pricelist for Olive Mill',
         company_dependent=True)
 
     @api.onchange('olive_farmer')

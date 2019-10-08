@@ -175,12 +175,12 @@ msgstr "Huile en sortie - vrac"
 #. module: l10n_fr_olive_mill
 #: model:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Oil Out - Sale to Consumers"
-msgstr "Huile en sortie - Vente aux particuliers"
+msgstr "Huile en sortie - Vente aux consommateurs"
 
 #. module: l10n_fr_olive_mill
 #: model:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Oil Out - Sale to Distributors"
-msgstr "Huile en sortie - Vente aux professionnels"
+msgstr "Huile en sortie - Vente aux distributeurs"
 
 #. module: l10n_fr_olive_mill
 #: model:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
@@ -344,22 +344,22 @@ msgstr "Huile normale vierge - Huile produite (L)"
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report_sale_consumer_organic_extravirgin_oil
 msgid "Sale to Consumers of Organic Extra Virgin Oil (L)"
-msgstr "Vente aux particuliers d'huile bio extra-vierge (L)"
+msgstr "Vente aux consommateurs d'huile bio extra-vierge (L)"
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report_sale_consumer_organic_virgin_oil
 msgid "Sale to Consumers of Organic Virgin Oil (L)"
-msgstr "Vente aux particuliers d'huile bio vierge (L)"
+msgstr "Vente aux consommateurs d'huile bio vierge (L)"
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report_sale_consumer_regular_extravirgin_oil
 msgid "Sale to Consumers of Regular Extra Virgin Oil (L)"
-msgstr "Vente aux particuliers d'huile normale extra-vierge (L)"
+msgstr "Vente aux consommateurs d'huile normale extra-vierge (L)"
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report_sale_consumer_regular_virgin_oil
 msgid "Sale to Consumers of Regular Virgin Oil (L)"
-msgstr "Vente aux particuliers d'huile normale vierge (L)"
+msgstr "Vente aux consommateurs d'huile normale vierge (L)"
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report_sale_distributor_organic_extravirgin_oil

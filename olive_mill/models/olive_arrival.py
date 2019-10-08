@@ -196,6 +196,7 @@ class OliveArrival(models.Model):
             raise UserError(_(
                 "Missing lines on arrival '%s'.") % self.name)
         oalo = self.env['olive.arrival.line']
+        ooao = self.env['olive.oil.analysis']
         pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
         pr_oil = self.env['decimal.precision'].precision_get(
             'Olive Oil Volume')
@@ -305,6 +306,22 @@ class OliveArrival(models.Model):
                         line.palox_id.name,
                         same_palox_different_oil_destination[0].display_name,
                         fg[same_palox_different_oil_destination[0].oil_destination]))
+
+            # Create analysis
+            ana_products = self.env['product.product']
+            for extra in line.extra_ids.filtered(lambda x: x.product_id.olive_type == 'analysis'):
+                ana_products |= extra.product_id
+            if ana_products:
+                existing_ana = ooao.search(
+                    [('arrival_line_id', '=', line.id)], limit=1)
+                if not existing_ana:
+                    ana_vals = {
+                        'arrival_line_id': line.id,
+                        'line_ids': [],
+                        }
+                    for ana_product in ana_products:
+                        ana_vals['line_ids'].append((0, 0, {'product_id': ana_product.id}))
+                    ooao.create(ana_vals)
 
             # Set line number
             line.write({
