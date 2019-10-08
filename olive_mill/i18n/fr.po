@@ -3700,7 +3700,7 @@ msgstr "Arrosage"
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_appointment_start_datetime
 msgid "Start"
-msgstr "Démarrer"
+msgstr "Début"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_season_start_date

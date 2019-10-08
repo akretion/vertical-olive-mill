@@ -28,17 +28,22 @@
                     </div>
                 <group name="main">
                     <group name="main-left">
-                        <field name="arrival_line_id"/>
-                        <field name="partner_id"/>
+                        <field name="oil_source_type" widget="radio"/>
+                        <field name="arrival_line_id" attrs="{'invisible': [('oil_source_type', '!=', 'arrival')], 'required': [('oil_source_type', '=', 'arrival')]}"/>
+                        <field name="location_id" attrs="{'invisible': [('oil_source_type', '!=', 'tank')], 'required': [('oil_source_type', '=', 'tank')]}"/>
+                        <field name="season_id"/>
                         <field name="oil_product_id"/>
+                        <field name="lot_id" attrs="{'invisible': [('oil_source_type', '!=', 'tank')]}" domain="[('product_id', '=', oil_product_id)]"/>
                         <field name="date"/>
-                        <field name="user_id"/>
+                        <field name="execution_mode"/>
+                        <field name="execution_user_id" attrs="{'invisible': [('execution_mode', '!=', 'internal')]}"/>
+                        <field name="execution_partner_id" attrs="{'invisible': [('execution_mode', '!=', 'external')]}"/>
                     </group>
                     <group name="main-right">
-                        <field name="season_id"/>
-                        <field name="arrival_date"/>
-                        <field name="production_id"/>
-                        <field name="production_date"/>
+                        <field name="partner_id" attrs="{'invisible': [('oil_source_type', '!=', 'arrival')]}"/>
+                        <field name="arrival_date" attrs="{'invisible': [('oil_source_type', '!=', 'arrival')]}"/>
+                        <field name="production_id" attrs="{'invisible': [('oil_source_type', '!=', 'arrival')]}"/>
+                        <field name="production_date" attrs="{'invisible': [('oil_source_type', '!=', 'arrival')]}"/>
                         <field name="company_id" groups="base.group_multi_company"/>
                     </group>
                 </group>
@@ -60,10 +65,12 @@
     <field name="arch" type="xml">
         <tree string="Olive Oil Analysis" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
             <field name="name"/>
+            <field name="oil_source_type"/>
             <field name="partner_id"/>
+            <field name="location_id"/>
             <field name="oil_product_id"/>
-            <field name="date"/>
             <field name="season_id"/>
+            <field name="date"/>
             <field name="state"/>
         </tree>
     </field>
@@ -76,10 +83,18 @@
         <search string="Cultivation Methods">
             <field name="name"/>
             <field name="partner_id"/>
+            <field name="location_id"/>
             <field name="oil_product_id"/>
+            <field name="lot_id"/>
             <separator/>
             <filter name="draft" domain="[('state', '=', 'draft')]" string="Draft"/>
             <filter name="done" domain="[('state', '=', 'done')]" string="Done"/>
+            <separator/>
+            <filter name="arrival" domain="[('oil_source_type', '=', 'arrival')]" string="Arrival"/>
+            <filter name="tank" domain="[('oil_source_type', '=', 'tank')]" string="Tank"/>
+            <separator/>
+            <filter name="internal" domain="[('execution_mode', '=', 'internal')]" string="Internal"/>
+            <filter name="external" domain="[('execution_mode', '=', 'external')]" string="External"/>
             <separator/>
             <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
             <separator/>
@@ -87,6 +102,7 @@
                 <filter name="state_groupby" string="State" context="{'group_by': 'state'}"/>
                 <filter name="oil_product_groupby" string="Oil Product" context="{'group_by': 'oil_product_id'}"/>
                 <filter name="partner_groupby" string="Olive Farmer" context="{'group_by': 'partner_id'}"/>
+                <filter name="location_groupby" string="Oil Tank" context="{'group_by': 'location_id'}"/>
                 <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>
                 <filter name="date_groupby" string="Date" context="{'group_by': 'date:month'}"/>
             </group>
@@ -133,6 +149,7 @@
             <field name="product_id"/>
             <field name="oil_product_id" invisible="not context.get('olive_oil_analysis_line_main_view')"/>
             <field name="partner_id" invisible="not context.get('olive_oil_analysis_line_main_view')"/>
+            <field name="location_id" invisible="not context.get('olive_oil_analysis_line_main_view')"/>
             <field name="date" invisible="not context.get('olive_oil_analysis_line_main_view')"/>
             <field name="season_id" invisible="not context.get('olive_oil_analysis_line_main_view')"/>
             <field name="result_string"/>
@@ -154,12 +171,19 @@
             <filter name="draft" domain="[('state', '=', 'draft')]" string="Draft"/>
             <filter name="done" domain="[('state', '=', 'done')]" string="Done"/>
             <separator/>
+            <filter name="arrival" domain="[('oil_source_type', '=', 'arrival')]" string="Arrival"/>
+            <filter name="tank" domain="[('oil_source_type', '=', 'tank')]" string="Tank"/>
+            <separator/>
+            <filter name="internal" domain="[('execution_mode', '=', 'internal')]" string="Internal"/>
+            <filter name="external" domain="[('execution_mode', '=', 'external')]" string="External"/>
+            <separator/>
             <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
             <separator/>
             <group name="groupby">
                 <filter name="state_groupby" string="State" context="{'group_by': 'state'}"/>
                 <filter name="oil_product_groupby" string="Oil Product" context="{'group_by': 'oil_product_id'}"/>
                 <filter name="partner_groupby" string="Olive Farmer" context="{'group_by': 'partner_id'}"/>
+                <filter name="location_groupby" string="Oil Tank" context="{'group_by': 'location_id'}"/>
                 <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>
                 <filter name="date_groupby" string="Date" context="{'group_by': 'date:month'}"/>
             </group>

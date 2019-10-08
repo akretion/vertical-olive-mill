@@ -316,8 +316,11 @@ class OliveArrival(models.Model):
                     [('arrival_line_id', '=', line.id)], limit=1)
                 if not existing_ana:
                     ana_vals = {
+                        'oil_source_type': 'arrival',
                         'arrival_line_id': line.id,
                         'line_ids': [],
+                        'season_id': self.season_id.id,
+                        'oil_product_id': line.oil_product_id.id,
                         }
                     for ana_product in ana_products:
                         ana_vals['line_ids'].append((0, 0, {'product_id': ana_product.id}))

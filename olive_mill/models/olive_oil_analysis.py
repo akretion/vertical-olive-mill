@@ -16,15 +16,24 @@ class OliveOilAnalysis(models.Model):
     _inherit = ['mail.thread']
 
     name = fields.Char(string='Analysis Number', index=True, readonly=True)
+    oil_source_type = fields.Selection([
+        ('arrival', 'Arrival'),
+        ('tank', 'Tank'),
+        ], default='arrival', string='Oil Source Type', required=True,
+        track_visibility='onchange', states={'done': [('readonly', True)]})
     arrival_line_id = fields.Many2one(
-        'olive.arrival.line', string='Arrival Line', required=True,
+        'olive.arrival.line', string='Arrival Line',
         states={'done': [('readonly', True)]}, track_visibility='onchange')
     partner_id = fields.Many2one(
         related='arrival_line_id.arrival_id.partner_id.commercial_partner_id',
         readonly=True, store=True, index=True, string='Olive Farmer')
     oil_product_id = fields.Many2one(
-        related='arrival_line_id.oil_product_id',
-        readonly=True, store=True, index=True)
+        'product.product', string='Oil Type', required=True, index=True,
+        domain=[('olive_type', '=', 'oil')],
+        track_visibility='onchange', states={'done': [('readonly', True)]})
+    lot_id = fields.Many2one(
+        'stock.production.lot', string='Oil Lot',
+        track_visibility='onchange', states={'done': [('readonly', True)]})
     production_id = fields.Many2one(
         related='arrival_line_id.production_id', readonly=True, store=True)
     production_date = fields.Date(
@@ -33,7 +42,12 @@ class OliveOilAnalysis(models.Model):
     arrival_date = fields.Date(
         related='arrival_line_id.arrival_id.date', readonly=True, store=True)
     season_id = fields.Many2one(
-        related='arrival_line_id.arrival_id.season_id', readonly=True, store=True)
+        'olive.season', string='Season', required=True, index=True,
+        states={'done': [('readonly', True)]})
+    location_id = fields.Many2one(
+        'stock.location', string='Oil Tank',
+        domain=[('olive_tank_type', '!=', False)],
+        states={'done': [('readonly', True)]}, track_visibility='onchange')
     state = fields.Selection([
         ('draft', 'Draft'),
         ('done', 'Done'),
@@ -43,10 +57,19 @@ class OliveOilAnalysis(models.Model):
     date = fields.Date(
         string='Analysis Date', states={'done': [('readonly', True)]},
         copy=False, track_visibility='onchange')
-    user_id = fields.Many2one(
+    execution_mode = fields.Selection([
+        ('internal', 'Internal'),
+        ('external', 'External'),
+        ], default='internal', string='Execution Mode', required=True,
+        states={'done': [('readonly', True)]}, track_visibility='onchange')
+    execution_user_id = fields.Many2one(
         'res.users', string='Analysis Made by',
         states={'done': [('readonly', True)]}, track_visibility='onchange',
         default=lambda self: self.env.user.company_id.olive_oil_analysis_default_user_id.id or False)
+    execution_partner_id = fields.Many2one(
+        'res.partner', string='Analysis Made by',
+        states={'done': [('readonly', True)]}, track_visibility='onchange',
+        domain=[('supplier', '=', True)])
     company_id = fields.Many2one(
         'res.company', string='Company',
         ondelete='cascade', required=True,
@@ -63,12 +86,45 @@ class OliveOilAnalysis(models.Model):
                 'olive.oil.analysis')
         return super(OliveOilAnalysis, self).create(vals)
 
+    @api.onchange('location_id')
+    def location_id_change(self):
+        if self.oil_source_type == 'tank' and self.location_id:
+            self.season_id = self.location_id.olive_season_id
+            self.oil_product_id = self.location_id.oil_product_id
+            # if oil tank is merged
+            quant_lot_rg = self.env['stock.quant'].read_group(
+            [('location_id', '=', self.location_id.id)],
+            ['qty', 'lot_id'], ['lot_id'])
+            if len(quant_lot_rg) == 1 and quant_lot_rg[0].get('lot_id'):
+                self.lot_id = quant_lot_rg[0]['lot_id'][0]
+            else:
+                self.lot_id = False
+
+
+    @api.onchange('arrival_line_id')
+    def arrival_line_id_change(self):
+        if self.oil_source_type == 'arrival' and self.arrival_line_id:
+            self.season_id = self.arrival_line_id.season_id
+            self.oil_product_id = self.arrival_line_id.oil_product_id
+            self.lot_id = False
+
+    @api.onchange('execution_mode')
+    def execution_mode_change(self):
+        if self.execution_mode == 'external' and self.execution_user_id:
+            self.execution_user_id = False
+        elif self.execution_mode == 'internal' and self.execution_partner_id:
+            self.execution_partner_id = False
+
     def validate(self):
         today = fields.Date.context_today(self)
         for ana in self:
-            if not ana.user_id:
+            if ana.execution_mode == 'internal' and not ana.execution_user_id:
                 raise UserError(_(
                     'On analysis %s, you must set the user who made '
+                    'the analysis.') % ana.display_name)
+            if ana.execution_mode == 'external' and not ana.execution_partner_id:
+                raise UserError(_(
+                    'On analysis %s, you must set the partner who mode '
                     'the analysis.') % ana.display_name)
             if not ana.date:
                 raise UserError(_(
@@ -143,19 +199,24 @@ class OliveOilAnalysisLine(models.Model):
     uom = fields.Char(
         related='product_id.olive_analysis_uom', readonly=True,
         string='Unit of Measure')
+    oil_source_type = fields.Selection(
+        related='analysis_id.oil_source_type', readonly=True, store=True)
     oil_product_id = fields.Many2one(
-        related='analysis_id.arrival_line_id.oil_product_id',
+        related='analysis_id.oil_product_id',
         readonly=True, store=True, index=True)
     date = fields.Date(
         related='analysis_id.date', store=True, readonly=True)
     season_id = fields.Many2one(
-        related='analysis_id.arrival_line_id.arrival_id.season_id',
-        readonly=True, store=True)
+        related='analysis_id.season_id', readonly=True, store=True)
     partner_id = fields.Many2one(
         related='analysis_id.arrival_line_id.arrival_id.partner_id.commercial_partner_id',
         readonly=True, store=True, index=True, string='Olive Farmer')
+    location_id = fields.Many2one(
+        related='analysis_id.location_id', readonly=True, store=True)
     state = fields.Selection(
         related='analysis_id.state', store=True, readonly=True)
+    execution_mode = fields.Selection(
+        related='analysis_id.execution_mode', readonly=True, store=True)
 
     @api.onchange('product_id')
     def product_id_change(self):
