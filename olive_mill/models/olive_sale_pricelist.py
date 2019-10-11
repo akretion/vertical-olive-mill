@@ -16,8 +16,7 @@ class OliveSalePricelist(models.Model):
     sequence = fields.Integer()
     company_id = fields.Many2one(
         'res.company', string='Company', ondelete='cascade', required=True,
-        default=lambda self: self.env['res.company']._company_default_get(
-            'olive.sale.pricelist'))
+        default=lambda self: self.env['res.company']._company_default_get())
     active = fields.Boolean(default=True)
     line_ids = fields.One2many(
         'olive.sale.pricelist.line', 'pricelist_id', string='Lines')

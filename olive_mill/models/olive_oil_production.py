@@ -19,8 +19,7 @@ class OliveOilProduction(models.Model):
     company_id = fields.Many2one(
         'res.company', string='Company', ondelete='cascade', required=True,
         states={'done': [('readonly', True)]},
-        default=lambda self: self.env['res.company']._company_default_get(
-            'olive.arrival'))
+        default=lambda self: self.env['res.company']._company_default_get())
     season_id = fields.Many2one(
         'olive.season', string='Season', required=True, index=True,
         default=lambda self: self.env.user.company_id.current_season_id.id,
@@ -110,14 +109,14 @@ class OliveOilProduction(models.Model):
         readonly=True, track_visibility='onchange')  # written by ratio2force wizard
     ratio = fields.Float(
         string='Gross Ratio (% L)', digits=dp.get_precision('Olive Oil Ratio'),
-        readonly=True,
+        readonly=True, group_operator = 'avg',
         help="This ratio gives the number of liters of olive oil for "
         "100 kg of olives.")  # Yes, it's a ratio between liters and kg !!!
     date = fields.Date(
         string='Date', default=fields.Date.context_today, required=True,
         states={'done': [('readonly', True)]}, track_visibility='onchange')
     day_position = fields.Integer(
-        compute='_compute_day_position', readonly=True)
+        compute='_compute_day_position', readonly=True, string='Order')
     sample = fields.Boolean(
         string='Sample', readonly=True,
         states={'draft': [('readonly', False)], 'ratio': [('readonly', False)]})

@@ -14,11 +14,11 @@
     <field name="arch" type="xml">
         <form string="Pre-season Poll">
             <sheet>
-                <field name="partner_organic_certified_logo" widget="image" class="oe_avatar" attrs="{'invisible': [('partner_organic_certified_logo', '=', False)]}"/>
+                <field name="olive_organic_certified_logo" widget="image" class="oe_avatar" attrs="{'invisible': [('olive_organic_certified_logo', '=', False)]}"/>
                 <group name="main">
                     <group name="left" string="Poll">
                         <field name="partner_id"/>
-                        <field name="partner_olive_culture_type" invisible="1"/>
+                        <field name="olive_culture_type" invisible="1"/>
                         <label for="olive_qty" string="Olive Qty"/>
                         <div name="olive_qty">
                             <field name="olive_qty" class="oe_inline"/> kg
@@ -27,7 +27,7 @@
                         <div name="sale_olive_qty">
                             <field name="sale_olive_qty" class="oe_inline"/> kg
                         </div>
-                        <field name="oil_product_id" domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', partner_olive_culture_type)]" attrs="{'required': [('sale_olive_qty', '>', 0)]}"/>
+                        <field name="oil_product_id" domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', olive_culture_type)]" attrs="{'required': [('sale_olive_qty', '>', 0)]}"/>
                         <label for="oil_qty" string="Oil Qty"/>
                         <div name="oil_qty">
                             <field name="oil_qty" class="oe_inline"/> L

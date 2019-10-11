@@ -15,7 +15,7 @@ class OliveLendedCase(models.Model):
         'res.partner', string='Olive Farmer',
         domain=[('parent_id', '=', False), ('olive_farmer', '=', True)],
         ondelete='restrict', index=True)
-    partner_olive_culture_type = fields.Selection(
+    olive_culture_type = fields.Selection(
         related='partner_id.olive_culture_type', readonly=True)
     warehouse_id = fields.Many2one(
         'stock.warehouse', string='Warehouse', required=True,
@@ -23,8 +23,7 @@ class OliveLendedCase(models.Model):
         default=lambda self: self.env.user._default_olive_mill_wh())
     company_id = fields.Many2one(
         'res.company', string='Company', index=True,
-        default=lambda self: self.env['res.company']._company_default_get(
-            'olive.lended.case'))
+        default=lambda self: self.env['res.company']._company_default_get())
     date = fields.Date(
         string='Date', required=True, default=fields.Date.context_today)
     regular_qty = fields.Integer(

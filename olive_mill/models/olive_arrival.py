@@ -22,8 +22,7 @@ class OliveArrival(models.Model):
         'res.company', string='Company',
         ondelete='cascade', required=True,
         states={'done': [('readonly', True)]},
-        default=lambda self: self.env['res.company']._company_default_get(
-            'olive.arrival'))
+        default=lambda self: self.env['res.company']._company_default_get())
     season_id = fields.Many2one(
         'olive.season', string='Season', required=True, index=True,
         default=lambda self: self.env.user.company_id.current_season_id.id,
@@ -35,13 +34,18 @@ class OliveArrival(models.Model):
         track_visibility='onchange')
     commercial_partner_id = fields.Many2one(
         related='partner_id.commercial_partner_id', readonly=True, store=True)
-    partner_organic_certified_logo = fields.Binary(
+    olive_organic_certified_logo = fields.Binary(
         related='partner_id.commercial_partner_id.olive_organic_certified_logo',
         readonly=True)
-    partner_olive_culture_type = fields.Selection(
+    olive_culture_type = fields.Selection(
         related='partner_id.commercial_partner_id.olive_culture_type', readonly=True)
-    partner_olive_cultivation_form = fields.Boolean(
-        related='partner_id.commercial_partner_id.olive_cultivation_form',
+    olive_cultivation_form_ko = fields.Boolean(
+        related='partner_id.commercial_partner_id.olive_cultivation_form_ko',
+        readonly=True)
+    olive_parcel_ko = fields.Boolean(
+        related='partner_id.commercial_partner_id.olive_parcel_ko', readonly=True)
+    olive_organic_certif_ko = fields.Boolean(
+        related='partner_id.commercial_partner_id.olive_organic_certif_ko',
         readonly=True)
     partner_olive_tree_total = fields.Integer(
         related='partner_id.commercial_partner_id.olive_tree_total',
@@ -71,6 +75,10 @@ class OliveArrival(models.Model):
         ('sale', 'Sale'),
         ('mix', 'Mix'),
         ], string='Default Oil Destination',
+        states={'done': [('readonly', True)]})
+    default_oil_product_id = fields.Many2one(
+        'product.product', string='Default Oil Type',
+        domain=[('olive_type', '=', 'oil')],
         states={'done': [('readonly', True)]})
     state = fields.Selection([
         ('draft', 'Draft'),
@@ -117,6 +125,9 @@ class OliveArrival(models.Model):
     olive_ratio_net = fields.Float(
         string='Olive Net Ratio (kg / L)', digits=(16, 2),
         readonly=True)
+    operator_user_id = fields.Many2one(
+        'res.users', string='Operator', domain=[('olive_operator', '=', True)],
+        ondelete='restrict', copy=False)
 
     _sql_constraints = [(
         'returned_regular_case_positive',
@@ -156,12 +167,10 @@ class OliveArrival(models.Model):
 
     @api.onchange('default_ochard_id')
     def default_ochard_id_change(self):
-        variant = False
         if self.default_ochard_id:
             ochard = self.default_ochard_id
             if len(ochard.parcel_ids) == 1 and len(ochard.parcel_ids[0].variant_ids) == 1:
-                variant = ochard.parcel_ids[0].variant_ids[0]
-        self.default_variant_id = variant
+                self.default_variant_id = ochard.parcel_ids[0].variant_ids[0]
 
     @api.model
     def create(self, vals):
@@ -201,7 +210,7 @@ class OliveArrival(models.Model):
         pr_oil = self.env['decimal.precision'].precision_get(
             'Olive Oil Volume')
         wh = self.warehouse_id
-        partner_olive_culture_type = self.commercial_partner_id.olive_culture_type
+        olive_culture_type = self.commercial_partner_id.olive_culture_type
         palox_max_weight = self.company_id.olive_max_qty_per_palox
         arrival_vals = {
             'state': 'done',
@@ -220,12 +229,13 @@ class OliveArrival(models.Model):
             if line.oil_destination in ('sale', 'mix'):
                 has_sale_or_mix = True
             if line.palox_id.borrower_partner_id:
-                returned_palox |= line.palox_id
+                line.palox_id.return_borrowed_palox()
             for palox in self.returned_palox_ids:
-                returned_palox |= palox
+                if palox.borrower_partner_id:
+                    palox.return_borrowed_palox()
             # Block if oil_product is not coherent with partner (organic, ...)
             if (line.oil_product_id.olive_culture_type !=
-                    partner_olive_culture_type):
+                    olive_culture_type):
                 raise UserError(_(
                     "On arrival line number %d, the destination oil '%s' is "
                     "'%s' but the farmer '%s' is '%s'.") % (
@@ -233,7 +243,7 @@ class OliveArrival(models.Model):
                         line.oil_product_id.name,
                         line.oil_product_id.olive_culture_type,
                         self.commercial_partner_id.display_name,
-                        partner_olive_culture_type,
+                        olive_culture_type,
                         ))
             if (
                     line.oil_destination == 'mix' and
@@ -393,11 +403,6 @@ class OliveArrival(models.Model):
             else:
                 lended_case = olco.create(lended_case_vals)
                 arrival_vals['lended_case_id'] = lended_case.id
-        # Mark palox as returned
-        returned_palox.write({
-            'borrower_partner_id': False,
-            'borrowed_date': False,
-            })
         self.write(arrival_vals)
         self.line_ids.write({'state': 'done'})
 
@@ -451,7 +456,7 @@ class OliveArrivalLine(models.Model):
     commercial_partner_id = fields.Many2one(
         related='arrival_id.partner_id.commercial_partner_id',
         string='Olive Farmer', readonly=True, store=True, index=True)
-    partner_olive_culture_type = fields.Selection(
+    olive_culture_type = fields.Selection(
         related='arrival_id.partner_id.commercial_partner_id.olive_culture_type',
         readonly=True, store=True)
     # END RELATED fields for arrival

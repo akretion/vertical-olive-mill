@@ -1,6 +1,8 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_olive_palox_manager,Full access on olive.palox,model_olive_palox,stock.group_stock_manager,1,1,1,1
 access_olive_palox_user,Read+write access on olive.palox,model_olive_palox,stock.group_stock_user,1,1,0,0
+access_olive_palox_borrow_history_user,Read+create access on olive.palox.borrow.history,model_olive_palox_borrow_history,stock.group_stock_user,1,0,1,0
+access_olive_palox_borrow_history_manager,Full access on olive.palox.borrow.history,model_olive_palox_borrow_history,stock.group_stock_manager,1,1,1,1
 access_olive_ochard_manager,Full access on olive.ochard,model_olive_ochard,stock.group_stock_user,1,1,1,1
 access_olive_parcel_manager,Full access on olive.parcel,model_olive_parcel,stock.group_stock_user,1,1,1,1
 access_olive_season_manager,Full access on olive.season,model_olive_season,stock.group_stock_manager,1,1,1,1

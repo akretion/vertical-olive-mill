@@ -4,11 +4,13 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 
-from odoo import models
+from odoo import fields, models
 
 
 class ResUsers(models.Model):
     _inherit = 'res.users'
+
+    olive_operator = fields.Boolean(string='Olive Mill Operator')
 
     def _default_olive_mill_wh(self):
         self.ensure_one()

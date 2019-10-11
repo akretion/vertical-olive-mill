@@ -77,6 +77,12 @@ class ResCompany(models.Model):
     olive_oil_early_bird_discount_product_id = fields.Many2one(
         'product.product', string='Early Bird Discount Product',
         domain=[('olive_type', '=', 'service')])
+    olive_oil_production_start_hour = fields.Integer(
+        string='Oil Production Start Hour', default=8)
+    olive_oil_production_start_minute = fields.Integer(
+        string='Oil Production Start Minute', default=0)
+    olive_oil_production_duration_minutes = fields.Integer(
+        string='Oil Production Duration', default=30)
     olive_oil_analysis_default_user_id = fields.Many2one(
         'res.users', string='Default User for Olive Oil Analysis')
     # olive_oil_tax_price_unit = fields.Float(
@@ -123,7 +129,22 @@ class ResCompany(models.Model):
         'Lend Palox/Cases Appointment Default Duration must be positive.'), (
         'olive_appointment_withdrawal_minutes_positive',
         'CHECK(olive_appointment_withdrawal_minutes >= 0)',
-        'Withdrawal Appointment Default Duration must be positive.'),
+        'Withdrawal Appointment Default Duration must be positive.'), (
+        'olive_oil_production_start_hour_min',
+        'CHECK(olive_oil_production_start_hour >= 0)',
+        'Oil Production Start Hour must be between 0 and 23.'), (
+        'olive_oil_production_start_hour_max',
+        'CHECK(olive_oil_production_start_hour <= 23)',
+        'Oil Production Start Hour must be between 0 and 23.'), (
+        'olive_oil_production_start_minute_min',
+        'CHECK(olive_oil_production_start_minute >= 0)',
+        'Oil Production Start Minute must be between 0 and 59.'), (
+        'olive_oil_production_start_minute_max',
+        'CHECK(olive_oil_production_start_minute <= 59)',
+        'Oil Production Start Minute must be between 0 and 59.'), (
+        'olive_oil_production_duration_minutes_positive',
+        'CHECK(olive_oil_production_duration_minutes) >= 0',
+        'Oil Production Duration must be positive.')
         ]
 
     @api.model

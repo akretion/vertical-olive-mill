@@ -51,6 +51,7 @@ class PartnerOrganicCertification(models.Model):
 
     def validate(self):
         self.ensure_one()
+        assert self.state == 'draft'
         self.write({
             'state': 'done',
             'validation_user_id': self.env.user.id,

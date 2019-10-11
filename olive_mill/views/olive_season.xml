@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2018-2019 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -12,6 +12,9 @@
     <field name="model">olive.season</field>
     <field name="arch" type="xml">
         <form string="Olive Season">
+            <header>
+                <button class="btn-primary" string="Generate Partner Organic Certification" type="object" name="generate_partner_organic_certif" attrs="{'invisible': [('partner_organic_certif_generated', '=', True)]}"/>
+            </header>
             <group name="main">
                 <field name="name"/>
                 <field name="company_id" groups="base.group_multi_company"/>
@@ -20,6 +23,7 @@
                 <field name="early_bird_date"/>
                 <field name="default_expiry_date"/>
                 <field name="show_on_dashboard"/>
+                <field name="partner_organic_certif_generated" invisible="1"/>
             </group>
         </form>
     </field>

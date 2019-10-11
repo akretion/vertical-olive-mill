@@ -14,8 +14,13 @@ class OliveInvoiceCreate(models.TransientModel):
     partner_id = fields.Many2one(
         'res.partner', string='Olive Farmer', required=True,
         domain=[('olive_farmer', '=', True)])
-    partner_olive_cultivation_form = fields.Boolean(
-        related='partner_id.commercial_partner_id.olive_cultivation_form',
+    olive_cultivation_form_ko = fields.Boolean(
+        related='partner_id.commercial_partner_id.olive_cultivation_form_ko',
+        readonly=True)
+    olive_parcel_ko = fields.Boolean(
+        related='partner_id.commercial_partner_id.olive_parcel_ko', readonly=True)
+    olive_organic_certif_ko = fields.Boolean(
+        related='partner_id.commercial_partner_id.olive_organic_certif_ko',
         readonly=True)
     olive_sale_pricelist_id = fields.Many2one(
         related='partner_id.olive_sale_pricelist_id',

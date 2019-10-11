@@ -27,6 +27,12 @@
     <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
 </record>
 
+<record id="olive_palox_borrow_history_multicompany_rule" model="ir.rule">
+    <field name="name">Olive Palox Borrow History multi-company</field>
+    <field name="model_id" ref="model_olive_palox_borrow_history"/>
+    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
+</record>
+
 <record id="olive_lended_case_multicompany_rule" model="ir.rule">
     <field name="name">Olive lended cases multi-company</field>
     <field name="model_id" ref="model_olive_lended_case"/>

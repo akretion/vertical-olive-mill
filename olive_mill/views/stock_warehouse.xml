@@ -16,13 +16,16 @@
         <xpath expr="//field[@name='default_resupply_wh_id']" position="before">
             <field name="olive_mill" />
         </xpath>
-        <notebook position="inside">
+        <xpath expr="//field[@name='reception_steps']/../.." position="before">
             <page name="olive_mill" string="Olive Mill" attrs="{'invisible': [('olive_mill', '=', False)]}">
                 <group name="olive_mill">
-                <group name="olive_mill_left" string="Locations">
-                    <field name="olive_withdrawal_loc_id" attrs="{'required': [('olive_mill', '=', True)]}"/>
-                    <field name="olive_compensation_loc_id"/>
+                <group name="olive_lended_cases" string="Lended Cases">
+                    <field name="olive_regular_case_total"/>
+                    <field name="olive_regular_case_stock"/>
+                    <field name="olive_organic_case_total"/>
+                    <field name="olive_organic_case_stock"/>
                 </group>
+
                 <group name="olive_mill_right" string="Compensation">
                     <label for="olive_compensation_last_qty"/>
                     <div name="olive_compensation_last_qty">
@@ -42,15 +45,14 @@
                     </div>
                     <button name="olive_oil_compensation_ratio_update" type="object" string="Update Compensation Ratio" colspan="2"/>
                 </group>
-                <group name="olive_lended_cases" string="Lended Cases">
-                    <field name="olive_regular_case_total"/>
-                    <field name="olive_regular_case_stock"/>
-                    <field name="olive_organic_case_total"/>
-                    <field name="olive_organic_case_stock"/>
+                <group name="olive_mill_left" string="Locations">
+                    <field name="olive_withdrawal_loc_id" attrs="{'required': [('olive_mill', '=', True)]}"/>
+                    <field name="olive_compensation_loc_id"/>
                 </group>
+
                 </group>
             </page>
-        </notebook>
+        </xpath>
     </field>
 </record>
 

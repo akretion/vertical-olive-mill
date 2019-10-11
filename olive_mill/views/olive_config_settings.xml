@@ -95,6 +95,20 @@
                     <label string=" minutes" class="oe_inline"/>
                 </div>
             </group>
+            <group name="oil_production" string="Oil Production">
+                <label for="olive_oil_production_start_hour"/>
+                <div name="olive_oil_production_start_hour">
+                    <field name="olive_oil_production_start_hour" class="oe_inline"/> h
+                </div>
+                <label for="olive_oil_production_start_minute"/>
+                <div name="olive_oil_production_start_minute">
+                    <field name="olive_oil_production_start_minute" class="oe_inline"/> min
+                </div>
+                <label for="olive_oil_production_duration_minutes"/>
+                <div name="olive_oil_production_duration_minutes">
+                    <field name="olive_oil_production_duration_minutes" class="oe_inline"/> minutes
+                </div>
+            </group>
             <group name="invoicing" string="Invoicing">
                 <label for="olive_oil_leaf_removal_product_id"/>
                 <div name="olive_oil_leaf_removal_product_id">

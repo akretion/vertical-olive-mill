@@ -4,7 +4,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import api, models, fields, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 import odoo.addons.decimal_precision as dp
 
 
@@ -17,8 +17,7 @@ class OlivePalox(models.Model):
     label = fields.Char(string='Label')
     company_id = fields.Many2one(
         'res.company', string='Company', ondelete='cascade', required=True,
-        default=lambda self: self.env['res.company']._company_default_get(
-            'olive.palox'))
+        default=lambda self: self.env['res.company']._company_default_get())
     borrower_partner_id = fields.Many2one(
         'res.partner', string='Borrower', ondelete='restrict', copy=False,
         domain=[('parent_id', '=', False), ('olive_farmer', '=', True)])
@@ -50,6 +49,9 @@ class OlivePalox(models.Model):
     line_ids = fields.One2many(
         'olive.arrival.line', 'palox_id', string='Content', readonly=True,
         domain=[('state', '=', 'done'), ('production_id', '=', False)])
+    borrow_history_ids = fields.One2many(
+        'olive.palox.borrow.history', 'palox_id', string='Borrow History',
+        readonly=True)
 
     def _compute_weight(self):
         res = self.env['olive.arrival.line'].read_group([
@@ -114,3 +116,45 @@ class OlivePalox(models.Model):
         'name_company_unique',
         'unique(name, company_id)',
         'This palox number already exists in this company.')]
+
+    def return_borrowed_palox(self):
+        self.ensure_one()
+        if not self.borrower_partner_id:
+            raise UserError(_(
+                "Cannot return palox '%s' because it currently has no borrower.")
+                % self.display_name)
+        if not self.borrowed_date:
+            raise UserError(_(
+                "Cannot return palox '%s' because it has no borrowed date.")
+                % self.display_name)
+        self.env['olive.palox.borrow.history'].create({
+            'palox_id': self.id,
+            'partner_id': self.borrower_partner_id.id,
+            'start_date': self.borrowed_date,
+            })
+        self.write({
+            'borrower_partner_id': False,
+            'borrowed_date': False,
+            })
+        return
+
+
+class OlivePaloxBorrowHistory(models.Model):
+    _name = 'olive.palox.borrow.history'
+    _description = 'Olive Palox Borrow History'
+    _order = 'end_date desc'
+
+    palox_id = fields.Many2one(
+        'olive.palox', string='Palox', required=True, ondelete='cascade',
+        readonly=True, index=True)
+    partner_id = fields.Many2one(
+        'res.partner', string='Borrower', required=True, ondelete='restrict',
+        readonly=True)
+    start_date = fields.Date(string='Start Date', required=True, readonly=True)
+    end_date = fields.Date(
+        string='End Date', default=fields.Date.context_today, readonly=True)
+    season_id = fields.Many2one(
+        'olive.season', readonly=True, string='Season',
+        default=lambda self: self.env.user.company_id.current_season_id.id)
+    company_id = fields.Many2one(
+        related='palox_id.company_id', readonly=True, store=True)

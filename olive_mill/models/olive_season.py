@@ -19,8 +19,7 @@ class OliveSeason(models.Model):
     name = fields.Char(string='Name', required=True)
     company_id = fields.Many2one(
         'res.company', string='Company',
-        default=lambda self: self.env['res.company']._company_default_get(
-            'olive.season'))
+        default=lambda self: self.env['res.company']._company_default_get())
     start_date = fields.Date(string='Start Date', required=True)
     end_date = fields.Date(string='End Date', required=True)
     year = fields.Char(compute='_compute_year', string='Year', store=True)
@@ -41,6 +40,7 @@ class OliveSeason(models.Model):
         digits=dp.get_precision('Olive Oil Ratio'))
     show_on_dashboard = fields.Boolean(string='Show on Dashboard', default=True)
     kanban_dashboard_graph = fields.Text(compute='_compute_kanban_dashboard_graph')
+    partner_organic_certif_generated = fields.Boolean(readonly=True)
 
     _sql_constrains = [(
         'name_unique',
@@ -169,5 +169,54 @@ class OliveSeason(models.Model):
                 'search_default_production_done': True,
                 },
             'views': False,
+            })
+        return action
+
+    def generate_partner_organic_certif(self):
+        self.ensure_one()
+        # Get all partners that already had 1 organic certif in the past
+        # Then look at the last arrival
+        # If they had a valid organic certif for their last arrival
+        # then we generate a draft organic certif
+        poco = self.env['partner.organic.certification']
+        rpo = self.env['res.partner']
+        oao = self.env['olive.arrival']
+        existing_cert = poco.search([('season_id', '=', self.id)])
+        if existing_cert:
+            UserError(_(
+                "Some certifications have already been generated for season '%s'.")
+                % self.name)
+        rg_res = poco.read_group(
+            [('state', '=', 'done')], ['partner_id'], ['partner_id'])
+        cert_ids = []
+        for rg_re in rg_res:
+            partner = rpo.browse(rg_re['partner_id'][0])
+            if partner.active and partner.olive_farmer and not partner.parent_id:
+                last_arrival = oao.search([
+                    ('state', '=', 'done'),
+                    ('season_id', '!=', self.id),
+                    ('commercial_partner_id', '=', partner.id),
+                    ], order='date desc', limit=1)
+                if last_arrival:
+                    cert = poco.search([
+                        ('state', '=', 'done'),
+                        ('season_id', '=', last_arrival.season_id.id),
+                        ('partner_id', '=', partner.id)], limit=1)
+                    if cert:
+                        new_cert = poco.create({
+                            'partner_id': partner.id,
+                            'season_id': self.id,
+                            'state': 'draft',
+                            'conversion': cert.conversion,
+                            'certifying_entity_id': cert.certifying_entity_id.id,
+                            })
+                        cert_ids.append(new_cert.id)
+        if not cert_ids:
+            raise UserError(_("No organic certification generated."))
+        self.partner_organic_certif_generated = True
+        action = self.env.ref('olive_mill.partner_organic_certification_action').read()[0]
+        action.update({
+            'context': {'partner_organic_certification_main_view': True},
+            'domain': [('id', 'in', cert_ids)],
             })
         return action

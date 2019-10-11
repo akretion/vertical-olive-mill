@@ -17,7 +17,9 @@
                 <button name="validate" string="Validate" class="btn-primary" states="draft" type="object"/>
                 <button name="cancel" string="Cancel" class="btn-default" states="draft,done" confirm="Are you sure you want to cancel this arrival ?" type="object"/>
                 <button name="back2draft" string="Back to Draft" class="btn-default" states="cancel" type="object"/>
-                <span name="partner_olive_cultivation_form" attrs="{'invisible': ['|', ('partner_olive_cultivation_form', '=', True), ('partner_id', '=', False)]}" class="label label-danger">Cultivation Form not Provided</span>
+                <span name="olive_cultivation_form_ko" attrs="{'invisible': ['|', ('olive_cultivation_form_ko', '=', False), ('partner_id', '=', False)]}" class="label label-danger">Cultivation form missing</span>
+                <span name="olive_parcel_ko" attrs="{'invisible': ['|', ('olive_parcel_ko', '=', False), ('partner_id', '=', False)]}" class="label label-warning">Parcel information incomplete</span>
+                <span name="olive_organic_certif_ko" attrs="{'invisible': ['|', ('olive_organic_certif_ko', '=', False), ('partner_id', '=', False)]}" class="label label-success">Organic certification missing</span>
                 <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
             </header>
             <sheet>
@@ -29,7 +31,7 @@
                         <field string="Olive Trees" name="partner_olive_tree_total" widget="statinfo"/>
                     </button>
                 </div>
-                <field name="partner_organic_certified_logo" widget="image" class="oe_avatar" attrs="{'invisible': [('partner_organic_certified_logo', '=', False)]}"/>
+                <field name="olive_organic_certified_logo" widget="image" class="oe_avatar" attrs="{'invisible': [('olive_organic_certified_logo', '=', False)]}"/>
                 <div class="oe_title">
                     <label for="name"/>
                     <h1>
@@ -39,32 +41,36 @@
                 <group name="main">
                     <group name="left">
                         <field name="partner_id"/>
-                        <field name="commercial_partner_id" invisible="1"/>
-                        <field name="partner_olive_cultivation_form" invisible="1"/>
-                        <field name="partner_olive_culture_type" invisible="0"/>
+                        <field name="olive_culture_type" invisible="0"/>
+                        <field name="harvest_start_date"/>
                         <field name="default_ochard_id" domain="[('partner_id', '=', commercial_partner_id)]" context="{'default_partner_id': commercial_partner_id}"/>
                         <field name="default_variant_id" widget="selection"/>
+                        <field name="default_oil_product_id" domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', olive_culture_type)]" widget="selection"/>
                         <field name="default_oil_destination"/>
                         <field name="default_leaf_removal"/>
+                        <field name="commercial_partner_id" invisible="1"/>
+                        <field name="olive_cultivation_form_ko" invisible="1"/>
+                        <field name="olive_parcel_ko" invisible="1"/>
+                        <field name="olive_organic_certif_ko" invisible="1"/>
                     </group>
                     <group name="right">
                         <field name="date"/>
-                        <field name="harvest_start_date"/>
                         <label for="olive_qty" string="Total Quantity"/>
                         <div name="olive_qty">
                             <field name="olive_qty" class="oe_inline"/>
                             <label string=" kg"/>
                         </div>
-                        <field name="returned_regular_case" attrs="{'readonly': ['|', ('partner_olive_culture_type', 'in', ('organic', 'conversion')), ('state', '=', 'done')]}"/>
-                        <field name="returned_organic_case" attrs="{'readonly': ['|', ('partner_olive_culture_type', '=', 'regular'), ('state', '=', 'done')]}"/>
+                        <field name="returned_regular_case" attrs="{'readonly': ['|', ('olive_culture_type', 'in', ('organic', 'conversion')), ('state', '=', 'done')]}"/>
+                        <field name="returned_organic_case" attrs="{'readonly': ['|', ('olive_culture_type', '=', 'regular'), ('state', '=', 'done')]}"/>
                         <field name="returned_palox_ids" widget="many2many_tags"
                             domain="[('borrower_partner_id', '=', commercial_partner_id)]"/>
+                        <field name="operator_user_id" widget="selection"/>
                     </group>
                 </group>
                 <notebook>
                     <page name="lines" string="Arrival Lines">
                         <field name="line_ids" nolabel="1"
-                            context="{'default_leaf_removal': default_leaf_removal, 'default_variant_id': default_variant_id, 'default_ochard_id': default_ochard_id, 'default_commercial_partner_id': commercial_partner_id, 'default_oil_destination': default_oil_destination, 'default_partner_olive_culture_type': partner_olive_culture_type, 'form_view_ref': 'olive_mill.olive_arrival_line_arrival_form'}">
+                            context="{'default_leaf_removal': default_leaf_removal, 'default_variant_id': default_variant_id, 'default_oil_product_id': default_oil_product_id, 'default_ochard_id': default_ochard_id, 'default_commercial_partner_id': commercial_partner_id, 'default_oil_destination': default_oil_destination, 'default_olive_culture_type': olive_culture_type, 'form_view_ref': 'olive_mill.olive_arrival_line_arrival_form'}">
                             <tree>
                                 <field name="name"/>
                                 <field name="olive_qty" sum="1"/>
@@ -184,7 +190,9 @@
             <filter name="today" string="Today" domain="[('date', '=', context_today().strftime('%Y-%m-%d'))]"/>
             <group string="Group By" name="groupby">
                 <filter name="commercial_partner_groupby" string="Farmer" context="{'group_by': 'commercial_partner_id'}"/>
-                <filter name="date_groupby" string="Date" context="{'group_by': 'date:week'}"/>
+                <filter name="day_groupby" string="Day" context="{'group_by': 'date:day'}"/>
+                <filter name="week_groupby" string="Week" context="{'group_by': 'date:week'}"/>
+                <filter name="month_groupby" string="Month" context="{'group_by': 'date:month'}"/>
                 <filter name="warehouse_groupby" string="Warehouse" context="{'group_by': 'warehouse_id'}"/>
                 <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>
                 <filter name="state_groupby" string="State" context="{'group_by': 'state'}"/>
@@ -216,7 +224,7 @@
                 <field name="arrival_id"/>
                 <field name="arrival_date"/>
                 <field name="commercial_partner_id"/>
-                <field name="partner_olive_culture_type"/>
+                <field name="olive_culture_type"/>
                 <label for="olive_qty" string="Olive Qty"/>
                 <div name="olive_qty">
                     <field name="olive_qty" class="oe_inline"/>
@@ -227,7 +235,7 @@
                 <field name="ripeness"/>
                 <field name="sanitary_state"/>
                 <field name="oil_product_id"
-                   domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', partner_olive_culture_type)]"/>
+                   domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', olive_culture_type)]" widget="selection"/>
                 <field name="ochard_id" domain="[('partner_id', '=', commercial_partner_id)]" context="{'default_partner_id': commercial_partner_id}"/>
                 <field name="palox_id" domain="['|', ('oil_product_id', '=', False), ('oil_product_id', '=', oil_product_id), '|', ('borrower_partner_id', '=', False), ('borrower_partner_id', '=', commercial_partner_id)]"/>
                 <field name="oil_destination"/>
@@ -347,21 +355,6 @@
             </header>
             <group name="main">
                 <field name="name"/>
-                <field name="commercial_partner_id" invisible="1"/>
-                <field name="partner_olive_culture_type" invisible="1"/>
-                <label for="olive_qty" string="Olive Qty"/>
-                <div name="olive_qty">
-                    <field name="olive_qty" class="oe_inline"/>
-                    <label string=" kg"/>
-                </div>
-                <field name="leaf_removal"/>
-                <field name="variant_id" widget="selection"/>
-                <field name="ripeness"/>
-                <field name="sanitary_state"/>
-                <field name="oil_product_id"
-                   domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', partner_olive_culture_type)]"/>
-                <field name="ochard_id" domain="[('partner_id', '=', commercial_partner_id)]" context="{'default_partner_id': commercial_partner_id}"/>
-                <field name="palox_id" domain="['|', ('oil_product_id', '=', False), ('oil_product_id', '=', oil_product_id), '|', ('borrower_partner_id', '=', False), ('borrower_partner_id', '=', commercial_partner_id)]"/>
                 <field name="oil_destination"/>
                 <label for="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}" string="Requested Withdrawal Qty"/>
                 <div name="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}">
@@ -369,6 +362,22 @@
                         attrs="{'required': [('oil_destination', '=', 'mix')]}" class="oe_inline"/>
                     <label string=" L"/>
                 </div>
+
+                <field name="oil_product_id"
+                   domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', olive_culture_type)]" widget="selection"/>
+                <field name="palox_id" domain="['|', ('oil_product_id', '=', False), ('oil_product_id', '=', oil_product_id), '|', ('borrower_partner_id', '=', False), ('borrower_partner_id', '=', commercial_partner_id)]"/>
+                <label for="olive_qty" string="Olive Qty"/>
+                <div name="olive_qty">
+                    <field name="olive_qty" class="oe_inline"/>
+                    <label string=" kg"/>
+                </div>
+                <field name="variant_id" widget="selection"/>
+                <field name="ripeness"/>
+                <field name="sanitary_state"/>
+                <field name="leaf_removal"/>
+                <field name="ochard_id" domain="[('partner_id', '=', commercial_partner_id)]" context="{'default_partner_id': commercial_partner_id}"/>
+                <field name="commercial_partner_id" invisible="1"/>
+                <field name="olive_culture_type" invisible="1"/>
             </group>
             <group name="extras" string="Extra Items and Analysis">
                 <field name="extra_ids" nolabel="1"/>
@@ -411,9 +420,9 @@
             <field name="season_id"/>
             <field name="warehouse_id"/>
             <separator/>
-            <filter name="regular" string="Regular" domain="[('partner_olive_culture_type', '=', 'regular')]"/>
-            <filter name="conversion" string="Conversion" domain="[('partner_olive_culture_type', '=', 'conversion')]"/>
-            <filter name="organic" string="Organic" domain="[('partner_olive_culture_type', '=', 'organic')]"/>
+            <filter name="regular" string="Regular" domain="[('olive_culture_type', '=', 'regular')]"/>
+            <filter name="conversion" string="Conversion" domain="[('olive_culture_type', '=', 'conversion')]"/>
+            <filter name="organic" string="Organic" domain="[('olive_culture_type', '=', 'organic')]"/>
             <separator/>
             <filter name="arrival_draft" string="Draft Arrivals" domain="[('state', '=', 'draft')]"/>
             <filter name="arrival_done" string="Done Arrivals" domain="[('state', '=', 'done')]"/>
@@ -433,8 +442,9 @@
             <separator/>
             <group string="Group By" name="groupby">
                 <filter name="commercial_partner_groupby" string="Farmer" context="{'group_by': 'commercial_partner_id'}"/>
-                <filter name="arrival_day_groupby" string="Arrival Day" context="{'group_by': 'arrival_date:day'}"/>
-                <filter name="arrival_week_groupby" string="Arrival Week" context="{'group_by': 'arrival_date:week'}"/>
+                <filter name="arrival_day_groupby" string="Day" context="{'group_by': 'arrival_date:day'}"/>
+                <filter name="arrival_week_groupby" string="Week" context="{'group_by': 'arrival_date:week'}"/>
+                <filter name="arrival_month_groupby" string="Month" context="{'group_by': 'arrival_date:Month'}"/>
                 <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>
                 <filter name="oil_destination_groupby" string="Oil Destination" context="{'group_by': 'oil_destination'}"/>
                 <filter name="variant_groupby" string="Olive Variant" context="{'group_by': 'variant_id'}"/>

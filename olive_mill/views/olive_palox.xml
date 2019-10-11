@@ -12,6 +12,9 @@
     <field name="model">olive.palox</field>
     <field name="arch" type="xml">
         <form string="Olive Palox">
+            <header>
+                <button name="return_borrowed_palox" type="object" string="Return Palox" attrs="{'invisible': ['|', ('borrower_partner_id', '=', False), ('borrowed_date', '=', False)]}"/>
+            </header>
             <sheet>
                 <div class="oe_button_box" name="button_box">
                     <button name="toggle_active" type="object"
@@ -40,9 +43,14 @@
                     <field name="borrowed_date"/>
                     <field name="company_id" groups="base.group_multi_company"/>
                 </group>
-                <group name="content" string="Current Content">
-                    <field name="line_ids" nolabel="1"/>
-                </group>
+                <notebook>
+                    <page name="content" string="Current Content">
+                        <field name="line_ids" nolabel="1"/>
+                    </page>
+                    <page name="borrow_history" string="Borrow History">
+                        <field name="borrow_history_ids" nolabel="1"/>
+                    </page>
+                </notebook>
             </sheet>
         </form>
     </field>
@@ -93,5 +101,44 @@
 </record>
 
 <menuitem id="olive_palox_menu" action="olive_palox_action" parent="olive_data_menu" sequence="70"/>
+
+<record id="olive_palox_borrow_history_tree" model="ir.ui.view">
+    <field name="name">olive.palox.borrow.history.tree</field>
+    <field name="model">olive.palox.borrow.history</field>
+    <field name="arch" type="xml">
+        <tree string="Olive Palox">
+            <field name="palox_id" invisible="not context.get('borrow_history_main_view')"/>
+            <field name="partner_id"/>
+            <field name="start_date"/>
+            <field name="end_date"/>
+            <field name="season_id" invisible="not context.get('borrow_history_main_view')"/>
+            <field name="company_id" invisible="not context.get('borrow_history_main_view')" groups="base.group_multi_company"/>
+        </tree>
+    </field>
+</record>
+
+<record id="olive_palox_borrow_history_search" model="ir.ui.view">
+    <field name="name">olive.palox.borrow.history.search</field>
+    <field name="model">olive.palox.borrow.history</field>
+    <field name="arch" type="xml">
+        <search>
+            <field name="palox_id"/>
+            <group string="Group By" name="groupby">
+                <filter name="partner_groupby" string="Borrower" context="{'group_by': 'partner_id'}"/>
+                <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<record id="olive_palox_borrow_history_action" model="ir.actions.act_window">
+    <field name="name">Palox Borrow History</field>
+    <field name="res_model">olive.palox.borrow.history</field>
+    <field name="view_mode">tree</field>
+    <field name="context">{'borrow_history_main_view': True}</field>
+</record>
+
+<menuitem id="olive_palox_borrow_history_menu" action="olive_palox_borrow_history_action" parent="olive_config_menu" sequence="200"/>
+
 
 </odoo>

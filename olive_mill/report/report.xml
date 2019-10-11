@@ -119,5 +119,28 @@
     <field name="value" eval="'ir.actions.report.xml,%d'%olive_oil_analysis_report" />
 </record>
 
+<record id="olive_appointment_day_report" model="ir.actions.report.xml">
+    <field name="name">Print Appointments</field>
+    <field name="model">olive.appointment.print</field>
+    <field name="report_name">olive.appointment.day</field>
+    <field name="report_type">py3o</field>
+    <field name="py3o_filetype">odt</field>
+    <field name="module">olive_mill</field>
+    <field name="py3o_template_fallback">report/olive_appointment_day.odt</field>
+    <field name="print_report_name">'Appointments-' + object.date + '.odt'</field>
+</record>
+
+<record id="olive_oil_production_day_report" model="ir.actions.report.xml">
+    <field name="name">Print Olive Oil Production</field>
+    <field name="model">olive.oil.production.day.print</field>
+    <field name="report_name">olive.oil.production.day</field>
+    <field name="report_type">py3o</field>
+    <field name="py3o_filetype">odt</field>
+    <field name="module">olive_mill</field>
+    <field name="py3o_template_fallback">report/olive_oil_production_day.odt</field>
+    <field name="print_report_name">'Production-' + object.date + '.odt'</field>
+</record>
+
+
 
 </odoo>

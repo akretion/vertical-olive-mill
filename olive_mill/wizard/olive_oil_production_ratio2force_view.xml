@@ -20,6 +20,16 @@
                 <field name="oil_destination" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}"/>
                 <field name="oil_product_id"/>
                 <field name="sale_location_id" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank_type', '=', 'regular'), ('oil_product_id', '=', oil_product_id), ('olive_season_id', '=', season_id)]"/>
+                <label for="decanter_duration"/>
+                <div name="decanter_duration">
+                    <field name="decanter_duration" class="oe_inline"/>
+                    <label string=" minutes"/>
+                </div>
+                <label for="decanter_speed"/>
+                <div name="decanter_speed">
+                    <field name="decanter_speed" class="oe_inline"/>
+                    <label string=" kg / h"/>
+                </div>
                 <label for="olive_qty"/>
                 <div name="olive_qty">
                     <field name="olive_qty" class="oe_inline"/>
@@ -34,7 +44,7 @@
                     <label string=" L" class="oe_inline"/>
                 </div>
                 <label for="compensation_last_olive_qty" string="Olive Compensation Qty" attrs="{'invisible': [('compensation_type', '!=', 'last')]}"/>
-                <div name="compensation_last_olive_qty">
+                <div name="compensation_last_olive_qty" attrs="{'invisible': [('compensation_type', '!=', 'last')]}">
                     <field name="compensation_last_olive_qty" class="oe_inline"/>
                     <label string=" kg" class="oe_inline"/>
                 </div>
@@ -53,16 +63,6 @@
                 <div name="ratio">
                     <field name="ratio" class="oe_inline"/>
                     <label string=" % (L)" class="oe_inline"/>
-                </div>
-                <label for="decanter_duration"/>
-                <div name="decanter_duration">
-                    <field name="decanter_duration" class="oe_inline"/>
-                    <label string=" minutes"/>
-                </div>
-                <label for="decanter_speed"/>
-                <div name="decanter_speed">
-                    <field name="decanter_speed" class="oe_inline"/>
-                    <label string=" kg / h"/>
                 </div>
             </group>
             <footer>

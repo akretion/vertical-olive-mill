@@ -1667,7 +1667,7 @@ msgstr "Quantité de caisses bio prêtées"
 #: model:ir.model.fields,field_description:olive_mill.field_shopinvader_partner_olive_lended_palox
 #: model:ir.ui.view,arch_db:olive_mill.olive_tab_button_partner_form
 msgid "Lended Palox"
-msgstr "Palox prêté"
+msgstr "Palox prêtées"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_prestashop_address_olive_lended_regular_case

@@ -22,8 +22,8 @@
                 <field name="msg" nolabel="1"/>
             </group>
             <footer>
-                <button name="validate" type="object" string="Force Validation" class="btn-primary"/>
-                <button special="cancel" string="Cancel" class="btn-default"/>
+                <button name="validate" type="object" string="Force Validation" class="btn-default" confirm="Are you sure you want to force validation?"/>
+                <button special="cancel" string="Cancel" class="btn-primary"/>
             </footer>
         </form>
     </field>

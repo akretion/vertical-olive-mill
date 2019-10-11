@@ -35,19 +35,25 @@ class ResPartner(models.Model):
         compute='_compute_olive_total', string='Oil Qty Sold (L)', readonly=True,
         digits=dp.get_precision('Olive Oil Volume'),
         help="Olive oil sale quantity for the current season in liters")
-    olive_cultivation_form = fields.Boolean(
-        compute='_compute_olive_total',
-        string='Cultivation Form Provided', readonly=True)
+    olive_cultivation_form_ko = fields.Boolean(
+        compute='_compute_organic_and_warnings',
+        string='Cultivation Form Missing', readonly=True)
+    olive_parcel_ko = fields.Boolean(
+        compute='_compute_organic_and_warnings',
+        string='Parcel Information Incomplete', readonly=True)
+    olive_organic_certif_ko = fields.Boolean(
+        compute='_compute_organic_and_warnings',
+        string='Organic Certification Missing', readonly=True)
     olive_organic_certification_ids = fields.One2many(
         'partner.organic.certification', 'partner_id', 'Organic Certifications')
     olive_culture_type = fields.Selection([
         ('regular', 'Regular'),
         ('organic', 'Organic'),
         ('conversion', 'Conversion'),
-        ], compute='_compute_olive_organic_certified',
+        ], compute='_compute_organic_and_warnings',
         string='Olive Culture Type', readonly=True)
     olive_organic_certified_logo = fields.Binary(
-        compute='_compute_olive_organic_certified',
+        compute='_compute_organic_and_warnings',
         string='Organic Certified Logo', readonly=True)
     olive_sale_pricelist_id = fields.Many2one(
         'olive.sale.pricelist', string='Sale Pricelist for Olive Mill',
@@ -97,36 +103,78 @@ class ResPartner(models.Model):
                 partner.olive_qty_current_season = int(arrival_re['olive_qty'])
                 partner.olive_sale_oil_qty_current_season = arrival_re['sale_oil_qty']
                 partner.olive_current_season_id = season.id
-            cultivation_res = self.env['olive.cultivation'].read_group([
-                ('season_id', '=', season.id),
-                ('partner_id', 'in', self.ids)],
-                ['partner_id'], ['partner_id'])
-            for cultivation_re in cultivation_res:
-                partner = self.browse(cultivation_re['partner_id'][0])
-                partner.olive_cultivation_form = True
 
-    def _compute_olive_organic_certified(self):
+    def _compute_organic_and_warnings(self):
         season = self.env['olive.season'].get_current_season()
+        poco = self.env['partner.organic.certification']
+        oco = self.env['olive.cultivation']
+        ooo = self.env['olive.ochard']
+        opo = self.env['olive.parcel']
+        parcel_required_fields = [
+            'ochard_id',
+            'land_registry_ref',
+            'area',
+            'tree_qty',
+            'variant_label',
+            'density',
+            'planted_year',
+            'irrigation',
+            'cultivation_method',
+            ]
         for partner in self:
             culture_type = 'regular'
             filename = False
             logo = False
-            if season and partner.olive_farmer and not partner.parent_id:
-                cert = self.env['partner.organic.certification'].search([
-                    ('partner_id', '=', partner.id),
-                    ('season_id', '=', season.id),
-                    ], limit=1)
-                if cert:
-                    if cert.conversion:
-                        culture_type = 'conversion'
-                        filename = 'organic_logo_conversion_done.png'
-                        if cert.state == 'draft':
-                            filename = 'organic_logo_conversion_draft.png'
-                    else:
-                        culture_type = 'organic'
-                        filename = 'organic_logo_done.png'
-                        if cert.state == 'draft':
-                            filename = 'organic_logo_draft.png'
+            cultivation_form_ko = True
+            parcel_ko = True
+            certif_ko = False
+            if partner.olive_farmer and not partner.parent_id:
+                # parcel_ok if all ochards have at least one parcel
+                # and alls parcels have complete info
+                ochard_ids = ooo.search([('partner_id', '=', partner.id)]).ids
+                if ochard_ids:
+                    parcels_complete = True
+                    parcels = opo.search_read(
+                        [('partner_id', '=', partner.id)],
+                        parcel_required_fields)
+                    for parcel in parcels:
+                        if parcel.get('ochard_id'):
+                            ochard_id = parcel['ochard_id'][0]
+                            if ochard_id in ochard_ids:
+                                ochard_ids.remove(ochard_id)
+                        for pfield in parcel_required_fields:
+                            if not parcel.get(pfield):
+                                parcels_complete = False
+                                break
+                        if not parcels_complete:
+                            break
+                    if not ochard_ids and parcels_complete:
+                        parcel_ko = False
+
+                if season:
+                    cert = poco.search([
+                        ('partner_id', '=', partner.id),
+                        ('season_id', '=', season.id),
+                        ], limit=1)
+                    if cert:
+                        if cert.conversion:
+                            culture_type = 'conversion'
+                            filename = 'organic_logo_conversion_done.png'
+                            if cert.state == 'draft':
+                                filename = 'organic_logo_conversion_draft.png'
+                        else:
+                            culture_type = 'organic'
+                            filename = 'organic_logo_done.png'
+                            if cert.state == 'draft':
+                                filename = 'organic_logo_draft.png'
+                    if cert.state == 'draft':
+                        certif_ko = True
+
+                    cultivations = oco.search([
+                        ('season_id', '=', season.id),
+                        ('partner_id', '=', partner.id)], limit=1)
+                    if cultivations:
+                        cultivation_form_ko = False
             if filename:
                 fname_path = 'olive_mill/static/image/%s' % filename
                 f = tools.file_open(fname_path, 'rb')
@@ -135,6 +183,9 @@ class ResPartner(models.Model):
                     logo = f_binary.encode('base64')
             partner.olive_culture_type = culture_type
             partner.olive_organic_certified_logo = logo
+            partner.olive_cultivation_form_ko = cultivation_form_ko
+            partner.olive_parcel_ko = parcel_ko
+            partner.olive_organic_certif_ko = certif_ko
 
     def olive_check_in_invoice_fiscal_position(self):
         self.ensure_one()
@@ -148,3 +199,25 @@ class ResPartner(models.Model):
                 "purchase olive oil with VAT to a farmer "
                 "that is not subject to VAT, which would be a big "
                 "problem!).") % self.display_name)
+
+    def update_organic_certif(self):
+        self.ensure_one()
+        cert = self.env['partner.organic.certification'].search([
+            ('partner_id', '=', self.id),
+            ('season_id', '=', self.env.user.company_id.current_season_id.id),
+            ('state', '=', 'draft'),
+            ], limit=1)
+        action = self.env.ref('olive_mill.partner_organic_certification_action').read()[0]
+        action['context'] = {
+            'partner_organic_certification_main_view': True,
+            'search_default_partner_id': self.id,
+            'default_partner_id': self.id,
+            }
+        if cert:
+            action.update({
+                'view_mode': 'form,tree',
+                'res_id': cert.id,
+                'views': False,
+                })
+        return action
+

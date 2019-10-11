@@ -7,47 +7,97 @@
 
 <odoo>
 
+
+<record id="olive_appointment_action" model="ir.actions.act_window">
+    <field name="name">Appointments</field>
+    <field name="res_model">olive.appointment</field>
+    <field name="view_mode">calendar,tree,form</field>
+    <field name="context">{'search_default_current_season': 1}</field>
+</record>
+
 <record id="olive_appointment_form" model="ir.ui.view">
     <field name="name">olive.appointment.form</field>
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
         <form string="Appointment">
             <header>
-                <button name="%(olive_palox_lend_action)d" type="action" string="Lend Palox/Cases" attrs="{'invisible': [('appointment_type', '!=', 'lend')]}" context="{'default_partner_id': partner_id}" class="btn-primary"/>
-                <button name="create_arrival" class="btn-primary" attrs="{'invisible': ['|', ('arrival_id', '!=', False), ('appointment_type', '!=', 'arrival')]}" string="Create Arrival" type="object"/>
+                <button name="%(olive_palox_lend_action)d" type="action" string="Lend Palox/Cases" attrs="{'invisible': [('appointment_type', '!=', 'lend')]}" context="{'default_partner_id': partner_id, 'default_regular_case_qty': lend_regular_case_qty, 'default_organic_case_qty': lend_organic_case_qty}" class="btn-primary"/>
+                <button name="open_arrival" class="btn-primary" attrs="{'invisible': [('appointment_type', '!=', 'arrival')]}" string="Arrival" type="object"/>
+                <button name="open_new_appointment" attrs="{'invisible': [('appointment_type', '!=', 'arrival')]}" string="New Appointment" type="object"/>
                 <button name="%(olive_withdrawal_action)d" type="action" string="New Withdrawal" attrs="{'invisible': [('appointment_type', '!=', 'withdrawal')]}" context="{'default_partner_id': partner_id}" class="btn-primary"/>
                 <button name="%(olive_invoice_create_action)d" type="action" string="Create Invoice" attrs="{'invisible': [('appointment_type', '!=', 'withdrawal')]}" context="{'default_partner_id': partner_id}"/>
+                <span name="olive_cultivation_form_ko" attrs="{'invisible': ['|', ('olive_cultivation_form_ko', '=', False), ('partner_id', '=', False)]}" class="label label-danger">Cultivation form missing</span>
+                <span name="olive_parcel_ko" attrs="{'invisible': ['|', ('olive_parcel_ko', '=', False), ('partner_id', '=', False)]}" class="label label-warning">Parcel information incomplete</span>
+                <span name="olive_organic_certif_ko" attrs="{'invisible': ['|', ('olive_organic_certif_ko', '=', False), ('partner_id', '=', False)]}" class="label label-success">Organic certification missing</span>
             </header>
             <sheet>
+                <div name="button_box" class="oe_button_box">
+                    <button class="oe_stat_button" type="action"
+                        name="%(olive_mill.olive_appointment_action)d"
+                        icon="fa-arrow-down"
+                        context="{'search_default_date': date}">  <!-- use fa-tractor when we'll have access to FA 5.4 -->
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="total_qty_same_day" widget="statinfo" nolabel="1"/>
+                                kg
+                            </span>
+                            <span class="o_stat_text">Olives</span>
+                        </div>
+                    </button>
+                    <button class="oe_stat_button" type="action"
+                        name="%(olive_mill.olive_appointment_action)d"
+                        icon="fa-stop"
+                        context="{'search_default_date': date}">  <!-- use fa-tractor when we'll have access to FA 5.4 -->
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="total_palox_same_day" widget="statinfo" nolabel="1"/>
+                            </span>
+                            <span class="o_stat_text">Palox</span>
+                        </div>
+                    </button>
+                </div>
+                <field name="olive_organic_certified_logo" widget="image" class="oe_avatar" attrs="{'invisible': [('olive_organic_certified_logo', '=', False)]}"/>
                 <group name="main">
                     <group name="top-left">
                         <field name="partner_id"/>
                         <field name="appointment_type"/>
                         <field name="name"/>
                         <field name="commercial_partner_id" invisible="1"/>
+                        <field name="olive_culture_type" invisible="1"/>
+                        <field name="olive_cultivation_form_ko" invisible="1"/>
+                        <field name="olive_parcel_ko" invisible="1"/>
+                        <field name="olive_organic_certif_ko" invisible="1"/>
                     </group>
                     <group name="top-right">
                         <field name="start_datetime"/>
                         <field name="end_datetime"/>
-                        <field name="arrival_id" attrs="{'invisible': [('appointment_type', '!=', 'arrival')]}"/>
                         <field name="season_id"/>
                         <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="date" invisible="0"/>
                     </group>
                     <group name="arrival" attrs="{'invisible': [('appointment_type', '!=', 'arrival')]}">
                         <field name="variant_id" widget="selection"/>
                         <label for="qty" />
                         <div name="qty">
-                            <field name="qty" class="oe_inline"/>
-                            <label string=" kg" class="oe_inline"/>
+                            <field name="qty" class="oe_inline"/> kg
                         </div>
                         <field name="palox_qty"/>
                         <field name="leaf_removal"/>
+                        <field name="oil_product_id" domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', olive_culture_type)]" widget="selection"/>
                         <field name="oil_destination"/>
                         <label for="withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}"/>
                         <div name="withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}">
                             <field name="withdrawal_oil_qty" class="oe_inline"/>
                             <label string=" L" class="oe_inline"/>
                         </div>
+                    </group>
+                    <group name="withdrawal" attrs="{'invisible': [('appointment_type', '!=', 'withdrawal')]}">
+                        <field name="withdrawal_invoice" widget="radio" string="Withdrawal"/>
+                    </group>
+                    <group name="lend" attrs="{'invisible': [('appointment_type', '!=', 'lend')]}">
+                        <field name="lend_palox_qty" />
+                        <field name="lend_regular_case_qty" attrs="{'readonly': [('olive_culture_type', 'in', ('organic', 'conversion'))]}"/>
+                        <field name="lend_organic_case_qty" attrs="{'readonly': [('olive_culture_type', '=', 'regular')]}"/>
                     </group>
                 </group>
             </sheet>
@@ -83,8 +133,7 @@
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
         <calendar string="Appointments" color="appointment_type" date_start="start_datetime" date_stop="end_datetime" mode="week">
-            <field name="partner_id"/>
-            <field name="qty"/>
+            <field name="display_calendar_label"/>
         </calendar>
     </field>
 </record>
@@ -95,8 +144,9 @@
     <field name="arch" type="xml">
         <search string="Search Appointments">
             <field name="partner_id" operator="child_of"/>
+            <field name="date"/>
             <separator/>
-            <filter name="today" string="Today" domain="[('start_datetime', '&lt;=', datetime.datetime.combine(context_today(), datetime.time(23, 59, 0))), ('start_datetime', '&gt;', datetime.datetime.combine(context_today(), datetime.time(0, 0, 0)))]"/>
+            <filter name="today" string="Today" domain="[('date', '=', context_today()]"/>
             <filter name="tomorrow" string="Tomorrow" domain="[('start_datetime', '&lt;=', datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(23, 59, 0))), ('start_datetime', '&gt;', datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(0, 0, 0)))]"/>
             <separator/>
             <filter name="lend" string="Lend Palox/Cases" domain="[('appointment_type', '=', 'lend')]"/>
@@ -107,7 +157,9 @@
             <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
             <separator/>
             <group string="Group By" name="groupby">
-                <filter name="start_groupby" string="Day" context="{'group_by': 'start_datetime:day'}"/>
+                <filter name="day_groupby" string="Day" context="{'group_by': 'start_datetime:day'}"/>
+                <filter name="week_groupby" string="Week" context="{'group_by': 'start_datetime:week'}"/>
+                <filter name="month_groupby" string="Month" context="{'group_by': 'start_datetime:month'}"/>
                 <filter name="commercial_partner_groupby" string="Partner" context="{'group_by': 'commercial_partner_id'}"/>
                 <filter name="appointment_type_groupby" string="Appointment Type" context="{'group_by': 'appointment_type'}"/>
                 <filter name="variant_groupby" string="Olive Variant" context="{'group_by': 'variant_id'}"/>
@@ -115,13 +167,6 @@
             </group>
         </search>
     </field>
-</record>
-
-<record id="olive_appointment_action" model="ir.actions.act_window">
-    <field name="name">Appointments</field>
-    <field name="res_model">olive.appointment</field>
-    <field name="view_mode">tree,form,calendar</field>
-    <field name="context">{'search_default_current_season': 1}</field>
 </record>
 
 <menuitem id="olive_appointment_menu" action="olive_appointment_action" parent="olive_operations_menu" sequence="10"/>

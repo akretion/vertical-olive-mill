@@ -14,12 +14,12 @@
         <form string="Olive Lended Cases">
             <group name="main">
                 <field name="partner_id" invisible="not context.get('olive_lended_case_main_view')"/>
-                <field name="partner_olive_culture_type" invisible="1"/>
+                <field name="olive_culture_type" invisible="1"/>
                 <field name="warehouse_id"/>
                 <field name="company_id" groups="base.group_multi_company"/>
                 <field name="date"/>
-                <field name="regular_qty" attrs="{'readonly': [('partner_olive_culture_type', 'in', ('organic', 'conversion'))]}"/>
-                <field name="organic_qty" attrs="{'readonly': [('partner_olive_culture_type', '=', 'regular')]}"/>
+                <field name="regular_qty" attrs="{'readonly': [('olive_culture_type', 'in', ('organic', 'conversion'))]}"/>
+                <field name="organic_qty" attrs="{'readonly': [('olive_culture_type', '=', 'regular')]}"/>
                 <field name="notes"/>
             </group>
         </form>
@@ -62,7 +62,7 @@
     <field name="name">Lended Cases</field>
     <field name="res_model">olive.lended.case</field>
     <field name="view_mode">tree,form</field>
-    <field name="context">{'olive_lended_case_main_view': True}</field>
+    <field name="context">{'olive_lended_case_main_view': True, 'search_default_partner_groupby': True}</field>
 </record>
 
 <menuitem id="olive_lended_case_menu" action="olive_lended_case_action" parent="olive_data_menu" sequence="80"/>
