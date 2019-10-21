@@ -109,7 +109,7 @@ class OliveOilProduction(models.Model):
         readonly=True, track_visibility='onchange')  # written by ratio2force wizard
     ratio = fields.Float(
         string='Gross Ratio (% L)', digits=dp.get_precision('Olive Oil Ratio'),
-        readonly=True, group_operator = 'avg',
+        readonly=True, group_operator='avg',
         help="This ratio gives the number of liters of olive oil for "
         "100 kg of olives.")  # Yes, it's a ratio between liters and kg !!!
     date = fields.Date(

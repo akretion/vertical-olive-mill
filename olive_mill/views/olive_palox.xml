@@ -30,18 +30,25 @@
                     </h1>
                 </div>
                 <group name="main">
-                    <field name="label"/>
-                    <label for="weight" string="Current Weight"/>
-                    <div>
-                        <field name="weight" class="oe_inline"/>
-                        <label string=" kg" class="oe_inline"/>
-                    </div>
-                    <field name="oil_product_id"/>
-                    <field name="oil_destination"/>
-                    <field name="arrival_date"/>
-                    <field name="borrower_partner_id"/>
-                    <field name="borrowed_date"/>
-                    <field name="company_id" groups="base.group_multi_company"/>
+                    <group name="main-left">
+                        <field name="label"/>
+                        <label for="weight" string="Current Net Weight"/>
+                        <div name="weight">
+                            <field name="weight" class="oe_inline"/> kg
+                        </div>
+                        <field name="oil_product_id"/>
+                        <field name="oil_destination"/>
+                        <field name="arrival_date"/>
+                        <field name="borrower_partner_id"/>
+                        <field name="borrowed_date"/>
+                    </group>
+                    <group name="main-right">
+                        <label for="empty_weight" string="Empty Weight"/>
+                        <div name="empty_weight">
+                            <field name="empty_weight" class="oe_inline"/> kg
+                        </div>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
                 </group>
                 <notebook>
                     <page name="content" string="Current Content">
@@ -70,6 +77,7 @@
             <field name="farmers"/>
             <field name="borrower_partner_id"/>
             <field name="borrowed_date"/>
+            <field name="empty_weight"/>
         </tree>
     </field>
 </record>

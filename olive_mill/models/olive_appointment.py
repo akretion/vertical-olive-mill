@@ -92,7 +92,6 @@ class OliveAppointment(models.Model):
         compute='_compute_display_calendar_label',
         string='Label in Calendar View', readonly=True)
 
-
     _sql_constraints = [(
         'qty_positive',
         'CHECK(qty >= 0)',
@@ -123,10 +122,10 @@ class OliveAppointment(models.Model):
             app.total_palox_same_day = total_palox_same_day
 
     @api.depends(
-            'partner_id', 'appointment_type', 'qty', 'oil_destination',
-            'withdrawal_oil_qty',
-            'oil_product_id', 'leaf_removal', 'withdrawal_invoice',
-            'lend_palox_qty', 'lend_regular_case_qty', 'lend_organic_case_qty')
+        'partner_id', 'appointment_type', 'qty', 'oil_destination',
+        'withdrawal_oil_qty',
+        'oil_product_id', 'leaf_removal', 'withdrawal_invoice',
+        'lend_palox_qty', 'lend_regular_case_qty', 'lend_organic_case_qty')
     def _compute_display_calendar_label(self):
         for app in self:
             label = app.partner_id.name
@@ -157,7 +156,6 @@ class OliveAppointment(models.Model):
                 if lend_list:
                     label += ', %s' % ', '.join(lend_list)
             app.display_calendar_label = label
-
 
     @api.onchange('oil_destination')
     def oil_destination_change(self):

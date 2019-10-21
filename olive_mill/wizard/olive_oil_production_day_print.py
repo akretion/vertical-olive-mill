@@ -8,7 +8,6 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 
-
 class OliveOilProductionDayPrint(models.TransientModel):
     _name = 'olive.oil.production.day.print'
     _description = 'Wizard to print the olive oil productions of the day'

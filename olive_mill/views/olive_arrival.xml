@@ -15,8 +15,10 @@
         <form string="Olive Arrival">
             <header>
                 <button name="validate" string="Validate" class="btn-primary" states="draft" type="object"/>
+                <button name="print_report" string="Print" type="object"/>
                 <button name="cancel" string="Cancel" class="btn-default" states="draft,done" confirm="Are you sure you want to cancel this arrival ?" type="object"/>
                 <button name="back2draft" string="Back to Draft" class="btn-default" states="cancel" type="object"/>
+                <button type="action" name="%(olive_palox_lend_action)d" string="Lend Palox and/or Cases" context="{'default_partner_id': commercial_partner_id, 'default_arrival_id': active_id}" attrs="{'invisible': [('hide_lend_palox_case_button', '=', True)]}"/>
                 <span name="olive_cultivation_form_ko" attrs="{'invisible': ['|', ('olive_cultivation_form_ko', '=', False), ('partner_id', '=', False)]}" class="label label-danger">Cultivation form missing</span>
                 <span name="olive_parcel_ko" attrs="{'invisible': ['|', ('olive_parcel_ko', '=', False), ('partner_id', '=', False)]}" class="label label-warning">Parcel information incomplete</span>
                 <span name="olive_organic_certif_ko" attrs="{'invisible': ['|', ('olive_organic_certif_ko', '=', False), ('partner_id', '=', False)]}" class="label label-success">Organic certification missing</span>
@@ -24,6 +26,25 @@
             </header>
             <sheet>
                 <div name="button_box" class="oe_button_box">
+                    <button class="oe_stat_button" type="action"
+                        name="%(olive_mill.olive_palox_action)d"
+                        context="{'default_borrower_partner_id': commercial_partner_id, 'search_default_borrower_partner_id': commercial_partner_id, 'no_create': True}"
+                        icon="fa-inbox">  <!-- use fa-pallet when we'll have access to FA 5.0.7, which is not the case in v10 -->
+                        <field string="Lended Palox" name="lended_palox" widget="statinfo"/>
+                    </button>
+                    <button class="oe_stat_button" type="action"
+                        name="%(olive_mill.olive_lended_case_action)d"
+                        context="{'default_partner_id': commercial_partner_id, 'search_default_partner_id': commercial_partner_id, 'olive_lended_case_main_view': 1}"
+                        icon="fa-codepen">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="lended_regular_case" widget="statinfo" nolabel="1"/>
+                                + <field name="lended_organic_case" widget="statinfo" nolabel="1"/>
+                                organic
+                            </span>
+                            <span class="o_stat_text">Lended Cases</span>
+                        </div>
+                    </button>
                     <button class="oe_stat_button" type="action"
                         name="%(olive_mill.olive_ochard_action)d"
                         icon="fa-pagelines"
@@ -118,6 +139,7 @@
                                 <field name="lended_case_id" context="{'olive_lended_case_main_view': True}"/>
                                 <field name="done_datetime" states="done"/>
                                 <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="hide_lend_palox_case_button" invisible="1"/>
                             </group>
                         </group>
                     </page>
@@ -366,10 +388,13 @@
                 <field name="oil_product_id"
                    domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', olive_culture_type)]" widget="selection"/>
                 <field name="palox_id" domain="['|', ('oil_product_id', '=', False), ('oil_product_id', '=', oil_product_id), '|', ('borrower_partner_id', '=', False), ('borrower_partner_id', '=', commercial_partner_id)]"/>
+                <label for="palox_weight" string="Palox Weight"/>
+                <div name="palox_weight">
+                    <field name="palox_weight" class="oe_inline"/> kg
+                </div>
                 <label for="olive_qty" string="Olive Qty"/>
                 <div name="olive_qty">
-                    <field name="olive_qty" class="oe_inline"/>
-                    <label string=" kg"/>
+                    <field name="olive_qty" class="oe_inline"/> kg
                 </div>
                 <field name="variant_id" widget="selection"/>
                 <field name="ripeness"/>

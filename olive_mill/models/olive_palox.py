@@ -31,8 +31,10 @@ class OlivePalox(models.Model):
     oil_product_id = fields.Many2one(
         'product.product', string='Current Oil Product',
         domain=[('olive_type', '=', 'oil')])
+    empty_weight = fields.Float(
+        string='Empty Weight (kg)', digits=dp.get_precision('Olive Weight'))
     weight = fields.Float(
-        compute='_compute_weight', string='Current Weight (kg)',
+        compute='_compute_weight', string='Current Net Weight (kg)',
         digits=dp.get_precision('Olive Weight'), readonly=True)
     oil_destination = fields.Selection([
         ('withdrawal', 'Withdrawal'),

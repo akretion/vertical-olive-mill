@@ -13,6 +13,7 @@
     <field name="arch" type="xml">
         <form string="Lend Palox and/or Cases">
             <group name="main">
+                <field name="arrival_id" invisible="1"/>
                 <field name="partner_id"/>
                 <field name="olive_culture_type" invisible="1"/>
                 <field name="palox_ids" widget="many2many_tags"/>

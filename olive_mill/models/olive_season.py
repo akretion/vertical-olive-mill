@@ -5,7 +5,7 @@
 
 from odoo import models, fields, api, _
 import odoo.addons.decimal_precision as dp
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 from dateutil.relativedelta import relativedelta
 from babel.dates import format_date
 import json
@@ -183,7 +183,7 @@ class OliveSeason(models.Model):
         oao = self.env['olive.arrival']
         existing_cert = poco.search([('season_id', '=', self.id)])
         if existing_cert:
-            UserError(_(
+            raise UserError(_(
                 "Some certifications have already been generated for season '%s'.")
                 % self.name)
         rg_res = poco.read_group(

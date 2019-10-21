@@ -102,7 +102,9 @@ class OliveArrival(models.Model):
     returned_organic_case = fields.Integer(
         string='Returned Organic Cases', states={'done': [('readonly', True)]})
     lended_case_id = fields.Many2one(
-        'olive.lended.case', string='Lended Case Move', readonly=True)
+        'olive.lended.case', string='Returned Lended Cases Move', readonly=True)
+    hide_lend_palox_case_button = fields.Boolean(
+        string='Hide Button Lend Palox and/or Cases', readonly=True)
     returned_palox_ids = fields.Many2many(
         'olive.palox', string='Other Returned Palox',
         states={'done': [('readonly', True)]},
@@ -125,6 +127,12 @@ class OliveArrival(models.Model):
     olive_ratio_net = fields.Float(
         string='Olive Net Ratio (kg / L)', digits=(16, 2),
         readonly=True)
+    lended_regular_case = fields.Integer(
+        compute='_compute_lended_case', string='Lended Regular Case', readonly=True)
+    lended_organic_case = fields.Integer(
+        compute='_compute_lended_case', string='Lended Organic Case', readonly=True)
+    lended_palox = fields.Integer(
+        compute='_compute_lended_palox', string='Lended Palox', readonly=True)
     operator_user_id = fields.Many2one(
         'res.users', string='Operator', domain=[('olive_operator', '=', True)],
         ondelete='restrict', copy=False)
@@ -144,6 +152,38 @@ class OliveArrival(models.Model):
             ['arrival_id', 'olive_qty'], ['arrival_id'])
         for re in res:
             self.browse(re['arrival_id'][0]).olive_qty = re['olive_qty']
+
+    @api.depends(
+        'returned_regular_case', 'returned_organic_case', 'lended_case_id')
+    def _compute_lended_case(self):
+        olco = self.env['olive.lended.case']
+        for arrival in self:
+            cases_res = olco.read_group([
+                ('company_id', '=', arrival.company_id.id),
+                ('partner_id', '=', arrival.commercial_partner_id.id)],
+                ['regular_qty', 'organic_qty'], [])
+            lended_regular_case = cases_res and cases_res[0]['regular_qty'] or 0
+            lended_organic_case = cases_res and cases_res[0]['organic_qty'] or 0
+            if not arrival.lended_case_id:
+                lended_regular_case -= arrival.returned_regular_case
+                lended_organic_case -= arrival.returned_organic_case
+            arrival.lended_regular_case = lended_regular_case
+            arrival.lended_organic_case = lended_organic_case
+
+    @api.depends('returned_palox_ids', 'line_ids.palox_id')
+    def _compute_lended_palox(self):
+        opo = self.env['olive.palox']
+        for arrival in self:
+            lended_palox = opo.search([
+                ('borrower_partner_id', '=', arrival.commercial_partner_id.id)])
+            if arrival.state == 'draft':
+                for rp in arrival.returned_palox_ids:
+                    if rp in lended_palox:
+                        lended_palox -= rp
+                for line in arrival.line_ids:
+                    if line.palox_id in lended_palox:
+                        lended_palox -= line.palox_id
+            arrival.lended_palox = len(lended_palox)
 
     @api.constrains('date', 'harvest_start_date')
     def arrival_check(self):
@@ -218,7 +258,6 @@ class OliveArrival(models.Model):
             }
         i = 0
         warn_msgs = []
-        returned_palox = self.env['olive.palox']
         has_sale_or_mix = False
         for line in self.line_ids:
             i += 1
@@ -414,6 +453,11 @@ class OliveArrival(models.Model):
                     % arrival.name)
         return super(OliveArrival, self).unlink()
 
+    def print_report(self):
+        self.ensure_one()
+        action = self.env['report'].get_action(self, 'olive.arrival')
+        return action
+
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
         res = super(OliveArrival, self).fields_view_get(
@@ -464,6 +508,11 @@ class OliveArrivalLine(models.Model):
         string='Leaf Removal', states={'done': [('readonly', True)]})
     variant_id = fields.Many2one(
         'olive.variant', string='Olive Variant', required=True,
+        states={'done': [('readonly', True)]})
+    palox_weight = fields.Float(
+        string='Gross Palox Weight', digits=dp.get_precision('Olive Weight'),
+        help="If you enter the gross palox weight, Odoo will use the palox "
+        "empty weight to set the olive quantity.",
         states={'done': [('readonly', True)]})
     olive_qty = fields.Float(
         string='Olive Qty (kg)', required=True,
@@ -591,6 +640,15 @@ class OliveArrivalLine(models.Model):
         "\nLast-of-day compensation: already deducted."
         "\nShrinkage: already deducted."
         "\nFilter loss: not applicable.")
+    withdrawal_oil_qty_with_compensation = fields.Float(
+        compute='_compute_withdrawal_oil_qty_with_compensation', store=True,
+        string='Withdrawal Oil Qty with Compensation (L)',
+        readonly=True, digits=dp.get_precision('Olive Oil Volume'),
+        help="Withdrawal oil quantity with compensation in liters (for statistics)."
+        "\nFirst-of-day compensation: included."
+        "\nLast-of-day compensation: already deducted."
+        "\nShrinkage: already deducted."
+        "\nFilter loss: not applicable.")
 
     to_sale_tank_oil_qty = fields.Float(
         string='Oil Qty to Sale Tank (L)',
@@ -669,6 +727,14 @@ class OliveArrivalLine(models.Model):
                 oil_qty_with_compensation += line.compensation_oil_qty
             line.oil_qty_with_compensation = oil_qty_with_compensation
 
+    @api.depends('withdrawal_oil_qty', 'compensation_type', 'compensation_oil_qty', 'oil_destination')
+    def _compute_withdrawal_oil_qty_with_compensation(self):
+        for line in self:
+            withdrawal_oil_qty_w_comp = line.withdrawal_oil_qty
+            if line.compensation_type == 'first' and line.oil_destination == 'withdrawal':
+                withdrawal_oil_qty_w_comp += line.compensation_oil_qty
+            line.withdrawal_oil_qty_with_compensation = withdrawal_oil_qty_w_comp
+
     @api.depends('sale_oil_qty', 'oil_service_sale_price_unit', 'oil_sale_price_unit')
     def _compute_oil_price_total(self):
         for line in self:
@@ -681,13 +747,62 @@ class OliveArrivalLine(models.Model):
         if self.oil_destination != 'mix':
             self.mix_withdrawal_oil_qty = 0
 
+    @api.onchange('palox_weight')
+    def palox_weight_change(self):
+        prec = self.env['decimal.precision'].precision_get('Olive Weight')
+        res = {
+            'warning': {
+                'title': _('Error'),
+                'message': '',
+                },
+            }
+        if not float_is_zero(self.palox_weight, precision_digits=prec):
+            if not self.palox_id:
+                self.palox_weight = 0
+                res['warning']['message'] = _('Select the palox before entering the gross palox weight. The gross palox weight has been reset to 0 kg.')
+                return res
+            else:
+                if float_is_zero(self.palox_id.empty_weight, precision_digits=prec):
+                    self.palox_weight = 0
+                    res['warning']['message'] = _("Missing empty weight on palox '%s'. The gross palox weight has been reset to 0 kg.") % self.palox_id.name
+                    return res
+                olive_qty = self.palox_weight - self.palox_id.empty_weight - self.palox_id.weight
+                if float_compare(olive_qty, 0, precision_digits=prec) <= 0:
+                    self.palox_weight = 0
+                    res['warning']['message'] = _("Wrong gross palox weight: the olive qty would be negative (%s kg). The gross palox weight has been reset to 0 kg.") % olive_qty
+                    return res
+                self.olive_qty = olive_qty
+
+    @api.onchange('palox_id')
+    def palox_id_change(self):
+        prec = self.env['decimal.precision'].precision_get('Olive Weight')
+        if not float_is_zero(self.palox_weight, precision_digits=prec):
+            self.palox_weight = 0
+            self.olive_qty = 0
+            res = {
+                'warning': {
+                    'title': _('Error'),
+                    'message': _("You changed the palox and the olive qty was set via the palox gross weight, so you must re-enter the palox gross weight."),
+                    }
+                }
+            return res
+
     def unlink(self):
+        pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
         for line in self:
-            if line.arrival_id:
+            if line.production_id:
                 raise UserError(_(
                     "Deletion of arrival line %s not allowed because "
-                    "it is still linked to arrival %s.") % (
-                        line.name, line.arrival_id.name))
+                    "it is linked to oil production %s.") % (
+                        line.name, line.production_id.name))
+            if not float_is_zero(line.olive_qty, precision_digits=pr_oli):
+                raise UserError(_(
+                    "Deletion of arrival line %s not allowed because "
+                    "the olive qty (%s kg) is not null.") % (line.name, line.olive_qty))
+            if line.state == 'done':
+                raise UserError(_(
+                    "Deletion of arrival line %s not allowed because "
+                    "it is in done state.") % line.name)
         return super(OliveArrivalLine, self).unlink()
 
     @api.depends('name', 'commercial_partner_id', 'variant_id')

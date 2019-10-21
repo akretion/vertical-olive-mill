@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018 Akretion France (http://www.akretion.com/)
+  Copyright 2018-2019 Barroux Abbey (http://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -141,6 +141,23 @@
     <field name="print_report_name">'Production-' + object.date + '.odt'</field>
 </record>
 
+<record id="olive_arrival_report" model="ir.actions.report.xml">
+    <field name="name">Olive Arrival</field>
+    <field name="model">olive.arrival</field>
+    <field name="report_name">olive.arrival</field>
+    <field name="report_type">py3o</field>
+    <field name="py3o_filetype">odt</field>
+    <field name="module">olive_mill</field>
+    <field name="py3o_template_fallback">report/olive_arrival.odt</field>
+    <field name="print_report_name">'Arrival-' + object.name + '.odt'</field>
+</record>
+
+<record id="button_olive_arrival_report" model="ir.values">
+    <field name="key2">client_print_multi</field>
+    <field name="model">olive.arrival</field>
+    <field name="name">Olive Arrival</field>
+    <field name="value" eval="'ir.actions.report.xml,%d'%olive_arrival_report" />
+</record>
 
 
 </odoo>

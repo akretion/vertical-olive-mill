@@ -93,13 +93,12 @@ class OliveOilAnalysis(models.Model):
             self.oil_product_id = self.location_id.oil_product_id
             # if oil tank is merged
             quant_lot_rg = self.env['stock.quant'].read_group(
-            [('location_id', '=', self.location_id.id)],
-            ['qty', 'lot_id'], ['lot_id'])
+                [('location_id', '=', self.location_id.id)],
+                ['qty', 'lot_id'], ['lot_id'])
             if len(quant_lot_rg) == 1 and quant_lot_rg[0].get('lot_id'):
                 self.lot_id = quant_lot_rg[0]['lot_id'][0]
             else:
                 self.lot_id = False
-
 
     @api.onchange('arrival_line_id')
     def arrival_line_id_change(self):
@@ -183,13 +182,13 @@ class OliveOilAnalysisLine(models.Model):
         string='Decimal Precision', states={'done': [('readonly', True)]})
     result_p1 = fields.Float(
         string='Result (1 decimal)', digits=(16, 1),
-        states={'done': [('readonly', True)]}, group_operator = 'avg')
+        states={'done': [('readonly', True)]}, group_operator='avg')
     result_p2 = fields.Float(
         string='Result (2 decimals)', digits=(16, 2),
-        states={'done': [('readonly', True)]}, group_operator = 'avg')
+        states={'done': [('readonly', True)]}, group_operator='avg')
     result_int = fields.Integer(
         string='Result (integer)',
-        states={'done': [('readonly', True)]}, group_operator = 'avg')
+        states={'done': [('readonly', True)]}, group_operator='avg')
     result_string = fields.Char(
         string='Result', compute='_compute_result_string', readonly=True)
     precision = fields.Char(
@@ -255,5 +254,3 @@ class OliveOilAnalysisLine(models.Model):
         res = super(OliveOilAnalysisLine, self).fields_view_get(
             view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
         return self.env.user.company_id.current_season_update(res, view_type)
-
-

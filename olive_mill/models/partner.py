@@ -28,13 +28,38 @@ class ResPartner(models.Model):
     olive_current_season_id = fields.Many2one(
         'olive.season', compute='_compute_olive_total', readonly=True,
         string='Current Olive Season')
-    olive_qty_current_season = fields.Integer(
-        compute='_compute_olive_total', string='Olive Qty', readonly=True,
-        help="Olive quantity for the current season in kg")
-    olive_sale_oil_qty_current_season = fields.Float(
-        compute='_compute_olive_total', string='Oil Qty Sold (L)', readonly=True,
+    olive_qty_current_season = fields.Float(
+        compute='_compute_olive_total', string='Olive Qty Brought',
+        readonly=True, digits=dp.get_precision('Olive Weight'),
+        help="Olives brought for the current season in kg")
+    olive_qty_triturated_current_season = fields.Float(
+        compute='_compute_olive_total', string='Olive Qty Triturated',
+        readonly=True, digits=dp.get_precision('Olive Weight'),
+        help="Olives triturated for the current season in kg")
+    olive_oil_qty_current_season = fields.Float(
+        compute='_compute_olive_total', string='Net Oil Qty', readonly=True,
         digits=dp.get_precision('Olive Oil Volume'),
-        help="Olive oil sale quantity for the current season in liters")
+        help="Net olive oil producted for the current season in liters")
+    olive_oil_ratio_current_season = fields.Float(
+        compute='_compute_olive_total', string='Net Oil Ratio', readonly=True,
+        digits=dp.get_precision('Olive Oil Ratio'),
+        help="Net oil ratio for the current season in percentage")
+    olive_oil_qty_withdrawal_current_season = fields.Float(
+        compute='_compute_olive_total', string='Withdrawal Oil Qty', readonly=True,
+        digits=dp.get_precision('Olive Oil Volume'),
+        help="Withdrawal oil (already withdrawn and pending withdrawal) for the current season in liters")
+    olive_oil_qty_to_withdraw = fields.Float(
+        compute='_compute_olive_total', string='Oil Qty to Withdraw', readonly=True,
+        digits=dp.get_precision('Olive Oil Volume'),
+        help="Olive oil to withdraw in liters")
+    olive_oil_qty_withdrawn_current_season = fields.Float(
+        compute='_compute_olive_total', string='Withdrawan Oil Qty', readonly=True,
+        digits=dp.get_precision('Olive Oil Volume'),
+        help="Withdrawan oil for the current season in liters")
+    olive_sale_oil_qty_current_season = fields.Float(
+        compute='_compute_olive_total', string='Oil Qty Sold', readonly=True,
+        digits=dp.get_precision('Olive Oil Volume'),
+        help="Sold olive oil for the current season in liters")
     olive_cultivation_form_ko = fields.Boolean(
         compute='_compute_organic_and_warnings',
         string='Cultivation Form Missing', readonly=True)
@@ -65,44 +90,93 @@ class ResPartner(models.Model):
             self.customer = True
             self.supplier = True
 
+    @api.one
     def _compute_olive_total(self):
-        company = self.env.user.company_id
-        cases_res = self.env['olive.lended.case'].read_group([
-            ('company_id', '=', company.id),
-            ('partner_id', 'in', self.ids)],
-            ['partner_id', 'regular_qty', 'organic_qty'], ['partner_id'])
-        for cases_re in cases_res:
-            partner = self.browse(cases_re['partner_id'][0])
-            partner.olive_lended_regular_case = cases_re['regular_qty']
-            partner.olive_lended_organic_case = cases_re['organic_qty']
-        parcel_res = self.env['olive.parcel'].read_group([
-            ('partner_id', 'in', self.ids)],
-            ['partner_id', 'tree_qty', 'area'], ['partner_id'])
-        for parcel_re in parcel_res:
-            partner = self.browse(parcel_re['partner_id'][0])
-            partner.olive_tree_total = parcel_re['tree_qty']
-            partner.olive_area_total = parcel_re['area']
+        olive_lended_regular_case = 0
+        olive_lended_organic_case = 0
+        olive_lended_palox = 0
+        olive_tree_total = 0
+        olive_area_total = 0.0
+        olive_qty_current_season = 0.0
+        olive_current_season_id = False
+        olive_qty_triturated_current_season = 0.0
+        olive_sale_oil_qty_current_season = 0.0
+        olive_oil_qty_current_season = 0.0
+        olive_oil_qty_withdrawal_current_season = 0.0
+        olive_oil_ratio_current_season = 0.0
+        olive_oil_qty_to_withdraw = 0.0
+        olive_oil_qty_withdrawn_current_season = 0.0
+        if self.olive_farmer:
+            company = self.env.user.company_id
+            cases_res = self.env['olive.lended.case'].read_group([
+                ('company_id', '=', company.id),
+                ('partner_id', '=', self.id)],
+                ['regular_qty', 'organic_qty'], [])
+            if cases_res:
+                olive_lended_regular_case = cases_res[0]['regular_qty'] or 0
+                olive_lended_organic_case = cases_res[0]['organic_qty'] or 0
+            olive_lended_palox = self.env['olive.palox'].search([
+                ('borrower_partner_id', '=', self.id),
+                ('company_id', '=', company.id),
+                ], count=True)
 
-        palox_res = self.env['olive.palox'].read_group([
-            ('borrower_partner_id', 'in', self.ids),
-            ('company_id', '=', company.id),
-            ], ['borrower_partner_id'], ['borrower_partner_id'])
-        for palox_re in palox_res:
-            partner = self.browse(palox_re['borrower_partner_id'][0])
-            partner.olive_lended_palox = palox_re['borrower_partner_id_count']
-        season = self.env['olive.season'].get_current_season()
-        if season:
-            arrival_res = self.env['olive.arrival.line'].read_group([
-                ('season_id', '=', season.id),
-                ('commercial_partner_id', 'in', self.ids),
-                ('state', '=', 'done')],
-                ['commercial_partner_id', 'olive_qty', 'sale_oil_qty'],
-                ['commercial_partner_id'])
-            for arrival_re in arrival_res:
-                partner = self.browse(arrival_re['commercial_partner_id'][0])
-                partner.olive_qty_current_season = int(arrival_re['olive_qty'])
-                partner.olive_sale_oil_qty_current_season = arrival_re['sale_oil_qty']
-                partner.olive_current_season_id = season.id
+            parcel_res = self.env['olive.parcel'].read_group([
+                ('partner_id', '=', self.id)],
+                ['tree_qty', 'area'], [])
+            if parcel_res:
+                olive_tree_total = parcel_res[0]['tree_qty'] or 0.0
+                olive_area_total = parcel_res[0]['area'] or 0.0
+
+            season = self.env['olive.season'].get_current_season()
+            if season:
+                olive_current_season_id = season.id
+                arrival_res = self.env['olive.arrival.line'].read_group([
+                    ('season_id', '=', season.id),
+                    ('commercial_partner_id', '=', self.id),
+                    ('state', '=', 'done')],
+                    ['olive_qty'], [])
+                if arrival_res:
+                    olive_qty_current_season = arrival_res[0]['olive_qty'] or 0.0
+                arrival_prod_res = self.env['olive.arrival.line'].read_group([
+                    ('season_id', '=', season.id),
+                    ('commercial_partner_id', '=', self.id),
+                    ('state', '=', 'done'),
+                    ('production_state', '=', 'done')],
+                    ['olive_qty', 'sale_oil_qty', 'oil_qty_net', 'withdrawal_oil_qty_with_compensation'],
+                    [])
+                if arrival_prod_res:
+                    olive_qty_triturated_current_season = arrival_prod_res[0]['olive_qty'] or 0.0
+                    olive_sale_oil_qty_current_season = arrival_prod_res[0]['sale_oil_qty'] or 0.0
+                    olive_oil_qty_current_season = arrival_prod_res[0]['oil_qty_net'] or 0.0
+                    olive_oil_qty_withdrawal_current_season = arrival_prod_res[0]['withdrawal_oil_qty_with_compensation'] or 0.0
+                    if olive_qty_triturated_current_season:
+                        olive_oil_ratio_current_season = 100 * olive_oil_qty_current_season / olive_qty_triturated_current_season
+            olive_products = self.env['product.product'].search([
+                ('olive_type', '=', 'oil')])
+            withdrawal_locations = self.env['stock.location'].search([
+                ('olive_tank_type', '=', False), ('usage', '=', 'internal')])
+            withdrawal_res = self.env['stock.quant'].read_group([
+                ('location_id', 'in', withdrawal_locations.ids),
+                ('product_id', 'in', olive_products.ids),
+                ('owner_id', '=', self.id)],
+                ['qty'], [])
+            if withdrawal_res:
+                olive_oil_qty_to_withdraw = withdrawal_res[0]['qty'] or 0.0
+            olive_oil_qty_withdrawn_current_season = olive_oil_qty_withdrawal_current_season - olive_oil_qty_to_withdraw
+        self.olive_lended_regular_case = olive_lended_regular_case
+        self.olive_lended_organic_case = olive_lended_organic_case
+        self.olive_lended_palox = olive_lended_palox
+        self.olive_tree_total = olive_tree_total
+        self.olive_area_total = olive_area_total
+        self.olive_qty_current_season = olive_qty_current_season
+        self.olive_current_season_id = olive_current_season_id
+        self.olive_qty_triturated_current_season = olive_qty_triturated_current_season
+        self.olive_sale_oil_qty_current_season = olive_sale_oil_qty_current_season
+        self.olive_oil_qty_current_season = olive_oil_qty_current_season
+        self.olive_oil_qty_withdrawal_current_season = olive_oil_qty_withdrawal_current_season
+        self.olive_oil_ratio_current_season = olive_oil_ratio_current_season
+        self.olive_oil_qty_to_withdraw = olive_oil_qty_to_withdraw
+        self.olive_oil_qty_withdrawn_current_season = olive_oil_qty_withdrawn_current_season
 
     def _compute_organic_and_warnings(self):
         season = self.env['olive.season'].get_current_season()
@@ -119,7 +193,7 @@ class ResPartner(models.Model):
             'density',
             'planted_year',
             'irrigation',
-            'cultivation_method',
+            # 'cultivation_method', no warning if empty
             ]
         for partner in self:
             culture_type = 'regular'
@@ -220,4 +294,3 @@ class ResPartner(models.Model):
                 'views': False,
                 })
         return action
-

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+# Copyright 2018-2019 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import models, fields
+from odoo import api, fields, models
 
 
 class OliveLendedCase(models.Model):
@@ -35,3 +35,15 @@ class OliveLendedCase(models.Model):
         help="The quantity is positive when the case is lended. "
         "It is negative when the case is returned.")
     notes = fields.Char(string='Notes')
+
+    @api.depends('date', 'partner_id', 'regular_qty', 'organic_qty')
+    def name_get(self):
+        res = []
+        for rec in self:
+            name = '%s, %s, %d | %d' % (
+                rec.date,
+                rec.partner_id.name,
+                rec.regular_qty,
+                rec.organic_qty)
+            res.append((rec.id, name))
+        return res

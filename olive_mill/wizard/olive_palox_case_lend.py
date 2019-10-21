@@ -11,6 +11,8 @@ class OlivePaloxCaseLend(models.TransientModel):
     _name = 'olive.palox.case.lend'
     _description = 'Wizard to lend palox and/or cases'
 
+    arrival_id = fields.Many2one(
+        'olive.arrival', string='Arrival', readonly=True)
     partner_id = fields.Many2one(
         'res.partner', string='Olive Farmer', required=True,
         domain=[('olive_farmer', '=', True)])
@@ -40,4 +42,6 @@ class OlivePaloxCaseLend(models.TransientModel):
                 'regular_qty': self.regular_case_qty,
                 'organic_qty': self.organic_case_qty,
                 })
+            if self.arrival_id:
+                self.arrival_id.hide_lend_palox_case_button = True
         return
