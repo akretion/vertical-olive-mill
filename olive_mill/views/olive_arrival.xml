@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2018-2019 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -14,6 +14,7 @@
     <field name="arch" type="xml">
         <form string="Olive Arrival">
             <header>
+                <button name="check" string="Check" states="draft" type="object"/>
                 <button name="validate" string="Validate" class="btn-primary" states="draft" type="object"/>
                 <button name="print_report" string="Print" type="object"/>
                 <button name="cancel" string="Cancel" class="btn-default" states="draft,done" confirm="Are you sure you want to cancel this arrival ?" type="object"/>

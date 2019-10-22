@@ -71,8 +71,7 @@ class OliveOilPicking(models.TransientModel):
         assert self.container_src_location_id
         assert oil_product.tracking == 'lot'
         oil_start_qty_in_tank = self.src_location_id.olive_oil_tank_check(
-            raise_if_empty=True, raise_if_reservation=True,
-            raise_if_multi_lot=True)
+            raise_if_empty=True)
         # Check we have enough oil (and tank is merged)
         if float_compare(
                 oil_start_qty_in_tank, self.oil_qty,
@@ -187,7 +186,7 @@ class OliveOilPicking(models.TransientModel):
         assert oil_move.state == 'done'
 
         # Check oil end qty
-        oil_end_qty_in_tank = self.src_location_id.olive_oil_tank_check()
+        oil_end_qty_in_tank = self.src_location_id.olive_oil_tank_check(raise_if_empty=False)
         if float_compare(
                 oil_end_qty_in_tank, oil_start_qty_in_tank - self.oil_qty,
                 precision_digits=pr_oil):

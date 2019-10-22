@@ -69,6 +69,9 @@ class ResPartner(models.Model):
     olive_organic_certif_ko = fields.Boolean(
         compute='_compute_organic_and_warnings',
         string='Organic Certification Missing', readonly=True)
+    olive_invoicing_ko = fields.Boolean(
+        compute='_compute_organic_and_warnings',
+        string='Invoicing to do', readonly=True)
     olive_organic_certification_ids = fields.One2many(
         'partner.organic.certification', 'partner_id', 'Organic Certifications')
     olive_culture_type = fields.Selection([
@@ -184,6 +187,7 @@ class ResPartner(models.Model):
         oco = self.env['olive.cultivation']
         ooo = self.env['olive.ochard']
         opo = self.env['olive.parcel']
+        oalo = self.env['olive.arrival.line']
         parcel_required_fields = [
             'ochard_id',
             'land_registry_ref',
@@ -202,6 +206,7 @@ class ResPartner(models.Model):
             cultivation_form_ko = True
             parcel_ko = True
             certif_ko = False
+            invoicing_ko = False
             if partner.olive_farmer and not partner.parent_id:
                 # parcel_ok if all ochards have at least one parcel
                 # and alls parcels have complete info
@@ -249,6 +254,25 @@ class ResPartner(models.Model):
                         ('partner_id', '=', partner.id)], limit=1)
                     if cultivations:
                         cultivation_form_ko = False
+                    lines_to_out_invoice = oalo.search([
+                        ('commercial_partner_id', '=', partner.id),
+                        ('season_id', '=', season.id),
+                        ('production_state', '=', 'done'),
+                        ('out_invoice_id', '=', False),
+                        ], count=True)
+                    if lines_to_out_invoice:
+                        invoicing_ko = True
+                    else:
+                        lines_to_in_invoice = oalo.search([
+                            ('commercial_partner_id', '=', partner.id),
+                            ('production_state', '=', 'done'),
+                            ('in_invoice_line_id', '=', False),
+                            ('oil_destination', 'in', ('sale', 'mix')),
+                            ('sale_oil_qty', '>', 0),
+                            ('season_id', '=', season.id),
+                            ], count=True)
+                        if lines_to_in_invoice:
+                            invoicing_ko = True
             if filename:
                 fname_path = 'olive_mill/static/image/%s' % filename
                 f = tools.file_open(fname_path, 'rb')
@@ -260,6 +284,7 @@ class ResPartner(models.Model):
             partner.olive_cultivation_form_ko = cultivation_form_ko
             partner.olive_parcel_ko = parcel_ko
             partner.olive_organic_certif_ko = certif_ko
+            partner.olive_invoicing_ko = invoicing_ko
 
     def olive_check_in_invoice_fiscal_position(self):
         self.ensure_one()

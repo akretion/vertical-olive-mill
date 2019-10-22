@@ -95,6 +95,8 @@
             <separator/>
             <filter name="lended" domain="[('borrower_partner_id', '!=', False)]" string="Lended"/>
             <filter name="not_lended" domain="[('borrower_partner_id', '=', False)]" string="Not Lended"/>
+            <separator/>
+            <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
             <group string="Group By" name="groupby">
                 <filter name="borrower_partner_groupby" string="Borrower" context="{'group_by': 'borrower_partner_id'}"/>
             </group>

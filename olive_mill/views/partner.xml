@@ -74,9 +74,11 @@
                     <field name="olive_cultivation_form_ko" invisible="1"/>
                     <field name="olive_parcel_ko" invisible="1"/>
                     <field name="olive_organic_certif_ko" invisible="1"/>
+                    <field name="olive_invoicing_ko" invisible="1"/>
                     <div name="olive_cultivation_form_ko" attrs="{'invisible': [('olive_cultivation_form_ko', '=', False)]}" class="label label-danger" colspan="2">Cultivation form missing</div>
                     <div name="olive_parcel_ko" attrs="{'invisible': [('olive_parcel_ko', '=', False)]}" class="label label-warning">Parcel information incomplete</div>
                     <div name="olive_organic_certif_ko" attrs="{'invisible': [('olive_organic_certif_ko', '=', False)]}" class="label label-success">Organic certification missing</div>
+                    <div name="olive_invoicing_ko" attrs="{'invisible': [('olive_invoicing_ko', '=', False)]}" class="label label-info">Invoicing to do</div>
                 </div>
                 <group name="olive_main">
                     <group name="left">

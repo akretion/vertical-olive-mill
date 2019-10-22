@@ -22,6 +22,12 @@ class OliveInvoiceCreate(models.TransientModel):
     olive_organic_certif_ko = fields.Boolean(
         related='partner_id.commercial_partner_id.olive_organic_certif_ko',
         readonly=True)
+    olive_invoicing_ko = fields.Boolean(
+        related='partner_id.commercial_partner_id.olive_invoicing_ko',
+        readonly=True)
+    season_id = fields.Many2one(
+        'olive.season', string='Season', required=True,
+        default=lambda self: self.env.user.company_id.current_season_id.id)
     olive_sale_pricelist_id = fields.Many2one(
         related='partner_id.olive_sale_pricelist_id',
         readonly=False)
@@ -43,6 +49,7 @@ class OliveInvoiceCreate(models.TransientModel):
             lines = oalo.search([
                 ('commercial_partner_id', '=', commercial_partner.id),
                 ('warehouse_id', '=', self.warehouse_id.id),
+                ('season_id', '=', self.season_id.id),
                 ('production_state', '=', 'done'),
                 ('in_invoice_line_id', '=', False),
                 ('oil_destination', 'in', ('sale', 'mix')),
@@ -55,6 +62,7 @@ class OliveInvoiceCreate(models.TransientModel):
             lines = oalo.search([
                 ('commercial_partner_id', '=', commercial_partner.id),
                 ('warehouse_id', '=', self.warehouse_id.id),
+                ('season_id', '=', self.season_id.id),
                 ('production_state', '=', 'done'),
                 ('out_invoice_id', '=', False),
                 ])

@@ -36,6 +36,9 @@ class OliveAppointment(models.Model):
     olive_organic_certif_ko = fields.Boolean(
         related='partner_id.commercial_partner_id.olive_organic_certif_ko',
         readonly=True)
+    olive_invoicing_ko = fields.Boolean(
+        related='partner_id.commercial_partner_id.olive_invoicing_ko',
+        readonly=True)
     olive_culture_type = fields.Selection(
         related='partner_id.commercial_partner_id.olive_culture_type',
         readonly=True)
@@ -260,6 +263,18 @@ class OliveAppointment(models.Model):
             'context': context,
             })
         return action
+
+    def report_show_timeslot(self):
+        # show timeslot in right TZ
+        self.ensure_one()
+        start_datetime_tz = fields.Datetime.context_timestamp(
+            self, fields.Datetime.from_string(self.start_datetime))
+        end_datetime_tz = fields.Datetime.context_timestamp(
+            self, fields.Datetime.from_string(self.end_datetime))
+        label = '%s - %s' % (
+            fields.Datetime.to_string(start_datetime_tz)[11:16],
+            fields.Datetime.to_string(end_datetime_tz)[11:16])
+        return label
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):

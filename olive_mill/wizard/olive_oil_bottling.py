@@ -120,9 +120,7 @@ class OliveOilBottling(models.TransientModel):
         if self.bottle_qty <= 0:
             raise UserError(_(
                 "The quantity of bottles to produce must be positive."))
-        src_location_start_qty = self.src_location_id.olive_oil_tank_check(
-            raise_if_empty=True, raise_if_reservation=True,
-            raise_if_multi_lot=True)
+        src_location_start_qty = self.src_location_id.olive_oil_tank_check()
         # Check we have enough oil
         oil_qty = self.bottle_qty * self.bottle_volume
         src_location_end_qty = float_round(src_location_start_qty - oil_qty, precision_digits=prec)
@@ -189,9 +187,8 @@ class OliveOilBottling(models.TransientModel):
                 "The expiry date should not be in the past."))
         # Re-check the qty of oil in tank (could have been changed after validation
         # of last step
-        src_location_start_qty = self.src_location_id.olive_oil_tank_check(
-            raise_if_empty=True, raise_if_reservation=True,
-            raise_if_multi_lot=True)
+        src_location_start_qty = self.src_location_id.olive_oil_tank_check()
+        # raise_if_not_merged=True by default, so merge check is done here
         if float_compare(src_location_start_qty, self.src_location_start_qty, precision_digits=prec):
             raise UserError(_(
                 "The quantity of oil in tank has changed between the "
@@ -243,9 +240,7 @@ class OliveOilBottling(models.TransientModel):
                 'line_ids': [(0, 0, inv_line_vals)],
                 })
             inventory.action_done()
-            src_location_start_qty = self.src_location_id.olive_oil_tank_check(
-                raise_if_empty=True, raise_if_reservation=True,
-                raise_if_multi_lot=True)
+            src_location_start_qty = self.src_location_id.olive_oil_tank_check()
             if float_compare(src_location_start_qty, self.inventory_start_qty, precision_digits=prec):
                 raise UserError(_(
                     "Something went wrong in the automatic inventory operation."))

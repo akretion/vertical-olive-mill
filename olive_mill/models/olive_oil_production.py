@@ -541,6 +541,8 @@ class OliveOilProduction(models.Model):
             if not sale_loc:
                 raise UserError(_(
                     "Sale tank is not set on oil production %s.") % self.name)
+            sale_loc.olive_oil_tank_check(
+                raise_if_not_merged=False, raise_if_empty=False)
             sale_loc.olive_oil_tank_compatibility_check(oil_product, season)
             sale_move = smo.create({
                 'product_id': oil_product.id,

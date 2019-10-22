@@ -53,24 +53,15 @@ class StockLocation(models.Model):
     def olive_oil_qty(self):
         '''This method is a kind of alias to olive_oil_tank_check()'''
         self.ensure_one()
-        qty = self.olive_oil_tank_check()
+        qty = self.olive_oil_tank_check(
+            raise_if_not_merged=False, raise_if_empty=False)
         return qty
 
     def olive_oil_tank_compatibility_check(self, oil_product, season):
+        """This method should be called AFTER olive_oil_tank_check()
+        so we don't re-do the checks made in olive_oil_tank_check()"""
         self.ensure_one()
-        if not self.olive_tank_type:
-            raise UserError(_(
-                "The stock location '%s' is not an olive oil tank.")
-                % self.display_name)
-        if not self.oil_product_id:
-            raise UserError(_(
-                "Oil product is not configured on stock location '%s'.")
-                % self.display_name)
         if self.olive_tank_type != 'risouletto':
-            if not self.olive_season_id:
-                raise UserError(_(
-                    "Olive season is not configured on stock location '%s'.")
-                    % self.display_name)
             if self.oil_product_id != oil_product:
                 raise UserError(_(
                     "You are working with oil product '%s', "
@@ -88,77 +79,99 @@ class StockLocation(models.Model):
                         self.display_name,
                         self.olive_season_id.name))
 
-    def olive_oil_tank_check(
-            self, raise_if_empty=False, raise_if_multi_lot=False,
-            raise_if_reservation=False):
-        '''Returns quantity'''
+    def olive_oil_tank_check(self, raise_if_not_merged=True, raise_if_empty=True):
+        '''Returns quantity
+        Always raises when there are reservations
+        '''
         self.ensure_one()
         sqo = self.env['stock.quant']
         ppo = self.env['product.product']
-        pr_oil = self.env['decimal.precision'].precision_get('Olive Oil Volume')
+        prec = self.env['decimal.precision'].precision_get('Product Unit of Measure')
         tank_type = self.olive_tank_type
+        tank_type_label = dict(self.fields_get('olive_tank_type', 'selection')['olive_tank_type']['selection'])[tank_type]
+        # Tank configuration checks
         if not tank_type:
             raise UserError(_(
                 "The stock location '%s' is not an olive oil tank.")
                 % self.display_name)
         if not self.oil_product_id:
             raise UserError(_(
-                "Missing Oil Product on tank '%s'.") % self.name)
-        quant_rg = sqo.read_group(
-            [('location_id', '=', self.id)],
-            ['qty', 'product_id'], ['product_id'])
-        if tank_type != 'risouletto':
-            if not self.olive_season_id:
-                raise UserError(_(
-                    "Olive season is not configured on stock location '%s'.")
-                    % self.display_name)
-            if len(quant_rg) > 1:
-                raise UserError(_(
-                    "There are several different products in tank '%s'. "
-                    "This should never happen in an oil tank which is "
-                    "not a risouletto tank.") % self.name)
-        qty = 0.0
-        for qrg in quant_rg:
-            qty += qrg['qty']
-            oil_product_id = qrg['product_id'][0]
-            oil_product = ppo.browse(oil_product_id)
-            if not oil_product.olive_type:
-                raise UserError(_(
-                    "The olive tank '%s' contains product '%s' "
-                    "which has no olive type.") % (
-                        self.display_name, oil_product.display_name))
-            if tank_type != 'risouletto' and oil_product != self.oil_product_id:
-                raise UserError(_(
-                    "The tank '%s' (type '%s') contains '%s' but it is "
-                    "configured to contain '%s'. This should never "
-                    "happen.") % (
-                        self.name, tank_type, oil_product.display_name,
-                        self.oil_product_id.display_name))
+                "Missing oil product on tank '%s'.") % self.name)
+        if self.oil_product_id.olive_type != 'oil':
+            raise UserError(_(
+                "Oil product '%s' configured on tank '%s' is not "
+                "an olive oil product.") % (
+                    self.oil_product_id.display_name, self.name))
+        if tank_type != 'risouletto' and not self.olive_season_id:
+            raise UserError(_(
+                "Olive season is not configured on tank '%s'.") % self.name)
 
-        if raise_if_empty and float_compare(qty, 0, precision_digits=pr_oil) <= 0:
+        # raise if empty
+        quant_qty_rg = sqo.read_group(
+            [('location_id', '=', self.id)],
+            ['qty'], [])
+        qty = quant_qty_rg and quant_qty_rg[0]['qty'] or 0
+        fcompare = float_compare(qty, 0, precision_digits=prec)
+        if fcompare < 0:
             raise UserError(_(
-                "The tank '%s' is empty.") % self.name)
-        if not self.oil_product_id:
+                "The tank '%s' has a negative quantity (%s).") % (self.name, qty))
+        elif fcompare == 0:
+            if raise_if_empty:
+                raise UserError(_(
+                    "The tank '%s' is empty.") % self.name)
+            return 0  # WARN : no further checks if empty
+
+        # raise if there are reservations
+        reserved_quants_count = sqo.search([
+            ('location_id', '=', self.id), ('reservation_id', '!=', False)],
+            count=True)
+        if reserved_quants_count:
             raise UserError(_(
-                "Oil product is not configured on tank '%s'.")
-                % self.display_name)
-        if raise_if_multi_lot:
+                "There are %d reserved quants in tank '%s'.")
+                % (reserved_quants_count, self.name))
+
+        if raise_if_not_merged:
             quant_lot_rg = sqo.read_group(
                 [('location_id', '=', self.id)],
                 ['qty', 'lot_id'], ['lot_id'])
             if len(quant_lot_rg) > 1:
                 raise UserError(_(
-                    "There are several different lots in tank '%s'. "
-                    "You may have to merge this tank first.")
-                    % self.name)
-        if raise_if_reservation:
-            reserved_quants_count = sqo.search([
-                ('location_id', '=', self.id), ('reservation_id', '!=', False)],
-                count=True)
-            if reserved_quants_count:
+                    "The tank '%s' (type '%s') is not merged: it "
+                    "contains several different lots.") % (
+                        self.name, tank_type_label))
+            # for risouletto, there are additionnal checks for raise_if_not_merged
+            # see below
+
+        quant_product_rg = sqo.read_group(
+            [('location_id', '=', self.id)],
+            ['qty', 'product_id'], ['product_id'])
+        if tank_type == 'risouletto':
+            for quant_product in quant_product_rg:
+                product = ppo.browse(quant_product['product_id'][0])
+                if raise_if_not_merged and product != self.oil_product_id:
+                    raise UserError(_(
+                        "The tank '%s' (type '%s') contains '%s', "
+                        "so it not merged.") % (
+                            self.name, tank_type_label, product.display_name))
+                if product.olive_type != 'oil':
+                    raise UserError(_(
+                        "The tank '%s' (type '%s') contains '%s', "
+                        "which is not an olive oil product.") % (
+                            self.name, tank_type_label, product.display_name))
+        else:  # regular oil => always 1 product, same as configured on tank
+            if len(quant_product_rg) > 1:
                 raise UserError(_(
-                    "There are some reserved quants in tank '%s'.")
-                    % self.name)
+                    "There are several different products in tank '%s'. "
+                    "This should never happen in an oil tank which is "
+                    "not a risouletto tank.") % self.name)
+            product = ppo.browse(quant_product_rg[0]['product_id'][0])
+            if product != self.oil_product_id:
+                raise UserError(_(
+                    "The tank '%s' (type '%s') contains '%s' but it is "
+                    "configured to contain '%s'. This should never "
+                    "happen.") % (
+                        self.name, tank_type_label, product.display_name,
+                        self.oil_product_id.display_name))
         return qty
 
     def olive_oil_transfer(
@@ -166,18 +179,23 @@ class StockLocation(models.Model):
             partial_transfer_qty=False, origin=False, auto_validate=False):
         self.ensure_one()
         assert transfer_type in ('partial', 'full'), 'wrong transfer_type arg'
+        if dest_loc == self:
+            raise UserError(_(
+                "You are trying to transfer oil from '%s' to the same location!")
+                % self.display_name)
         sqo = self.env['stock.quant']
         smo = self.env['stock.move']
         pr_oil = self.env['decimal.precision'].precision_get('Olive Oil Volume')
         src_loc = self
-        raise_if_multi_lot = False
+        raise_if_not_merged = False
         if transfer_type == 'partial':
-            raise_if_multi_lot = True
+            raise_if_not_merged = True
         src_qty = src_loc.olive_oil_tank_check(
-            raise_if_empty=True, raise_if_multi_lot=raise_if_multi_lot)
+            raise_if_not_merged=raise_if_not_merged)
         # compat src/dest
         if dest_loc.olive_tank_type:
-            dest_loc.olive_oil_tank_check()
+            dest_loc.olive_oil_tank_check(
+                raise_if_not_merged=False, raise_if_empty=False)
             dest_loc.olive_oil_tank_compatibility_check(
                 src_loc.oil_product_id, src_loc.olive_season_id)
 

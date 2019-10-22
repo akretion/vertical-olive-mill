@@ -22,6 +22,9 @@ class OliveWithdrawal(models.TransientModel):
     olive_organic_certif_ko = fields.Boolean(
         related='partner_id.commercial_partner_id.olive_organic_certif_ko',
         readonly=True)
+    olive_invoicing_ko = fields.Boolean(
+        related='partner_id.commercial_partner_id.olive_invoicing_ko',
+        readonly=True)
     warehouse_id = fields.Many2one(
         'stock.warehouse', string='Olive Mill', required=True,
         default=lambda self: self.env.user._default_olive_mill_wh())

@@ -236,42 +236,50 @@ class OliveArrival(models.Model):
                 lambda l: l.state == 'cancel').write({'state': 'draft'})
         self.write({'state': 'draft'})
 
-    def validate(self):
-        self.ensure_one()
-        assert self.state == 'draft'
+    def check_arrival(self):
+        warn_msgs = []
         oalo = self.env['olive.arrival.line']
-        olco = self.env['olive.lended.case']
-        if not self.line_ids:
-            raise UserError(_(
-                "Missing lines on arrival '%s'.") % self.name)
-        oalo = self.env['olive.arrival.line']
-        ooao = self.env['olive.oil.analysis']
         pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
         pr_oil = self.env['decimal.precision'].precision_get(
             'Olive Oil Volume')
         wh = self.warehouse_id
         olive_culture_type = self.commercial_partner_id.olive_culture_type
+        if self.returned_regular_case or self.returned_organic_case:
+            if (
+                    not self.lended_case_id and
+                    self.returned_regular_case > self.commercial_partner_id.olive_lended_regular_case):
+                raise UserError(_(
+                    "The olive farmer '%s' currently has %d lended case(s) "
+                    "but the olive arrival %s declares %d returned case(s).")
+                    % (self.commercial_partner_id.display_name,
+                       self.commercial_partner_id.olive_lended_regular_case,
+                       self.name,
+                       self.returned_regular_case))
+            if (
+                    not self.lended_case_id and
+                    self.returned_organic_case >
+                    self.commercial_partner_id.olive_lended_organic_case):
+                raise UserError(_(
+                    "The olive farmer '%s' currently has %d lended organic "
+                    "case(s) but the olive arrival %s declares %d returned "
+                    "organic case(s).") % (
+                        self.commercial_partner_id.display_name,
+                        self.commercial_partner_id.olive_lended_organic_case,
+                        self.name,
+                        self.returned_organic_case))
+
         palox_max_weight = self.company_id.olive_max_qty_per_palox
-        arrival_vals = {
-            'state': 'done',
-            'done_datetime': fields.Datetime.now(),
-            }
-        i = 0
-        warn_msgs = []
         has_sale_or_mix = False
+        i = 0
         for line in self.line_ids:
             i += 1
+            if line.oil_destination in ('sale', 'mix'):
+                has_sale_or_mix = True
             if float_is_zero(line.olive_qty, precision_digits=pr_oli):
                 raise UserError(_(
                     "On arrival line number %d, the olive quantity is null.")
                     % i)
-            if line.oil_destination in ('sale', 'mix'):
-                has_sale_or_mix = True
-            if line.palox_id.borrower_partner_id:
-                line.palox_id.return_borrowed_palox()
-            for palox in self.returned_palox_ids:
-                if palox.borrower_partner_id:
-                    palox.return_borrowed_palox()
+
             # Block if oil_product is not coherent with partner (organic, ...)
             if (line.oil_product_id.olive_culture_type !=
                     olive_culture_type):
@@ -355,7 +363,62 @@ class OliveArrival(models.Model):
                         line.palox_id.name,
                         same_palox_different_oil_destination[0].display_name,
                         fg[same_palox_different_oil_destination[0].oil_destination]))
+        # for mix/sale, warn if delay between harvest and arrival is too long
+        arrival_date_dt = fields.Date.from_string(self.date)
+        harvest_st_date_dt = fields.Date.from_string(self.harvest_start_date)
+        delta_days = (arrival_date_dt - harvest_st_date_dt).days
+        max_delta_days = self.company_id.olive_harvest_arrival_max_delta_days
+        if has_sale_or_mix and delta_days > max_delta_days:
+            warn_msgs.append(_(
+                "This arrival has sale or mix oil destination and the delay "
+                "between the harvest start date (%s) and the arrival date "
+                "(%s) is %d days (maximum allowed is %d days).") % (
+                    self.harvest_start_date, self.date,
+                    delta_days, max_delta_days))
+        action = {}
+        if warn_msgs:
+            action = self.env.ref('olive_mill.olive_arrival_warning_action').read()[0]
+            action['context'] = {
+                'default_arrival_id': self.id,
+                'default_msg': '\n\n'.join(warn_msgs),
+                'default_count': len(warn_msgs),
+                }
+        return warn_msgs, action
 
+    def check(self):
+        self.ensure_one()
+        warn_msgs, action = self.check_arrival()
+        return action
+
+    def validate(self):
+        self.ensure_one()
+        assert self.state == 'draft'
+        olco = self.env['olive.lended.case']
+        if not self.line_ids:
+            raise UserError(_(
+                "Missing lines on arrival '%s'.") % self.name)
+        ooao = self.env['olive.oil.analysis']
+        warn_msgs, action = self.check_arrival()
+        if warn_msgs:
+            if not self._context.get('olive_no_warning'):
+                action['context']['default_show_validation_button'] = True
+                return action
+            else:
+                for warn_msg in warn_msgs:
+                    self.message_post(warn_msg)
+
+        arrival_vals = {
+            'state': 'done',
+            'done_datetime': fields.Datetime.now(),
+            }
+        i = 0
+        for line in self.line_ids:
+            i += 1
+            if line.palox_id.borrower_partner_id:
+                line.palox_id.return_borrowed_palox()
+            for palox in self.returned_palox_ids:
+                if palox.borrower_partner_id:
+                    palox.return_borrowed_palox()
             # Create analysis
             ana_products = self.env['product.product']
             for extra in line.extra_ids.filtered(lambda x: x.product_id.olive_type == 'analysis'):
@@ -380,60 +443,12 @@ class OliveArrival(models.Model):
                 'name': '%s/%s' % (self.name, i),
                 })
 
-        # for mix/sale, warn if delay between harvest and arrival is too long
-        arrival_date_dt = fields.Date.from_string(self.date)
-        harvest_st_date_dt = fields.Date.from_string(self.harvest_start_date)
-        delta_days = (arrival_date_dt - harvest_st_date_dt).days
-        max_delta_days = self.company_id.olive_harvest_arrival_max_delta_days
-        if has_sale_or_mix and delta_days > max_delta_days:
-            warn_msgs.append(_(
-                "This arrival has sale or mix oil destination and the delay "
-                "between the harvest start date (%s) and the arrival date "
-                "(%s) is %d days (maximum allowed is %d days).") % (
-                    self.harvest_start_date, self.date,
-                    delta_days, max_delta_days))
-        if warn_msgs:
-            if not self._context.get('olive_no_warning'):
-                action = self.env['ir.actions.act_window'].for_xml_id(
-                    'olive_mill', 'olive_arrival_warning_action')
-                action['context'] = {
-                    'default_arrival_id': self.id,
-                    'default_msg': '\n\n'.join(warn_msgs),
-                    'default_count': len(warn_msgs),
-                    }
-                return action
-            else:
-                for warn_msg in warn_msgs:
-                    self.message_post(warn_msg)
-
         if self.returned_regular_case or self.returned_organic_case:
-            if (
-                    not self.lended_case_id and
-                    self.returned_regular_case > self.commercial_partner_id.olive_lended_regular_case):
-                raise UserError(_(
-                    "The olive farmer '%s' currently has %d lended case(s) "
-                    "but the olive arrival %s declares %d returned case(s).")
-                    % (self.commercial_partner_id.display_name,
-                       self.commercial_partner_id.olive_lended_regular_case,
-                       self.name,
-                       self.returned_regular_case))
-            if (
-                    not self.lended_case_id and
-                    self.returned_organic_case >
-                    self.commercial_partner_id.olive_lended_organic_case):
-                raise UserError(_(
-                    "The olive farmer '%s' currently has %d lended organic "
-                    "case(s) but the olive arrival %s declares %d returned "
-                    "organic case(s).") % (
-                        self.commercial_partner_id.display_name,
-                        self.commercial_partner_id.olive_lended_organic_case,
-                        self.name,
-                        self.returned_organic_case))
             lended_case_vals = {
                 'partner_id': self.commercial_partner_id.id,
                 'regular_qty': self.returned_regular_case * -1,
                 'organic_qty': self.returned_organic_case * -1,
-                'warehouse_id': wh.id,
+                'warehouse_id': self.warehouse_id.id,
                 'company_id': self.company_id.id,
                 'notes': self.name,
                 }
@@ -684,8 +699,6 @@ class OliveArrivalLine(models.Model):
         'account.invoice', string="Customer Invoice", readonly=True)
     in_invoice_line_id = fields.Many2one(
         'account.invoice.line', string='Vendor Bill Line', readonly=True)
-    in_invoice_id = fields.Many2one(  # TEMPO RESTORE FOR MIG SCRIPT
-        'account.invoice', string="Vendor Bill", readonly=True)
     company_currency_id = fields.Many2one(
         related='arrival_id.company_id.currency_id', store=True, readonly=True)
     oil_sale_price_unit = fields.Monetary(

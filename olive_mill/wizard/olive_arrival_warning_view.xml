@@ -20,10 +20,11 @@
             </div>
             <group name="main">
                 <field name="msg" nolabel="1"/>
+                <field name="show_validation_button" invisible="1"/>
             </group>
             <footer>
-                <button name="validate" type="object" string="Force Validation" class="btn-default" confirm="Are you sure you want to force validation?"/>
-                <button special="cancel" string="Cancel" class="btn-primary"/>
+                <button special="cancel" string="Close" class="btn-primary"/>
+                <button name="validate" type="object" string="Force Validation" class="btn-default" confirm="Are you sure you want to force validation?" attrs="{'invisible': [('show_validation_button', '=', False)]}"/>
             </footer>
         </form>
     </field>

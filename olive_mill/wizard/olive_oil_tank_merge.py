@@ -26,16 +26,21 @@ class OliveOilTankMerge(models.TransientModel):
         splo = self.env['stock.production.lot']
         sqo = self.env['stock.quant']
         loc = self.location_id
-        qty = loc.olive_oil_tank_check(
-            raise_if_empty=True, raise_if_reservation=True)
-        # Don't filter on products, because a risouletto oil tank
-        # can have several different products (including risoletto itself)
+        qty = loc.olive_oil_tank_check(raise_if_not_merged=False)
+        # Check if already merged
+        error_msg = _(
+            "Oil tank '%s' is already merged.") % loc.name
         quant_lot_rg = sqo.read_group(
             [('location_id', '=', loc.id)],
             ['qty', 'lot_id'], ['lot_id'])
-        if len(quant_lot_rg) == 1:
-            raise UserError(_(
-                "Oil tank '%s' is already merged.") % loc.name)
+        if self.location_id.olive_tank_type == 'risouletto':
+            if len(quant_lot_rg) == 1:
+                lot = splo.browse(quant_lot_rg[0]['lot_id'][0])
+                if lot.product_id == loc.oil_product_id:
+                    raise UserError(error_msg)
+        else:
+            if len(quant_lot_rg) == 1:
+                raise UserError(error_msg)
         product = loc.oil_product_id
         assert product.tracking == 'lot'
         assert product.olive_type == 'oil'
@@ -160,8 +165,7 @@ class OliveOilTankMerge(models.TransientModel):
         mo.post_inventory()
         assert mo.check_to_done is True
         mo.button_mark_done()
-        post_mo_qty = loc.olive_oil_tank_check(
-            raise_if_reservation=True, raise_if_multi_lot=True)
+        post_mo_qty = loc.olive_oil_tank_check()
         if float_compare(qty, post_mo_qty, precision_digits=pr_oil):
             raise (_(
                 "In tank '%s', the oil quantity after the merge (%s) "
