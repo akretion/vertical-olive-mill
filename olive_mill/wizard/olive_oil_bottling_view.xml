@@ -18,25 +18,51 @@
             <group name="main">
                 <field name="bottle_product_id"/>
                 <field name="season_id"/>
-                <field name="warehouse_id"/>
+                <field name="warehouse_id" states="select"/>
             </group>
-            <group name="production" string="Production" states="produce">
-                <label for="bottle_volume" string="Bottle Volume"/>
+            <group name="qty_tank" states="qty,produce">
+                <label for="bottle_volume"/>
                 <div name="bottle_volume">
-                    <field name="bottle_volume" class="oe_inline"/>
-                    <label string=" L"/>
+                    <field name="bottle_volume" class="oe_inline"/> L
                 </div>
                 <field name="bom_id"/>
                 <field name="oil_product_id"/>
-                <field name="quantity" attrs="{'required': [('state', '=', 'produce')]}"/>
-                <field name="src_location_id" domain="[('oil_product_id', '=', oil_product_id), ('olive_season_id', '=', season_id)]" attrs="{'required': [('state', '=', 'produce')]}"/>
-                <field name="other_src_location_id" attrs="{'required': [('state', '=', 'produce')]}"/>
-                <field name="dest_location_id" attrs="{'required': [('state', '=', 'produce')]}"/>
-                <field name="expiry_date" attrs="{'required': [('state', '=', 'produce')]}"/>
-                <field name="lot_name" attrs="{'required': [('state', '=', 'produce')]}"/>
+                <field name="bottle_qty" attrs="{'required': [('state', '=', 'qty')]}"/>
+                <field name="src_location_id" domain="[('oil_product_id', '=', oil_product_id), ('olive_season_id', '=', season_id)]" attrs="{'required': [('state', '=', 'qty')]}"/>
+                <field name="src_location_end_status" attrs="{'required': [('state', '=', 'qty')]}"/>
+                <field name="other_src_location_id" attrs="{'required': [('state', '=', 'qty')]}"/>
+                <field name="dest_location_id" attrs="{'required': [('state', '=', 'qty')]}"/>
+            </group>
+            <group name="inventory_lot" states="produce">
+                <label for="src_location_start_qty"/>
+                <div name="src_location_start_qty">
+                    <field name="src_location_start_qty" class="oe_inline"/> L
+                </div>
+                <label for="oil_qty"/>
+                <div name="oil_qty">
+                    <field name="oil_qty" class="oe_inline"/> L
+                </div>
+                <label for="src_location_end_qty"/>
+                <div name="src_location_end_qty">
+                    <field name="src_location_end_qty" class="oe_inline"/> L
+                </div>
+                <field name="inventory_required"/>
+                <label for="inventory_start_qty" attrs="{'invisible': [('inventory_required', '=', 'no')]}"/>
+                <div name="inventory_start_qty" attrs="{'invisible': [('inventory_required', '=', 'no')]}">
+                    <field name="inventory_start_qty" class="oe_inline"/> L
+                </div>
+                <label for="inventory_end_qty" attrs="{'invisible': [('inventory_required', '=', 'no')]}"/>
+                <div name="inventory_end_qty" attrs="{'invisible': [('inventory_required', '=', 'no')]}">
+                    <field name="inventory_end_qty" class="oe_inline"/> L
+                </div>
+                <field name="lot_type" attrs="{'required': [('state', '=', 'produce')]}"/>
+                <field name="expiry_date" attrs="{'required': [('state', '=', 'produce'), ('lot_type', '=', 'new')]}"/>
+                <field name="lot_name" attrs="{'required': [('state', '=', 'produce'), ('lot_type', '=', 'new')], 'invisible': [('lot_type', '!=', 'new')]}"/>
+                <field name="lot_id" attrs="{'required': [('state', '=', 'produce'), ('lot_type', '=', 'existing')], 'invisible': [('lot_type', '!=', 'existing')]}" domain="[('product_id', '=', bottle_product_id), ('expiry_date', '=', expiry_date)]"/>
             </group>
             <footer>
-                <button name="select2produce" type="object" string="Next" class="btn-primary" states="select"/>
+                <button name="select2qty" type="object" string="Next" class="btn-primary" states="select"/>
+                <button name="qty2produce" type="object" string="Next" class="btn-primary" states="qty"/>
                 <button name="validate" type="object" string="Validate" class="btn-primary" states="produce"/>
                 <button special="cancel" string="Cancel" class="btn-default"/>
             </footer>

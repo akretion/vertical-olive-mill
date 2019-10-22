@@ -107,7 +107,6 @@ class StockLocation(models.Model):
         quant_rg = sqo.read_group(
             [('location_id', '=', self.id)],
             ['qty', 'product_id'], ['product_id'])
-        # TODO: handle negative quants ?
         if tank_type != 'risouletto':
             if not self.olive_season_id:
                 raise UserError(_(

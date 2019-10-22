@@ -35,7 +35,8 @@ class OliveOilTankTransfer(models.TransientModel):
             partial_transfer_qty = self.quantity
         pick = self.src_location_id.olive_oil_transfer(
             self.dest_location_id, self.transfer_type, self.warehouse_id,
-            origin=origin, partial_transfer_qty=partial_transfer_qty)
+            origin=origin, partial_transfer_qty=partial_transfer_qty,
+            auto_validate=True)
         action = self.env['ir.actions.act_window'].for_xml_id(
             'stock', 'action_picking_tree_all')
         action.update({
