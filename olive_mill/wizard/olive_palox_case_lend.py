@@ -29,10 +29,7 @@ class OlivePaloxCaseLend(models.TransientModel):
         self.ensure_one()
         commercial_partner = self.partner_id.commercial_partner_id
         if self.palox_ids:
-            self.palox_ids.write({
-                'borrower_partner_id': commercial_partner.id,
-                'borrowed_date': fields.Date.context_today(self),
-                })
+            self.palox_ids.lend_palox(commercial_partner)
         if self.regular_case_qty < 0 or self.organic_case_qty < 0:
             raise UserError(_(
                 "The quantity of cases to lend must be positive"))

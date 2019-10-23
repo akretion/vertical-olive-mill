@@ -1,28 +1,40 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_olive_palox_manager,Full access on olive.palox,model_olive_palox,stock.group_stock_manager,1,1,1,1
+access_olive_palox_operator,Read+write access on olive.palox for operator,model_olive_palox,olive_operator,1,0,0,0
 access_olive_palox_user,Read+write access on olive.palox,model_olive_palox,stock.group_stock_user,1,1,0,0
+access_olive_palox_manager,Full access on olive.palox,model_olive_palox,stock.group_stock_manager,1,1,1,1
+access_olive_palox_borrow_history_operator,Read+create access on olive.palox.borrow.history,model_olive_palox_borrow_history,olive_operator,1,0,1,0
 access_olive_palox_borrow_history_user,Read+create access on olive.palox.borrow.history,model_olive_palox_borrow_history,stock.group_stock_user,1,0,1,0
 access_olive_palox_borrow_history_manager,Full access on olive.palox.borrow.history,model_olive_palox_borrow_history,stock.group_stock_manager,1,1,1,1
-access_olive_ochard_manager,Full access on olive.ochard,model_olive_ochard,stock.group_stock_user,1,1,1,1
-access_olive_parcel_manager,Full access on olive.parcel,model_olive_parcel,stock.group_stock_user,1,1,1,1
-access_olive_season_manager,Full access on olive.season,model_olive_season,stock.group_stock_manager,1,1,1,1
+access_olive_ochard_operator,Read access on olive.ochard,model_olive_ochard,olive_operator,1,0,0,0
+access_olive_ochard_user,Full access on olive.ochard,model_olive_ochard,stock.group_stock_user,1,1,1,1
+access_olive_parcel_operator,Read access on olive.parcel,model_olive_parcel,olive_operator,1,0,0,0
+access_olive_parcel_user,Full access on olive.parcel,model_olive_parcel,stock.group_stock_user,1,1,1,1
 access_olive_season_user,Read access on olive.season,model_olive_season,base.group_user,1,0,0,0
-access_olive_variant_manager,Full access on olive.variant,model_olive_variant,stock.group_stock_manager,1,1,1,1
+access_olive_season_manager,Full access on olive.season,model_olive_season,stock.group_stock_manager,1,1,1,1
 access_olive_variant_user,Read access on olive.variant,model_olive_variant,base.group_user,1,0,0,0
+access_olive_variant_manager,Full access on olive.variant,model_olive_variant,stock.group_stock_manager,1,1,1,1
 access_olive_treatment_manager,Full access on olive.treatment,model_olive_treatment,stock.group_stock_manager,1,1,1,1
 access_olive_treatment_user,Read+create access on olive.treatment,model_olive_treatment,stock.group_stock_user,1,0,1,0
+access_olive_cultivation_operator,Read access on olive.cultivation,model_olive_cultivation,olive_operator,1,1,1,1
 access_olive_cultivation_user,Full access on olive.cultivation,model_olive_cultivation,stock.group_stock_user,1,1,1,1
-access_olive_lended_case_manager,Full access on olive.lended.case,model_olive_lended_case,stock.group_stock_manager,1,1,1,1
+access_olive_lended_case_operator,Read+create access on olive.lended.case to operator,model_olive_lended_case,olive_operator,1,0,1,0
 access_olive_lended_case_user,Read+create access on olive.lended.case to stock user,model_olive_lended_case,stock.group_stock_user,1,0,1,0
-access_organic_certifying_entity_manager,Full access on organic.certifying.entity,model_organic_certifying_entity,stock.group_stock_manager,1,1,1,1
+access_olive_lended_case_manager,Full access on olive.lended.case,model_olive_lended_case,stock.group_stock_manager,1,1,1,1
 access_organic_certifying_entity_user,Read access on organic.certifying.entity,model_organic_certifying_entity,base.group_user,1,0,0,0
-access_partner_organic_certification_manager,Full access on partner.organic.certification,model_partner_organic_certification,stock.group_stock_manager,1,1,1,1
+access_organic_certifying_entity_manager,Full access on organic.certifying.entity,model_organic_certifying_entity,stock.group_stock_manager,1,1,1,1
+access_partner_organic_certification_operator,Read+create access on partner.organic.certification,model_partner_organic_certification,olive_operator,1,0,0,0
 access_partner_organic_certification_user,Read+create access on partner.organic.certification,model_partner_organic_certification,stock.group_stock_user,1,1,1,0
+access_partner_organic_certification_manager,Full access on partner.organic.certification,model_partner_organic_certification,stock.group_stock_manager,1,1,1,1
 access_olive_preseason_poll_user,Full access on olive.preseason.poll,model_olive_preseason_poll,stock.group_stock_user,1,1,1,1
+access_olive_appointment_operator,Read access on olive.appointment,model_olive_appointment,olive_operator,1,0,0,0
 access_olive_appointment_user,Full access on olive.appointment,model_olive_appointment,stock.group_stock_user,1,1,1,1
+access_olive_arrival_operator,Full access on olive.arrival,model_olive_arrival,olive_operator,1,1,1,1
 access_olive_arrival_user,Full access on olive.arrival,model_olive_arrival,stock.group_stock_user,1,1,1,1
+access_olive_arrival_line_operator,Full access on olive.arrival.line to operator,model_olive_arrival_line,olive_operator,1,1,1,1
 access_olive_arrival_line_user,Full access on olive.arrival.line to stock user,model_olive_arrival_line,stock.group_stock_user,1,1,1,1
+access_olive_arrival_line_extra_operator,Full access on olive.arrival.line.extra,model_olive_arrival_line_extra,olive_operator,1,1,1,1
 access_olive_arrival_line_extra_user,Full access on olive.arrival.line.extra,model_olive_arrival_line_extra,stock.group_stock_user,1,1,1,1
+access_olive_oil_production_operator,Read+Write+Create access on olive.oil.production,model_olive_oil_production,olive_operator,1,1,1,0
 access_olive_oil_production_user,Full access on olive.oil.production,model_olive_oil_production,stock.group_stock_user,1,1,1,1
 access_olive_sale_pricelist_full,Full access on olive.sale.pricelist to Stock Manager,model_olive_sale_pricelist,stock.group_stock_manager,1,1,1,1
 access_olive_sale_pricelist_read,Read access on olive.sale.pricelist to Stock User,model_olive_sale_pricelist,stock.group_stock_user,1,0,0,0
@@ -30,3 +42,7 @@ access_olive_sale_pricelist_line_full,Full access on olive.sale.pricelist.line t
 access_olive_sale_pricelist_line_read,Read access on olive.sale.pricelist.line to Employee,model_olive_sale_pricelist,stock.group_stock_user,1,0,0,0
 access_olive_oil_analysis_user,Full access on olive.oil.analysis,model_olive_oil_analysis,stock.group_stock_user,1,1,1,1
 access_olive_oil_analysis_line_user,Full access on olive.oil.analysis.line,model_olive_oil_analysis_line,stock.group_stock_user,1,1,1,1
+access_stock_warehouse_operator,Read access on stock.warehouse,stock.model_stock_warehouse,olive_operator,1,0,0,0
+access_stock_location_operator,Read access on stock.location,stock.model_stock_location,olive_operator,1,0,0,0
+access_stock_location_operator,Read access on stock.location,stock.model_stock_location,olive_operator,1,0,0,0
+access_stock_move_operator,Read access on stock.move,stock.model_stock_move,olive_operator,1,0,0,0

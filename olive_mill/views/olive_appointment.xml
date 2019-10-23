@@ -42,7 +42,7 @@
                                 <field name="total_qty_same_day" widget="statinfo" nolabel="1"/>
                                 kg
                             </span>
-                            <span class="o_stat_text">Olives</span>
+                            <span class="o_stat_text">Olives that day</span>
                         </div>
                     </button>
                     <button class="oe_stat_button" type="action"
@@ -53,7 +53,7 @@
                             <span class="o_stat_value">
                                 <field name="total_palox_same_day" widget="statinfo" nolabel="1"/>
                             </span>
-                            <span class="o_stat_text">Palox</span>
+                            <span class="o_stat_text">Palox that day</span>
                         </div>
                     </button>
                 </div>

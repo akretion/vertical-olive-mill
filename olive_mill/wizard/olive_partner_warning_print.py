@@ -26,9 +26,9 @@ class OlivePartnerWarningPrint(models.TransientModel):
             if (
                     not float_is_zero(olive_qty, precision_digits=prec) and
                     (p.olive_cultivation_form_ko or
-                    p.olive_parcel_ko or
-                    p.olive_organic_certif_ko or
-                    p.olive_invoicing_ko)):
+                     p.olive_parcel_ko or
+                     p.olive_organic_certif_ko or
+                     p.olive_invoicing_ko)):
                 res.append({
                     'name': p.name_title,
                     'olive_qty': int(round(olive_qty, 0)),

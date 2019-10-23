@@ -7,12 +7,19 @@
 
 <odoo>
 
+<record id="new_olive_oil_production_action" model="ir.actions.act_window">
+    <field name="name">Oil Productions</field>
+    <field name="res_model">olive.oil.production</field>
+    <field name="view_mode">form,tree,pivot,graph</field>
+</record>
+
 <record id="olive_palox_form" model="ir.ui.view">
     <field name="name">olive.palox.form</field>
     <field name="model">olive.palox</field>
     <field name="arch" type="xml">
         <form string="Olive Palox">
             <header>
+                <button name="%(new_olive_oil_production_action)d" type="action" string="Create Oil Production" context="{'default_palox_id': active_id}" attrs="{'invisible': [('weight', '&lt;=', 0)]}"/>
                 <button name="return_borrowed_palox" type="object" string="Return Palox" attrs="{'invisible': ['|', ('borrower_partner_id', '=', False), ('borrowed_date', '=', False)]}"/>
             </header>
             <sheet>

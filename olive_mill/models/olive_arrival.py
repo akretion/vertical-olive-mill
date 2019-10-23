@@ -302,7 +302,7 @@ class OliveArrival(models.Model):
 
             # Check oil product is the same
             if not line.palox_id.oil_product_id:
-                line.palox_id.oil_product_id = line.oil_product_id.id
+                line.sudo().palox_id.oil_product_id = line.oil_product_id.id
             elif line.palox_id.oil_product_id != line.oil_product_id:
                 raise UserError(_(
                     "You are collecting %s in palox %s but this palox "
@@ -363,6 +363,7 @@ class OliveArrival(models.Model):
                         line.palox_id.name,
                         same_palox_different_oil_destination[0].display_name,
                         fg[same_palox_different_oil_destination[0].oil_destination]))
+            line.check_arrival_line_hook(i, warn_msgs)
         # for mix/sale, warn if delay between harvest and arrival is too long
         arrival_date_dt = fields.Date.from_string(self.date)
         harvest_st_date_dt = fields.Date.from_string(self.harvest_start_date)
@@ -1156,6 +1157,9 @@ class OliveArrivalLine(models.Model):
         self.create_out_invoice_lines(invoice)
         self.write({'out_invoice_id': invoice.id})
         return invoice
+
+    def check_arrival_line_hook(self, i, warn_msgs):
+        return
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):

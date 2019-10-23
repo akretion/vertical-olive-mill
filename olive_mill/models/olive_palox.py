@@ -119,6 +119,13 @@ class OlivePalox(models.Model):
         'unique(name, company_id)',
         'This palox number already exists in this company.')]
 
+    def lend_palox(self, partner):
+        assert not partner.parent_id
+        self.sudo().write({
+            'borrower_partner_id': partner.id,
+            'borrowed_date': fields.Date.context_today(self),
+            })
+
     def return_borrowed_palox(self):
         self.ensure_one()
         if not self.borrower_partner_id:
@@ -129,12 +136,12 @@ class OlivePalox(models.Model):
             raise UserError(_(
                 "Cannot return palox '%s' because it has no borrowed date.")
                 % self.display_name)
-        self.env['olive.palox.borrow.history'].create({
+        self.env['olive.palox.borrow.history'].sudo().create({
             'palox_id': self.id,
             'partner_id': self.borrower_partner_id.id,
             'start_date': self.borrowed_date,
             })
-        self.write({
+        self.sudo().write({
             'borrower_partner_id': False,
             'borrowed_date': False,
             })

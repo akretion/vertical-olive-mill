@@ -449,7 +449,8 @@ class OliveOilProduction(models.Model):
             raise UserError(_(
                 "The production %s uses compensation, so you must set the "
                 "compensation tank.") % self.name)
-        cqty = cloc.olive_oil_qty()
+        cloc.olive_oil_tank_check(raise_if_not_merged=False, raise_if_empty=False)
+        cqty = cloc.olive_oil_qty
         if ctype == 'last':
             # cloc must be empty
             if float_compare(cqty, 0, precision_digits=pr_oil) > 0:

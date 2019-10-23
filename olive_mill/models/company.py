@@ -143,7 +143,7 @@ class ResCompany(models.Model):
         'CHECK(olive_oil_production_start_minute <= 59)',
         'Oil Production Start Minute must be between 0 and 59.'), (
         'olive_oil_production_duration_minutes_positive',
-        'CHECK(olive_oil_production_duration_minutes) >= 0',
+        'CHECK(olive_oil_production_duration_minutes >= 0)',
         'Oil Production Duration must be positive.')
         ]
 

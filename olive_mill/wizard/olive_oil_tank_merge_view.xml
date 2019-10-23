@@ -30,6 +30,6 @@
     <field name="target">new</field>
 </record>
 
-<menuitem id="olive_oil_tank_merge_menu" action="olive_oil_tank_merge_action" parent="olive_operations_menu" sequence="210"/>
+<menuitem id="olive_oil_tank_merge_menu" action="olive_oil_tank_merge_action" parent="olive_operations_menu" groups="stock.group_stock_user" sequence="210"/>
 
 </odoo>

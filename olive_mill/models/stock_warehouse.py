@@ -80,19 +80,24 @@ class StockWarehouse(models.Model):
             days=self.olive_oil_compensation_ratio_days)
         start_date = fields.Date.to_string(start_date_dt)
         rg = self.env['olive.oil.production'].read_group([
-            ('state', '=', 'done'),
-            ('date', '<=', today),
-            ('date', '>=', start_date),
+            ('production_state', '=', 'done'),
+            ('production_date', '<=', today),
+            ('production_date', '>=', start_date),
             ], ['olive_qty', 'oil_qty'], [])
-        if rg[0]['olive_qty']:
+        if rg and rg[0]['olive_qty']:
             ratio = 100 * rg[0]['oil_qty'] / rg[0]['olive_qty']
-        self.write({
-            'olive_oil_compensation_ratio_update_date': today,
-            'olive_oil_compensation_ratio': ratio,
-            })
-        logger.info(
-            'Oil compensation ratio updated to %s on warehouse %s '
-            'start_date %s ', ratio, self.name, start_date)
+            self.write({
+                'olive_oil_compensation_ratio_update_date': today,
+                'olive_oil_compensation_ratio': ratio,
+                })
+            logger.info(
+                'Oil compensation ratio updated to %s on warehouse %s '
+                'start_date %s ', ratio, self.name, start_date)
+        else:
+            logger.warning(
+                'Oil compensation ratio not updated on warehouse %s '
+                'because there is no production data between %s and %s',
+                self.name, start_date, today)
 
     def olive_get_shrinkage_tank(self, oil_product, raise_if_not_found=True):
         self.ensure_one()

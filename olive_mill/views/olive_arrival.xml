@@ -16,7 +16,7 @@
             <header>
                 <button name="check" string="Check" states="draft" type="object"/>
                 <button name="validate" string="Validate" class="btn-primary" states="draft" type="object"/>
-                <button name="print_report" string="Print" type="object"/>
+                <button name="print_report" string="Show Report" type="object"/>
                 <button name="cancel" string="Cancel" class="btn-default" states="draft,done" confirm="Are you sure you want to cancel this arrival ?" type="object"/>
                 <button name="back2draft" string="Back to Draft" class="btn-default" states="cancel" type="object"/>
                 <button type="action" name="%(olive_palox_lend_action)d" string="Lend Palox and/or Cases" context="{'default_partner_id': commercial_partner_id, 'default_arrival_id': active_id}" attrs="{'invisible': [('hide_lend_palox_case_button', '=', True)]}"/>

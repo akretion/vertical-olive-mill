@@ -13,7 +13,7 @@
     <field name="arch" type="xml">
         <form string="Farmer Organic Certification">
             <header>
-                <button name="validate" string="Validate" type="object" confirm="I certify that I have seen the organic certificate of that olive farmer." states="draft"/>
+                <button name="validate" string="Validate" type="object" confirm="I certify that I have seen the organic certificate of that olive farmer." states="draft" groups="stock.group_stock_user"/>
                 <field name="state" widget="statusbar" statusbar_colors="{'draft': 'blue'}"/>
             </header>
             <group name="main">

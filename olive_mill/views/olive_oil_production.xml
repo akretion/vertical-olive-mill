@@ -20,7 +20,7 @@
                 <button name="%(olive_oil_production_force_ratio_action)d" string="Force a Ratio" class="btn-primary" states="force" type="action" context="{'default_production_id': active_id}"/>
                 <button name="force2pack" string="Go to Next Step" class="btn-primary" states="force" type="object"/>
                 <button name="%(olive_oil_production_pack2check_action)d" string="Pack" class="btn-primary" states="pack" type="action" context="{'default_production_id': active_id}"/>
-                <button name="check2done" string="Mark as Done" class="btn-primary" states="check" type="object" confirm="You are about to terminate and lock this oil production. Are you sure?"/>
+                <button name="check2done" string="Mark as Done" class="btn-primary" states="check" type="object" confirm="You are about to terminate and lock this oil production. Are you sure?" groups="stock.group_stock_user"/>
                 <button name="back2draft" string="Back to Draft" class="btn-default" states="cancel" type="object"/>
                 <button name="%(olive_oil_production_product_swap_action)d" string="Swap Oil Type" type="action" context="{'default_production_id': active_id}" states="ratio,force,pack,check"/>
                 <button name="%(olive_oil_production_report)d" string="Print" type="action" states="ratio,force,pack,check,done"/>

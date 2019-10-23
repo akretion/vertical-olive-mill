@@ -5,7 +5,8 @@
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
-from odoo.tools import float_compare
+from odoo.tools import float_compare, float_round
+import odoo.addons.decimal_precision as dp
 
 
 class StockLocation(models.Model):
@@ -28,13 +29,29 @@ class StockLocation(models.Model):
         'product.product', 'stock_location_shrinkage_oil_product_rel',
         'location_id', 'product_id', domain=[('olive_type', '=', 'oil')],
         string='Allowed Oil Products')
+    olive_oil_qty = fields.Float(
+        compute='_compute_olive_oil_qty', readonly=True,
+        string='Olive Oil Qty (L)',
+        digits=dp.get_precision('Product Unit of Measure'))
+
+    def _compute_olive_oil_qty(self):
+        prec = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+        rg_res = self.env['stock.quant'].read_group(
+            [('location_id', 'in', self.ids)],
+            ['qty', 'location_id'],
+            ['location_id'])
+        for rg_re in rg_res:
+            loc = self.browse(rg_re['location_id'][0])
+            qty = loc.olive_tank_type and rg_re['qty'] and float_round(rg_re['qty'], precision_digits=prec) or 0
+            loc.olive_oil_qty = qty
 
     @api.onchange('olive_tank_type')
     def olive_tank_type_change(self):
         if self.olive_tank_type:
-            season = self.env['olive.season'].get_current_season()
-            if season:
-                self.olive_season_id = season
+            if not self.olive_season_id:
+                season = self.env['olive.season'].get_current_season()
+                if season:
+                    self.olive_season_id = season
         else:
             self.olive_season_id = False
 
@@ -49,13 +66,6 @@ class StockLocation(models.Model):
                     new_name, loc.olive_season_year, loc.oil_product_id.name)
             new_res.append((entry[0], new_name))
         return new_res
-
-    def olive_oil_qty(self):
-        '''This method is a kind of alias to olive_oil_tank_check()'''
-        self.ensure_one()
-        qty = self.olive_oil_tank_check(
-            raise_if_not_merged=False, raise_if_empty=False)
-        return qty
 
     def olive_oil_tank_compatibility_check(self, oil_product, season):
         """This method should be called AFTER olive_oil_tank_check()

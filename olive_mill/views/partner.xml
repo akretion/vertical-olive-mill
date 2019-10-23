@@ -26,7 +26,7 @@
     <field name="name">olive.mill.tab.button.partner.form</field>
     <field name="model">res.partner</field>
     <field name="inherit_id" ref="base.view_partner_form"/>
-    <field name="groups_id" eval="[(4, ref('stock.group_stock_user'))]"/>
+    <field name="groups_id" eval="[(4, ref('stock.group_stock_user')), (4, ref('olive_operator'))]"/>
     <!-- Inherit before specific modules, to be sure Olive Mill is the first tab -->
     <field name="priority">5</field>
     <field name="arch" type="xml">
@@ -88,9 +88,9 @@
                         <button type="action" name="%(olive_cultivation_action)d" string="Cultivation Form" context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}" colspan="2"/>
                         <button name="update_organic_certif" string="Organic Certifications" type="object"/>
                         <button type="action" name="%(olive_arrival_action)d" string="Arrivals" context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}" colspan="2"/>
-                        <button type="action" name="%(olive_withdrawal_action)d" string="New Olive Oil Withdrawal" context="{'default_partner_id': active_id}" colspan="2"/>
-                        <button type="action" name="%(olive_invoice_create_action)d" string="Create Invoice" context="{'default_partner_id': active_id}" colspan="2"/>
-                        <button type="action" name="%(olive_arrival_line_action)d" string="Show statistics" colspan="2" context="{'search_default_commercial_partner_id': active_id, 'search_default_arrival_done': True}"/>
+                        <button type="action" name="%(olive_withdrawal_action)d" string="New Olive Oil Withdrawal" context="{'default_partner_id': active_id}" colspan="2" groups="stock.group_stock_user"/>
+                        <button type="action" name="%(olive_invoice_create_action)d" string="Create Invoice" context="{'default_partner_id': active_id}" colspan="2" groups="stock.group_stock_user"/>
+                        <button type="action" name="%(olive_arrival_line_action)d" string="Show statistics" colspan="2" context="{'search_default_commercial_partner_id': active_id, 'search_default_arrival_done': True}" groups="stock.group_stock_user"/>
                     </group>
                     <group name="right">
                         <field name="olive_current_season_id"/>

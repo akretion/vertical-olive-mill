@@ -44,6 +44,6 @@
     <field name="target">new</field>
 </record>
 
-<menuitem id="olive_invoice_create_menu" action="olive_invoice_create_action" parent="olive_operations_menu" sequence="180"/>
+<menuitem id="olive_invoice_create_menu" action="olive_invoice_create_action" parent="olive_operations_menu" groups="stock.group_stock_user" sequence="180"/>
 
 </odoo>
