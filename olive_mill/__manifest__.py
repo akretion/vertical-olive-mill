@@ -48,6 +48,7 @@
         'wizard/olive_oil_picking_view.xml',
         'wizard/olive_appointment_print_view.xml',
         'wizard/olive_oil_production_day_print_view.xml',
+        'wizard/olive_partner_warning_print_view.xml',
         'views/olive_config_settings.xml',
         'views/stock_location.xml',
         'views/stock_warehouse.xml',

@@ -159,5 +159,17 @@
     <field name="value" eval="'ir.actions.report.xml,%d'%olive_arrival_report" />
 </record>
 
+<record id="olive_partner_warnings_report" model="ir.actions.report.xml">
+    <field name="name">Print Farmer Warnings</field>
+    <field name="model">olive.partner.warning.print</field>
+    <field name="report_name">olive.partner.warning</field>
+    <field name="report_type">py3o</field>
+    <field name="py3o_filetype">odt</field>
+    <field name="module">olive_mill</field>
+    <field name="py3o_template_fallback">report/olive_partner_warning.odt</field>
+    <field name="print_report_name">'Warnings-' + object.season_id.name.replace(' ', '_') + '.odt'</field>
+</record>
+
+
 
 </odoo>

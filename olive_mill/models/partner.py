@@ -109,6 +109,7 @@ class ResPartner(models.Model):
         olive_oil_ratio_current_season = 0.0
         olive_oil_qty_to_withdraw = 0.0
         olive_oil_qty_withdrawn_current_season = 0.0
+        season_id = self._context.get('season_id') or self.env['olive.season'].get_current_season().id
         if self.olive_farmer:
             company = self.env.user.company_id
             cases_res = self.env['olive.lended.case'].read_group([
@@ -130,18 +131,17 @@ class ResPartner(models.Model):
                 olive_tree_total = parcel_res[0]['tree_qty'] or 0.0
                 olive_area_total = parcel_res[0]['area'] or 0.0
 
-            season = self.env['olive.season'].get_current_season()
-            if season:
-                olive_current_season_id = season.id
+            if season_id:
+                olive_current_season_id = season_id
                 arrival_res = self.env['olive.arrival.line'].read_group([
-                    ('season_id', '=', season.id),
+                    ('season_id', '=', season_id),
                     ('commercial_partner_id', '=', self.id),
                     ('state', '=', 'done')],
                     ['olive_qty'], [])
                 if arrival_res:
                     olive_qty_current_season = arrival_res[0]['olive_qty'] or 0.0
                 arrival_prod_res = self.env['olive.arrival.line'].read_group([
-                    ('season_id', '=', season.id),
+                    ('season_id', '=', season_id),
                     ('commercial_partner_id', '=', self.id),
                     ('state', '=', 'done'),
                     ('production_state', '=', 'done')],
@@ -182,7 +182,7 @@ class ResPartner(models.Model):
         self.olive_oil_qty_withdrawn_current_season = olive_oil_qty_withdrawn_current_season
 
     def _compute_organic_and_warnings(self):
-        season = self.env['olive.season'].get_current_season()
+        season_id = self._context.get('season_id') or self.env['olive.season'].get_current_season().id
         poco = self.env['partner.organic.certification']
         oco = self.env['olive.cultivation']
         ooo = self.env['olive.ochard']
@@ -230,10 +230,10 @@ class ResPartner(models.Model):
                     if not ochard_ids and parcels_complete:
                         parcel_ko = False
 
-                if season:
+                if season_id:
                     cert = poco.search([
                         ('partner_id', '=', partner.id),
-                        ('season_id', '=', season.id),
+                        ('season_id', '=', season_id),
                         ], limit=1)
                     if cert:
                         if cert.conversion:
@@ -250,13 +250,13 @@ class ResPartner(models.Model):
                         certif_ko = True
 
                     cultivations = oco.search([
-                        ('season_id', '=', season.id),
+                        ('season_id', '=', season_id),
                         ('partner_id', '=', partner.id)], limit=1)
                     if cultivations:
                         cultivation_form_ko = False
                     lines_to_out_invoice = oalo.search([
                         ('commercial_partner_id', '=', partner.id),
-                        ('season_id', '=', season.id),
+                        ('season_id', '=', season_id),
                         ('production_state', '=', 'done'),
                         ('out_invoice_id', '=', False),
                         ], count=True)
@@ -269,7 +269,7 @@ class ResPartner(models.Model):
                             ('in_invoice_line_id', '=', False),
                             ('oil_destination', 'in', ('sale', 'mix')),
                             ('sale_oil_qty', '>', 0),
-                            ('season_id', '=', season.id),
+                            ('season_id', '=', season_id),
                             ], count=True)
                         if lines_to_in_invoice:
                             invoicing_ko = True
