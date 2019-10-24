@@ -179,10 +179,10 @@
             <filter name="tomorrow" string="Tomorrow" domain="[('date', '=', (context_today() + datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]"/>
             <filter name="day-after-tomorrow" string="Day after Tomorrow" domain="[('date', '=', (context_today() + datetime.timedelta(days=2)).strftime('%Y-%m-%d'))]"/>
             <separator/>
+            <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
+            <separator/>
             <filter string="In Progress" domain="[('state', 'not in', ('done', 'cancel'))]" name="progress"/>
             <filter string="Done" domain="[('state', '=', 'done')]" name="done"/>
-            <separator/>
-            <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
             <separator/>
             <group string="Group By" name="groupby">
                 <filter name="day_groupby" string="Day" context="{'group_by': 'date:day'}"/>

@@ -204,11 +204,11 @@
             <field name="partner_id" operator="child_of"/>
             <field name="warehouse_id"/>
             <separator/>
+            <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
+            <separator/>
             <filter string="Draft" domain="[('state', '=', 'draft')]" name="draft"/>
             <filter string="Done" domain="[('state', '=', 'done')]" name="done"/>
             <filter string="Not Cancelled" domain="[('state', '!=', 'cancel')]" name="not_cancelled"/>
-            <separator/>
-            <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
             <separator/>
             <filter name="today" string="Today" domain="[('date', '=', context_today().strftime('%Y-%m-%d'))]"/>
             <group string="Group By" name="groupby">

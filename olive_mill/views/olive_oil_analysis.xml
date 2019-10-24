@@ -87,6 +87,8 @@
             <field name="oil_product_id"/>
             <field name="lot_id"/>
             <separator/>
+            <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
+            <separator/>
             <filter name="draft" domain="[('state', '=', 'draft')]" string="Draft"/>
             <filter name="done" domain="[('state', '=', 'done')]" string="Done"/>
             <separator/>
@@ -95,8 +97,6 @@
             <separator/>
             <filter name="internal" domain="[('execution_mode', '=', 'internal')]" string="Internal"/>
             <filter name="external" domain="[('execution_mode', '=', 'external')]" string="External"/>
-            <separator/>
-            <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
             <separator/>
             <group name="groupby">
                 <filter name="state_groupby" string="State" context="{'group_by': 'state'}"/>
