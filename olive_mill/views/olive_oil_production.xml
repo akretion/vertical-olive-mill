@@ -111,16 +111,12 @@
                                 <tree editable="bottom">
                                     <field name="name"/>
                                     <field name="commercial_partner_id"/>
+                                    <field name="withdrawal_oil_qty_kg" sum="1"/>
                                     <field name="oil_destination"/>
                                     <field name="olive_qty" sum="1"/>
-                                    <field name="oil_ratio"/>
-                                    <field name="oil_qty" sum="1"/>
-                                    <field name="oil_qty_kg" sum="1"/>
-                                    <field name="compensation_oil_qty" sum="1"/>
                                     <field name="shrinkage_oil_qty" sum="1"/>
-                                    <field name="withdrawal_oil_qty" sum="1"/>
-                                    <field name="withdrawal_oil_qty_kg" sum="1"/>
                                     <field name="filter_loss_oil_qty" sum="1"/>
+                                    <field name="withdrawal_oil_qty" sum="1"/>
                                     <field name="to_sale_tank_oil_qty" sum="1"/>
                                     <field name="sale_oil_qty" sum="1"/>
                                     <field name="oil_ratio_net"/>
