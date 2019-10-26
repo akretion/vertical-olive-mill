@@ -146,8 +146,9 @@ class OliveAppointment(models.Model):
                 if app.leaf_removal:
                     label += _(', LEAF REMOVAL')
             elif app.appointment_type == 'withdrawal':
-                invoicing_label = dict(app.fields_get('withdrawal_invoice', 'selection')['withdrawal_invoice']['selection'])[app.withdrawal_invoice]
-                label += ', %s' % invoicing_label
+                if app.withdrawal_invoice:
+                    invoicing_label = dict(app.fields_get('withdrawal_invoice', 'selection')['withdrawal_invoice']['selection'])[app.withdrawal_invoice]
+                    label += ', %s' % invoicing_label
             elif app.appointment_type == 'lend':
                 lend_list = []
                 if app.lend_palox_qty:
