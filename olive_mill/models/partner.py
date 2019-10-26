@@ -109,7 +109,6 @@ class ResPartner(models.Model):
         olive_oil_ratio_current_season = 0.0
         olive_oil_qty_to_withdraw = 0.0
         olive_oil_qty_withdrawn_current_season = 0.0
-        season_id = self._context.get('season_id') or self.env['olive.season'].get_current_season().id
         if self.olive_farmer:
             company = self.env.user.company_id
             cases_res = self.env['olive.lended.case'].read_group([
@@ -130,6 +129,12 @@ class ResPartner(models.Model):
             if parcel_res:
                 olive_tree_total = parcel_res[0]['tree_qty'] or 0.0
                 olive_area_total = parcel_res[0]['area'] or 0.0
+
+            season_id = self._context.get('season_id')
+            if not season_id:
+                season = self.env['olive.season'].get_current_season()
+                if season:
+                    season_id = season.id
 
             if season_id:
                 olive_current_season_id = season_id
