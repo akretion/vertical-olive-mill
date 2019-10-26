@@ -187,7 +187,6 @@ class ResPartner(models.Model):
         self.olive_oil_qty_withdrawn_current_season = olive_oil_qty_withdrawn_current_season
 
     def _compute_organic_and_warnings(self):
-        season_id = self._context.get('season_id') or self.env['olive.season'].get_current_season().id
         poco = self.env['partner.organic.certification']
         oco = self.env['olive.cultivation']
         ooo = self.env['olive.ochard']
@@ -234,6 +233,12 @@ class ResPartner(models.Model):
                             break
                     if not ochard_ids and parcels_complete:
                         parcel_ko = False
+
+                season_id = self._context.get('season_id')
+                if not season_id:
+                    season = self.env['olive.season'].get_current_season()
+                    if season:
+                        season_id = season.id
 
                 if season_id:
                     cert = poco.search([
