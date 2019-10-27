@@ -147,7 +147,7 @@
 <menuitem id="olive_config_settings_menu"
         action="olive_config_settings_action"
         parent="olive_config_menu"
-        groups="stock.group_stock_manager"
+        groups="base.group_system"
         sequence="10"/>
 
 

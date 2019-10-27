@@ -78,11 +78,11 @@ class ResCompany(models.Model):
         'product.product', string='Early Bird Discount Product',
         domain=[('olive_type', '=', 'service')])
     olive_oil_production_start_hour = fields.Integer(
-        string='Oil Production Start Hour', default=8)
+        string='Default Oil Production Start Hour', default=8)
     olive_oil_production_start_minute = fields.Integer(
-        string='Oil Production Start Minute', default=0)
+        string='Default Oil Production Start Minute', default=0)
     olive_oil_production_duration_minutes = fields.Integer(
-        string='Oil Production Duration', default=30)
+        string='Default Oil Production Duration', default=30)
     olive_oil_analysis_default_user_id = fields.Many2one(
         'res.users', string='Default User for Olive Oil Analysis')
     # olive_oil_tax_price_unit = fields.Float(

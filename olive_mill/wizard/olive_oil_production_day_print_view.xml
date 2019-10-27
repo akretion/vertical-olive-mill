@@ -14,6 +14,18 @@
         <form string="Print Production Planning">
             <group name="main">
                 <field name="date"/>
+                <label for="start_hour"/>
+                <div name="start_hour">
+                    <field name="start_hour" class="oe_inline"/> h
+                </div>
+                <label for="start_minute"/>
+                <div name="start_minute">
+                    <field name="start_minute" class="oe_inline"/> min
+                </div>
+                <label for="duration_minutes"/>
+                <div name="duration_minutes">
+                    <field name="duration_minutes" class="oe_inline"/> min
+                </div>
             </group>
             <footer>
                 <button name="run" type="object" string="Show" class="btn-primary"/>
