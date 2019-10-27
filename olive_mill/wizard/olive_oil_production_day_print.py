@@ -28,7 +28,8 @@ class OliveOilProductionDayPrint(models.TransientModel):
         string='Date', default=fields.Date.context_today, required=True)
     start_hour = fields.Integer(string='Start Hour', required=True)
     start_minute = fields.Integer(string='Start Minute', required=True)
-    duration_minutes = fields.Integer(string='Duration', required=True)
+    duration_minutes = fields.Integer(
+        string='Duration of one Oil Production', required=True)
 
     _sql_constraints = [(
         'duration_minutes_positive',
