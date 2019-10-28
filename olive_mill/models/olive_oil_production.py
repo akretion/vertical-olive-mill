@@ -339,8 +339,13 @@ class OliveOilProduction(models.Model):
         # because, at the time of the wizard, the previous last of day
         # compensation may not be done yet, so the compensation tank
         # may be empty
-        compensation_oil_qty = self.compensation_check_tank()
-        if self.compensation_type == 'first':
+        if self.compensation_type == 'last':
+            # cloc.oil_product_id will be written a second time in
+            # check2done (in case the wizard swap product is used)
+            cloc.oil_product_id = self.oil_product_id.id
+            compensation_oil_qty = self.compensation_check_tank()
+        elif self.compensation_type == 'first':
+            compensation_oil_qty = self.compensation_check_tank()
             density = self.company_id.olive_oil_density
             self.write({
                 'compensation_oil_qty': compensation_oil_qty,
