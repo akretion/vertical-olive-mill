@@ -79,7 +79,7 @@ class StockWarehouse(models.Model):
         start_date_dt = today_dt - relativedelta(
             days=self.olive_oil_compensation_ratio_days)
         start_date = fields.Date.to_string(start_date_dt)
-        rg = self.env['olive.oil.production'].read_group([
+        rg = self.env['olive.arrival.line'].read_group([
             ('production_state', '=', 'done'),
             ('production_date', '<=', today),
             ('production_date', '>=', start_date),

@@ -342,7 +342,7 @@ class OliveOilProduction(models.Model):
         if self.compensation_type == 'last':
             # cloc.oil_product_id will be written a second time in
             # check2done (in case the wizard swap product is used)
-            cloc.oil_product_id = self.oil_product_id.id
+            cloc.sudo().oil_product_id = self.oil_product_id.id
             compensation_oil_qty = self.compensation_check_tank()
         elif self.compensation_type == 'first':
             compensation_oil_qty = self.compensation_check_tank()
@@ -581,7 +581,7 @@ class OliveOilProduction(models.Model):
             cmove.action_done()
             assert cmove.state == 'done'
             prod_vals['compensation_last_move_id'] = cmove.id
-            cloc.oil_product_id = oil_product.id
+            cloc.sudo().oil_product_id = oil_product.id
 
         # Shrinkage move
         if float_compare(to_shrinkage_tank_oil_qty, 0, precision_digits=pr_oil) > 0:
@@ -657,7 +657,7 @@ class OliveOilProduction(models.Model):
                     # remove first line of wlines
                     wlines.pop(0)
             # free compensation tank
-            cloc.oil_product_id = False
+            cloc.sudo().oil_product_id = False
 
         self.write(prod_vals)
         self.update_arrival_production_done()
