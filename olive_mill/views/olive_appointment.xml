@@ -15,6 +15,14 @@
     <field name="context">{'search_default_current_season': 1}</field>
 </record>
 
+<record id="olive_appointment_tree_action" model="ir.actions.act_window">
+    <field name="name">Appointments</field>
+    <field name="res_model">olive.appointment</field>
+    <field name="view_mode">tree,form,calendar</field>
+    <field name="context">{'search_default_current_season': 1}</field>
+</record>
+
+
 <record id="olive_appointment_form" model="ir.ui.view">
     <field name="name">olive.appointment.form</field>
     <field name="model">olive.appointment</field>
@@ -33,10 +41,9 @@
             </header>
             <sheet>
                 <div name="button_box" class="oe_button_box">
-                    <button class="oe_stat_button" type="action"
-                        name="%(olive_mill.olive_appointment_action)d"
-                        icon="fa-arrow-down"
-                        context="{'search_default_date': date}">  <!-- use fa-tractor when we'll have access to FA 5.4 -->
+                    <button class="oe_stat_button" type="object"
+                        name="show_arrival_appointments_same_day"
+                        icon="fa-arrow-down">  <!-- use fa-tractor when we'll have access to FA 5.4 -->
                         <div class="o_form_field o_stat_info">
                             <span class="o_stat_value">
                                 <field name="total_qty_same_day" widget="statinfo" nolabel="1"/>
@@ -45,10 +52,9 @@
                             <span class="o_stat_text">Olives that day</span>
                         </div>
                     </button>
-                    <button class="oe_stat_button" type="action"
-                        name="%(olive_mill.olive_appointment_action)d"
-                        icon="fa-stop"
-                        context="{'search_default_date': date}">  <!-- use fa-tractor when we'll have access to FA 5.4 -->
+                    <button class="oe_stat_button" type="object"
+                        name="show_arrival_appointments_same_day"
+                        icon="fa-stop">  <!-- use fa-tractor when we'll have access to FA 5.4 -->
                         <div class="o_form_field o_stat_info">
                             <span class="o_stat_value">
                                 <field name="total_palox_same_day" widget="statinfo" nolabel="1"/>
@@ -56,6 +62,7 @@
                             <span class="o_stat_text">Palox that day</span>
                         </div>
                     </button>
+                    <button name="open_new_appointment_after_this" string="New After This" type="object" icon="fa-angle-double-right" class="oe_stat_button"/>
                 </div>
                 <field name="olive_organic_certified_logo" widget="image" class="oe_avatar" attrs="{'invisible': [('olive_organic_certified_logo', '=', False)]}"/>
                 <group name="main">
@@ -75,7 +82,7 @@
                         <field name="end_datetime"/>
                         <field name="season_id"/>
                         <field name="company_id" groups="base.group_multi_company"/>
-                        <field name="date" invisible="0"/>
+                        <field name="date" invisible="1"/>
                     </group>
                     <group name="arrival" attrs="{'invisible': [('appointment_type', '!=', 'arrival')]}">
                         <field name="variant_id" widget="selection"/>

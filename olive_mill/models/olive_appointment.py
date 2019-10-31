@@ -5,6 +5,7 @@
 
 from odoo import models, fields, api, _
 from dateutil.relativedelta import relativedelta
+import math
 
 
 class OliveAppointment(models.Model):
@@ -13,8 +14,8 @@ class OliveAppointment(models.Model):
     _order = 'start_datetime desc'
     _inherit = ['mail.thread']
 
-    # name is required when you create from calendar
-    # it is also needed for appointments with type = 'other'
+    # name is used when you create from calendar via the quick create pop-up
+    # it is also used for appointments with type = 'other'
     name = fields.Char(string='Notes')
     company_id = fields.Many2one(
         'res.company', string='Company',
@@ -159,6 +160,9 @@ class OliveAppointment(models.Model):
                     lend_list.append(_('Organic cases: %d') % app.lend_organic_case_qty)
                 if lend_list:
                     label += ', %s' % ', '.join(lend_list)
+            elif app.appointment_type == 'other':
+                if app.name:
+                    label += ', ' + app.name
             app.display_calendar_label = label
 
     @api.onchange('oil_destination')
@@ -204,7 +208,8 @@ class OliveAppointment(models.Model):
                     duration_coef = company.olive_appointment_arrival_leaf_removal_minutes
                 else:
                     duration_coef = company.olive_appointment_arrival_no_leaf_removal_minutes
-                minutes = duration_coef * self.qty / 100.0
+                # math.ceil() rounds up: math.ceil(5.1) = 6.0
+                minutes = int(math.ceil(duration_coef * self.qty / 100.0))
                 if minutes < company.olive_appointment_arrival_min_minutes:
                     minutes = company.olive_appointment_arrival_min_minutes
             elif self.appointment_type == 'lend':
@@ -262,6 +267,30 @@ class OliveAppointment(models.Model):
             'view_mode': 'form,tree,calendar',
             'views': False,
             'context': context,
+            })
+        return action
+
+    def show_arrival_appointments_same_day(self):
+        self.ensure_one()
+        action = self.env['ir.actions.act_window'].for_xml_id(
+            'olive_mill', 'olive_appointment_tree_action')
+        action.update({
+            'views': False,
+            'context': {},
+            })
+        # I would prefer to do 'context': {'search_default_date': self.date}
+        # but it raises a JS error, so I do it via a domain
+        action['domain'] = [('date', '=', self.date)]
+        return action
+
+    def open_new_appointment_after_this(self):
+        self.ensure_one()
+        action = self.env['ir.actions.act_window'].for_xml_id(
+            'olive_mill', 'olive_appointment_action')
+        action.update({
+            'view_mode': 'form,tree,calendar',
+            'views': False,
+            'context': {'default_start_datetime': self.end_datetime},
             })
         return action
 

@@ -83,7 +83,7 @@
                 <group name="olive_main">
                     <group name="left">
                         <field name="olive_sale_pricelist_id" string="Sale Pricelist"/>
-                        <button type="action" name="%(olive_appointment_action)d" string="Appointments" context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}" colspan="2"/>
+                        <button type="action" name="%(olive_appointment_tree_action)d" string="Appointments" context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}" colspan="2"/>
                         <button type="action" name="%(olive_palox_lend_action)d" string="Lend Palox and/or Cases" context="{'default_partner_id': active_id}" colspan="2"/>
                         <button type="action" name="%(olive_cultivation_action)d" string="Cultivation Form" context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}" colspan="2"/>
                         <button name="update_organic_certif" string="Organic Certifications" type="object"/>

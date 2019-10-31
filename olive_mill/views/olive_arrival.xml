@@ -417,7 +417,7 @@
     <field name="name">olive.arrival.line.tree</field>
     <field name="model">olive.arrival.line</field>
     <field name="arch" type="xml">
-        <tree string="Olive Arrival Lines" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
+        <tree string="Olive Arrival Lines" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" edit="0" create="0">
             <field name="name"/>
             <field name="arrival_id"/>
             <field name="production_id"/>
