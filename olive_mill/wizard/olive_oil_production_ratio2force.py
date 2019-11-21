@@ -45,9 +45,9 @@ class OliveOilProductionRatio2force(models.TransientModel):
         string='Gross Ratio (% L)', compute='_compute_all',
         digits=dp.get_precision('Olive Oil Ratio'), readonly=True)
     sale_location_id = fields.Many2one(
-        related='production_id.sale_location_id', readonly=False)
+        'stock.location', string='Sale Tank')
     compensation_sale_location_id = fields.Many2one(
-        related='production_id.compensation_sale_location_id', readonly=False)
+        'stock.location', string='Compensation Sale Tank')
     decanter_duration = fields.Integer(string='Decanter Duration')
     decanter_speed = fields.Integer(
         string='Decanter Speed', compute='_compute_decanter_speed',
@@ -99,6 +99,8 @@ class OliveOilProductionRatio2force(models.TransientModel):
             'oil_qty': self.oil_qty,
             'ratio': self.ratio,
             'decanter_speed': self.decanter_speed,
+            'compensation_sale_location_id': self.compensation_sale_location_id.id or False,
+            'sale_location_id': self.sale_location_id.id or False,
             }
         prod.write(vals)
         prod.ratio2force()

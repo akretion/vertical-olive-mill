@@ -17,7 +17,7 @@
                 <button name="detach_lines" string="Detach Arrival Lines" type="object" attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('line_ids', '=', [])]}"/>
                 <button name="%(olive_oil_production_compensation_action)d" string="Change Compensation Type" class="btn-primary" states="ratio" type="action" context="{'default_production_id': active_id}"/>
                 <button name="start_ratio2force" string="Enter Result" class="btn-primary" states="ratio" type="object"/>
-                <button name="%(olive_oil_production_force_ratio_action)d" string="Force a Ratio" class="btn-primary" states="force" type="action" context="{'default_production_id': active_id}"/>
+                <button name="%(olive_oil_production_force_ratio_action)d" string="Force a Ratio" class="btn-primary" states="force" type="action" context="{'default_production_id': active_id, 'default_compensation_sale_location_id': compensation_sale_location_id, 'default_sale_location_id': sale_location_id}"/>
                 <button name="force2pack" string="Go to Next Step" class="btn-primary" states="force" type="object"/>
                 <button name="%(olive_oil_production_pack2check_action)d" string="Pack" class="btn-primary" states="pack" type="action" context="{'default_production_id': active_id}"/>
                 <button name="check2done" string="Mark as Done" class="btn-primary" states="check" type="object" confirm="You are about to terminate and lock this oil production. Are you sure?" groups="stock.group_stock_user"/>
@@ -94,8 +94,8 @@
                         <field name="shrinkage_location_id" domain="[('olive_tank_type', '=', 'shrinkage'), ('olive_season_id', '=', season_id)]"/>
                         <field name="withdrawal_location_id" attrs="{'invisible': [('oil_destination', '=', 'sale')]}"/>
                         <field name="compensation_location_id" attrs="{'invisible': [('compensation_type', 'not in', ('first', 'last'))]}" domain="[('olive_tank_type', '=', 'compensation'), ('olive_season_id', '=', season_id)]"/>
-                        <label for="to_compensation_sale_tank_oil_qty" string="To Compensation Sale Tank Oil Qty"/>
-                        <div name="to_compensation_sale_tank_oil_qty">
+                        <label for="to_compensation_sale_tank_oil_qty" string="To Compensation Sale Tank Oil Qty" attrs="{'invisible': ['|', ('compensation_type', '!=', 'first'), ('oil_destination', '=', 'withdrawal')]}"/>
+                        <div name="to_compensation_sale_tank_oil_qty" attrs="{'invisible': ['|', ('compensation_type', '!=', 'first'), ('oil_destination', '=', 'withdrawal')]}">
                             <field name="to_compensation_sale_tank_oil_qty" class="oe_inline"/>
                             <label string=" L"/>
                         </div>

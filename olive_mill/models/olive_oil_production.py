@@ -344,9 +344,8 @@ class OliveOilProduction(models.Model):
             # cloc.oil_product_id will be written a second time in
             # check2done (in case the wizard swap product is used)
             cloc.sudo().oil_product_id = self.oil_product_id.id
-            compensation_oil_qty = self.compensation_check_tank()
-        elif self.compensation_type == 'first':
-            compensation_oil_qty = self.compensation_check_tank()
+        compensation_oil_qty = self.compensation_check_tank()
+        if self.compensation_type == 'first':
             density = self.company_id.olive_oil_density
             self.write({
                 'compensation_oil_qty': compensation_oil_qty,
@@ -447,21 +446,21 @@ class OliveOilProduction(models.Model):
         '''Performs check and return the qty of the tank'''
         self.ensure_one()
         ctype = self.compensation_type
-        if ctype not in ('last', 'first'):
-            return True
         pr_oil = self.env['decimal.precision'].precision_get('Olive Oil Volume')
         cloc = self.compensation_location_id
         if not cloc:
+            if ctype == 'none':
+                return 0
             raise UserError(_(
                 "The production %s uses compensation, so you must set the "
                 "compensation tank.") % self.name)
         cloc.olive_oil_tank_check(raise_if_not_merged=False, raise_if_empty=False)
         cqty = cloc.olive_oil_qty
-        if ctype == 'last':
+        if ctype in ('last', 'none'):
             # cloc must be empty
             if float_compare(cqty, 0, precision_digits=pr_oil) > 0:
                 raise UserError(_(
-                    "The production %s uses last of day compensation, so the compensation tank must be empty before the operation.") % self.name)
+                    "The production %s uses last of day compensation or no compensation, so the compensation tank must be empty before the operation.") % self.name)
         elif ctype == 'first':
             if float_compare(cqty, 0, precision_digits=pr_oil) <= 0:
                 raise UserError(_(
@@ -657,8 +656,10 @@ class OliveOilProduction(models.Model):
 
                     # remove first line of wlines
                     wlines.pop(0)
-            # free compensation tank
-            cloc.sudo().oil_product_id = False
+            # DON'T remove oil_product_id on compensation tank
+            # because we now go through olive_tank_type_change()
+            # even when compensation = 'none', so the product must always be set
+            # cloc.sudo().oil_product_id = False
 
         self.write(prod_vals)
         self.update_arrival_production_done()
