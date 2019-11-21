@@ -26,11 +26,11 @@ class OliveArrival(models.Model):
     season_id = fields.Many2one(
         'olive.season', string='Season', required=True, index=True,
         default=lambda self: self.env.user.company_id.current_season_id.id,
-        states={'done': [('readonly', True)]})
+        states={'done': [('readonly', True)]}, ondelete='restrict')
     partner_id = fields.Many2one(
         'res.partner', string='Olive Farmer', required=True, index=True,
         domain=[('parent_id', '=', False), ('olive_farmer', '=', True)],
-        states={'done': [('readonly', True)]},
+        states={'done': [('readonly', True)]}, ondelete='restrict',
         track_visibility='onchange')
     commercial_partner_id = fields.Many2one(
         related='partner_id.commercial_partner_id', readonly=True, store=True)
@@ -524,7 +524,7 @@ class OliveArrivalLine(models.Model):
         string='Leaf Removal', states={'done': [('readonly', True)]})
     variant_id = fields.Many2one(
         'olive.variant', string='Olive Variant', required=True,
-        states={'done': [('readonly', True)]})
+        ondelete='restrict', states={'done': [('readonly', True)]})
     palox_weight = fields.Float(
         string='Gross Palox Weight', digits=dp.get_precision('Olive Weight'),
         help="If you enter the gross palox weight, Odoo will use the palox "
@@ -538,10 +538,10 @@ class OliveArrivalLine(models.Model):
         "\nFirst-of-day compensation: not included."
         "\nLast-of-day compensation: not deducted.")
     ochard_id = fields.Many2one(
-        'olive.ochard', string='Ochard', required=True,
+        'olive.ochard', string='Ochard', required=True, ondelete='restrict',
         states={'done': [('readonly', True)]})
     palox_id = fields.Many2one(
-        'olive.palox', string='Palox', required=True,
+        'olive.palox', string='Palox', required=True, ondelete='restrict',
         states={'done': [('readonly', True)]})
     oil_destination = fields.Selection([
         ('withdrawal', 'Withdrawal'),
@@ -569,7 +569,7 @@ class OliveArrivalLine(models.Model):
         states={'done': [('readonly', True)]})
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Type', required=True, index=True,
-        domain=[('olive_type', '=', 'oil')],
+        domain=[('olive_type', '=', 'oil')], ondelete='restrict',
         states={'done': [('readonly', True)]})
     product_olive_culture_type = fields.Selection(
         related='oil_product_id.olive_culture_type', readonly=True, store=True)

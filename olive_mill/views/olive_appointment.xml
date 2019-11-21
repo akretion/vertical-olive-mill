@@ -141,7 +141,7 @@
     <field name="name">olive.appointment.calendar</field>
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
-        <calendar string="Appointments" color="appointment_type" date_start="start_datetime" date_stop="end_datetime" mode="week">
+        <calendar string="Appointments" color="appointment_type" date_start="start_datetime" date_stop="end_datetime" mode="day">
             <field name="display_calendar_label"/>
         </calendar>
     </field>

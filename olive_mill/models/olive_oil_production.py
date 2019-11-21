@@ -31,6 +31,7 @@ class OliveOilProduction(models.Model):
         track_visibility='onchange')
     palox_id = fields.Many2one(
         'olive.palox', string='Palox', required=True, readonly=True,
+        ondelete='restrict',
         states={'draft': [('readonly', False)]}, track_visibility='onchange')
     # STOCK LOCATIONS
     sale_location_id = fields.Many2one(
