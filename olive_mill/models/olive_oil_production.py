@@ -354,7 +354,11 @@ class OliveOilProduction(models.Model):
                 })
         action = self.env['ir.actions.act_window'].for_xml_id(
             'olive_mill', 'olive_oil_production_ratio2force_action')
-        action['context'] = {'default_production_id': self.id}
+        action['context'] = {
+            'default_production_id': self.id,
+            'default_compensation_sale_location_id': self.compensation_sale_location_id.id or False,
+            'default_sale_location_id': self.sale_location_id.id or False,
+            }
         return action
 
     def ratio2force(self):
