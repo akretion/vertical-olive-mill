@@ -84,7 +84,9 @@
                     <group name="left">
                         <field name="olive_sale_pricelist_id" string="Sale Pricelist"/>
                         <button type="action" name="%(olive_appointment_tree_action)d" string="Appointments" context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}" colspan="2"/>
-                        <button type="action" name="%(olive_palox_lend_action)d" string="Lend Palox and/or Cases" context="{'default_partner_id': active_id}" colspan="2"/>
+                        <button type="action" name="%(olive_palox_lend_action)d" string="Lend Palox and/or Cases" context="{'default_partner_id': active_id, 'default_way': 'lend'}" colspan="2"/>
+                        <button type="action" name="%(olive_palox_lend_action)d" string="Return Palox and/or Cases" context="{'default_partner_id': active_id, 'default_way': 'return'}" colspan="2" attrs="{'invisible': [('olive_lended_palox', '=', 0), ('olive_lended_regular_case', '=', 0), ('olive_lended_organic_case', '=', 0)]}"/>
+                        <button type="object" name="create_single_olive_ochard" string="Quick-create an ochard to update later" attrs="{'invisible': [('olive_ochard_ids', '!=', [])]}" colspan="2"/>
                         <button type="action" name="%(olive_cultivation_action)d" string="Cultivation Form" context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}" colspan="2"/>
                         <button name="update_organic_certif" string="Organic Certifications" type="object"/>
                         <button type="action" name="%(olive_arrival_action)d" string="Arrivals" context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}" colspan="2"/>
@@ -131,6 +133,7 @@
                             <field name="olive_area_total" class="oe_inline"/> ha
                         </div>
                         <field name="olive_culture_type" invisible="1"/>
+                        <field name="olive_ochard_ids" invisible="1"/>
                     </group>
                 </group>
             </page>

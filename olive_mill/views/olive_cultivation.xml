@@ -69,6 +69,6 @@
     <field name="context">{'olive_cultivation_main_view': True, 'search_default_current_season': True}</field>
 </record>
 
-<menuitem id="olive_cultivation_menu" action="olive_cultivation_action" parent="olive_data_menu" sequence="40"/>
+<menuitem id="olive_cultivation_menu" action="olive_cultivation_action" parent="olive_data_menu" sequence="80"/>
 
 </odoo>

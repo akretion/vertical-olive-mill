@@ -30,8 +30,8 @@
         <form string="Appointment">
             <header>
                 <button name="%(olive_palox_lend_action)d" type="action" string="Lend Palox/Cases" attrs="{'invisible': [('appointment_type', '!=', 'lend')]}" context="{'default_partner_id': partner_id, 'default_regular_case_qty': lend_regular_case_qty, 'default_organic_case_qty': lend_organic_case_qty}" class="btn-primary"/>
-                <button name="open_arrival" class="btn-primary" attrs="{'invisible': [('appointment_type', '!=', 'arrival')]}" string="Arrival" type="object"/>
-                <button name="open_new_appointment" attrs="{'invisible': [('appointment_type', '!=', 'arrival')]}" string="New Appointment" type="object"/>
+                <button name="open_arrival" class="btn-primary" attrs="{'invisible': [('appointment_type', 'not in', ('arrival_leaf_removal', 'arrival_no_leaf_removal'))]}" string="Arrival" type="object"/>
+                <button name="open_new_appointment" attrs="{'invisible': [('appointment_type', 'not in', ('arrival_leaf_removal', 'arrival_no_leaf_removal'))]}" string="New Appointment" type="object"/>
                 <button name="%(olive_withdrawal_action)d" type="action" string="New Withdrawal" attrs="{'invisible': [('appointment_type', '!=', 'withdrawal')]}" context="{'default_partner_id': partner_id}" class="btn-primary"/>
                 <button name="%(olive_invoice_create_action)d" type="action" string="Create Invoice" attrs="{'invisible': [('appointment_type', '!=', 'withdrawal')]}" context="{'default_partner_id': partner_id}"/>
                 <span name="olive_cultivation_form_ko" attrs="{'invisible': ['|', ('olive_cultivation_form_ko', '=', False), ('partner_id', '=', False)]}" class="label label-danger">Cultivation form missing</span>
@@ -84,14 +84,13 @@
                         <field name="company_id" groups="base.group_multi_company"/>
                         <field name="date" invisible="1"/>
                     </group>
-                    <group name="arrival" attrs="{'invisible': [('appointment_type', '!=', 'arrival')]}">
+                    <group name="arrival" attrs="{'invisible': [('appointment_type', 'not in', ('arrival_leaf_removal', 'arrival_no_leaf_removal'))]}">
                         <field name="variant_id" widget="selection"/>
                         <label for="qty" />
                         <div name="qty">
                             <field name="qty" class="oe_inline"/> kg
                         </div>
                         <field name="palox_qty"/>
-                        <field name="leaf_removal"/>
                         <field name="oil_product_id" domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', olive_culture_type)]" widget="selection"/>
                         <field name="oil_destination"/>
                         <label for="withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}"/>
@@ -122,7 +121,7 @@
     <field name="name">olive.appointment.tree</field>
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
-        <tree string="Appointments">
+        <tree string="Appointments" decoration-info="appointment_type == 'withdrawal'" decoration-warning="appointment_type == 'arrival_no_leaf_removal'" decoration-danger="appointment_type == 'arrival_leaf_removal'" decoration-success="appointment_type == 'lend'">
             <field name="start_datetime"/>
             <field name="end_datetime"/>
             <field name="appointment_type"/>
@@ -131,7 +130,6 @@
             <field name="variant_id"/>
             <field name="qty" sum="1"/>
             <field name="palox_qty" sum="1"/>
-            <field name="leaf_removal"/>
             <field name="oil_destination"/>
         </tree>
     </field>
@@ -155,11 +153,11 @@
             <field name="partner_id" operator="child_of"/>
             <field name="date"/>
             <separator/>
-            <filter name="today" string="Today" domain="[('date', '=', context_today()]"/>
+            <filter name="today" string="Today" domain="[('date', '=', context_today().strftime('%Y-%m-%d'))]"/>
             <filter name="tomorrow" string="Tomorrow" domain="[('start_datetime', '&lt;=', datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(23, 59, 0))), ('start_datetime', '&gt;', datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(0, 0, 0)))]"/>
             <separator/>
             <filter name="lend" string="Lend Palox/Cases" domain="[('appointment_type', '=', 'lend')]"/>
-            <filter name="arrival" string="Arrival" domain="[('appointment_type', '=', 'arrival')]"/>
+            <filter name="arrival" string="Arrival" domain="[('appointment_type', 'in', ('arrival_leaf_removal', 'arrival_no_leaf_removal'))]"/>
             <filter name="withdrawal" string="Withdrawal" domain="[('appointment_type', '=', 'withdrawal')]"/>
             <filter name="other" string="Other" domain="[('appointment_type', '=', 'other')]"/>
             <separator/>

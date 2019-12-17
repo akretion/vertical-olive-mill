@@ -75,6 +75,6 @@
     <field name="context">{'olive_parcel_main_view': True}</field>
 </record>
 
-<menuitem id="olive_parcel_menu" action="olive_parcel_action" parent="olive_data_menu" sequence="30"/>
+<menuitem id="olive_parcel_menu" action="olive_parcel_action" parent="olive_data_menu" sequence="70"/>
 
 </odoo>

@@ -18,8 +18,6 @@ class OliveConfigSettings(models.TransientModel):
         related='company_id.current_season_id', readonly=True)
     olive_harvest_arrival_max_delta_days = fields.Integer(
         related='company_id.olive_harvest_arrival_max_delta_days')
-    olive_poll_average_season_count = fields.Integer(
-        related='company_id.olive_poll_average_season_count')
     olive_max_qty_per_palox = fields.Integer(
         related='company_id.olive_max_qty_per_palox')
     olive_appointment_qty_per_palox = fields.Integer(

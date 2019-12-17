@@ -404,7 +404,7 @@ msgstr "Qté moyenne d'olives"
 #. module: olive_mill
 #: model:ir.ui.view,arch_db:olive_mill.olive_preseason_poll_form
 msgid "Average Ratio"
-msgstr "Taux moyen"
+msgstr "Rendement moyen"
 
 #. module: olive_mill
 #: model:ir.ui.view,arch_db:olive_mill.olive_preseason_poll_form
@@ -1993,7 +1993,7 @@ msgstr "La quantité maxi d'olives par palox doit être positive."
 #: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_olive_max_ratio
 #: model:ir.model.fields,field_description:olive_mill.field_res_company_olive_max_ratio
 msgid "Maximum Ratio"
-msgstr "Taux maximum"
+msgstr "Rendement maximum"
 
 #. module: olive_mill
 #: selection:olive.parcel,irrigation:0
@@ -2004,7 +2004,7 @@ msgstr "Micro-jet"
 #: model:ir.model.fields,field_description:olive_mill.field_olive_config_settings_olive_min_ratio
 #: model:ir.model.fields,field_description:olive_mill.field_res_company_olive_min_ratio
 msgid "Minimum Ratio"
-msgstr "Taux minimum"
+msgstr "Rendement minimum"
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/stock_location.py:105
@@ -2877,12 +2877,12 @@ msgstr "Le rendement mini doit être positif."
 #. module: olive_mill
 #: model:ir.ui.view,arch_db:olive_mill.olive_arrival_form
 msgid "Olive Net Ratio"
-msgstr "Taux net d'olives"
+msgstr "Rendement net d'olives"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_olive_ratio_net
 msgid "Olive Net Ratio (kg / L)"
-msgstr "Taux net d'olives (kg / L)"
+msgstr "Rendement net d'olives (kg / L)"
 
 #. module: olive_mill
 #: model:ir.model,name:olive_mill.model_olive_ochard
@@ -2975,7 +2975,7 @@ msgstr "Presse d'huile d'olive - Compensation"
 #: model:ir.actions.act_window,name:olive_mill.olive_oil_production_force_ratio_action
 #: model:ir.model,name:olive_mill.model_olive_oil_production_force_ratio
 msgid "Olive Oil Production Force Ratio"
-msgstr "Presse d'huile d'olive - Taux imposé"
+msgstr "Presse d'huile d'olive - Rendement imposé"
 
 #. module: olive_mill
 #: model:ir.model,name:olive_mill.model_olive_oil_production_pack2check
@@ -3394,7 +3394,7 @@ msgstr "Sur la ligne %s, la quantité d'olives est nulle."
 #: code:addons/olive_mill/models/olive_oil_production.py:624
 #, python-format
 msgid "On oil production %s which has first-of-day compensation, you must set a compensation sale tank."
-msgstr "Sur la presse %s qui comporte la première compensation de la journée, vous devez saisir une cuve de compensation à l'achat."
+msgstr "Sur la presse %s qui comporte la première compensation de la journée, vous devez saisir une cuve de compensation à la vente."
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/olive_palox.py:103
@@ -3683,7 +3683,7 @@ msgstr "Qté moyenne d'olives sur le passé (kg)"
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_preseason_poll_past_average_ratio
 msgid "Past Average Ratio (%)"
-msgstr "Taux moyen sur le passé (%)"
+msgstr "Rendement moyen sur le passé (%)"
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_preseason_poll_past_average_sale_oil_qty
@@ -3945,7 +3945,7 @@ msgstr "Quantité d'olives par palox"
 #. module: olive_mill
 #: model:ir.model.fields,help:olive_mill.field_olive_arrival_line_mix_withdrawal_oil_qty
 msgid "Quantity of olive oil withdrawn by the farmer in liters"
-msgstr "Quantité d'huile de retrait par oléiculteur en litres"
+msgstr "Quantité d'huile retirée par oléiculteur en litres"
 
 #. module: olive_mill
 #: model:ir.model,name:olive_mill.model_stock_quant
@@ -4713,7 +4713,7 @@ msgstr "La quantité de caisses à prêter doit être positive."
 #. module: olive_mill
 #: sql_constraint:olive.appointment:0
 msgid "The quantity of oil withdrawn must be positive or null."
-msgstr "La quantité d'huile en retrait doit être positive ou nulle."
+msgstr "La quantité d'huile retirée doit être positive ou nulle."
 
 #. module: olive_mill
 #: code:addons/olive_mill/wizard/olive_oil_picking.py:67

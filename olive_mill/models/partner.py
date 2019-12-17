@@ -53,9 +53,9 @@ class ResPartner(models.Model):
         digits=dp.get_precision('Olive Oil Volume'),
         help="Olive oil to withdraw in liters")
     olive_oil_qty_withdrawn_current_season = fields.Float(
-        compute='_compute_olive_total', string='Withdrawan Oil Qty', readonly=True,
+        compute='_compute_olive_total', string='Withdrawn Oil Qty', readonly=True,
         digits=dp.get_precision('Olive Oil Volume'),
-        help="Withdrawan oil for the current season in liters")
+        help="Withdrawn oil for the current season in liters")
     olive_sale_oil_qty_current_season = fields.Float(
         compute='_compute_olive_total', string='Oil Qty Sold', readonly=True,
         digits=dp.get_precision('Olive Oil Volume'),
@@ -198,9 +198,9 @@ class ResPartner(models.Model):
             'area',
             'tree_qty',
             'variant_label',
-            'density',
+            # 'density', no warning if empty
             'planted_year',
-            'irrigation',
+            # 'irrigation', no warning if empty
             # 'cultivation_method', no warning if empty
             ]
         for partner in self:
@@ -329,3 +329,12 @@ class ResPartner(models.Model):
                 'views': False,
                 })
         return action
+
+    def create_single_olive_ochard(self):
+        self.ensure_one()
+        assert not self.parent_id
+        assert not self.olive_ochard_ids
+        self.env['olive.ochard'].create({
+            'partner_id': self.id,
+            'name': _('OCHARD TO RENAME'),
+            })

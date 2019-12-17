@@ -26,6 +26,7 @@ access_partner_organic_certification_operator,Read+create access on partner.orga
 access_partner_organic_certification_user,Read+create access on partner.organic.certification,model_partner_organic_certification,stock.group_stock_user,1,1,1,0
 access_partner_organic_certification_manager,Full access on partner.organic.certification,model_partner_organic_certification,stock.group_stock_manager,1,1,1,1
 access_olive_preseason_poll_user,Full access on olive.preseason.poll,model_olive_preseason_poll,stock.group_stock_user,1,1,1,1
+access_olive_preseason_poll_line_user,Full access on olive.preseason.poll.line,model_olive_preseason_poll_line,stock.group_stock_user,1,1,1,1
 access_olive_appointment_operator,Read access on olive.appointment,model_olive_appointment,olive_operator,1,0,0,0
 access_olive_appointment_user,Full access on olive.appointment,model_olive_appointment,stock.group_stock_user,1,1,1,1
 access_olive_arrival_operator,Full access on olive.arrival,model_olive_arrival,olive_operator,1,1,1,1

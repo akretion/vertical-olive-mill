@@ -7,6 +7,8 @@ from odoo import models, fields, api, _
 from dateutil.relativedelta import relativedelta
 import math
 
+ARRIVAL_TYPES = ('arrival_leaf_removal', 'arrival_no_leaf_removal')
+
 
 class OliveAppointment(models.Model):
     _name = 'olive.appointment'
@@ -48,21 +50,20 @@ class OliveAppointment(models.Model):
         readonly=True)
     appointment_type = fields.Selection([
         ('lend', 'Lend Palox/Cases'),
-        ('arrival', 'Arrival'),
+        ('arrival_leaf_removal', 'Arrival with Leaf Removal'),
+        ('arrival_no_leaf_removal', 'Arrival without Leaf Removal'),
         ('withdrawal', 'Withdrawal'),
         ('other', 'Other'),
-        ], string='Appointment Type', required=True)
+        ], string='Appointment Type', required=True, track_visibility='onchange')
     withdrawal_invoice = fields.Selection([
         ('invoice', 'With Invoice'),
         ('noinvoice', 'Without Invoice'),
-        ], string='Invoicing')
+        ], string='Invoicing', track_visibility='onchange')
     lend_palox_qty = fields.Integer(string='Number of Palox')
     lend_regular_case_qty = fields.Integer(string='Number of Regular Cases')
     lend_organic_case_qty = fields.Integer(string='Number of Organic Cases')
     variant_id = fields.Many2one(
         'olive.variant', string='Olive Variant', track_visibility='onchange')
-    leaf_removal = fields.Boolean(
-        string='Leaf Removal', track_visibility='onchange')
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Type',
         domain=[('olive_type', '=', 'oil')])
@@ -119,7 +120,7 @@ class OliveAppointment(models.Model):
             if app.start_datetime:
                 rg_res = self.read_group([
                     ('date', '=', app.start_datetime[:10]),
-                    ('appointment_type', '=', 'arrival')], ['qty', 'palox_qty'], [])
+                    ('appointment_type', 'in', ARRIVAL_TYPES)], ['qty', 'palox_qty'], [])
                 total_qty_same_day = rg_res and rg_res[0]['qty'] or 0
                 total_palox_same_day = rg_res and rg_res[0]['palox_qty'] or 0
             app.total_qty_same_day = total_qty_same_day
@@ -128,7 +129,7 @@ class OliveAppointment(models.Model):
     @api.depends(
         'partner_id', 'appointment_type', 'qty', 'oil_destination',
         'withdrawal_oil_qty',
-        'oil_product_id', 'leaf_removal', 'withdrawal_invoice',
+        'oil_product_id', 'withdrawal_invoice',
         'lend_palox_qty', 'lend_regular_case_qty', 'lend_organic_case_qty')
     def _compute_display_calendar_label(self):
         for app in self:
@@ -136,7 +137,7 @@ class OliveAppointment(models.Model):
             if app.olive_culture_type and app.olive_culture_type != 'regular':
                 olive_culture_type_label = dict(app.fields_get('olive_culture_type', 'selection')['olive_culture_type']['selection'])[app.olive_culture_type]
                 label += ' [%s]' % olive_culture_type_label
-            if app.appointment_type == 'arrival':
+            if app.appointment_type in ARRIVAL_TYPES:
                 label += ', %d kg' % app.qty
                 if app.oil_destination == 'withdrawal':
                     label += _(' (Withdrawal)')
@@ -144,8 +145,8 @@ class OliveAppointment(models.Model):
                     label += _(' (Partial withdrawal: %d L)') % app.withdrawal_oil_qty
                 if app.oil_product_id:
                     label += ', %s' % app.oil_product_id.name
-                if app.leaf_removal:
-                    label += _(', LEAF REMOVAL')
+                if app.appointment_type == 'arrival_leaf_removal':
+                    label += _(', leaf removal')
             elif app.appointment_type == 'withdrawal':
                 if app.withdrawal_invoice:
                     invoicing_label = dict(app.fields_get('withdrawal_invoice', 'selection')['withdrawal_invoice']['selection'])[app.withdrawal_invoice]
@@ -172,7 +173,7 @@ class OliveAppointment(models.Model):
 
     @api.onchange('partner_id', 'appointment_type')
     def partner_id_change(self):
-        if self.partner_id.commercial_partner_id and self.appointment_type == 'arrival':
+        if self.partner_id.commercial_partner_id and self.appointment_type in ARRIVAL_TYPES:
             ochards = self.env['olive.ochard'].search([
                 ('partner_id', '=', self.partner_id.commercial_partner_id.id)])
             if (
@@ -197,14 +198,14 @@ class OliveAppointment(models.Model):
                 u'%s %s' % (app.partner_id.display_name, start_in_tz[:16])))
         return res
 
-    @api.onchange('start_datetime', 'appointment_type', 'leaf_removal', 'qty')
+    @api.onchange('start_datetime', 'appointment_type', 'qty')
     def end_datetime_change(self):
         if self.start_datetime and self.appointment_type and self.company_id:
             minutes = False
             company = self.company_id
             start_dt = fields.Datetime.from_string(self.start_datetime)
-            if self.appointment_type == 'arrival':
-                if self.leaf_removal:
+            if self.appointment_type in ARRIVAL_TYPES:
+                if self.appointment_type == 'arrival_leaf_removal':
                     duration_coef = company.olive_appointment_arrival_leaf_removal_minutes
                 else:
                     duration_coef = company.olive_appointment_arrival_no_leaf_removal_minutes
@@ -236,9 +237,10 @@ class OliveAppointment(models.Model):
             'default_company_id': self.company_id.id,
             'default_default_variant_id': self.variant_id.id or False,
             'default_default_oil_destination': self.oil_destination,
-            'default_default_leaf_removal': self.leaf_removal,
             'default_default_oil_product_id': self.oil_product_id.id or False,
             }
+        if self.appointment_type == 'arrival_leaf_removal':
+            context['default_default_leaf_removal'] = True
         action = self.env['ir.actions.act_window'].for_xml_id(
             'olive_mill', 'olive_arrival_action')
         action.update({

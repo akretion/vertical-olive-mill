@@ -160,7 +160,7 @@
             <field name="farmers"/>
             <field name="olive_qty" string="Total Olive Qty (kg)"/>
             <field name="oil_qty" string="Oil Qty (L)"/>
-            <field name="ratio" string="Ratio (%)"/>
+            <!--  <field name="ratio"/> -->
             <field name="sale_location_id"/>
             <field name="state"/>
         </tree>

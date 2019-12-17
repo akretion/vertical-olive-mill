@@ -74,6 +74,6 @@
     <field name="context">{'partner_organic_certification_main_view': True, 'search_default_current_season': True}</field>
 </record>
 
-<menuitem id="partner_organic_certification_menu" action="partner_organic_certification_action" parent="olive_data_menu" sequence="100"/>
+<menuitem id="partner_organic_certification_menu" action="partner_organic_certification_action" parent="olive_data_menu" sequence="40"/>
 
 </odoo>

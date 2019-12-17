@@ -23,11 +23,6 @@ class ResCompany(models.Model):
     current_season_id = fields.Many2one(
         'olive.season', compute='_compute_current_season_id', readonly=True,
         string='Current Season')
-    # POLLS
-    olive_poll_average_season_count = fields.Integer(
-        string='Number of Past Seasons', default=3,
-        help="Number of past seasons taken into account to compute "
-        "the average quantities and ratios on the pre-season polls.")
     # START APPOINTMENTS
     olive_appointment_qty_per_palox = fields.Integer(
         string='Quantity of Olives per Palox', default=380)

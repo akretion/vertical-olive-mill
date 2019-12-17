@@ -82,6 +82,7 @@ class OliveArrival(models.Model):
         states={'done': [('readonly', True)]})
     state = fields.Selection([
         ('draft', 'Draft'),
+        ('weighted', 'Weighted'),
         ('done', 'Done'),
         ('cancel', 'Cancelled'),
         ], string='State', default='draft', readonly=True,
@@ -123,10 +124,10 @@ class OliveArrival(models.Model):
         "\nFilter loss: already deducted.")
     oil_ratio_net = fields.Float(
         string='Oil Net Ratio (% L)', digits=dp.get_precision('Olive Oil Ratio'),
-        readonly=True)
+        readonly=True, group_operator='avg')
     olive_ratio_net = fields.Float(
         string='Olive Net Ratio (kg / L)', digits=(16, 2),
-        readonly=True)
+        readonly=True, group_operator='avg')
     lended_regular_case = fields.Integer(
         compute='_compute_lended_case', string='Lended Regular Case', readonly=True)
     lended_organic_case = fields.Integer(
@@ -176,7 +177,7 @@ class OliveArrival(models.Model):
         for arrival in self:
             lended_palox = opo.search([
                 ('borrower_partner_id', '=', arrival.commercial_partner_id.id)])
-            if arrival.state == 'draft':
+            if arrival.state in ('draft', 'weighted'):
                 for rp in arrival.returned_palox_ids:
                     if rp in lended_palox:
                         lended_palox -= rp
@@ -391,9 +392,14 @@ class OliveArrival(models.Model):
         warn_msgs, action = self.check_arrival()
         return action
 
+    def weighted(self):
+        self.ensure_one()
+        self.write({'state': 'weighted'})
+        return self.check()
+
     def validate(self):
         self.ensure_one()
-        assert self.state == 'draft'
+        assert self.state in ('draft', 'weighted')
         olco = self.env['olive.lended.case']
         if not self.line_ids:
             raise UserError(_(
@@ -587,10 +593,10 @@ class OliveArrivalLine(models.Model):
     # END related fields for production
     oil_ratio = fields.Float(
         string='Oil Gross Ratio (% L)', digits=dp.get_precision('Olive Oil Ratio'),
-        readonly=True)
+        readonly=True, group_operator='avg')
     oil_ratio_net = fields.Float(
         string='Oil Net Ratio (% L)', digits=dp.get_precision('Olive Oil Ratio'),
-        readonly=True)
+        readonly=True, group_operator='avg')
     extra_ids = fields.One2many(
         'olive.arrival.line.extra', 'line_id', string="Extra Items")
     extra_count = fields.Integer(

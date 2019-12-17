@@ -14,16 +14,17 @@
     <field name="arch" type="xml">
         <form string="Olive Arrival">
             <header>
-                <button name="check" string="Check" states="draft" type="object"/>
-                <button name="validate" string="Validate" class="btn-primary" states="draft" type="object"/>
+                <button name="check" string="Check" states="draft,weighted" type="object"/>
+                <button name="weighted" string="Weighted" class="btn-primary" states="draft" type="object"/>
+                <button name="validate" string="Validate" class="btn-primary" states="draft,weighted" type="object"/>
                 <button name="print_report" string="Show Report" type="object"/>
-                <button name="cancel" string="Cancel" class="btn-default" states="draft,done" confirm="Are you sure you want to cancel this arrival ?" type="object"/>
+                <button name="cancel" string="Cancel" class="btn-default" states="draft,weighted,done" confirm="Are you sure you want to cancel this arrival ?" type="object"/>
                 <button name="back2draft" string="Back to Draft" class="btn-default" states="cancel" type="object"/>
                 <button type="action" name="%(olive_palox_lend_action)d" string="Lend Palox and/or Cases" context="{'default_partner_id': commercial_partner_id, 'default_arrival_id': active_id}" attrs="{'invisible': [('hide_lend_palox_case_button', '=', True)]}"/>
                 <span name="olive_cultivation_form_ko" attrs="{'invisible': ['|', ('olive_cultivation_form_ko', '=', False), ('partner_id', '=', False)]}" class="label label-danger">Cultivation form missing</span>
                 <span name="olive_parcel_ko" attrs="{'invisible': ['|', ('olive_parcel_ko', '=', False), ('partner_id', '=', False)]}" class="label label-warning">Parcel information incomplete</span>
                 <span name="olive_organic_certif_ko" attrs="{'invisible': ['|', ('olive_organic_certif_ko', '=', False), ('partner_id', '=', False)]}" class="label label-success">Organic certification missing</span>
-                <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                <field name="state" widget="statusbar" statusbar_visible="draft,weighted,done"/>
             </header>
             <sheet>
                 <div name="button_box" class="oe_button_box">
@@ -158,7 +159,7 @@
     <field name="name">olive.arrival.tree</field>
     <field name="model">olive.arrival</field>
     <field name="arch" type="xml">
-        <tree string="Olive Arrivals" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
+        <tree string="Olive Arrivals" decoration-info="state == 'draft'" decoration-success="state == 'weighted'" decoration-muted="state == 'cancel'">
             <field name="name"/>
             <field name="date"/>
             <field name="harvest_start_date"/>
@@ -207,6 +208,7 @@
             <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
             <separator/>
             <filter string="Draft" domain="[('state', '=', 'draft')]" name="draft"/>
+            <filter string="Weighted" domain="[('state', '=', 'weighted')]" name="weighted"/>
             <filter string="Done" domain="[('state', '=', 'done')]" name="done"/>
             <filter string="Not Cancelled" domain="[('state', '!=', 'cancel')]" name="not_cancelled"/>
             <separator/>
@@ -239,7 +241,7 @@
     <field name="arch" type="xml">
         <form string="Olive Arrival Lines">
             <header>
-                <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                <field name="state" widget="statusbar" statusbar_visible="draft,weighted,done"/>
             </header>
             <group name="main">
             <group name="main-left" string="Arrival">
@@ -425,7 +427,7 @@
             <field name="oil_destination"/>
             <field name="oil_product_id"/>
             <field name="olive_qty" sum="1"/>
-            <field name="compensation_oil_qty" sum="1"/>
+            <field name="oil_qty_net" sum="1"/>
             <field name="withdrawal_oil_qty" sum="1"/>
             <field name="sale_oil_qty" sum="1"/>
             <field name="oil_ratio_net"/>
@@ -488,8 +490,7 @@
             <field name="oil_product_id" type="row"/>
             <field name="season_id" type="col"/>
             <field name="olive_qty" type="measure"/>
-            <field name="oil_qty_with_compensation" type="measure"/>
-            <field name="oil_qty" type="measure"/>
+            <field name="oil_qty_net" type="measure"/>
             <field name="withdrawal_oil_qty" type="measure"/>
             <field name="sale_oil_qty" type="measure"/>
         </pivot>

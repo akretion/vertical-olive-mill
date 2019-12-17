@@ -83,7 +83,7 @@
     <field name="view_id" ref="olive_stock_location_with_qty_tree"/>
 </record>
 
-<menuitem id="tank_stock_location_menu" action="tank_stock_location_action" parent="olive_data_menu" sequence="60"/>
+<menuitem id="tank_stock_location_menu" action="tank_stock_location_action" parent="olive_data_menu" sequence="20"/>
 
 
 

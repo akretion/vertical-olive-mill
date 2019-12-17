@@ -6,6 +6,7 @@
 from odoo import models, fields, api, _
 import odoo.addons.decimal_precision as dp
 from odoo.exceptions import ValidationError, UserError
+from odoo.tools import float_round
 from dateutil.relativedelta import relativedelta
 from babel.dates import format_date
 import json
@@ -54,6 +55,8 @@ class OliveSeason(models.Model):
 
     def _compute_totals(self):
         oalo = self.env['olive.arrival.line']
+        pr_ratio = self.env['decimal.precision'].precision_get(
+            'Olive Oil Ratio')
         arrival_res = oalo.read_group([
             ('season_id', 'in', self.ids),
             ('state', '=', 'done')],
@@ -72,12 +75,14 @@ class OliveSeason(models.Model):
             oil_qty_with_compensation = re['oil_qty_with_compensation']
             gross_ratio = 0
             if olive_qty:
-                gross_ratio = 100 * oil_qty_with_compensation / olive_qty
-            season.olive_qty = int(olive_qty)
-            season.oil_qty_with_compensation = int(oil_qty_with_compensation)
+                gross_ratio = float_round(
+                    100 * oil_qty_with_compensation / olive_qty,
+                    precision_digits=pr_ratio)
+            season.olive_qty = int(round(olive_qty))
+            season.oil_qty_with_compensation = int(round(oil_qty_with_compensation))
             season.gross_ratio = gross_ratio
-            season.sale_oil_qty = int(re['sale_oil_qty'])
-            season.withdrawal_oil_qty = int(re['withdrawal_oil_qty'])
+            season.sale_oil_qty = int(round(re['sale_oil_qty']))
+            season.withdrawal_oil_qty = int(round(re['withdrawal_oil_qty']))
 
     @api.constrains('start_date', 'end_date', 'early_bird_date')
     def season_check(self):
