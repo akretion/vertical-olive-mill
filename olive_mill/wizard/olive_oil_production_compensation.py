@@ -97,6 +97,7 @@ class OliveOilProductionCompensation(models.TransientModel):
 
     def validate(self):
         self.ensure_one()
+        oopo = self.env['olive.oil.production']
         pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
         pr_ratio = self.env['decimal.precision'].precision_get('Olive Oil Ratio')
         prod = self.production_id
@@ -125,12 +126,41 @@ class OliveOilProductionCompensation(models.TransientModel):
                     "The compensation ratio (%s %%) is not realistic.") % cratio)
             compensation_oil_qty = float_round(
                 self.compensation_last_oil_qty, precision_digits=pr_ratio)
-        prod.write({
+        vals = {
             'compensation_type': ctype,
             'compensation_location_id': cloc.id,
             'compensation_last_olive_qty': self.compensation_last_olive_qty,
             'compensation_ratio': self.compensation_ratio,
             'compensation_oil_qty': compensation_oil_qty,
             'compensation_oil_qty_kg': compensation_oil_qty * density,
-            })
+            }
+        if (
+                ctype == 'first' and
+                prod.oil_destination in ('sale', 'mix') and
+                not prod.compensation_sale_location_id):
+            # search if we have a last-compensation in done state
+            # on the last production day
+            last_prod = oopo.search([
+                ('state', '!=', 'cancel'),
+                ('season_id', '=', prod.season_id.id),
+                ('warehouse_id', '=', prod.warehouse_id.id),
+                ('compensation_location_id', '=', cloc.id),
+                ('date', '<', prod.date),
+                ], order='date desc', limit=1)
+            if last_prod:
+                last_prod_day = last_prod.date
+                previous_last_prod = oopo.search([
+                    ('season_id', '=', prod.season_id.id),
+                    ('warehouse_id', '=', prod.warehouse_id.id),
+                    ('compensation_location_id', '=', cloc.id),
+                    ('state', '=', 'done'),
+                    ('compensation_type', '=', 'last'),
+                    ('date', '=', last_prod_day),
+                    ], order='date desc', limit=1)
+                if (
+                        previous_last_prod and
+                        previous_last_prod.oil_destination in ('sale', 'mix') and
+                        previous_last_prod.sale_location_id):
+                    vals['compensation_sale_location_id'] = previous_last_prod.sale_location_id.id
+        prod.write(vals)
         return True

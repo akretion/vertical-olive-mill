@@ -15,6 +15,7 @@ from . import olive_oil_bottling
 from . import olive_oil_picking
 from . import olive_oil_production_compensation
 from . import olive_oil_production_product_swap
+from . import olive_oil_production_done_last
 from . import olive_appointment_print
 from . import olive_oil_production_day_print
 from . import olive_partner_warning_print

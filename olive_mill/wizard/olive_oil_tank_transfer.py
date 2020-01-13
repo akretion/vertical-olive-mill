@@ -18,7 +18,7 @@ class OliveOilTankTransfer(models.TransientModel):
     transfer_type = fields.Selection([
         ('full', 'Full Transfer'),
         ('partial', 'Partial Transfer'),
-        ], default='full', required=True, string='Transfer Type')
+        ], default='partial', required=True, string='Transfer Type')
     quantity = fields.Float(
         string='Oil Quantity to Transfer (L)',
         digits=dp.get_precision('Olive Oil Volume'))

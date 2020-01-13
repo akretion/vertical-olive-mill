@@ -43,6 +43,7 @@
         'wizard/olive_arrival_warning_view.xml',
         'wizard/olive_oil_production_compensation_view.xml',
         'wizard/olive_oil_production_product_swap_view.xml',
+        'wizard/olive_oil_production_done_last_view.xml',
         'wizard/olive_oil_tank_merge_view.xml',
         'wizard/olive_oil_bottling_view.xml',
         'wizard/olive_oil_picking_view.xml',

@@ -12,6 +12,7 @@
     <field name="usage">internal</field>
     <field name="olive_tank_type">regular</field>
     <field name="oil_product_id" ref="oil"/>
+    <field name="olive_season_id" ref="current_season"/>
     <field name="location_id" ref="stock.stock_location_stock"/>
 </record>
 
@@ -20,6 +21,7 @@
     <field name="usage">internal</field>
     <field name="olive_tank_type">regular</field>
     <field name="oil_product_id" ref="oil"/>
+    <field name="olive_season_id" ref="current_season"/>
     <field name="location_id" ref="stock.stock_location_stock"/>
 </record>
 
@@ -28,6 +30,7 @@
     <field name="usage">internal</field>
     <field name="olive_tank_type">regular</field>
     <field name="oil_product_id" ref="oil"/>
+    <field name="olive_season_id" ref="current_season"/>
     <field name="location_id" ref="stock.stock_location_stock"/>
 </record>
 
@@ -36,6 +39,8 @@
     <field name="usage">internal</field>
     <field name="olive_tank_type">shrinkage</field>
     <field name="oil_product_id" ref="oil"/>
+    <field name="olive_shrinkage_oil_product_ids" eval="[(4, ref('olive_mill.oil'))]"/>
+    <field name="olive_season_id" ref="current_season"/>
     <field name="location_id" ref="stock.stock_location_stock"/>
 </record>
 
@@ -43,6 +48,7 @@
     <field name="name">Withdrawal</field>
     <field name="usage">internal</field>
     <field name="olive_tank_type" eval="False"/>
+    <field name="olive_season_id" ref="current_season"/>
     <field name="location_id" ref="stock.stock_location_stock"/>
 </record>
 
@@ -50,6 +56,7 @@
     <field name="name">Compensation</field>
     <field name="usage">internal</field>
     <field name="olive_tank_type">compensation</field>
+    <field name="olive_season_id" ref="current_season"/>
     <field name="location_id" ref="stock.stock_location_stock"/>
 </record>
 

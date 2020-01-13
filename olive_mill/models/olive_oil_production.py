@@ -617,6 +617,7 @@ class OliveOilProduction(models.Model):
                 })
             shrinkage_move.action_done()
             prod_vals['shrinkage_move_id'] = shrinkage_move.id
+        action = {}
         # Distribute compensation
         if ctype == 'first':
             # In sale and mix, the compensation is always sold
@@ -664,9 +665,38 @@ class OliveOilProduction(models.Model):
             # because we now go through olive_tank_type_change()
             # even when compensation = 'none', so the product must always be set
             # cloc.sudo().oil_product_id = False
+        # If last = sale and first next day = sale, copy sale tank of last to
+        # compensation sale tank of first
+        # if last = withdrawal and first = sale, open wizard to select sale tank
+        elif ctype == 'last':
+            # try to find first of day compensation in the future
+            next_first_prod = self.search([
+                ('warehouse_id', '=', self.warehouse_id.id),
+                ('season_id', '=', self.season_id.id),
+                ('compensation_location_id', '=', self.compensation_location_id.id),
+                ('state', '=', 'ratio'),
+                ('date', '>', self.date),
+                ('compensation_type', '=', 'first'),
+                ], order='date', limit=1)
+            if next_first_prod:
+                if self.oil_destination in ('sale', 'mix') and next_first_prod.oil_destination in ('sale', 'mix'):
+                    # simple copy
+                    next_first_prod.compensation_sale_location_id = self.sale_location_id.id
+                    next_first_prod.message_post(_(
+                        "Compensation sale tank automatically set upon "
+                        "closing of last-of-day production "
+                        "<a href=# data-oe-model=olive.oil.production data-oe-id=%d>%s</a>.") % (self.id, self.name))
+                elif self.oil_destination == 'withdrawal' and next_first_prod.oil_destination in ('sale', 'mix'):
+                    # start wizard
+                    action = self.env.ref('olive_mill.olive_oil_production_done_last_action').read()[0]
+                    action['context'] = {
+                        'default_last_production_id': self.id,
+                        'default_next_first_production_id': next_first_prod.id,
+                        }
 
         self.write(prod_vals)
         self.update_arrival_production_done()
+        return action
 
     def update_arrival_production_done(self):
         self.ensure_one()

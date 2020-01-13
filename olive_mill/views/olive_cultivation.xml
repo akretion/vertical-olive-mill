@@ -19,9 +19,9 @@
                 <field name="ochard_ids" widget="many2many_tags" domain="[('partner_id', '=', partner_id)]"/>
                 <field name="treatment_type"/>
                 <field name="scan" attrs="{'required': [('treatment_type', '=', 'scan')], 'invisible': [('treatment_type', '!=', 'scan')]}" filename="scan_filename"/>
-                <field name="date" attrs="{'required': [('treatment_type', 'not in', ('none', 'scan'))], 'invisible': [('treatment_type', 'in', ('none', 'scan'))]}"/>
-                <field name="treatment_id" attrs="{'invisible': [('treatment_type', 'in', ('none', 'scan'))]}"/>
-                <field name="quantity" attrs="{'invisible': [('treatment_type', 'in', ('none', 'scan'))]}"/>
+                <field name="date" attrs="{'required': [('treatment_type', 'not in', ('none', 'scan', 'paper'))], 'invisible': [('treatment_type', 'in', ('none', 'scan', 'paper'))]}"/>
+                <field name="treatment_id" attrs="{'invisible': [('treatment_type', 'in', ('none', 'scan', 'paper'))]}"/>
+                <field name="quantity" attrs="{'invisible': [('treatment_type', 'in', ('none', 'scan', 'paper'))]}"/>
                 <field name="notes"/>
                 <field name="scan_filename" invisible="1"/>
             </group>

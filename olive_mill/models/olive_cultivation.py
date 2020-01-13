@@ -24,6 +24,7 @@ class OliveCultivation(models.Model):
     date = fields.Date(string="Date")
     treatment_type = fields.Selection([
         ('none', 'No Treatment'),
+        ('paper', 'Paper form filled'),
         ('scan', 'See Scan'),
         ('treatment', 'Treatment'),
         ('fertilisation', 'Fertilisation'),
