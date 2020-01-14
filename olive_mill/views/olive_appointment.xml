@@ -122,6 +122,7 @@
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
         <tree string="Appointments" decoration-info="appointment_type == 'withdrawal'" decoration-warning="appointment_type == 'arrival_no_leaf_removal'" decoration-danger="appointment_type == 'arrival_leaf_removal'" decoration-success="appointment_type == 'lend'">
+            <field name="day_of_week"/>
             <field name="start_datetime"/>
             <field name="end_datetime"/>
             <field name="appointment_type"/>

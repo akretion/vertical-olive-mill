@@ -75,6 +75,8 @@ class OliveAppointment(models.Model):
     end_datetime = fields.Datetime(string='End', required=True)
     date = fields.Date(
         compute='_compute_date', string='Date', store=True, readonly=True)
+    day_of_week = fields.Char(
+        compute='_compute_date', string='Day of Week', store=True, readonly=True)
     oil_destination = fields.Selection([
         ('withdrawal', 'Withdrawal'),
         ('sale', 'Sale'),
@@ -110,7 +112,13 @@ class OliveAppointment(models.Model):
     def _compute_date(self):
         # TODO add support for TZ
         for app in self:
-            app.date = app.start_datetime and app.start_datetime[:10] or False
+            date = day_of_week = False
+            if app.start_datetime:
+                date = app.start_datetime[:10]
+                date_dt = fields.Date.from_string(date)
+                day_of_week = date_dt.strftime('%A')
+            app.date = date
+            app.day_of_week = day_of_week
 
     @api.depends('start_datetime', 'qty', 'palox_qty')
     def _compute_total_qty_same_day(self):
