@@ -106,7 +106,6 @@
             <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
             <group string="Group By" name="groupby">
                 <filter name="borrower_partner_groupby" string="Borrower" context="{'group_by': 'borrower_partner_id'}"/>
-                <filter name="borrowed_date_groupby" string="Borrowed Date" context="{'group_by': 'borrowed_date'}"/>
             </group>
         </search>
     </field>
