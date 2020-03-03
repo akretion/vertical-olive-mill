@@ -755,13 +755,6 @@ class OliveArrivalLine(models.Model):
                 withdrawal_oil_qty_w_comp += line.compensation_oil_qty
             line.withdrawal_oil_qty_with_compensation = withdrawal_oil_qty_w_comp
 
-    @api.depends('sale_oil_qty', 'oil_service_sale_price_unit', 'oil_sale_price_unit')
-    def _compute_oil_price_total(self):
-        for line in self:
-            qty = line.sale_oil_qty
-            line.oil_sale_price_total = line.oil_sale_price_unit * qty
-            line.oil_service_sale_price_total = line.oil_service_sale_price_unit * qty
-
     @api.onchange('oil_destination')
     def oil_destination_change(self):
         if self.oil_destination != 'mix':
