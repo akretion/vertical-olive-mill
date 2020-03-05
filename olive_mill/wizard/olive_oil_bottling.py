@@ -326,7 +326,7 @@ class OliveOilBottling(models.TransientModel):
         mo.button_mark_done()
 
         # Check oil end qty
-        oil_end_qty_in_tank = self.src_location_id.olive_oil_tank_check()
+        oil_end_qty_in_tank = self.src_location_id.olive_oil_tank_check(raise_if_empty=False)
         if float_compare(
                 oil_end_qty_in_tank,
                 src_location_start_qty - self.bottle_qty * self.bottle_volume,
