@@ -348,6 +348,22 @@ class OliveAgrimerReport(models.Model):
                 else:
                     bottle2oiltypevol[pbottle][oil_type] = bottle_volume * qty
 
+        pack_bottles_kit = ppo.search(
+            [('olive_type', '=', 'bottle_full_pack_phantom')])
+        # Here, we just do a check to be sure that it's properly configured
+        # But it has no impact on computation, because kits
+        # appear as separate components in stock moves
+        for pbottles_kit in pack_bottles_kit:
+            boms = self.env['mrp.bom'].search([
+                ('product_tmpl_id', '=', pbottles_kit.product_tmpl_id.id),
+                ('type', '=', 'phantom'),
+                ('product_uom_id', '=', pbottles_kit.uom_id.id),
+            ])
+            if not boms:
+                raise UserError(_(
+                    "No bill of material with type kit for product '%s'.")
+                    % pbottles_kit.display_name)
+
         vals = {}
         self._reset_values(vals)
         self._compute_olive_arrival_qty(vals)

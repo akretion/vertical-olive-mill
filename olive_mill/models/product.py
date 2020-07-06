@@ -16,7 +16,8 @@ class ProductTemplate(models.Model):
         ('oil', 'Olive Oil'),
         ('bottle', 'Empty Oil Bottle'),
         ('bottle_full', 'Full Oil Bottle'),
-        ('bottle_full_pack', 'Pack of Full Oil Bottles'),
+        ('bottle_full_pack', 'Pack of Full Oil Bottles (Manufacture)'),
+        ('bottle_full_pack_phantom', 'Pack of Full Oil Bottles (Kit)'),
         ('analysis', 'Analysis'),
         ('extra_service', 'Extra Service'),
         ('service', 'Production Service'),
@@ -214,7 +215,8 @@ class ProductProduct(models.Model):
             ])
         if not boms:
             raise UserError(_(
-                "No bill of material for product '%s'.") % self.display_name)
+                "No bill of material with type 'Manufacture this product' "
+                "for product '%s'.") % self.display_name)
         if len(boms) > 1:
             raise UserError(_(
                 "There are several bill of materials for product '%s'. "

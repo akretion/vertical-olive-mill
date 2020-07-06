@@ -5,7 +5,7 @@
 
 from odoo import api, fields, models
 import odoo.addons.decimal_precision as dp
-from odoo.tools import float_compare, float_is_zero
+from odoo.tools import float_is_zero
 
 
 class OlivePreseasonPoll(models.Model):
@@ -217,8 +217,6 @@ class OlivePreseasonPollLine(models.Model):
         'CHECK(olive_qty - sale_olive_qty >= 0)',
         'The sale olive quantity cannot be superior to the olive quantity.'
         )]
-
-
 
     @api.depends('olive_qty')
     def _compute_oil_qty(self):
