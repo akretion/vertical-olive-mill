@@ -86,9 +86,6 @@ class ResCompany(models.Model):
     #    help='Tax unit price per liter of olive oil')
 
     _sql_constraints = [(
-        'olive_poll_average_season_count_positive',
-        'CHECK(olive_poll_average_season_count >= 0)',
-        'Number of Past Seasons must be positive.'), (
         'olive_max_qty_per_palox_positive',
         'CHECK(olive_max_qty_per_palox >= 0)',
         'Maximum Quantity of Olives per Palox must be positive.'), (
