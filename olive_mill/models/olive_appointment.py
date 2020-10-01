@@ -266,7 +266,6 @@ class OliveAppointment(models.Model):
             'default_appointment_type': self.appointment_type,
             'default_variant_id': self.variant_id.id or False,
             'default_oil_destination': self.oil_destination,
-            'default_leaf_removal': self.leaf_removal,
             'default_oil_product_id': self.oil_product_id.id or False,
             'default_qty': self.qty,
             'default_withdrawal_oil_qty': self.withdrawal_oil_qty,

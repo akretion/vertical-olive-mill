@@ -40,7 +40,8 @@ class OlivePaloxGenerateProduction(models.TransientModel):
                 'palox_id': palox.id,
                 'warehouse_id': self.warehouse_id.id,
                 }
-            vals = oopo.play_onchanges(vals, ['palox_id', 'warehouse_id'])
+            nvals = oopo.play_onchanges(vals, ['palox_id', 'warehouse_id'])
+            vals.update(nvals)
             prod = oopo.create(vals)
             prod.draft2ratio()
         action = self.env['ir.actions.act_window'].for_xml_id(
