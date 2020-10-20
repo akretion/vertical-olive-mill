@@ -128,10 +128,6 @@
                         <div name="olive_sale_oil_qty_current_season">
                             <field name="olive_sale_oil_qty_current_season" class="oe_inline"/> L
                         </div>
-                        <label for="olive_area_total"/>
-                        <div name="olive_area_total">
-                            <field name="olive_area_total" class="oe_inline"/> ha
-                        </div>
                         <field name="olive_culture_type" invisible="1"/>
                         <field name="olive_ochard_ids" invisible="1"/>
                     </group>

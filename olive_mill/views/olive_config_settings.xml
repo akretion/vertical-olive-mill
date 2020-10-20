@@ -56,6 +56,13 @@
                     <label string=" days" class="oe_inline"/>
                 </div>
             </group>
+            <group name="preseason_polls" string="Pre-season Polls">
+                <label for="olive_preseason_poll_ratio_no_history"/>
+                <div name="olive_preseason_poll_ratio_no_history">
+                    <field name="olive_preseason_poll_ratio_no_history" class="oe_inline"/>
+                    <label string=" %" class="oe_inline"/>
+                </div>
+            </group>
             <group name="appointment" string="Appointments">
                 <label for="olive_appointment_qty_per_palox"/>
                 <div name="olive_appointment_qty_per_palox">

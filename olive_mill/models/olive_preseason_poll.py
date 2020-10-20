@@ -130,7 +130,6 @@ class OlivePreseasonPoll(models.Model):
             ('commercial_partner_id', '=', self.commercial_partner_id.id)],
             ['olive_qty', 'oil_qty_net', 'sale_oil_qty', 'season_id'],
             ['season_id'])
-        print "res=", res
         season2data = {}
         for re in res:
             season_id = re['season_id'][0]
@@ -218,29 +217,40 @@ class OlivePreseasonPollLine(models.Model):
         'The sale olive quantity cannot be superior to the olive quantity.'
         )]
 
+    def _get_ratio(self):
+        self.ensure_one()
+        prec = self.env['decimal.precision'].precision_get('Olive Oil Ratio')
+        poll = self.poll_id
+        ratio = poll.past_average_ratio_net
+        if float_is_zero(ratio, precision_digits=prec):
+            ratio = poll.company_id.olive_preseason_poll_ratio_no_history
+        return ratio
+
     @api.depends('olive_qty')
     def _compute_oil_qty(self):
         for line in self:
-            line.oil_qty = int(line.olive_qty * line.poll_id.past_average_ratio_net / 100)
+            line.oil_qty = int(line.olive_qty * line._get_ratio() / 100)
 
     @api.onchange('oil_qty')
     def _inverse_oil_qty(self):
         for line in self:
-            if line.poll_id.past_average_ratio_net > 0:
-                line.olive_qty = int(100 * line.oil_qty / line.poll_id.past_average_ratio_net)
+            ratio = line._get_ratio()
+            if ratio > 0:
+                line.olive_qty = int(100 * line.oil_qty / ratio)
             else:
                 line.olive_qty = 0
 
     @api.depends('sale_olive_qty')
     def _compute_sale_oil_qty(self):
         for line in self:
-            line.sale_oil_qty = int(line.sale_olive_qty * line.poll_id.past_average_ratio_net / 100)
+            line.sale_oil_qty = int(line.sale_olive_qty * line._get_ratio() / 100)
 
     @api.onchange('sale_oil_qty')
     def _inverse_sale_oil_qty(self):
         for line in self:
-            if line.poll_id.past_average_ratio_net > 0:
-                line.sale_olive_qty = int(100 * line.sale_oil_qty / line.poll_id.past_average_ratio_net)
+            ratio = line._get_ratio()
+            if ratio > 0:
+                line.sale_olive_qty = int(100 * line.sale_oil_qty / ratio)
             else:
                 line.sale_olive_qty = 0
 

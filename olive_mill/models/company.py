@@ -23,6 +23,10 @@ class ResCompany(models.Model):
     current_season_id = fields.Many2one(
         'olive.season', compute='_compute_current_season_id', readonly=True,
         string='Current Season')
+    # Pre-season polls
+    olive_preseason_poll_ratio_no_history = fields.Float(
+        string='Ratio for Olive Farmers without History',
+        default=15, digits=dp.get_precision('Olive Oil Ratio'))
     # START APPOINTMENTS
     olive_appointment_qty_per_palox = fields.Integer(
         string='Quantity of Olives per Palox', default=380)
@@ -89,6 +93,13 @@ class ResCompany(models.Model):
         'olive_max_qty_per_palox_positive',
         'CHECK(olive_max_qty_per_palox >= 0)',
         'Maximum Quantity of Olives per Palox must be positive.'), (
+        'olive_harvest_arrival_max_delta_days_positive',
+        'CHECK(olive_harvest_arrival_max_delta_days >= 0)',
+        'Maximum Delay Between Harvest Start Date and Arrival Date '
+        'must be positive.'), (
+        'olive_preseason_poll_ratio_no_history_positive',
+        'CHECK(olive_preseason_poll_ratio_no_history >= 0)',
+        'Ratio for Olive Farmers without History must be positive.'), (
         'olive_oil_density_positive',
         'CHECK(olive_oil_density > 0)',
         'Olive oil density must be strictly positive.'), (

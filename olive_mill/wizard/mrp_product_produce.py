@@ -18,9 +18,7 @@ class MrpProductProduce(models.TransientModel):
     @api.depends('product_id')
     def compute_lot_default(self):
         for wiz in self:
-            print "wiz.product_id.olive_type=", wiz.product_id.olive_type
             if wiz.product_id.olive_type == 'bottle':
                 wiz.default_lot_expiry_date = self.env.user.company_id.oil_default_expiry_date
-                print "self.env.user.company_id.oil_default_expiry_date=", self.env.user.company_id.oil_default_expiry_date
             if wiz.product_id.olive_type in ('olive', 'oil'):
                 wiz.default_oil_merge_lot = True
