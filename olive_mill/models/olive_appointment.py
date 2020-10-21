@@ -153,8 +153,6 @@ class OliveAppointment(models.Model):
                     label += _(' (Partial withdrawal: %d L)') % app.withdrawal_oil_qty
                 if app.oil_product_id:
                     label += ', %s' % app.oil_product_id.name
-                if app.appointment_type == 'arrival_leaf_removal':
-                    label += _(', leaf removal')
             elif app.appointment_type == 'withdrawal':
                 if app.withdrawal_invoice:
                     invoicing_label = dict(app.fields_get('withdrawal_invoice', 'selection')['withdrawal_invoice']['selection'])[app.withdrawal_invoice]

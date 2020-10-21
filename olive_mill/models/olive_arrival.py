@@ -543,6 +543,20 @@ class OliveArrivalLine(models.Model):
         help="Olive quantity in kg."
         "\nFirst-of-day compensation: not included."
         "\nLast-of-day compensation: not deducted.")
+    withdrawal_olive_qty = fields.Float(
+        string='Withdrawal Olive Qty', digits=dp.get_precision('Olive Weight'),
+        compute='_compute_sale_withdrawal_olive_qty', store=True, readonly=True,
+        help="Equivalent in olive quantity (in Kg) of the withdrawn oil."
+        "This field is for reporting purposes, it is not very accurate."
+        "\nFirst-of-day compensation: not included."
+        "\nLast-of-day compensation: not deducted.")
+    sale_olive_qty = fields.Float(
+        string='Sale Olive Qty', digits=dp.get_precision('Olive Weight'),
+        compute='_compute_sale_withdrawal_olive_qty', store=True, readonly=True,
+        help="Equivalent in olive quantity (in Kg) of the oil sold."
+        "This field is for reporting purposes, it is not very accurate."
+        "\nFirst-of-day compensation: not included."
+        "\nLast-of-day compensation: not deducted.")
     ochard_id = fields.Many2one(
         'olive.ochard', string='Ochard', required=True, ondelete='restrict',
         states={'done': [('readonly', True)]})
@@ -754,6 +768,27 @@ class OliveArrivalLine(models.Model):
             if line.compensation_type == 'first' and line.oil_destination == 'withdrawal':
                 withdrawal_oil_qty_w_comp += line.compensation_oil_qty
             line.withdrawal_oil_qty_with_compensation = withdrawal_oil_qty_w_comp
+
+    @api.depends('olive_qty', 'oil_destination', 'production_state', 'sale_oil_qty', 'oil_qty_net')
+    def _compute_sale_withdrawal_olive_qty(self):
+        prec = self.env['decimal.precision'].precision_get('Olive Weight')
+        for line in self:
+            sale_olive_qty = 0
+            withdrawal_olive_qty = 0
+            if line.production_state == 'done':
+                olive_qty = line.olive_qty
+                if line.oil_destination == 'sale':
+                    sale_olive_qty = olive_qty
+                elif line.oil_destination == 'withdrawal':
+                    withdrawal_olive_qty = olive_qty
+                elif line.oil_destination == 'mix' and line.oil_qty_net > 0:
+                    sale_share = line.sale_oil_qty / line.oil_qty_net
+                    sale_olive_qty = float_round(
+                        olive_qty * sale_share, precision_digits=prec)
+                    withdrawal_olive_qty = float_round(
+                        olive_qty - sale_olive_qty, precision_digits=prec)
+            line.sale_olive_qty = sale_olive_qty
+            line.withdrawal_olive_qty = withdrawal_olive_qty
 
     @api.onchange('oil_destination')
     def oil_destination_change(self):

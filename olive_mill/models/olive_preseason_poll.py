@@ -194,12 +194,8 @@ class OlivePreseasonPollLine(models.Model):
         domain=[('olive_type', '=', 'oil')])
     sale_olive_qty = fields.Integer(
         string='Sale Olive Qty (kg)', required=True)
-    oil_qty = fields.Integer(
-        string='Oil Qty (L)', store=True,
-        compute='_compute_oil_qty', inverse='_inverse_oil_qty')
-    sale_oil_qty = fields.Integer(
-        string='Sale Oil Qty (L)', store=True,
-        compute='_compute_sale_oil_qty', inverse='_inverse_sale_oil_qty')
+    oil_qty = fields.Integer(string='Oil Qty (L)')
+    sale_oil_qty = fields.Integer(string='Sale Oil Qty (L)')
     olive_culture_type = fields.Selection(
         related='poll_id.partner_id.commercial_partner_id.olive_culture_type', readonly=True)
     commercial_partner_id = fields.Many2one(
@@ -226,33 +222,33 @@ class OlivePreseasonPollLine(models.Model):
             ratio = poll.company_id.olive_preseason_poll_ratio_no_history
         return ratio
 
-    @api.depends('olive_qty')
-    def _compute_oil_qty(self):
-        for line in self:
-            line.oil_qty = int(line.olive_qty * line._get_ratio() / 100)
+    @api.onchange('olive_qty')
+    def olive_qty_change(self):
+        if not self._context.get('olive_onchange'):
+            self.env.context = self.with_context(olive_onchange=True).env.context
+            self.oil_qty = int(self.olive_qty * self._get_ratio() / 100)
 
     @api.onchange('oil_qty')
-    def _inverse_oil_qty(self):
-        for line in self:
-            ratio = line._get_ratio()
+    def oil_qty_change(self):
+        if not self._context.get('olive_onchange'):
+            ratio = self._get_ratio()
             if ratio > 0:
-                line.olive_qty = int(100 * line.oil_qty / ratio)
-            else:
-                line.olive_qty = 0
+                self.env.context = self.with_context(olive_onchange=True).env.context
+                self.olive_qty = int(self.oil_qty * 100 / ratio)
 
-    @api.depends('sale_olive_qty')
-    def _compute_sale_oil_qty(self):
-        for line in self:
-            line.sale_oil_qty = int(line.sale_olive_qty * line._get_ratio() / 100)
+    @api.onchange('sale_olive_qty')
+    def sale_olive_qty_change(self):
+        if not self._context.get('sale_olive_onchange'):
+            self.env.context = self.with_context(sale_olive_onchange=True).env.context           
+            self.sale_oil_qty = int(self.sale_olive_qty * self._get_ratio() / 100)
 
     @api.onchange('sale_oil_qty')
-    def _inverse_sale_oil_qty(self):
-        for line in self:
-            ratio = line._get_ratio()
+    def sale_oil_qty_onchange(self):
+        if not self._context.get('sale_olive_onchange'):
+            ratio = self._get_ratio()
             if ratio > 0:
-                line.sale_olive_qty = int(100 * line.sale_oil_qty / ratio)
-            else:
-                line.sale_olive_qty = 0
+                self.env.context = self.with_context(sale_olive_onchange=True).env.context
+                self.sale_olive_qty = int(100 * self.sale_oil_qty / ratio)
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):

@@ -27,7 +27,6 @@ class OlivePalox(models.Model):
         'olive.oil.production', 'palox_id', string='Oil Productions')
     arrival_line_ids = fields.One2many(
         'olive.arrival.line', 'palox_id', string='Arrival Lines')
-    # ??? fillup_ok = fields.Boolean(compute='_compute_weight')
     oil_product_id = fields.Many2one(
         'product.product', string='Current Oil Product',
         domain=[('olive_type', '=', 'oil')])

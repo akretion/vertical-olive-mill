@@ -112,6 +112,10 @@
                         <div name="olive_oil_ratio_current_season">
                             <field name="olive_oil_ratio_current_season" class="oe_inline"/> %
                         </div>
+                        <label for="olive_qty_withdrawal_current_season"/>
+                        <div name="olive_qty_withdrawal_current_season">
+                            <field name="olive_qty_withdrawal_current_season" class="oe_inline"/> kg
+                        </div>
                         <label for="olive_oil_qty_withdrawal_current_season"/>
                         <div name="olive_oil_qty_withdrawal_current_season">
                             <field name="olive_oil_qty_withdrawal_current_season" class="oe_inline"/> L
@@ -123,6 +127,10 @@
                         <label for="olive_oil_qty_withdrawn_current_season"/>
                         <div name="olive_oil_qty_withdrawn_current_season">
                             <field name="olive_oil_qty_withdrawn_current_season" class="oe_inline"/> L
+                        </div>
+                        <label for="olive_qty_sale_current_season"/>
+                        <div name="olive_qty_sale_current_season">
+                            <field name="olive_qty_sale_current_season" class="oe_inline"/> kg
                         </div>
                         <label for="olive_sale_oil_qty_current_season"/>
                         <div name="olive_sale_oil_qty_current_season">

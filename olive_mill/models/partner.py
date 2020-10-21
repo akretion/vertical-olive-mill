@@ -36,6 +36,14 @@ class ResPartner(models.Model):
         compute='_compute_olive_total', string='Olive Qty Triturated',
         readonly=True, digits=dp.get_precision('Olive Weight'),
         help="Olives triturated for the current season in kg")
+    olive_qty_sale_current_season = fields.Float(
+        compute='_compute_olive_total', string='Olive Qty Sold',
+        readonly=True, digits=dp.get_precision('Olive Weight'),
+        help="Equivalent in olive qty (in kg) of the oil sold during the current season")
+    olive_qty_withdrawal_current_season = fields.Float(
+        compute='_compute_olive_total', string='Olive Qty Withdrawal',
+        readonly=True, digits=dp.get_precision('Olive Weight'),
+        help="Equivalent in olive qty (in kg) of the withdrawal oil during the current season")
     olive_oil_qty_current_season = fields.Float(
         compute='_compute_olive_total', string='Net Oil Qty', readonly=True,
         digits=dp.get_precision('Olive Oil Volume'),
@@ -101,6 +109,8 @@ class ResPartner(models.Model):
         olive_tree_total = 0
         olive_area_total = 0.0
         olive_qty_current_season = 0.0
+        olive_qty_sale_current_season = 0.0
+        olive_qty_withdrawal_current_season = 0.0
         olive_current_season_id = False
         olive_qty_triturated_current_season = 0.0
         olive_sale_oil_qty_current_season = 0.0
@@ -150,10 +160,12 @@ class ResPartner(models.Model):
                     ('commercial_partner_id', '=', self.id),
                     ('state', '=', 'done'),
                     ('production_state', '=', 'done')],
-                    ['olive_qty', 'sale_oil_qty', 'oil_qty_net', 'withdrawal_oil_qty_with_compensation'],
+                    ['olive_qty', 'sale_olive_qty', 'withdrawal_olive_qty', 'sale_oil_qty', 'oil_qty_net', 'withdrawal_oil_qty_with_compensation'],
                     [])
                 if arrival_prod_res:
                     olive_qty_triturated_current_season = arrival_prod_res[0]['olive_qty'] or 0.0
+                    olive_qty_sale_current_season = arrival_prod_res[0]['sale_olive_qty'] or 0.0
+                    olive_qty_withdrawal_current_season = arrival_prod_res[0]['withdrawal_olive_qty'] or 0.0
                     olive_sale_oil_qty_current_season = arrival_prod_res[0]['sale_oil_qty'] or 0.0
                     olive_oil_qty_current_season = arrival_prod_res[0]['oil_qty_net'] or 0.0
                     olive_oil_qty_withdrawal_current_season = arrival_prod_res[0]['withdrawal_oil_qty_with_compensation'] or 0.0
@@ -177,6 +189,8 @@ class ResPartner(models.Model):
         self.olive_tree_total = olive_tree_total
         self.olive_area_total = olive_area_total
         self.olive_qty_current_season = olive_qty_current_season
+        self.olive_qty_sale_current_season = olive_qty_sale_current_season
+        self.olive_qty_withdrawal_current_season = olive_qty_withdrawal_current_season
         self.olive_current_season_id = olive_current_season_id
         self.olive_qty_triturated_current_season = olive_qty_triturated_current_season
         self.olive_sale_oil_qty_current_season = olive_sale_oil_qty_current_season
