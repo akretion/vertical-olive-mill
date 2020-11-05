@@ -961,7 +961,7 @@ class OliveArrivalLine(models.Model):
             'product_id': product.id,
             'invoice_id': invoice.id,
             }
-        il_vals = ailo.play_onchanges(il_vals, ['product_id'])
+        il_vals.update(ailo.play_onchanges(il_vals, ['product_id']))
         if not il_vals.get('account_id'):
             raise UserError(_(
                 "Missing account on product '%s' or on it's related product category.")
@@ -989,7 +989,7 @@ class OliveArrivalLine(models.Model):
             'origin': origin,
             'reference': invoice_reference,
         }
-        vals = aio.play_onchanges(vals, ['partner_id'])
+        vals.update(aio.play_onchanges(vals, ['partner_id']))
         return vals
 
     def create_in_invoice_lines(self, invoice):
