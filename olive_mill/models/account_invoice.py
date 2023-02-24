@@ -12,7 +12,7 @@ class AccountInvoice(models.Model):
 
     def olive_out_invoice_price_update(self):
         self.ensure_one()
-        oalines = self.env['olive.arrival.line'].search([
+        oalines = self.env['olive.arrival.line'].sudo().search([
             ('out_invoice_id', '=', self.id),
             ('oil_destination', 'in', ('sale', 'mix'))])
         if oalines:
@@ -50,7 +50,7 @@ class AccountInvoice(models.Model):
         self.ensure_one()
         liter_uom = self.env.ref('product.product_uom_litre')
         for iline in self.invoice_line_ids:
-            oalines = self.env['olive.arrival.line'].search([
+            oalines = self.env['olive.arrival.line'].sudo().search([
                 ('in_invoice_line_id', '=', iline.id),
                 ('oil_destination', 'in', ('sale', 'mix'))])
             if oalines:
