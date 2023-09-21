@@ -5,7 +5,7 @@
 
 {
     'name': 'French localization for olive mill',
-    'version': '12.0.1.0.0',
+    'version': '10.0.1.0.0',
     'category': 'Manufacturing',
     'license': 'AGPL-3',
     'summary': 'AgriMer reports on olive mill',
