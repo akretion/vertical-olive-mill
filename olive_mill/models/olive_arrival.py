@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2018 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
@@ -8,7 +7,6 @@ from odoo.exceptions import UserError, ValidationError
 from odoo.tools import float_compare, float_is_zero, float_round
 from odoo.tools.misc import formatLang
 from babel.dates import format_date
-import odoo.addons.decimal_precision as dp
 
 
 class OliveArrival(models.Model):
@@ -31,7 +29,7 @@ class OliveArrival(models.Model):
         'res.partner', string='Olive Farmer', required=True, index=True,
         domain=[('parent_id', '=', False), ('olive_farmer', '=', True)],
         states={'done': [('readonly', True)]}, ondelete='restrict',
-        track_visibility='onchange')
+        tracking=True)
     commercial_partner_id = fields.Many2one(
         related='partner_id.commercial_partner_id', readonly=True, store=True)
     olive_organic_certified_logo = fields.Binary(
@@ -55,7 +53,7 @@ class OliveArrival(models.Model):
         domain=[('olive_mill', '=', True)],
         default=lambda self: self.env.user._default_olive_mill_wh(),
         states={'done': [('readonly', True)]},
-        track_visibility='onchange')
+        tracking=True)
     default_variant_id = fields.Many2one(
         'olive.variant', string='Default Olive Variant',
         states={'done': [('readonly', True)]})
@@ -67,8 +65,8 @@ class OliveArrival(models.Model):
         states={'done': [('readonly', True)]})
     olive_qty = fields.Float(
         compute='_compute_olive_qty', readonly=True, store=True,
-        track_visibility='onchange', string='Total Quantity (kg)',
-        digits=dp.get_precision('Olive Weight'),
+        tracking=True, string='Total Quantity (kg)',
+        digits='Olive Weight',
         help="Total olive quantity in kg")
     default_oil_destination = fields.Selection([
         ('withdrawal', 'Withdrawal'),
@@ -86,9 +84,9 @@ class OliveArrival(models.Model):
         ('done', 'Done'),
         ('cancel', 'Cancelled'),
         ], string='State', default='draft', readonly=True,
-        track_visibility='onchange')
+        tracking=True)
     date = fields.Date(
-        string='Arrival Date', track_visibility='onchange',
+        string='Arrival Date', tracking=True,
         default=fields.Date.context_today, required=True,
         states={'done': [('readonly', True)]})
     harvest_start_date = fields.Date(
@@ -113,17 +111,17 @@ class OliveArrival(models.Model):
         "lines")
     olive_qty_pressed = fields.Float(
         string='Olive Qty Pressed (kg)',
-        digits=dp.get_precision('Olive Weight'), readonly=True)
+        digits='Olive Weight', readonly=True)
     oil_qty_net = fields.Float(
         string='Net Oil Qty (L)',
-        readonly=True, digits=dp.get_precision('Olive Oil Volume'),
+        readonly=True, digits='Olive Oil Volume',
         help="Net oil quantity produced in liters."
         "\nFirst-of-day compensation: included."
         "\nLast-of-day compensation: already deducted."
         "\nShrinkage: already deducted."
         "\nFilter loss: already deducted.")
     oil_ratio_net = fields.Float(
-        string='Oil Net Ratio (% L)', digits=dp.get_precision('Olive Oil Ratio'),
+        string='Oil Net Ratio (% L)', digits='Olive Oil Ratio',
         readonly=True, group_operator='avg')
     olive_ratio_net = fields.Float(
         string='Olive Net Ratio (kg / L)', digits=(16, 2),
@@ -532,26 +530,26 @@ class OliveArrivalLine(models.Model):
         'olive.variant', string='Olive Variant', required=True,
         ondelete='restrict', states={'done': [('readonly', True)]})
     palox_weight = fields.Float(
-        string='Gross Palox Weight', digits=dp.get_precision('Olive Weight'),
+        string='Gross Palox Weight', digits='Olive Weight',
         help="If you enter the gross palox weight, Odoo will use the palox "
         "empty weight to set the olive quantity.",
         states={'done': [('readonly', True)]})
     olive_qty = fields.Float(
         string='Olive Qty (kg)', required=True,
-        digits=dp.get_precision('Olive Weight'),
+        digits='Olive Weight',
         states={'done': [('readonly', True)]},
         help="Olive quantity in kg."
         "\nFirst-of-day compensation: not included."
         "\nLast-of-day compensation: not deducted.")
     withdrawal_olive_qty = fields.Float(
-        string='Withdrawal Olive Qty', digits=dp.get_precision('Olive Weight'),
+        string='Withdrawal Olive Qty', digits='Olive Weight',
         compute='_compute_sale_withdrawal_olive_qty', store=True, readonly=True,
         help="Equivalent in olive quantity (in Kg) of the withdrawn oil."
         "This field is for reporting purposes, it is not very accurate."
         "\nFirst-of-day compensation: not included."
         "\nLast-of-day compensation: not deducted.")
     sale_olive_qty = fields.Float(
-        string='Sale Olive Qty', digits=dp.get_precision('Olive Weight'),
+        string='Sale Olive Qty', digits='Olive Weight',
         compute='_compute_sale_withdrawal_olive_qty', store=True, readonly=True,
         help="Equivalent in olive quantity (in Kg) of the oil sold."
         "This field is for reporting purposes, it is not very accurate."
@@ -571,7 +569,7 @@ class OliveArrivalLine(models.Model):
         states={'done': [('readonly', True)]})
     mix_withdrawal_oil_qty = fields.Float(
         string='Requested Withdrawal Qty (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]},
         help="Quantity of olive oil withdrawn by the farmer in liters")
     ripeness = fields.Selection([  # maturité
@@ -606,10 +604,10 @@ class OliveArrivalLine(models.Model):
         related='production_id.compensation_type', readonly=True, store=True)
     # END related fields for production
     oil_ratio = fields.Float(
-        string='Oil Gross Ratio (% L)', digits=dp.get_precision('Olive Oil Ratio'),
+        string='Oil Gross Ratio (% L)', digits='Olive Oil Ratio',
         readonly=True, group_operator='avg')
     oil_ratio_net = fields.Float(
-        string='Oil Net Ratio (% L)', digits=dp.get_precision('Olive Oil Ratio'),
+        string='Oil Net Ratio (% L)', digits='Olive Oil Ratio',
         readonly=True, group_operator='avg')
     extra_ids = fields.One2many(
         'olive.arrival.line.extra', 'line_id', string="Extra Items")
@@ -618,7 +616,7 @@ class OliveArrivalLine(models.Model):
 
     oil_qty_kg = fields.Float(
         string='Oil Qty (kg)',
-        readonly=True, digits=dp.get_precision('Olive Oil Volume'),
+        readonly=True, digits='Olive Oil Volume',
         help="Oil quantity in kg."
         "\nFirst-of-day compensation: not included."
         "\nLast-of-day compensation: already deducted."
@@ -626,7 +624,7 @@ class OliveArrivalLine(models.Model):
         "\nFilter loss: not deducted.")
     oil_qty = fields.Float(
         string='Oil Qty (L)',
-        readonly=True, digits=dp.get_precision('Olive Oil Volume'),
+        readonly=True, digits='Olive Oil Volume',
         help="Oil quantity in liters."
         "\nFirst-of-day compensation: not included."
         "\nLast-of-day compensation: already deducted."
@@ -639,14 +637,14 @@ class OliveArrivalLine(models.Model):
     # The sign is always positive, even for last-of-day compensation
     compensation_oil_qty = fields.Float(
         string='Compensation Oil Qty (L)',
-        readonly=True, digits=dp.get_precision('Olive Oil Volume'),
+        readonly=True, digits='Olive Oil Volume',
         help="This field is used both for last of the day and first of "
         "the day compensations. The quantity is always positive, "
         "even for last-of-day compensations.")
     oil_qty_with_compensation = fields.Float(
         compute='_compute_oil_qty_with_compensation',
         string='Oil Qty with Compensation (L)', store=True,
-        readonly=True, digits=dp.get_precision('Olive Oil Volume'),
+        readonly=True, digits='Olive Oil Volume',
         help="Oil quantity with compensation in liters."
         "\nFirst-of-day compensation: included."
         "\nLast-of-day compensation: already deducted."
@@ -655,14 +653,14 @@ class OliveArrivalLine(models.Model):
 
     shrinkage_oil_qty = fields.Float(  # Sale and withdrawal
         string='Shrinkage Oil Qty (L)',
-        readonly=True, digits=dp.get_precision('Olive Oil Volume'))
+        readonly=True, digits='Olive Oil Volume')
     shrinkage_oil_qty_kg = fields.Float(  # Withdrawal only
         string='Shrinkage Oil Qty (kg)',
-        readonly=True, digits=dp.get_precision('Olive Weight'))
+        readonly=True, digits='Olive Weight')
 
     withdrawal_oil_qty_kg = fields.Float(
         string='Withdrawal Oil Qty (kg)',
-        readonly=True, digits=dp.get_precision('Olive Weight'),
+        readonly=True, digits='Olive Weight',
         help="Withdrawal oil quantity in kg."
         "\nFirst-of-day compensation: not included."
         "\nLast-of-day compensation: already deducted."
@@ -670,7 +668,7 @@ class OliveArrivalLine(models.Model):
         "\nFilter loss: not applicable.")
     withdrawal_oil_qty = fields.Float(
         string='Withdrawal Oil Qty (L)',
-        readonly=True, digits=dp.get_precision('Olive Oil Volume'),
+        readonly=True, digits='Olive Oil Volume',
         help="Withdrawal oil quantity in liters."
         "\nFirst-of-day compensation: not included."
         "\nLast-of-day compensation: already deducted."
@@ -679,7 +677,7 @@ class OliveArrivalLine(models.Model):
     withdrawal_oil_qty_with_compensation = fields.Float(
         compute='_compute_withdrawal_oil_qty_with_compensation', store=True,
         string='Withdrawal Oil Qty with Compensation (L)',
-        readonly=True, digits=dp.get_precision('Olive Oil Volume'),
+        readonly=True, digits='Olive Oil Volume',
         help="Withdrawal oil quantity with compensation in liters (for statistics)."
         "\nFirst-of-day compensation: included."
         "\nLast-of-day compensation: already deducted."
@@ -688,7 +686,7 @@ class OliveArrivalLine(models.Model):
 
     to_sale_tank_oil_qty = fields.Float(
         string='Oil Qty to Sale Tank (L)',
-        readonly=True, digits=dp.get_precision('Olive Oil Volume'),
+        readonly=True, digits='Olive Oil Volume',
         help="Oil sent to sale tank in liters."
         "\nFirst-of-day compensation: not included."
         "\nLast-of-day compensation: already deducted."
@@ -696,7 +694,7 @@ class OliveArrivalLine(models.Model):
         "\nFilter loss: already deducted.")
     sale_oil_qty = fields.Float(
         string='Oil Qty Sold (L)',
-        readonly=True, digits=dp.get_precision('Olive Oil Volume'),
+        readonly=True, digits='Olive Oil Volume',
         help="Oil quantity sold in liters."
         "\nFirst-of-day compensation: included."
         "\nLast-of-day compensation: already deducted."
@@ -704,7 +702,7 @@ class OliveArrivalLine(models.Model):
         "\nFilter loss: already deducted.")
     oil_qty_net = fields.Float(
         string='Net Oil Qty (L)',
-        readonly=True, digits=dp.get_precision('Olive Oil Volume'),
+        readonly=True, digits='Olive Oil Volume',
         help="Net oil quantity produced in liters."
         "\nFirst-of-day compensation: included."
         "\nLast-of-day compensation: already deducted."
@@ -713,7 +711,7 @@ class OliveArrivalLine(models.Model):
 
     filter_loss_oil_qty = fields.Float(
         string='Oil Qty Lost in Filter (L)',
-        readonly=True, digits=dp.get_precision('Olive Oil Volume'))
+        readonly=True, digits='Olive Oil Volume')
     withdrawal_move_id = fields.Many2one(
         'stock.move', string='Withdrawal Move', readonly=True)
     out_invoice_id = fields.Many2one(
@@ -1218,7 +1216,7 @@ class OliveArrivalLineExtra(models.Model):
         related='product_id.olive_type', readonly=True, store=True)
     qty = fields.Float(
         string='Quantity', default=1,
-        digits=dp.get_precision('Product Unit of Measure'), required=True)
+        digits='Product Unit of Measure', required=True)
     uom_id = fields.Many2one(
         related='product_id.uom_id', readonly=True)
     fillup = fields.Boolean(string='Fill-up')

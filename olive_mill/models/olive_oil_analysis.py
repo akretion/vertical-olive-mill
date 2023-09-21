@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2019 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
@@ -20,20 +19,20 @@ class OliveOilAnalysis(models.Model):
         ('arrival', 'Arrival'),
         ('tank', 'Tank'),
         ], default='arrival', string='Oil Source Type', required=True,
-        track_visibility='onchange', states={'done': [('readonly', True)]})
+        tracking=True, states={'done': [('readonly', True)]})
     arrival_line_id = fields.Many2one(
         'olive.arrival.line', string='Arrival Line',
-        states={'done': [('readonly', True)]}, track_visibility='onchange')
+        states={'done': [('readonly', True)]}, tracking=True)
     partner_id = fields.Many2one(
         related='arrival_line_id.arrival_id.partner_id.commercial_partner_id',
         readonly=True, store=True, index=True, string='Olive Farmer')
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Type', required=True, index=True,
         domain=[('olive_type', '=', 'oil')],
-        track_visibility='onchange', states={'done': [('readonly', True)]})
+        tracking=True, states={'done': [('readonly', True)]})
     lot_id = fields.Many2one(
         'stock.production.lot', string='Oil Lot',
-        track_visibility='onchange', states={'done': [('readonly', True)]})
+        tracking=True, states={'done': [('readonly', True)]})
     production_id = fields.Many2one(
         related='arrival_line_id.production_id', readonly=True, store=True)
     production_date = fields.Date(
@@ -47,28 +46,28 @@ class OliveOilAnalysis(models.Model):
     location_id = fields.Many2one(
         'stock.location', string='Oil Tank',
         domain=[('olive_tank_type', '!=', False)],
-        states={'done': [('readonly', True)]}, track_visibility='onchange')
+        states={'done': [('readonly', True)]}, tracking=True)
     state = fields.Selection([
         ('draft', 'Draft'),
         ('done', 'Done'),
         ('cancel', 'Cancel'),
         ], string='State', readonly=True, default='draft', copy=False,
-        track_visibility='onchange')
+        tracking=True)
     date = fields.Date(
         string='Analysis Date', states={'done': [('readonly', True)]},
-        copy=False, track_visibility='onchange')
+        copy=False, tracking=True)
     execution_mode = fields.Selection([
         ('internal', 'Internal'),
         ('external', 'External'),
         ], default='internal', string='Execution Mode', required=True,
-        states={'done': [('readonly', True)]}, track_visibility='onchange')
+        states={'done': [('readonly', True)]}, tracking=True)
     execution_user_id = fields.Many2one(
         'res.users', string='Analysis Made by',
-        states={'done': [('readonly', True)]}, track_visibility='onchange',
+        states={'done': [('readonly', True)]}, tracking=True,
         default=lambda self: self.env.user.company_id.olive_oil_analysis_default_user_id.id or False)
     execution_partner_id = fields.Many2one(
         'res.partner', string='Analysis Made by',
-        states={'done': [('readonly', True)]}, track_visibility='onchange',
+        states={'done': [('readonly', True)]}, tracking=True,
         domain=[('supplier', '=', True)])
     company_id = fields.Many2one(
         'res.company', string='Company',

@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
 # Copyright 2018 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import fields, models, _
 from odoo.tools import float_compare, float_is_zero, float_round
-import odoo.addons.decimal_precision as dp
 from odoo.exceptions import UserError
 from datetime import datetime
 
@@ -34,7 +32,7 @@ class OliveOilBottling(models.TransientModel):
     # START fields 2nd step (qty)
     bottle_volume = fields.Float(
         string='Bottle Volume',
-        digits=dp.get_precision('Product Unit of Measure'), readonly=True)
+        digits='Product Unit of Measure', readonly=True)
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Type', readonly=True)
     bom_id = fields.Many2one(
@@ -63,13 +61,13 @@ class OliveOilBottling(models.TransientModel):
     # Start fields last step (produce)
     src_location_start_qty = fields.Float(
         string='Oil Qty in Tank before Bottling',
-        digits=dp.get_precision('Product Unit of Measure'), readonly=True)
+        digits='Product Unit of Measure', readonly=True)
     oil_qty = fields.Float(
         string='Oil Qty for Bottling',
-        digits=dp.get_precision('Product Unit of Measure'), readonly=True)
+        digits='Product Unit of Measure', readonly=True)
     src_location_end_qty = fields.Float(
         string='Oil Qty in Tank after Bottling',
-        digits=dp.get_precision('Product Unit of Measure'), readonly=True,
+        digits='Product Unit of Measure', readonly=True,
         help="This field doesn't take into account the inventory operation")
     inventory_required = fields.Selection([
         ('yes', 'Yes'),
@@ -77,10 +75,10 @@ class OliveOilBottling(models.TransientModel):
         ], readonly=True, string='Inventory Required')
     inventory_start_qty = fields.Float(
         string='Inventory Oil Qty in Tank before Bottling',
-        digits=dp.get_precision('Product Unit of Measure'), readonly=True)
+        digits='Product Unit of Measure', readonly=True)
     inventory_end_qty = fields.Float(
         string='Inventory Oil Qty in Tank after Bottling',
-        digits=dp.get_precision('Product Unit of Measure'), readonly=True)
+        digits='Product Unit of Measure', readonly=True)
     expiry_date = fields.Date(string='Expiry Date')
     lot_type = fields.Selection([
         ('new', 'New'),

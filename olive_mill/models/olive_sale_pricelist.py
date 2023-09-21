@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 # Copyright 2018 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields
-import odoo.addons.decimal_precision as dp
 
 
 class OliveSalePricelist(models.Model):
@@ -46,7 +44,7 @@ class OliveSalePricelistLine(models.Model):
         'product.product', string='Oil Product', required=True,
         domain=[('olive_type', '=', 'oil')])
     price = fields.Monetary(
-        string='Price', digits=dp.get_precision('Product Price'),
+        string='Price', digits='Product Price',
         required=True)
     currency_id = fields.Many2one(
         related='pricelist_id.company_id.currency_id', readonly=True,

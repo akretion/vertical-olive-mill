@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 # Copyright 2018 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models, _
-import odoo.addons.decimal_precision as dp
 from odoo.tools import float_compare, float_is_zero, float_round
 from odoo.exceptions import UserError
 from dateutil.relativedelta import relativedelta
@@ -33,17 +31,17 @@ class OliveOilProductionCompensation(models.TransientModel):
         'stock.location', string='Compensation Tank')
     compensation_last_olive_qty = fields.Float(
         string='Olive Compensation Qty',
-        digits=dp.get_precision('Olive Weight'))
+        digits='Olive Weight')
     compensation_ratio = fields.Float(
         string='Compensation Ratio',
-        digits=dp.get_precision('Olive Oil Ratio'))
+        digits='Olive Oil Ratio')
     compensation_ratio_update_date = fields.Date(
         related='production_id.warehouse_id.olive_oil_compensation_ratio_update_date',
         readonly=True)
     compensation_last_oil_qty = fields.Float(
         compute='_compute_compensation_last_oil_qty',
         string='Oil Compensation (L)', readonly=True,
-        digits=dp.get_precision('Olive Oil Volume'))
+        digits='Olive Oil Volume')
 
     @api.model
     def default_get(self, fields_list):

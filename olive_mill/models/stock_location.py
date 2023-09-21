@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2018 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl)
@@ -6,7 +5,6 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 from odoo.tools import float_compare, float_round
-import odoo.addons.decimal_precision as dp
 
 
 class StockLocation(models.Model):
@@ -32,7 +30,7 @@ class StockLocation(models.Model):
     olive_oil_qty = fields.Float(
         compute='_compute_olive_oil_qty', readonly=True,
         string='Olive Oil Qty (L)',
-        digits=dp.get_precision('Product Unit of Measure'))
+        digits='Product Unit of Measure')
 
     def _compute_olive_oil_qty(self):
         prec = self.env['decimal.precision'].precision_get('Product Unit of Measure')

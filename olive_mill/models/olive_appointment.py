@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2018 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
@@ -28,7 +27,7 @@ class OliveAppointment(models.Model):
         default=lambda self: self.env.user.company_id.current_season_id.id)
     partner_id = fields.Many2one(
         'res.partner', string='Olive Farmer', required=True, copy=False,
-        domain=[('olive_farmer', '=', True)], track_visibility='onchange')
+        domain=[('olive_farmer', '=', True)], tracking=True)
     commercial_partner_id = fields.Many2one(
         related='partner_id.commercial_partner_id', readonly=True, store=True)
     olive_cultivation_form_ko = fields.Boolean(
@@ -54,24 +53,24 @@ class OliveAppointment(models.Model):
         ('arrival_no_leaf_removal', 'Arrival without Leaf Removal'),
         ('withdrawal', 'Withdrawal'),
         ('other', 'Other'),
-        ], string='Appointment Type', required=True, track_visibility='onchange')
+        ], string='Appointment Type', required=True, tracking=True)
     withdrawal_invoice = fields.Selection([
         ('invoice', 'With Invoice'),
         ('noinvoice', 'Without Invoice'),
-        ], string='Invoicing', track_visibility='onchange')
+        ], string='Invoicing', tracking=True)
     lend_palox_qty = fields.Integer(string='Number of Palox')
     lend_regular_case_qty = fields.Integer(string='Number of Regular Cases')
     lend_organic_case_qty = fields.Integer(string='Number of Organic Cases')
     variant_id = fields.Many2one(
-        'olive.variant', string='Olive Variant', track_visibility='onchange')
+        'olive.variant', string='Olive Variant', tracking=True)
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Type',
         domain=[('olive_type', '=', 'oil')])
     qty = fields.Integer(
         string='Quantity', help="Olive quantity in kg",
-        track_visibility='onchange')
+        tracking=True)
     start_datetime = fields.Datetime(
-        string='Start', required=True, track_visibility='onchange')
+        string='Start', required=True, tracking=True)
     end_datetime = fields.Datetime(string='End', required=True)
     date = fields.Date(
         compute='_compute_date', string='Date', store=True, readonly=True)
@@ -81,9 +80,9 @@ class OliveAppointment(models.Model):
         ('withdrawal', 'Withdrawal'),
         ('sale', 'Sale'),
         ('mix', 'Mix'),
-        ], string='Oil Destination', track_visibility='onchange')
+        ], string='Oil Destination', tracking=True)
     withdrawal_oil_qty = fields.Integer(
-        string='Withdrawal Oil Quantity', track_visibility='onchange')
+        string='Withdrawal Oil Quantity', tracking=True)
     palox_qty = fields.Float(
         compute='_compute_palox_qty', string='Estimated Palox Qty', readonly=True,
         store=True, digits=(16, 1))

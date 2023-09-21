@@ -26,14 +26,15 @@
     </field>
 </record>
 
-<act_window id="olive_palox_generate_production_action"
-            multi="True"
-            key2="client_action_multi"
-            name="Generate Oil Productions"
-            res_model="olive.palox.generate.production"
-            src_model="olive.palox"
-            view_mode="form"
-            target="new" />
+<record id="olive_palox_generate_production_action" model="ir.actions.act_window">
+<field name="multi">True</field>
+<field name="key2">client_action_multi</field>
+<field name="name">Generate Oil Productions</field>
+<field name="res_model">olive.palox.generate.production</field>
+<field name="binding_model">olive.palox</field>
+<field name="view_mode">form</field>
+<field name="target">new</field>
+</record>
 
 
 </odoo>

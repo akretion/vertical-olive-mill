@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
 # Copyright 2018 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models, tools, _
 from odoo.exceptions import UserError, ValidationError
-import odoo.addons.decimal_precision as dp
 from odoo.tools import float_compare, float_round
 
 
@@ -28,16 +26,16 @@ class OliveOilProduction(models.Model):
         'stock.warehouse', string='Warehouse', required=True, index=True,
         domain=[('olive_mill', '=', True)],
         default=lambda self: self.env.user._default_olive_mill_wh(),
-        track_visibility='onchange')
+        tracking=True)
     palox_id = fields.Many2one(
         'olive.palox', string='Palox', required=True, readonly=True,
         ondelete='restrict',
-        states={'draft': [('readonly', False)]}, track_visibility='onchange')
+        states={'draft': [('readonly', False)]}, tracking=True)
     # STOCK LOCATIONS
     sale_location_id = fields.Many2one(
         'stock.location', string='Sale Tank',
         states={'done': [('readonly', True)]},
-        track_visibility='onchange')
+        tracking=True)
     # not a pb to have withdrawal_location_id required because
     # this field has a default value
     withdrawal_location_id = fields.Many2one(
@@ -47,14 +45,14 @@ class OliveOilProduction(models.Model):
     shrinkage_location_id = fields.Many2one(
         'stock.location', string='Shrinkage Tank',
         states={'done': [('readonly', True)]},
-        track_visibility='onchange')
+        tracking=True)
     compensation_location_id = fields.Many2one(
         'stock.location', string='Compensation Tank', readonly=True,
         states={'draft': [('readonly', False)]},  # so that the onchange works
-        track_visibility='onchange')
+        tracking=True)
     compensation_sale_location_id = fields.Many2one(
         'stock.location', string='Compensation Sale Tank',
-        states={'done': [('readonly', True)]}, track_visibility='onchange')
+        states={'done': [('readonly', True)]}, tracking=True)
     compensation_oil_product_id = fields.Many2one(
         'product.product', string='Compensation Oil Type', readonly=True)
     compensation_type = fields.Selection([
@@ -62,32 +60,32 @@ class OliveOilProduction(models.Model):
         ('first', 'First of the Day'),
         ('last', 'Last of the Day'),
         ], string='Compensation Type', default='none', readonly=True,
-        track_visibility='onchange')
+        tracking=True)
     compensation_last_olive_qty = fields.Float(
         string='Olive Compensation Qty',
-        digits=dp.get_precision('Olive Weight'), readonly=True,
-        track_visibility='onchange', help="Olive compensation in kg")
+        digits='Olive Weight', readonly=True,
+        tracking=True, help="Olive compensation in kg")
     compensation_ratio = fields.Float(
-        string='Compensation Ratio', digits=dp.get_precision('Olive Oil Ratio'),
-        readonly=True, track_visibility='onchange')
+        string='Compensation Ratio', digits='Olive Oil Ratio',
+        readonly=True, tracking=True)
     olive_qty = fields.Float(
         string='Olive Qty', compute='_compute_lines',
-        digits=dp.get_precision('Olive Weight'), readonly=True, store=True,
-        track_visibility='onchange',
+        digits='Olive Weight', readonly=True, store=True,
+        tracking=True,
         help='Olive quantity without compensation in kg')
     to_sale_tank_oil_qty = fields.Float(
         string='Oil Qty to Sale Tank (L)', compute='_compute_lines',
-        digits=dp.get_precision('Olive Oil Volume'), readonly=True, store=True)
+        digits='Olive Oil Volume', readonly=True, store=True)
     to_compensation_sale_tank_oil_qty = fields.Float(
         string='Oil Qty to Compensation Sale Tank (L)', compute='_compute_lines',
-        digits=dp.get_precision('Olive Oil Volume'), readonly=True, store=True)
+        digits='Olive Oil Volume', readonly=True, store=True)
     compensation_oil_qty = fields.Float(
         string='Oil Compensation (L)',
-        digits=dp.get_precision('Olive Oil Volume'), readonly=True,
-        track_visibility='onchange')
+        digits='Olive Oil Volume', readonly=True,
+        tracking=True)
     compensation_oil_qty_kg = fields.Float(
         string='Oil Compensation (kg)',
-        digits=dp.get_precision('Olive Weight'), readonly=True)
+        digits='Olive Weight', readonly=True)
     oil_destination = fields.Selection([
         ('withdrawal', 'Withdrawal'),
         ('sale', 'Sale'),
@@ -96,26 +94,26 @@ class OliveOilProduction(models.Model):
         readonly=True)
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Type', readonly=True,
-        track_visibility='onchange')
+        tracking=True)
     olive_culture_type = fields.Selection(
         related='oil_product_id.olive_culture_type', readonly=True, store=True)
     olive_culture_type_logo = fields.Binary(
         compute='_compute_olive_culture_type_logo',
         string='Olive Culture Type Logo', readonly=True)
     oil_qty_kg = fields.Float(
-        string='Oil Quantity (kg)', digits=dp.get_precision('Olive Weight'),
-        readonly=True, track_visibility='onchange')  # written by ratio2force wizard
+        string='Oil Quantity (kg)', digits='Olive Weight',
+        readonly=True, tracking=True)  # written by ratio2force wizard
     oil_qty = fields.Float(
-        string='Oil Quantity (L)', digits=dp.get_precision('Olive Oil Volume'),
-        readonly=True, track_visibility='onchange')  # written by ratio2force wizard
+        string='Oil Quantity (L)', digits='Olive Oil Volume',
+        readonly=True, tracking=True)  # written by ratio2force wizard
     ratio = fields.Float(
-        string='Gross Ratio (% L)', digits=dp.get_precision('Olive Oil Ratio'),
+        string='Gross Ratio (% L)', digits='Olive Oil Ratio',
         readonly=True, group_operator='avg',
         help="This ratio gives the number of liters of olive oil for "
         "100 kg of olives.")  # Yes, it's a ratio between liters and kg !!!
     date = fields.Date(
         string='Date', default=fields.Date.context_today, required=True,
-        states={'done': [('readonly', True)]}, track_visibility='onchange')
+        states={'done': [('readonly', True)]}, tracking=True)
     day_position = fields.Integer(
         compute='_compute_day_position', readonly=True, string='Order')
     sample = fields.Boolean(
@@ -134,7 +132,7 @@ class OliveOilProduction(models.Model):
         ('done', 'Done'),
         ('cancel', 'Cancelled'),
         ], string='State', default='draft', readonly=True,
-        track_visibility='onchange')
+        tracking=True)
     done_datetime = fields.Datetime(
         string='Date Done', readonly=True, copy=False)
     shrinkage_move_id = fields.Many2one(

@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 # Copyright 2018 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api, _
-import odoo.addons.decimal_precision as dp
 from odoo.exceptions import UserError
 from dateutil.relativedelta import relativedelta
 import logging
@@ -31,10 +29,10 @@ class StockWarehouse(models.Model):
         domain=[('olive_tank_type', '=', 'compensation')])
     olive_compensation_last_qty = fields.Float(
         string='Olive Compensation Quantity', default=45.0,
-        digits=dp.get_precision('Olive Weight'))
+        digits='Olive Weight')
     olive_oil_compensation_ratio = fields.Float(
         string='Compensation Ratio',
-        digits=dp.get_precision('Olive Oil Ratio'), default=17)
+        digits='Olive Oil Ratio', default=17)
     olive_oil_compensation_ratio_update_date = fields.Date(
         string='Last Update of the Compensation Ratio')
     olive_oil_compensation_ratio_days = fields.Integer(

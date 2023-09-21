@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 # Copyright 2019 Barroux Abbey (http://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models
-import odoo.addons.decimal_precision as dp
 from odoo.tools import float_is_zero
 
 
@@ -37,7 +35,7 @@ class OlivePreseasonPoll(models.Model):
         'olive.season', readonly=True, string='N-1 Season')
     n1_ratio_net = fields.Float(
         string='N-1 Net Ratio (%)',
-        digits=dp.get_precision('Olive Oil Ratio'), readonly=True)
+        digits='Olive Oil Ratio', readonly=True)
     n1_olive_qty = fields.Integer(
         string='N-1 Olive Qty (kg)', readonly=True)
     n1_oil_qty_net = fields.Integer(
@@ -50,7 +48,7 @@ class OlivePreseasonPoll(models.Model):
         'olive.season', readonly=True, string='N-2 Season')
     n2_ratio_net = fields.Float(
         string='N-2 Net Ratio (%)',
-        digits=dp.get_precision('Olive Oil Ratio'), readonly=True)
+        digits='Olive Oil Ratio', readonly=True)
     n2_olive_qty = fields.Integer(
         string='N-2 Olive Qty (kg)', readonly=True)
     n2_oil_qty_net = fields.Integer(
@@ -63,7 +61,7 @@ class OlivePreseasonPoll(models.Model):
         'olive.season', readonly=True, string='N-3 Season')
     n3_ratio_net = fields.Float(
         string='N-3 Net Ratio (%)',
-        digits=dp.get_precision('Olive Oil Ratio'), readonly=True)
+        digits='Olive Oil Ratio', readonly=True)
     n3_olive_qty = fields.Integer(
         string='N-3 Olive Qty (kg)', readonly=True)
     n3_oil_qty_net = fields.Integer(
@@ -73,7 +71,7 @@ class OlivePreseasonPoll(models.Model):
     n3_sale_oil_qty = fields.Integer(
         string='N-3 Sale Oil Qty (L)', readonly=True)
     past_average_ratio_net = fields.Float(
-        digits=dp.get_precision('Olive Oil Ratio'), readonly=True,
+        digits='Olive Oil Ratio', readonly=True,
         string='Past Average Net Ratio (%)')
     past_average_olive_qty = fields.Integer(
         string='Past Average Olive Qty (kg)', readonly=True)

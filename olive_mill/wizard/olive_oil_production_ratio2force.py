@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 # Copyright 2018 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models, _
-import odoo.addons.decimal_precision as dp
 from odoo.tools import float_round
 from odoo.exceptions import UserError
 
@@ -36,14 +34,14 @@ class OliveOilProductionRatio2force(models.TransientModel):
     compensation_oil_qty = fields.Float(
         related='production_id.compensation_oil_qty', readonly=True)
     oil_qty_kg = fields.Float(
-        string='Oil Qty (kg)', digits=dp.get_precision('Olive Weight'),
+        string='Oil Qty (kg)', digits='Olive Weight',
         required=True)
     oil_qty = fields.Float(
         string='Oil Qty (L)', compute='_compute_all',
-        digits=dp.get_precision('Olive Oil Volume'), readonly=True)
+        digits='Olive Oil Volume', readonly=True)
     ratio = fields.Float(
         string='Gross Ratio (% L)', compute='_compute_all',
-        digits=dp.get_precision('Olive Oil Ratio'), readonly=True)
+        digits='Olive Oil Ratio', readonly=True)
     sale_location_id = fields.Many2one(
         'stock.location', string='Sale Tank')
     compensation_sale_location_id = fields.Many2one(

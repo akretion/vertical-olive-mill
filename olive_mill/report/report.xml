@@ -7,7 +7,7 @@
 
 <odoo>
 
-<record id="olive_culture_report" model="ir.actions.report.xml">
+<record id="olive_culture_report" model="ir.actions.report">
     <field name="name">Olive Culture Form</field>
     <field name="model">res.partner</field>
     <field name="report_name">res.partner.olive.culture</field>
@@ -23,10 +23,10 @@
     <field name="key2">client_print_multi</field>
     <field name="model">res.partner</field>
     <field name="name">Olive Culture Form</field>
-    <field name="value" eval="'ir.actions.report.xml,%d'%olive_culture_report" />
+    <field name="value" eval="'ir.actions.report,%d'%olive_culture_report" />
 </record>
 
-<record id="olive_parcel_report" model="ir.actions.report.xml">
+<record id="olive_parcel_report" model="ir.actions.report">
     <field name="name">Olive Parcel</field>
     <field name="model">res.partner</field>
     <field name="report_name">res.partner.olive.parcel</field>
@@ -42,10 +42,10 @@
     <field name="key2">client_print_multi</field>
     <field name="model">res.partner</field>
     <field name="name">Olive Parcel Form</field>
-    <field name="value" eval="'ir.actions.report.xml,%d'%olive_parcel_report" />
+    <field name="value" eval="'ir.actions.report,%d'%olive_parcel_report" />
 </record>
 
-<record id="olive_oil_production_report" model="ir.actions.report.xml">
+<record id="olive_oil_production_report" model="ir.actions.report">
     <field name="name">Olive Oil Production</field>
     <field name="model">olive.oil.production</field>
     <field name="report_name">olive.oil.production</field>
@@ -61,10 +61,10 @@
     <field name="key2">client_print_multi</field>
     <field name="model">olive.oil.production</field>
     <field name="name">Olive Oil Production</field>
-    <field name="value" eval="'ir.actions.report.xml,%d'%olive_oil_production_report" />
+    <field name="value" eval="'ir.actions.report,%d'%olive_oil_production_report" />
 </record>
 
-<record id="olive_oil_delivery_report" model="ir.actions.report.xml">
+<record id="olive_oil_delivery_report" model="ir.actions.report">
     <field name="name">Olive Oil Withdrawal</field>
     <field name="model">stock.picking</field>
     <field name="report_name">olive.oil.delivery</field>
@@ -80,10 +80,10 @@
     <field name="key2">client_print_multi</field>
     <field name="model">stock.picking</field>
     <field name="name">Olive Oil Withdrawal</field>
-    <field name="value" eval="'ir.actions.report.xml,%d'%olive_oil_delivery_report" />
+    <field name="value" eval="'ir.actions.report,%d'%olive_oil_delivery_report" />
 </record>
 
-<record id="olive_prodlot_tracability_report" model="ir.actions.report.xml">
+<record id="olive_prodlot_tracability_report" model="ir.actions.report">
     <field name="name">Olive Oil Tracability</field>
     <field name="model">stock.production.lot</field>
     <field name="report_name">olive.prodlot.tracability</field>
@@ -98,10 +98,10 @@
     <field name="key2">client_print_multi</field>
     <field name="model">stock.production.lot</field>
     <field name="name">Olive Oil Tracability</field>
-    <field name="value" eval="'ir.actions.report.xml,%d'%olive_prodlot_tracability_report" />
+    <field name="value" eval="'ir.actions.report,%d'%olive_prodlot_tracability_report" />
 </record>
 
-<record id="olive_oil_analysis_report" model="ir.actions.report.xml">
+<record id="olive_oil_analysis_report" model="ir.actions.report">
     <field name="name">Olive Oil Analysis</field>
     <field name="model">olive.oil.analysis</field>
     <field name="report_name">olive.oil.analysis</field>
@@ -116,10 +116,10 @@
     <field name="key2">client_print_multi</field>
     <field name="model">olive.oil.analysis</field>
     <field name="name">Olive Oil Analysis</field>
-    <field name="value" eval="'ir.actions.report.xml,%d'%olive_oil_analysis_report" />
+    <field name="value" eval="'ir.actions.report,%d'%olive_oil_analysis_report" />
 </record>
 
-<record id="olive_appointment_day_report" model="ir.actions.report.xml">
+<record id="olive_appointment_day_report" model="ir.actions.report">
     <field name="name">Print Appointments</field>
     <field name="model">olive.appointment.print</field>
     <field name="report_name">olive.appointment.day</field>
@@ -130,7 +130,7 @@
     <field name="print_report_name">'Appointments-' + object.date + '.odt'</field>
 </record>
 
-<record id="olive_oil_production_day_report" model="ir.actions.report.xml">
+<record id="olive_oil_production_day_report" model="ir.actions.report">
     <field name="name">Print Olive Oil Production</field>
     <field name="model">olive.oil.production.day.print</field>
     <field name="report_name">olive.oil.production.day</field>
@@ -141,7 +141,7 @@
     <field name="print_report_name">'Production-' + object.date + '.odt'</field>
 </record>
 
-<record id="olive_arrival_report" model="ir.actions.report.xml">
+<record id="olive_arrival_report" model="ir.actions.report">
     <field name="name">Olive Arrival</field>
     <field name="model">olive.arrival</field>
     <field name="report_name">olive.arrival</field>
@@ -156,10 +156,10 @@
     <field name="key2">client_print_multi</field>
     <field name="model">olive.arrival</field>
     <field name="name">Olive Arrival</field>
-    <field name="value" eval="'ir.actions.report.xml,%d'%olive_arrival_report" />
+    <field name="value" eval="'ir.actions.report,%d'%olive_arrival_report" />
 </record>
 
-<record id="olive_partner_warnings_report" model="ir.actions.report.xml">
+<record id="olive_partner_warnings_report" model="ir.actions.report">
     <field name="name">Print Farmer Warnings</field>
     <field name="model">olive.partner.warning.print</field>
     <field name="report_name">olive.partner.warning</field>

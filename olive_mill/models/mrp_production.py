@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # © 2017 Barroux Abbey (Alexis de Lattre <alexis.delattre@akretion.com>)
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -21,7 +20,6 @@ class MrpProduction(models.Model):
         self.green = True
         return True
 
-    @api.multi
     def action_assign(self):
         sqo = self.env['stock.quant']
         for production in self:

@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
 # Copyright 2018 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import api, models, fields, _
 from odoo.exceptions import UserError, ValidationError
-import odoo.addons.decimal_precision as dp
 
 
 class OlivePalox(models.Model):
@@ -31,10 +29,10 @@ class OlivePalox(models.Model):
         'product.product', string='Current Oil Product',
         domain=[('olive_type', '=', 'oil')])
     empty_weight = fields.Float(
-        string='Empty Weight (kg)', digits=dp.get_precision('Olive Weight'))
+        string='Empty Weight (kg)', digits='Olive Weight')
     weight = fields.Float(
         compute='_compute_weight', string='Current Net Weight (kg)',
-        digits=dp.get_precision('Olive Weight'), readonly=True)
+        digits='Olive Weight', readonly=True)
     oil_destination = fields.Selection([
         ('withdrawal', 'Withdrawal'),
         ('sale', 'Sale'),

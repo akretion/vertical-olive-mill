@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 # Copyright 2018 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api
-import odoo.addons.decimal_precision as dp
 
 
 class OliveParcel(models.Model):
@@ -18,7 +16,7 @@ class OliveParcel(models.Model):
         index=True, store=True, readonly=True)
     land_registry_ref = fields.Char(string='Land Registry Ref')
     area = fields.Float(
-        string='Area', digits=dp.get_precision('Olive Parcel Area'),
+        string='Area', digits='Olive Parcel Area',
         help="Area in hectare")
     tree_qty = fields.Integer(string='Number of Trees')
     variant_ids = fields.Many2many('olive.variant', string='Olive Variants')

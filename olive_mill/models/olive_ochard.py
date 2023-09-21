@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 # Copyright 2018 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import api, models, fields
-import odoo.addons.decimal_precision as dp
 
 
 class OliveOchard(models.Model):
@@ -25,7 +23,7 @@ class OliveOchard(models.Model):
         compute='_compute_totals', string='Total Trees', readonly=True, store=True)
     area_total = fields.Float(
         compute='_compute_totals', string='Total Area', readonly=True, store=True,
-        digits=dp.get_precision('Olive Parcel Area'))
+        digits='Olive Parcel Area')
 
     _sql_constraints = [(
         'name_partner_id_unique',

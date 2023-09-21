@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 # Copyright 2018 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import fields, models, _
-import odoo.addons.decimal_precision as dp
 from odoo.exceptions import UserError
 
 
@@ -25,7 +23,7 @@ class OliveOilProductionForceRatio(models.TransientModel):
     arrival_line_id = fields.Many2one(
         'olive.arrival.line', required=True, string='Production Line')
     force_ratio = fields.Float(
-        string='Force Ratio', digits=dp.get_precision('Olive Oil Ratio'),
+        string='Force Ratio', digits='Olive Oil Ratio',
         required=True)
 
     def validate(self):

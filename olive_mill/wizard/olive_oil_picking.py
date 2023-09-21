@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 # Copyright 2018 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models, _
-import odoo.addons.decimal_precision as dp
 from odoo.tools import float_compare
 from odoo.exceptions import UserError
 
@@ -20,7 +18,7 @@ class OliveOilPicking(models.TransientModel):
         'product.product', string='Oil Type', readonly=True)
     oil_qty = fields.Float(
         string='Oil Qty', readonly=True,
-        digits=dp.get_precision('Product Unit of Measure'))
+        digits='Product Unit of Measure')
     warehouse_id = fields.Many2one(
         'stock.warehouse', string='Warehouse',
         domain=[('olive_mill', '=', True)],
@@ -247,5 +245,5 @@ class OliveOilPickingContainer(models.TransientModel):
             '|', ('tracking', '=', False), ('tracking', '=', 'none')])
     qty = fields.Float(
         string='Quantity', default=1,
-        digits=dp.get_precision('Product Unit of Measure'), required=True)
+        digits='Product Unit of Measure', required=True)
     uom_id = fields.Many2one(related='product_id.uom_id', readonly=True)

@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
 # Copyright 2018 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 
 from odoo import models, fields, api
-import odoo.addons.decimal_precision as dp
 
 
 class ResCompany(models.Model):
@@ -26,7 +24,7 @@ class ResCompany(models.Model):
     # Pre-season polls
     olive_preseason_poll_ratio_no_history = fields.Float(
         string='Ratio for Olive Farmers without History',
-        default=15, digits=dp.get_precision('Olive Oil Ratio'))
+        default=15, digits='Olive Oil Ratio')
     # START APPOINTMENTS
     olive_appointment_qty_per_palox = fields.Integer(
         string='Quantity of Olives per Palox', default=380)
@@ -46,23 +44,23 @@ class ResCompany(models.Model):
     # END APPOINTMENTS
     olive_shrinkage_ratio = fields.Float(
         string='Shrinkage Ratio', default=0.4,
-        digits=dp.get_precision('Olive Oil Ratio'))
+        digits='Olive Oil Ratio')
     olive_filter_ratio = fields.Float(
         string='Filter Loss Ratio', default=1.0,
-        digits=dp.get_precision('Olive Oil Ratio'))
+        digits='Olive Oil Ratio')
     olive_min_ratio = fields.Float(
         string='Minimum Ratio', default=5,
-        digits=dp.get_precision('Olive Oil Ratio'),
+        digits='Olive Oil Ratio',
         help="A ratio under that value would be considered as not realistic "
         "and would trigger a blocking error message.")
     olive_max_ratio = fields.Float(
         string='Maximum Ratio', default=35,
-        digits=dp.get_precision('Olive Oil Ratio'),
+        digits='Olive Oil Ratio',
         help="A ratio above that value would be considered as not realistic "
         "and would trigger a blocking error message.")
     olive_oil_density = fields.Float(
         string='Olive Oil Density', default=0.916,
-        digits=dp.get_precision('Olive Oil Density'),
+        digits='Olive Oil Density',
         help='Olive oil density in kg per liter')
     olive_oil_leaf_removal_product_id = fields.Many2one(
         'product.product', string='Leaf Removal Product',
@@ -86,7 +84,7 @@ class ResCompany(models.Model):
         'res.users', string='Default User for Olive Oil Analysis')
     # olive_oil_tax_price_unit = fields.Float(
     #    string='AFIDOL Tax Unit Price',
-    #    digits=dp.get_precision('Olive Oil Tax Price Unit'), default=0.129,
+    #    digits='Olive Oil Tax Price Unit', default=0.129,
     #    help='Tax unit price per liter of olive oil')
 
     _sql_constraints = [(

@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
 # Copyright 2018 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl)
 
 from odoo import api, fields, models, tools, _
 from odoo.exceptions import UserError
-import odoo.addons.decimal_precision as dp
 
 
 class ResPartner(models.Model):
@@ -18,7 +16,7 @@ class ResPartner(models.Model):
         compute='_compute_olive_total', string='Total Trees', readonly=True)
     olive_area_total = fields.Float(
         compute='_compute_olive_total', string='Total Area', readonly=True,
-        digits=dp.get_precision('Olive Parcel Area'))
+        digits='Olive Parcel Area')
     olive_lended_palox = fields.Integer(
         compute='_compute_olive_total', string='Lended Palox', readonly=True)
     olive_lended_regular_case = fields.Integer(
@@ -30,43 +28,43 @@ class ResPartner(models.Model):
         string='Current Olive Season')
     olive_qty_current_season = fields.Float(
         compute='_compute_olive_total', string='Olive Qty Brought',
-        readonly=True, digits=dp.get_precision('Olive Weight'),
+        readonly=True, digits='Olive Weight',
         help="Olives brought for the current season in kg")
     olive_qty_triturated_current_season = fields.Float(
         compute='_compute_olive_total', string='Olive Qty Triturated',
-        readonly=True, digits=dp.get_precision('Olive Weight'),
+        readonly=True, digits='Olive Weight',
         help="Olives triturated for the current season in kg")
     olive_qty_sale_current_season = fields.Float(
         compute='_compute_olive_total', string='Olive Qty Sold',
-        readonly=True, digits=dp.get_precision('Olive Weight'),
+        readonly=True, digits='Olive Weight',
         help="Equivalent in olive qty (in kg) of the oil sold during the current season")
     olive_qty_withdrawal_current_season = fields.Float(
         compute='_compute_olive_total', string='Olive Qty Withdrawal',
-        readonly=True, digits=dp.get_precision('Olive Weight'),
+        readonly=True, digits='Olive Weight',
         help="Equivalent in olive qty (in kg) of the withdrawal oil during the current season")
     olive_oil_qty_current_season = fields.Float(
         compute='_compute_olive_total', string='Net Oil Qty', readonly=True,
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         help="Net olive oil producted for the current season in liters")
     olive_oil_ratio_current_season = fields.Float(
         compute='_compute_olive_total', string='Net Oil Ratio', readonly=True,
-        digits=dp.get_precision('Olive Oil Ratio'),
+        digits='Olive Oil Ratio',
         help="Net oil ratio for the current season in percentage")
     olive_oil_qty_withdrawal_current_season = fields.Float(
         compute='_compute_olive_total', string='Withdrawal Oil Qty', readonly=True,
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         help="Withdrawal oil (already withdrawn and pending withdrawal) for the current season in liters")
     olive_oil_qty_to_withdraw = fields.Float(
         compute='_compute_olive_total', string='Oil Qty to Withdraw', readonly=True,
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         help="Olive oil to withdraw in liters")
     olive_oil_qty_withdrawn_current_season = fields.Float(
         compute='_compute_olive_total', string='Withdrawn Oil Qty', readonly=True,
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         help="Withdrawn oil for the current season in liters")
     olive_sale_oil_qty_current_season = fields.Float(
         compute='_compute_olive_total', string='Oil Qty Sold', readonly=True,
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         help="Sold olive oil for the current season in liters")
     olive_cultivation_form_ko = fields.Boolean(
         compute='_compute_organic_and_warnings',
@@ -101,7 +99,7 @@ class ResPartner(models.Model):
             self.customer = True
             self.supplier = True
 
-    @api.one
+    # WAS api.one => loop on recordset
     def _compute_olive_total(self):
         olive_lended_regular_case = 0
         olive_lended_organic_case = 0

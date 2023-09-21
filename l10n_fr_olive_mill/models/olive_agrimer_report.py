@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 # Copyright 2019 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models, _
-import odoo.addons.decimal_precision as dp
 from odoo.exceptions import UserError
 
 
@@ -24,68 +22,68 @@ class OliveAgrimerReport(models.Model):
         'date.range', string='Date Range',
         states={'done': [('readonly', True)]})
     date_start = fields.Date(
-        string='Start Date', required=True, track_visibility='onchange',
+        string='Start Date', required=True, tracking=True,
         states={'done': [('readonly', True)]})
     date_end = fields.Date(
-        string='End Date', track_visibility='onchange',
+        string='End Date', tracking=True,
         required=True, states={'done': [('readonly', True)]})
     olive_arrival_qty = fields.Float(
-        string='Olive Arrival (kg)', digits=dp.get_precision('Olive Weight'),
+        string='Olive Arrival (kg)', digits='Olive Weight',
         states={'done': [('readonly', True)]})
     olive_pressed_qty = fields.Float(
-        string='Olive Pressed (kg)', digits=dp.get_precision('Olive Weight'),
+        string='Olive Pressed (kg)', digits='Olive Weight',
         states={'done': [('readonly', True)]})
     organic_virgin_oil_produced = fields.Float(
         string='Organic Virgin Olive Oil Produced (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     organic_extravirgin_oil_produced = fields.Float(
         string='Organic Extra Virgin Olive Oil Produced (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     regular_virgin_oil_produced = fields.Float(
         string='Regular Virgin Olive Oil Produced (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     regular_extravirgin_oil_produced = fields.Float(
         string='Regular Extra Virgin Olive Oil Produced (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     # Oil OUT
     # Shrinkage
     shrinkage_organic_virgin_oil = fields.Float(
         string='Shrinkage Organic Virgin Oil (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     shrinkage_organic_extravirgin_oil = fields.Float(
         string='Shrinkage Organic Extra Virgin Oil (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     shrinkage_regular_virgin_oil = fields.Float(
         string='Shrinkage Regular Virgin Oil (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     shrinkage_regular_extravirgin_oil = fields.Float(
         string='Shrinkage Regular Extra Virgin Oil (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     # WITHDRAWAL (product = oil /
     # selected source location wh.olive_withdrawal_loc_id)
     withdrawal_organic_virgin_oil = fields.Float(
         string='Withdrawal Organic Virgin Oil (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     withdrawal_organic_extravirgin_oil = fields.Float(
         string='Organic Extra Virgin Oil Withdrawal (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     withdrawal_regular_virgin_oil = fields.Float(
         string='Regular Virgin Oil Withdrawal (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     withdrawal_regular_extravirgin_oil = fields.Float(
         string='Regular Extra Virgin Oil Withdrawal (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     # CONSUMER sale (product = bottles /
     # no partner or partner with other pricelists)
@@ -93,59 +91,59 @@ class OliveAgrimerReport(models.Model):
     # we used both for B2C and B2B
     sale_consumer_organic_virgin_oil = fields.Float(
         string='Sale to Consumers of Organic Virgin Oil (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     sale_consumer_organic_extravirgin_oil = fields.Float(
         string='Sale to Consumers of Organic Extra Virgin Oil (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     sale_consumer_regular_virgin_oil = fields.Float(
         string='Sale to Consumers of Regular Virgin Oil (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     sale_consumer_regular_extravirgin_oil = fields.Float(
         string='Sale to Consumers of Regular Extra Virgin Oil (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     # DISTRIBUTOR sale (product = bottles / partner with selected pricelist)
     sale_distributor_organic_virgin_oil = fields.Float(
         string='Sale to Distributors of Organic Virgin Oil (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     sale_distributor_organic_extravirgin_oil = fields.Float(
         string='Sale to Distributors of Organic Extra Virgin Oil (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     sale_distributor_regular_virgin_oil = fields.Float(
         string='Sale to Distributors of Regular Virgin Oil (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     sale_distributor_regular_extravirgin_oil = fields.Float(
         string='Sale to Distributors of Regular Extra Virgin Oil (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     # LOOSE sale (product = oil / all other source locations)
     sale_loose_organic_virgin_oil = fields.Float(
         string='Loose Sale of Organic Virgin Oil (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     sale_loose_organic_extravirgin_oil = fields.Float(
         string='Loose Sale of Organic Extra Virgin Oil (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     sale_loose_regular_virgin_oil = fields.Float(
         string='Loose Sale of Regular Virgin Oil (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
     sale_loose_regular_extravirgin_oil = fields.Float(
         string='Loose Sale of Regular Extra Virgin Oil (L)',
-        digits=dp.get_precision('Olive Oil Volume'),
+        digits='Olive Oil Volume',
         states={'done': [('readonly', True)]})
 
     state = fields.Selection([
         ('draft', 'Draft'),
         ('done', 'Done'),
-        ], default='draft', readonly=True, track_visibility='onchange')
+        ], default='draft', readonly=True, tracking=True)
 
     _sql_constraints = [(
         'date_company_uniq',

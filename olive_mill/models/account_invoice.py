@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2018 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
@@ -68,7 +67,6 @@ class AccountInvoice(models.Model):
                         'oil_sale_price_total': oil_sale_price_unit * oaline.sale_oil_qty,
                         })
 
-    @api.multi
     def action_move_create(self):
         for invoice in self:
             if invoice.partner_id.olive_farmer:  # just for perf

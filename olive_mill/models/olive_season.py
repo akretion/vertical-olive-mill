@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 # Copyright 2018 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api, _
-import odoo.addons.decimal_precision as dp
 from odoo.exceptions import ValidationError, UserError
 from odoo.tools import float_round
 from dateutil.relativedelta import relativedelta
@@ -38,7 +36,7 @@ class OliveSeason(models.Model):
         compute='_compute_totals', string='Withdrawal Oil Qty (L)', readonly=True)
     gross_ratio = fields.Float(
         compute='_compute_totals', string='Gross Ratio (%)', readonly=True,
-        digits=dp.get_precision('Olive Oil Ratio'))
+        digits='Olive Oil Ratio')
     show_on_dashboard = fields.Boolean(string='Show on Dashboard', default=True)
     kanban_dashboard_graph = fields.Text(compute='_compute_kanban_dashboard_graph')
     partner_organic_certif_generated = fields.Boolean(readonly=True)
