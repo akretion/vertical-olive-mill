@@ -150,6 +150,7 @@ class OliveOilAnalysis(models.Model):
                 raise UserError(_(
                     "You cannot delete analysis '%s' because it is in done state.")
                     % ana.display_name)
+        return super(OliveOilAnalysis, self).unlink()
 
     def back2draft(self):
         self.write({'state': 'draft'})
