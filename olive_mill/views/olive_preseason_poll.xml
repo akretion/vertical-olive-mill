@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2019 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2019-2023 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -12,7 +12,7 @@
     <field name="name">olive.preseason.poll.form</field>
     <field name="model">olive.preseason.poll</field>
     <field name="arch" type="xml">
-        <form string="Pre-season Poll">
+        <form>
             <header>
                 <button type="object" name="update_past_data" string="Get Past Data" class="btn-primary" attrs="{'invisible': [('past_data_ok', '=', True)]}"/>
             </header>
@@ -23,6 +23,7 @@
                         <group name="top-left">
                             <field name="partner_id"/>
                             <field name="season_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
                             <field name="past_data_ok" invisible="1"/>
                             <field name="olive_culture_type" invisible="1"/>
                         </group>
@@ -32,7 +33,7 @@
                                     <field name="olive_qty" sum="1"/>
                                     <field name="sale_olive_qty" sum="1"/>
                                     <field name="oil_product_id"
-                                        domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', olive_culture_type)]"
+                                        domain="[('detailed_type', '=', 'olive_oil'), ('olive_culture_type', '=', olive_culture_type)]"
                                         attrs="{'required': [('sale_olive_qty', '>', 0)]}"
                                         options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
                                     <!-- widget="selection" in tree view sometimes causes bug, no I use no_open, no_create, no_create_edit -->
@@ -146,7 +147,7 @@
     <field name="name">olive.preseason.poll.tree</field>
     <field name="model">olive.preseason.poll</field>
     <field name="arch" type="xml">
-        <tree string="Pre-season Polls">
+        <tree>
             <field name="partner_id"/>
             <field name="season_id"/>
             <field name="past_average_ratio_net"/>
@@ -162,7 +163,7 @@
     <field name="name">olive.preseason.poll.search</field>
     <field name="model">olive.preseason.poll</field>
     <field name="arch" type="xml">
-        <search string="Pre-season Polls">
+        <search>
             <field name="partner_id" operator="child_of"/>
             <separator/>
             <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
@@ -195,7 +196,7 @@
     <field name="name">olive.preseason.poll.line.tree</field>
     <field name="model">olive.preseason.poll.line</field>
     <field name="arch" type="xml">
-        <tree string="Pre-season Poll Lines" edit="0" create="0">
+        <tree edit="0" create="0">
             <field name="commercial_partner_id"/>
             <field name="season_id"/>
             <field name="olive_qty" sum="1"/>
@@ -211,7 +212,7 @@
     <field name="name">olive.preseason.poll.line.pivot</field>
     <field name="model">olive.preseason.poll.line</field>
     <field name="arch" type="xml">
-        <pivot string="Pre-season Polls">
+        <pivot>
             <field name="oil_product_id" type="row"/>
             <field name="olive_qty" type="measure"/>
             <field name="oil_qty" type="measure"/>

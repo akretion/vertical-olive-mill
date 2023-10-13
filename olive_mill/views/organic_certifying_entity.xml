@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -11,22 +11,17 @@
     <field name="name">organic.certifying.entity.form</field>
     <field name="model">organic.certifying.entity</field>
     <field name="arch" type="xml">
-        <form string="Organic Certifying Entity">
+        <form>
             <sheet>
-                <div class="oe_button_box" name="button_box">
-                    
-            <field name="active" invisible="1" />
-            <widget
-                name="web_ribbon"
-                title="Archived"
-                bg_color="bg-danger"
-                attrs="{'invisible': [('active', '=', True)]}"
-            />
-            
-                </div>
+                <widget
+                    name="web_ribbon"
+                    title="Archived"
+                    bg_color="bg-danger"
+                    attrs="{'invisible': [('active', '=', True)]}" />
                 <group name="main">
                     <field name="name"/>
                     <field name="code"/>
+                    <field name="active" invisible="1" />
                 </group>
             </sheet>
         </form>
@@ -37,7 +32,7 @@
     <field name="name">organic.certifying.entity.tree</field>
     <field name="model">organic.certifying.entity</field>
     <field name="arch" type="xml">
-        <tree string="Organic Certifying Entities">
+        <tree>
             <field name="sequence" widget="handle"/>
             <field name="name"/>
             <field name="code"/>
@@ -49,7 +44,7 @@
     <field name="name">organic.certifying.entity.search</field>
     <field name="model">organic.certifying.entity</field>
     <field name="arch" type="xml">
-        <search string="Search Organic Certifying Entities">
+        <search>
             <field name="name" filter_domain="['|', ('code', 'ilike', self), ('name', 'ilike', self)]" string="Name or Code"/>
             <separator/>
             <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
@@ -63,6 +58,6 @@
     <field name="view_mode">tree,form</field>
 </record>
 
-<menuitem id="organic_certifying_entity_menu" action="organic_certifying_entity_action" parent="olive_config_menu" sequence="100"/>
+<menuitem id="organic_certifying_entity_menu" action="organic_certifying_entity_action" parent="olive_config_menu" sequence="100" groups="olive_mill.olive_organic"/>
 
 </odoo>

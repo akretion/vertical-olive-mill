@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="olive_oil_production_force_ratio_form" model="ir.ui.view">
+    <field name="name">olive.oil.production.force.ratio.form</field>
+    <field name="model">olive.oil.production.force.ratio</field>
+    <field name="arch" type="xml">
+        <form>
+            <group name="main">
+                <field name="production_id" invisible="1"/>
+                <field name="palox_id"/>
+                <field name="farmers"/>
+                <field name="oil_product_id"/>
+                <label for="global_ratio"/>
+                <div name="global_ratio">
+                    <field name="global_ratio" class="oe_inline"/> %
+                </div>
+                <field name="arrival_line_id" domain="[('production_id', '=', production_id)]"/>
+                <label for="force_ratio"/>
+                <div name="force_ratio">
+                    <field name="force_ratio" class="oe_inline"/> %
+                </div>
+            </group>
+            <footer>
+                <button name="validate" type="object" string="Validate" class="btn-primary"/>
+                <button special="cancel" string="Cancel" class="btn-default"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+<record id="olive_oil_production_force_ratio_action" model="ir.actions.act_window">
+    <field name="name">Olive Oil Production Force Ratio</field>
+    <field name="res_model">olive.oil.production.force.ratio</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+</record>
+
+</odoo>

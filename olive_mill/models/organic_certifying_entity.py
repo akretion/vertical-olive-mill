@@ -1,4 +1,4 @@
-# Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+# Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -8,10 +8,10 @@ from odoo import api, fields, models
 class OrganicCertifyingEntity(models.Model):
     _name = 'organic.certifying.entity'
     _description = 'Organic Certifying Entity'
-    _order = 'sequence'
+    _order = 'sequence, id'
 
-    name = fields.Char(string='Name', required=True)
-    code = fields.Char(string='Code', required=True)
+    name = fields.Char(required=True)
+    code = fields.Char(required=True)
     sequence = fields.Integer()
     active = fields.Boolean(default=True)
 

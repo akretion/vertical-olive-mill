@@ -1,4 +1,4 @@
-# Copyright 2019 Barroux Abbey (https://www.barroux.org/)
+# Copyright 2019-2023 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -12,9 +12,10 @@ class OliveOilAnalysis(models.Model):
     _name = 'olive.oil.analysis'
     _description = 'Olive Oil Analysis'
     _order = 'id desc'
-    _inherit = ['mail.thread']
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _check_company_auto = True
 
-    name = fields.Char(string='Analysis Number', index=True, readonly=True)
+    name = fields.Char(string='Analysis Number', index=True, readonly=True, default=lambda x: _('New'))
     oil_source_type = fields.Selection([
         ('arrival', 'Arrival'),
         ('tank', 'Tank'),
@@ -22,31 +23,34 @@ class OliveOilAnalysis(models.Model):
         tracking=True, states={'done': [('readonly', True)]})
     arrival_line_id = fields.Many2one(
         'olive.arrival.line', string='Arrival Line',
-        states={'done': [('readonly', True)]}, tracking=True)
+        states={'done': [('readonly', True)]}, tracking=True, check_company=True)
     partner_id = fields.Many2one(
         related='arrival_line_id.arrival_id.partner_id.commercial_partner_id',
-        readonly=True, store=True, index=True, string='Olive Farmer')
+        store=True, index=True, string='Olive Farmer')
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Type', required=True, index=True,
-        domain=[('olive_type', '=', 'oil')],
+        domain=[('detailed_type', '=', 'olive_oil')],
         tracking=True, states={'done': [('readonly', True)]})
     lot_id = fields.Many2one(
         'stock.production.lot', string='Oil Lot',
-        tracking=True, states={'done': [('readonly', True)]})
+        tracking=True, states={'done': [('readonly', True)]},
+        domain="[('product_id', '=', oil_product_id), ('company_id', '=', company_id)]",
+        check_company=True)
     production_id = fields.Many2one(
-        related='arrival_line_id.production_id', readonly=True, store=True)
+        related='arrival_line_id.production_id', store=True)
     production_date = fields.Date(
-        related='arrival_line_id.production_id.date', readonly=True, store=True,
+        related='arrival_line_id.production_id.date', store=True,
         string='Production Date')
     arrival_date = fields.Date(
-        related='arrival_line_id.arrival_id.date', readonly=True, store=True)
+        related='arrival_line_id.arrival_id.date', store=True)
     season_id = fields.Many2one(
         'olive.season', string='Season', required=True, index=True,
-        states={'done': [('readonly', True)]})
+        domain="[('company_id', '=', company_id)]",
+        states={'done': [('readonly', True)]}, check_company=True)
     location_id = fields.Many2one(
         'stock.location', string='Oil Tank',
-        domain=[('olive_tank_type', '!=', False)],
-        states={'done': [('readonly', True)]}, tracking=True)
+        domain="[('olive_tank_type', '!=', False), ('company_id', '=', company_id)]",
+        states={'done': [('readonly', True)]}, tracking=True, check_company=True)
     state = fields.Selection([
         ('draft', 'Draft'),
         ('done', 'Done'),
@@ -64,26 +68,29 @@ class OliveOilAnalysis(models.Model):
     execution_user_id = fields.Many2one(
         'res.users', string='Analysis Made by',
         states={'done': [('readonly', True)]}, tracking=True,
-        default=lambda self: self.env.user.company_id.olive_oil_analysis_default_user_id.id or False)
+        default=lambda self: self.env.company.olive_oil_analysis_default_user_id.id or False)
     execution_partner_id = fields.Many2one(
-        'res.partner', string='Analysis Made by',
+        'res.partner', string='Analysis Made by (Partner)',
         states={'done': [('readonly', True)]}, tracking=True,
         domain=[('supplier', '=', True)])
     company_id = fields.Many2one(
         'res.company', string='Company',
         ondelete='cascade', required=True,
         states={'done': [('readonly', True)]},
-        default=lambda self: self.env['res.company']._company_default_get())
+        default=lambda self: self.env.company)
     line_ids = fields.One2many(
         'olive.oil.analysis.line', 'analysis_id', string='Analysis Lines',
         states={'done': [('readonly', True)]})
 
-    @api.model
-    def create(self, vals):
-        if vals.get('name', '/') == '/':
-            vals['name'] = self.env['ir.sequence'].next_by_code(
-                'olive.oil.analysis')
-        return super(OliveOilAnalysis, self).create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if 'company_id' in vals:
+                self = self.with_company(vals['company_id'])
+            if vals.get('name', _("New")) == _("New"):
+                vals['name'] = self.env['ir.sequence'].next_by_code(
+                    'olive.oil.analysis', sequence_date=vals.get('date')) or _("New")
+        return super().create(vals)
 
     @api.onchange('location_id')
     def location_id_change(self):
@@ -149,6 +156,7 @@ class OliveOilAnalysis(models.Model):
                 raise UserError(_(
                     "You cannot delete analysis '%s' because it is in done state.")
                     % ana.display_name)
+        return super().unlink()
 
     def back2draft(self):
         self.write({'state': 'draft'})
@@ -156,15 +164,11 @@ class OliveOilAnalysis(models.Model):
     def cancel(self):
         self.write({'state': 'cancel'})
 
-    def print_report(self):
-        action = self.env['report'].get_action(self, 'olive.oil.analysis')
-        return action
-
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
         res = super(OliveOilAnalysis, self).fields_view_get(
             view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        return self.env.user.company_id.current_season_update(res, view_type)
+        return self.env.company.current_season_update(res, view_type)
 
 
 class OliveOilAnalysisLine(models.Model):
@@ -176,8 +180,9 @@ class OliveOilAnalysisLine(models.Model):
     product_id = fields.Many2one(
         'product.product', string='Analysis Type',
         required=True, states={'done': [('readonly', True)]},
-        domain=[('olive_type', '=', 'analysis')])
+        domain=[('detailed_type', '=', 'olive_analysis')])
     decimal_precision = fields.Integer(
+        compute='_compute_params', readonly=False, store=True,
         string='Decimal Precision', states={'done': [('readonly', True)]})
     result_p1 = fields.Float(
         string='Result (1 decimal)', digits=(16, 1),
@@ -191,48 +196,36 @@ class OliveOilAnalysisLine(models.Model):
     result_string = fields.Char(
         string='Result', compute='_compute_result_string', readonly=True)
     precision = fields.Char(
+        compute='_compute_params', readonly=False, store=True,
         string='Precision', states={'done': [('readonly', True)]})
     instrument = fields.Char(
+        compute='_compute_params', readonly=False, store=True,
         string='Instrument', states={'done': [('readonly', True)]})
-    uom = fields.Char(
-        related='product_id.olive_analysis_uom', readonly=True,
-        string='Unit of Measure')
+    uom = fields.Char(related='product_id.olive_analysis_uom', string='Unit of Measure')
     oil_source_type = fields.Selection(
-        related='analysis_id.oil_source_type', readonly=True, store=True)
+        related='analysis_id.oil_source_type', store=True)
     oil_product_id = fields.Many2one(
-        related='analysis_id.oil_product_id',
-        readonly=True, store=True, index=True)
-    date = fields.Date(
-        related='analysis_id.date', store=True, readonly=True)
-    season_id = fields.Many2one(
-        related='analysis_id.season_id', readonly=True, store=True)
+        related='analysis_id.oil_product_id', store=True, index=True)
+    date = fields.Date(related='analysis_id.date', store=True)
+    season_id = fields.Many2one(related='analysis_id.season_id', store=True)
     partner_id = fields.Many2one(
         related='analysis_id.arrival_line_id.arrival_id.partner_id.commercial_partner_id',
-        readonly=True, store=True, index=True, string='Olive Farmer')
-    location_id = fields.Many2one(
-        related='analysis_id.location_id', readonly=True, store=True)
-    state = fields.Selection(
-        related='analysis_id.state', store=True, readonly=True)
-    execution_mode = fields.Selection(
-        related='analysis_id.execution_mode', readonly=True, store=True)
+        store=True, index=True, string='Olive Farmer')
+    location_id = fields.Many2one(related='analysis_id.location_id', store=True)
+    state = fields.Selection(related='analysis_id.state', store=True)
+    execution_mode = fields.Selection(related='analysis_id.execution_mode', store=True)
 
-    @api.onchange('product_id')
-    def product_id_change(self):
-        if self.product_id:
-            self.instrument = self.product_id.olive_analysis_instrument
-            self.precision = self.product_id.olive_analysis_precision
-            self.decimal_precision = self.product_id.olive_analysis_decimal_precision
-
-    @api.model
-    def create(self, vals):
-        if vals.get('product_id'):
-            product = self.env['product.product'].browse(vals['product_id'])
-            vals.update({
-                'instrument': product.olive_analysis_instrument,
-                'precision': product.olive_analysis_precision,
-                'decimal_precision': product.olive_analysis_decimal_precision,
-                })
-        return super(OliveOilAnalysisLine, self).create(vals)
+    @api.depends('product_id')
+    def _compute_params(self):
+        for line in self:
+            instrument = precision = decimal_precision = False
+            if line.product_id:
+                instrument = line.product_id.olive_analysis_instrument
+                precision = line.product_id.olive_analysis_precision
+                decimal_precision = line.product_id.olive_analysis_decimal_precision
+            line.instrument = instrument
+            line.precision = precision
+            line.decimal_precision = decimal_precision
 
     @api.depends('decimal_precision', 'result_p1', 'result_p2', 'result_int')
     def _compute_result_string(self):
@@ -250,6 +243,6 @@ class OliveOilAnalysisLine(models.Model):
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super(OliveOilAnalysisLine, self).fields_view_get(
+        res = super().fields_view_get(
             view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        return self.env.user.company_id.current_season_update(res, view_type)
+        return self.env.company.current_season_update(res, view_type)

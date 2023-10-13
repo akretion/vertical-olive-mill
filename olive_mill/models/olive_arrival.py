@@ -1,4 +1,4 @@
-# Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+# Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -7,23 +7,25 @@ from odoo.exceptions import UserError, ValidationError
 from odoo.tools import float_compare, float_is_zero, float_round
 from odoo.tools.misc import formatLang
 from babel.dates import format_date
+from collections import defaultdict
 
 
 class OliveArrival(models.Model):
     _name = 'olive.arrival'
     _description = 'Olive Arrival'
     _order = 'name desc'
-    _inherit = ['mail.thread']
+    _check_company_auto = True
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
-    name = fields.Char(string='Arrival Number', required=True, default='/')
+    name = fields.Char(
+        string='Arrival Number', required=True, default=lambda self: _("New"))
     company_id = fields.Many2one(
-        'res.company', string='Company',
-        ondelete='cascade', required=True,
+        'res.company', ondelete='cascade', required=True,
         states={'done': [('readonly', True)]},
-        default=lambda self: self.env['res.company']._company_default_get())
+        default=lambda self: self.env.company)
     season_id = fields.Many2one(
-        'olive.season', string='Season', required=True, index=True,
-        default=lambda self: self.env.user.company_id.current_season_id.id,
+        'olive.season', required=True, index=True,
+        default=lambda self: self.env.company.current_season_id.id, check_company=True,
         states={'done': [('readonly', True)]}, ondelete='restrict')
     partner_id = fields.Many2one(
         'res.partner', string='Olive Farmer', required=True, index=True,
@@ -31,26 +33,22 @@ class OliveArrival(models.Model):
         states={'done': [('readonly', True)]}, ondelete='restrict',
         tracking=True)
     commercial_partner_id = fields.Many2one(
-        related='partner_id.commercial_partner_id', readonly=True, store=True)
+        related='partner_id.commercial_partner_id', store=True)
     olive_organic_certified_logo = fields.Binary(
-        related='partner_id.commercial_partner_id.olive_organic_certified_logo',
-        readonly=True)
+        related='partner_id.commercial_partner_id.olive_organic_certified_logo')
     olive_culture_type = fields.Selection(
-        related='partner_id.commercial_partner_id.olive_culture_type', readonly=True)
+        related='partner_id.commercial_partner_id.olive_culture_type')
     olive_cultivation_form_ko = fields.Boolean(
-        related='partner_id.commercial_partner_id.olive_cultivation_form_ko',
-        readonly=True)
+        related='partner_id.commercial_partner_id.olive_cultivation_form_ko')
     olive_parcel_ko = fields.Boolean(
-        related='partner_id.commercial_partner_id.olive_parcel_ko', readonly=True)
+        related='partner_id.commercial_partner_id.olive_parcel_ko')
     olive_organic_certif_ko = fields.Boolean(
-        related='partner_id.commercial_partner_id.olive_organic_certif_ko',
-        readonly=True)
+        related='partner_id.commercial_partner_id.olive_organic_certif_ko')
     partner_olive_tree_total = fields.Integer(
-        related='partner_id.commercial_partner_id.olive_tree_total',
-        readonly=True)
+        related='partner_id.commercial_partner_id.olive_tree_total')
     warehouse_id = fields.Many2one(
         'stock.warehouse', string='Warehouse', required=True, index=True,
-        domain=[('olive_mill', '=', True)],
+        domain="[('olive_mill', '=', True), ('company_id', '=', company_id)]", check_company=True,
         default=lambda self: self.env.user._default_olive_mill_wh(),
         states={'done': [('readonly', True)]},
         tracking=True)
@@ -64,7 +62,7 @@ class OliveArrival(models.Model):
         string='Default Leaf Removal',
         states={'done': [('readonly', True)]})
     olive_qty = fields.Float(
-        compute='_compute_olive_qty', readonly=True, store=True,
+        compute='_compute_olive_qty', store=True,
         tracking=True, string='Total Quantity (kg)',
         digits='Olive Weight',
         help="Total olive quantity in kg")
@@ -76,7 +74,7 @@ class OliveArrival(models.Model):
         states={'done': [('readonly', True)]})
     default_oil_product_id = fields.Many2one(
         'product.product', string='Default Oil Type',
-        domain=[('olive_type', '=', 'oil')],
+        domain=[('detailed_type', '=', 'olive_oil')],
         states={'done': [('readonly', True)]})
     state = fields.Selection([
         ('draft', 'Draft'),
@@ -101,14 +99,14 @@ class OliveArrival(models.Model):
     returned_organic_case = fields.Integer(
         string='Returned Organic Cases', states={'done': [('readonly', True)]})
     lended_case_id = fields.Many2one(
-        'olive.lended.case', string='Returned Lended Cases Move', readonly=True)
+        'olive.lended.case', string='Returned Lended Cases Move',
+        readonly=True, check_company=True)
     hide_lend_palox_case_button = fields.Boolean(
         string='Hide Button Lend Palox and/or Cases', readonly=True)
     returned_palox_ids = fields.Many2many(
-        'olive.palox', string='Other Returned Palox',
+        'olive.palox', string='Other Returned Palox', check_company=True,
         states={'done': [('readonly', True)]},
-        help="Select returned palox other than those used in the arrival "
-        "lines")
+        help="Select returned palox other than those used in the arrival lines")
     olive_qty_pressed = fields.Float(
         string='Olive Qty Pressed (kg)',
         digits='Olive Weight', readonly=True)
@@ -127,11 +125,11 @@ class OliveArrival(models.Model):
         string='Olive Net Ratio (kg / L)', digits=(16, 2),
         readonly=True, group_operator='avg')
     lended_regular_case = fields.Integer(
-        compute='_compute_lended_case', string='Lended Regular Case', readonly=True)
+        compute='_compute_lended_case', string='Lended Regular Case')
     lended_organic_case = fields.Integer(
-        compute='_compute_lended_case', string='Lended Organic Case', readonly=True)
+        compute='_compute_lended_case', string='Lended Organic Case')
     lended_palox = fields.Integer(
-        compute='_compute_lended_palox', string='Lended Palox', readonly=True)
+        compute='_compute_lended_palox', string='Lended Palox')
     operator_user_id = fields.Many2one(
         'res.users', string='Operator', domain=[('olive_operator', '=', True)],
         ondelete='restrict', copy=False)
@@ -211,12 +209,15 @@ class OliveArrival(models.Model):
             if len(ochard.parcel_ids) == 1 and len(ochard.parcel_ids[0].variant_ids) == 1:
                 self.default_variant_id = ochard.parcel_ids[0].variant_ids[0]
 
-    @api.model
-    def create(self, vals):
-        if vals.get('name', '/') == '/':
-            vals['name'] = self.env['ir.sequence'].next_by_code(
-                'olive.arrival')
-        return super(OliveArrival, self).create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if 'company_id' in vals:
+                self = self.with_company(vals['company_id'])
+            if vals.get('name', _("New")) == _("New"):
+                vals['name'] = self.env['ir.sequence'].next_by_code(
+                    'olive.arrival') or _("New")
+        return super().create(vals_list)
 
     def cancel(self):
         for arrival in self:
@@ -225,14 +226,14 @@ class OliveArrival(models.Model):
                     "Cannot cancel arrival %s because all its lines are "
                     "currently selected in productions.") % arrival.name)
             arrival.line_ids.filtered(
-                lambda l: not l.production_id).write({'state': 'cancel'})
+                lambda line: not line.production_id).write({'state': 'cancel'})
         self.write({'state': 'cancel'})
 
     def back2draft(self):
         for arrival in self:
             assert arrival.state == 'cancel'
             arrival.line_ids.filtered(
-                lambda l: l.state == 'cancel').write({'state': 'draft'})
+                lambda line: line.state == 'cancel').write({'state': 'draft'})
         self.write({'state': 'draft'})
 
     def check_arrival(self):
@@ -351,7 +352,7 @@ class OliveArrival(models.Model):
                 ('palox_id', '=', line.palox_id.id),
                 ('state', '=', 'done'),
                 ('production_id', '=', False),
-                ('oil_destination', '!=', line.oil_destination)])
+                ('oil_destination', '!=', line.oil_destination)], limit=1)
             if same_palox_different_oil_destination:
                 fg = dict(oalo.fields_get(
                     'oil_destination', 'selection')['oil_destination']['selection'])
@@ -360,8 +361,8 @@ class OliveArrival(models.Model):
                     "the same palox has '%s'.") % (
                         fg[line.oil_destination],
                         line.palox_id.name,
-                        same_palox_different_oil_destination[0].display_name,
-                        fg[same_palox_different_oil_destination[0].oil_destination]))
+                        same_palox_different_oil_destination.display_name,
+                        fg[same_palox_different_oil_destination.oil_destination]))
             line.check_arrival_line_hook(i, warn_msgs)
         # for mix/sale, warn if delay between harvest and arrival is too long
         arrival_date_dt = fields.Date.from_string(self.date)
@@ -377,7 +378,7 @@ class OliveArrival(models.Model):
                     delta_days, max_delta_days))
         action = {}
         if warn_msgs:
-            action = self.env.ref('olive_mill.olive_arrival_warning_action').read()[0]
+            action = self.env['ir.actions.actions']._for_xml_id('olive_mill.olive_arrival_warning_action')
             action['context'] = {
                 'default_arrival_id': self.id,
                 'default_msg': '\n\n'.join(warn_msgs),
@@ -426,7 +427,7 @@ class OliveArrival(models.Model):
                     palox.return_borrowed_palox()
             # Create analysis
             ana_products = self.env['product.product']
-            for extra in line.extra_ids.filtered(lambda x: x.product_id.olive_type == 'analysis'):
+            for extra in line.extra_ids.filtered(lambda x: x.product_id.detailed_type == 'olive_analysis'):
                 ana_products |= extra.product_id
             if ana_products:
                 existing_ana = ooao.search(
@@ -438,15 +439,14 @@ class OliveArrival(models.Model):
                         'line_ids': [],
                         'season_id': self.season_id.id,
                         'oil_product_id': line.oil_product_id.id,
+                        'company_id': self.company_id.id,
                         }
                     for ana_product in ana_products:
                         ana_vals['line_ids'].append((0, 0, {'product_id': ana_product.id}))
                     ooao.create(ana_vals)
 
             # Set line number
-            line.write({
-                'name': '%s/%s' % (self.name, i),
-                })
+            line.write({'name': '%s/%s' % (self.name, i)})
 
         if self.returned_regular_case or self.returned_organic_case:
             lended_case_vals = {
@@ -467,22 +467,17 @@ class OliveArrival(models.Model):
 
     def unlink(self):
         for arrival in self:
-            if any([l.state == 'done' for l in arrival.line_ids]):
+            if any([line.state == 'done' for line in arrival.line_ids]):
                 raise UserError(_(
                     "Cannot delete arrival %s which has some lines in 'Done' state.")
                     % arrival.name)
-        return super(OliveArrival, self).unlink()
-
-    def print_report(self):
-        self.ensure_one()
-        action = self.env['report'].get_action(self, 'olive.arrival')
-        return action
+        return super().unlink()
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super(OliveArrival, self).fields_view_get(
+        res = super().fields_view_get(
             view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        return self.env.user.company_id.current_season_update(res, view_type)
+        return self.env.company.current_season_update(res, view_type)
 
 
 class OliveArrivalLine(models.Model):
@@ -506,23 +501,16 @@ class OliveArrivalLine(models.Model):
         'olive.arrival', string='Arrival', ondelete='cascade',
         states={'done': [('readonly', True)]})
     # START RELATED fields for arrival
-    company_id = fields.Many2one(
-        related='arrival_id.company_id', store=True, readonly=True)
-    arrival_state = fields.Selection(
-        related='arrival_id.state', string='Arrival State',
-        readonly=True, store=True)
-    arrival_date = fields.Date(
-        related='arrival_id.date', readonly=True, store=True)
-    season_id = fields.Many2one(
-        related='arrival_id.season_id', readonly=True, store=True, index=True)
-    warehouse_id = fields.Many2one(
-        related='arrival_id.warehouse_id', readonly=True, store=True, index=True)
+    company_id = fields.Many2one(related='arrival_id.company_id', store=True)
+    arrival_state = fields.Selection(related='arrival_id.state', store=True, string="Arrival State")
+    arrival_date = fields.Date(related='arrival_id.date', store=True)
+    season_id = fields.Many2one(related='arrival_id.season_id', store=True, index=True)
+    warehouse_id = fields.Many2one(related='arrival_id.warehouse_id', store=True, index=True)
     commercial_partner_id = fields.Many2one(
         related='arrival_id.partner_id.commercial_partner_id',
-        string='Olive Farmer', readonly=True, store=True, index=True)
+        string='Olive Farmer', store=True, index=True)
     olive_culture_type = fields.Selection(
-        related='arrival_id.partner_id.commercial_partner_id.olive_culture_type',
-        readonly=True, store=True)
+        related='arrival_id.partner_id.commercial_partner_id.olive_culture_type', store=True)
     # END RELATED fields for arrival
     leaf_removal = fields.Boolean(
         string='Leaf Removal', states={'done': [('readonly', True)]})
@@ -543,14 +531,14 @@ class OliveArrivalLine(models.Model):
         "\nLast-of-day compensation: not deducted.")
     withdrawal_olive_qty = fields.Float(
         string='Withdrawal Olive Qty', digits='Olive Weight',
-        compute='_compute_sale_withdrawal_olive_qty', store=True, readonly=True,
+        compute='_compute_sale_withdrawal_olive_qty', store=True,
         help="Equivalent in olive quantity (in Kg) of the withdrawn oil."
         "This field is for reporting purposes, it is not very accurate."
         "\nFirst-of-day compensation: not included."
         "\nLast-of-day compensation: not deducted.")
     sale_olive_qty = fields.Float(
         string='Sale Olive Qty', digits='Olive Weight',
-        compute='_compute_sale_withdrawal_olive_qty', store=True, readonly=True,
+        compute='_compute_sale_withdrawal_olive_qty', store=True,
         help="Equivalent in olive quantity (in Kg) of the oil sold."
         "This field is for reporting purposes, it is not very accurate."
         "\nFirst-of-day compensation: not included."
@@ -587,21 +575,19 @@ class OliveArrivalLine(models.Model):
         states={'done': [('readonly', True)]})
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Type', required=True, index=True,
-        domain=[('olive_type', '=', 'oil')], ondelete='restrict',
+        domain=[('detailed_type', '=', 'olive_oil')], ondelete='restrict',
         states={'done': [('readonly', True)]})
     product_olive_culture_type = fields.Selection(
-        related='oil_product_id.olive_culture_type', readonly=True, store=True)
+        related='oil_product_id.olive_culture_type', store=True)
     production_id = fields.Many2one(
         'olive.oil.production', string='Production', readonly=True)
     # START related fields for production
     production_date = fields.Date(
-        related='production_id.date', string='Production Date', readonly=True,
-        store=True)
+        related='production_id.date', string='Production Date', store=True)
     production_state = fields.Selection(
-        related='production_id.state', string='Production State',
-        readonly=True, store=True)
+        related='production_id.state', string='Production State', store=True)
     compensation_type = fields.Selection(
-        related='production_id.compensation_type', readonly=True, store=True)
+        related='production_id.compensation_type', store=True)
     # END related fields for production
     oil_ratio = fields.Float(
         string='Oil Gross Ratio (% L)', digits='Olive Oil Ratio',
@@ -612,7 +598,7 @@ class OliveArrivalLine(models.Model):
     extra_ids = fields.One2many(
         'olive.arrival.line.extra', 'line_id', string="Extra Items")
     extra_count = fields.Integer(
-        compute='_compute_extra_count', string='Extra Item Lines', readonly=True)
+        compute='_compute_extra_count', string='Extra Item Lines')
 
     oil_qty_kg = fields.Float(
         string='Oil Qty (kg)',
@@ -677,7 +663,7 @@ class OliveArrivalLine(models.Model):
     withdrawal_oil_qty_with_compensation = fields.Float(
         compute='_compute_withdrawal_oil_qty_with_compensation', store=True,
         string='Withdrawal Oil Qty with Compensation (L)',
-        readonly=True, digits='Olive Oil Volume',
+        digits='Olive Oil Volume',
         help="Withdrawal oil quantity with compensation in liters (for statistics)."
         "\nFirst-of-day compensation: included."
         "\nLast-of-day compensation: already deducted."
@@ -715,11 +701,11 @@ class OliveArrivalLine(models.Model):
     withdrawal_move_id = fields.Many2one(
         'stock.move', string='Withdrawal Move', readonly=True)
     out_invoice_id = fields.Many2one(
-        'account.invoice', string="Customer Invoice", readonly=True)
+        'account.move', string="Customer Invoice", readonly=True)
     in_invoice_line_id = fields.Many2one(
-        'account.invoice.line', string='Vendor Bill Line', readonly=True)
+        'account.move.line', string='Vendor Bill Line', readonly=True)
     company_currency_id = fields.Many2one(
-        related='arrival_id.company_id.currency_id', store=True, readonly=True)
+        related='arrival_id.company_id.currency_id', store=True)
     oil_sale_price_unit = fields.Monetary(
         string='Oil Sale Unit Price',
         readonly=True, currency_field='company_currency_id',
@@ -730,10 +716,10 @@ class OliveArrivalLine(models.Model):
         help='TODO')
     oil_sale_price_total = fields.Monetary(
         string='Oil Sale Price Total',
-        readonly=True, store=True, currency_field='company_currency_id')
+        readonly=True, currency_field='company_currency_id')
     oil_service_sale_price_total = fields.Monetary(
         string='Oil Service Price Total (Sale Only)',
-        readonly=True, store=True, currency_field='company_currency_id')
+        readonly=True, currency_field='company_currency_id')
 
     _sql_constraints = [(
         'olive_qty_positive',
@@ -746,10 +732,11 @@ class OliveArrivalLine(models.Model):
 
     @api.depends('extra_ids')
     def _compute_extra_count(self):
-        res = self.env['olive.arrival.line.extra'].read_group(
+        rg_res = self.env['olive.arrival.line.extra'].read_group(
             [('line_id', 'in', self.ids)], ['line_id'], ['line_id'])
-        for re in res:
-            self.browse(re['line_id'][0]).extra_count = re['line_id_count']
+        data_map = dict([(x['line_id'][0], x['line_id_count']) for x in rg_res])
+        for line in self:
+            line.extra_count = data_map.get(line.id, 0)
 
     @api.depends('oil_qty', 'compensation_type', 'compensation_oil_qty')
     def _compute_oil_qty_with_compensation(self):
@@ -849,7 +836,7 @@ class OliveArrivalLine(models.Model):
                 raise UserError(_(
                     "Deletion of arrival line %s not allowed because "
                     "it is in done state.") % line.name)
-        return super(OliveArrivalLine, self).unlink()
+        return super().unlink()
 
     @api.depends('name', 'commercial_partner_id', 'variant_id')
     def name_get(self):
@@ -857,7 +844,7 @@ class OliveArrivalLine(models.Model):
         for rec in self:
             name = rec.name
             if rec.commercial_partner_id:
-                name = u'%s (%s, %s)' % (name, rec.commercial_partner_id.name, rec.variant_id.name)
+                name = '%s (%s, %s)' % (name, rec.commercial_partner_id.name, rec.variant_id.name)
             res.append((rec.id, name))
         return res
 
@@ -953,27 +940,28 @@ class OliveArrivalLine(models.Model):
             }
         return vals
 
-    def pre_prepare_invoice_line(self, product, invoice):
-        ailo = self.env['account.invoice.line']
+    def _pre_prepare_invoice_line(self, product, vals):
+        amlo = self.env['account.move.line']
         il_vals = {
             'product_id': product.id,
-            'invoice_id': invoice.id,
+            'move_id': vals,
             }
-        il_vals.update(ailo.play_onchanges(il_vals, ['product_id']))
+        il_vals.update(amlo.play_onchanges(il_vals, ['product_id']))
+        il_vals.pop('move_id')
         if not il_vals.get('account_id'):
             raise UserError(_(
                 "Missing account on product '%s' or on it's related product category.")
                 % product.display_name)
         return il_vals
 
-    def prepare_invoice(self, invoice_type, invoice_reference=False):
+    def _prepare_invoice(self, move_type, invoice_reference=False):
         # pr_tax = self.env['decimal.precision'].precision_get(
         #    'Olive Oil Tax Price Unit')
         # pr_pri = self.env['decimal.precision'].precision_get(
         #    'Product Price')
-        aio = self.env['account.invoice']
+        amo = self.env['account.move']
         partner = self[0].commercial_partner_id
-        company = self.env.user.company_id
+        company = self.env.company
         origin = [line.name for line in self]
         if len(origin) > 3:
             origin = origin[:3] + ['...']
@@ -982,25 +970,25 @@ class OliveArrivalLine(models.Model):
         vals = {
             'partner_id': partner.id,
             'currency_id': currency.id,
-            'type': invoice_type,
+            'move_type': move_type,
             'company_id': company.id,
-            'origin': origin,
-            'reference': invoice_reference,
+            'invoice_origin': origin,
+            'ref': invoice_reference,
+            'invoice_line_ids': [],
         }
-        vals.update(aio.play_onchanges(vals, ['partner_id']))
+        vals.update(amo.play_onchanges(vals, ['partner_id']))
         return vals
 
-    def create_in_invoice_lines(self, invoice):
-        ailo = self.env['account.invoice.line'].with_context(type='in_invoice')
+    def create_in_invoice_lines(self, vals):
         pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
-        partner = invoice.partner_id
+        partner = self[0].commercial_partner_id
         lang = partner.lang or self.env.user.lang
         pricelist = partner.property_product_pricelist
         currency = pricelist.currency_id
         saledict = {}  # key = arrival, value = {'product': sale_oil_qty}
         # I can't do a double groupby via read_group()
         if partner.olive_sale_pricelist_id:
-            product2price = partner.olive_sale_pricelist_id.prepare_speeddict()
+            product2price = partner.olive_sale_pricelist_id._prepare_speeddict()
         else:
             product2price = {}
         for line in self:
@@ -1008,24 +996,17 @@ class OliveArrivalLine(models.Model):
             product = line.oil_product_id
             if float_compare(
                     line.sale_oil_qty, 0, precision_digits=pr_oli) > 0:
-                if line.arrival_id in saledict:
-                    if product in saledict[arrival]:
-                        saledict[arrival][product] += line.sale_oil_qty
-                    else:
-                        saledict[arrival][product] = line.sale_oil_qty
-                else:
-                    saledict[arrival] = {product: line.sale_oil_qty}
+                if line.arrival_id not in saledict:
+                    saledict[arrival] = defaultdict(float)
+                saledict[arrival][product] += line.sale_oil_qty
         total_oil_qty = 0.0
         for arrival, pdict in saledict.items():
             for product, quantity in pdict.items():
                 total_oil_qty += quantity
-                # TODO: move to prepare line method
-                il_vals = self.pre_prepare_invoice_line(product, invoice)
-                il_vals['origin'] = arrival.name
+                il_vals = self._pre_prepare_invoice_line(product, vals)
                 # TODO: translate in right language
                 arrival_date_formatted = format_date(
-                    fields.Date.from_string(arrival.date),
-                    format='short', locale=lang or 'en_US')
+                    arrival.date, format='short', locale=lang or 'en_US')
                 il_vals['name'] = _('%s (Arrival %s dated %s)') % (
                     product.with_context(lang=lang).name,
                     arrival.name, arrival_date_formatted)
@@ -1040,23 +1021,20 @@ class OliveArrivalLine(models.Model):
                 else:
                     price_unit = 0.0
                 il_vals['price_unit'] = price_unit
-                iline = ailo.create(il_vals)
-                arrival.line_ids.write({
-                    'in_invoice_line_id': iline.id})
+                il_vals['olive_arrival_line_ids'] = [(4, line.id) for line in arrival.line_ids]
+                vals['invoice_line_ids'].append((0, 0, il_vals))
         # TODO translate in right language
-        invoice.comment = _(
+        vals['narration'] = _(
             "Total oil quantity: %s L") % formatLang(
                 self.env, total_oil_qty, dp='Olive Oil Volume')
-        invoice.compute_taxes()
 
-    def create_out_invoice_lines(self, invoice):
-        ailo = self.env['account.invoice.line'].with_context(type='out_invoice')
+    def create_out_invoice_lines(self, vals):
         ppo = self.env['product.product']
         pr_oil = self.env['decimal.precision'].precision_get(
             'Olive Oil Volume')
         pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
-        company = invoice.company_id
-        partner = invoice.partner_id
+        company = self[0].company_id
+        partner = self[0].commercial_partner_id
         pricelist = partner.property_product_pricelist
         season = self[0].season_id
         totals = self.read_group(
@@ -1082,13 +1060,13 @@ class OliveArrivalLine(models.Model):
                 "Missing early bird discount product on company %s.")
                 % company.name)
         # Production
-        il_vals = self.pre_prepare_invoice_line(
-            company.olive_oil_production_product_id, invoice)
+        il_vals = self._pre_prepare_invoice_line(
+            company.olive_oil_production_product_id, vals)
         il_vals['quantity'] = totals['olive_qty']
         il_vals['price_unit'] = pricelist.get_product_price(
             company.olive_oil_production_product_id,
             totals['olive_qty'], partner)
-        ailo.create(il_vals)
+        vals['invoice_line_ids'].append((0, 0, il_vals))
         # additionnal service options are only invoiced on withdrawal
         # cf ('oil_destination', '=', 'withdrawal') in domain
         product_totals = self.read_group(
@@ -1097,11 +1075,11 @@ class OliveArrivalLine(models.Model):
         for product_total in product_totals:
             product = ppo.browse(product_total['oil_product_id'][0])
             for srv_product in product.olive_invoice_service_ids:
-                il_vals = self.pre_prepare_invoice_line(srv_product, invoice)
+                il_vals = self._pre_prepare_invoice_line(srv_product, vals)
                 il_vals['quantity'] = product_total['olive_qty']
                 il_vals['price_unit'] = pricelist.get_product_price(
                     srv_product, product_total['olive_qty'], partner)
-                ailo.create(il_vals)
+                vals['invoice_line_ids'].append((0, 0, il_vals))
         # Discount
         if season.early_bird_date:
             total_disc = self.read_group(
@@ -1111,8 +1089,8 @@ class OliveArrivalLine(models.Model):
             if total_disc and total_disc[0]['olive_qty'] and float_compare(
                     total_disc[0]['olive_qty'], 0,
                     precision_digits=pr_oli) > 0:
-                il_vals = self.pre_prepare_invoice_line(
-                    company.olive_oil_early_bird_discount_product_id, invoice)
+                il_vals = self._pre_prepare_invoice_line(
+                    company.olive_oil_early_bird_discount_product_id, vals)
                 # with Factur-X, we can't have negative prices
                 # so I put a negative qty
                 qty = total_disc[0]['olive_qty']
@@ -1120,7 +1098,7 @@ class OliveArrivalLine(models.Model):
                 il_vals['price_unit'] = pricelist.get_product_price(
                     company.olive_oil_early_bird_discount_product_id,
                     qty, partner)
-                ailo.create(il_vals)
+                vals['invoice_line_ids'].append((0, 0, il_vals))
         # leaf removal
         total_leaf = self.read_group(
             [('id', 'in', self.ids), ('leaf_removal', '=', True)],
@@ -1130,21 +1108,21 @@ class OliveArrivalLine(models.Model):
                 float_compare(
                     total_leaf[0]['olive_qty'], 0,
                     precision_digits=pr_oli) > 0):
-            il_vals = self.pre_prepare_invoice_line(
-                company.olive_oil_leaf_removal_product_id, invoice)
+            il_vals = self._pre_prepare_invoice_line(
+                company.olive_oil_leaf_removal_product_id, vals)
             qty = total_leaf[0]['olive_qty']
             il_vals['quantity'] = qty
             il_vals['price_unit'] = pricelist.get_product_price(
                 company.olive_oil_leaf_removal_product_id,
                 qty, partner)
-            ailo.create(il_vals)
+            vals['invoice_line_ids'].append((0, 0, il_vals))
         # AFIDOL Tax
         tax_product = company.olive_oil_tax_product_id
-        if tax_product.uom_id != self.env.ref('product.product_uom_kgm'):
+        if tax_product.uom_id != self.env.ref('uom.product_uom_kgm'):
             raise UserError(_(
-                "The unit of measure of the oil tax product (%s) should be in kg.")
+                "The unit of measure of the oil tax product '%s' should be in kg.")
                 % tax_product.display_name)
-        il_vals = self.pre_prepare_invoice_line(tax_product, invoice)
+        il_vals = self._pre_prepare_invoice_line(tax_product, vals)
         qty = totals['oil_qty_with_compensation'] - totals['shrinkage_oil_qty']\
             - totals['filter_loss_oil_qty']
         price_unit_kg = pricelist.get_product_price(
@@ -1153,10 +1131,10 @@ class OliveArrivalLine(models.Model):
             qty * company.olive_oil_density, precision_digits=pr_oil)
         il_vals['quantity'] = qty_kg
         il_vals['price_unit'] = price_unit_kg
-        il_vals['name'] += _(u" (%s L = %s kg)") % (
+        il_vals['name'] += _(" (%s L = %s kg)") % (
             formatLang(self.env, qty, dp='Olive Oil Volume'),
             formatLang(self.env, qty_kg, dp='Olive Oil Volume'))
-        ailo.create(il_vals)
+        vals['invoice_line_ids'].append((0, 0, il_vals))
         # Extra items
         extra_totals = self.env['olive.arrival.line.extra'].read_group(
             [
@@ -1168,36 +1146,35 @@ class OliveArrivalLine(models.Model):
             product_id = extra_total['product_id'][0]
             product = ppo.browse(product_id)
             qty = extra_total['qty']
-            il_vals = self.pre_prepare_invoice_line(product, invoice)
+            il_vals = self._pre_prepare_invoice_line(product, vals)
             il_vals['quantity'] = qty
             il_vals['price_unit'] = pricelist.get_product_price(
                 product, qty, partner)
-            ailo.create(il_vals)
-        invoice.compute_taxes()
+            vals['invoice_line_ids'].append((0, 0, il_vals))
 
     def in_invoice_create(self):
-        aio = self.env['account.invoice']
-        vals = self.prepare_invoice('in_invoice')
-        invoice = aio.with_context(type='in_invoice').create(vals)
-        self.create_in_invoice_lines(invoice)
-        return invoice
+        amo = self.env['account.move']
+        vals = self._prepare_invoice('in_invoice')
+        self.create_in_invoice_lines(vals)
+        move = amo.create(vals)
+        return move
 
     def out_invoice_create(self):
-        aio = self.env['account.invoice']
-        vals = self.prepare_invoice('out_invoice')
-        invoice = aio.with_context(type='out_invoice').create(vals)
-        self.create_out_invoice_lines(invoice)
-        self.write({'out_invoice_id': invoice.id})
-        return invoice
+        amo = self.env['account.move']
+        vals = self._prepare_invoice('out_invoice')
+        self.create_out_invoice_lines(vals)
+        move = amo.create(vals)
+        self.write({'out_invoice_id': move.id})
+        return move
 
     def check_arrival_line_hook(self, i, warn_msgs):
         return
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super(OliveArrivalLine, self).fields_view_get(
+        res = super().fields_view_get(
             view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        return self.env.user.company_id.current_season_update(res, view_type)
+        return self.env.company.current_season_update(res, view_type)
 
 
 class OliveArrivalLineExtra(models.Model):
@@ -1210,34 +1187,36 @@ class OliveArrivalLineExtra(models.Model):
         'product.product', string='Extra Product',
         required=True, ondelete='restrict',
         domain=[
-            ('olive_type', 'in', ('bottle', 'analysis', 'extra_service')),
+            ('detailed_type', 'in', ('olive_bottle_empty', 'olive_barrel_farmer', 'olive_analysis', 'olive_extra_service')),
             '|', ('tracking', '=', False), ('tracking', '=', 'none')])
-    product_olive_type = fields.Selection(
-        related='product_id.olive_type', readonly=True, store=True)
+    product_detailed_type = fields.Selection(
+        related='product_id.detailed_type', store=True)
     qty = fields.Float(
-        string='Quantity', default=1,
-        digits='Product Unit of Measure', required=True)
-    uom_id = fields.Many2one(
-        related='product_id.uom_id', readonly=True)
-    fillup = fields.Boolean(string='Fill-up')
+        string='Quantity', default=1, digits='Product Unit of Measure', required=True)
+    uom_id = fields.Many2one(related='product_id.uom_id')
+    fillup = fields.Boolean(compute="_compute_fillup", readonly=False, store=True, string='Fill-up')
     olive_bottle_free_full = fields.Boolean(
-        related='product_id.olive_bottle_free_full', store=True, readonly=True)
+        related='product_id.olive_bottle_free_full', store=True)
 
-    @api.onchange('product_id')
-    def product_id_change(self):
-        if (
-                self.product_id and
-                self.product_id.olive_type == 'bottle' and
-                self._context.get('olive_fillup_bottles')):
-            self.fillup = True
-        else:
-            self.fillup = False
+    @api.depends('product_id')
+    def _compute_fillup(self):
+        for extra in self:
+            if (
+                    extra.product_id and
+                    extra.product_id.detailed_type in ('olive_bottle_empty', 'olive_barrel_farmer')):
+                extra.fillup = True
+            else:
+                extra.fillup = False
 
     @api.constrains('product_id', 'fillup')
     def line_extra_check(self):
         for extra in self:
-            if extra.fillup and extra.product_id.olive_type != 'bottle':
+            if extra.fillup and extra.product_id.detailed_type not in ('olive_bottle_empty', 'olive_barrel_farmer'):
                 raise ValidationError(_(
                     "You cannot enable the fill-up option on product '%s' "
-                    "which is not an oil bottle.")
+                    "which is not an empty oil bottle.")
                     % extra.product_id.display_name)
+            if extra.product_id.detailed_type == 'olive_barrel_farmer' and not extra.fillup:
+                raise ValidationError(_(
+                    "You must enable the fill-up option on product '%s' "
+                    "which is a barrel of the farmer.") % extra.product_id.display_name)

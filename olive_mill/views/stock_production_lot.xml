@@ -13,8 +13,14 @@
     <field name="inherit_id" ref="stock.view_production_lot_form"/>
     <field name="arch" type="xml">
         <field name="product_id" position="after">
-            <field name="olive_production_id"/>
+            <field name="olive_production_id" attrs="{'invisible': [('product_detailed_type', '!=', 'olive_oil')]}"/>
+            <field name="product_detailed_type" invisible="1"/>
         </field>
+        <sheet position="before">
+            <header>
+                <button type="action" name="%(olive_prodlot_tracability_report)d" string="Olive Oil Tracability Report" attrs="{'invisible': [('product_detailed_type', '!=', 'olive_oil')]}"/>
+            </header>
+        </sheet>
     </field>
 </record>
 
@@ -25,7 +31,7 @@
     <field name="arch" type="xml">
         <field name="product_id" position="after">
             <separator/>
-            <filter domain="[('product_id.olive_type', '!=', False)]" string="Olive Products" name="olive_products"/>
+            <filter domain="[('product_detailed_type', '=like', 'olive_%')]" string="Olive Products" name="olive_products"/>
         </field>
     </field>
 </record>

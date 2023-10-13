@@ -1,4 +1,4 @@
-# Copyright 2019 Barroux Abbey (https://www.barroux.org/)
+# Copyright 2019-2023 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -8,23 +8,25 @@ from odoo.exceptions import UserError
 
 class OliveAgrimerReport(models.Model):
     _name = 'olive.agrimer.report'
-    _inherit = ['mail.thread']
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Olive ARGIMER reports'
     _order = 'date_start desc'
     _rec_name = 'date_start'
 
     company_id = fields.Many2one(
         'res.company', string='Company',
-        ondelete='cascade', required=True,
+        ondelete='cascade', required=True, index=True,
         states={'done': [('readonly', True)]},
-        default=lambda self: self.env['res.company']._company_default_get())
+        default=lambda self: self.env.company)
     date_range_id = fields.Many2one(
         'date.range', string='Date Range',
         states={'done': [('readonly', True)]})
     date_start = fields.Date(
+        compute='_compute_dates', readonly=False, store=True,
         string='Start Date', required=True, tracking=True,
         states={'done': [('readonly', True)]})
     date_end = fields.Date(
+        compute='_compute_dates', readonly=False, store=True,
         string='End Date', tracking=True,
         required=True, states={'done': [('readonly', True)]})
     olive_arrival_qty = fields.Float(
@@ -150,11 +152,12 @@ class OliveAgrimerReport(models.Model):
         'unique(date_start, date_end, company_id)',
         'An AgriMer report with the same start/end date already exists!')]
 
-    @api.onchange('date_range_id')
-    def onchange_date_range_id(self):
-        if self.date_range_id:
-            self.date_start = self.date_range_id.date_start
-            self.date_end = self.date_range_id.date_end
+    @api.depends('date_range_id')
+    def _compute_dates(self):
+        for report in self:
+            if report.date_range_id:
+                report.date_start = report.date_range_id.date_start
+                report.date_end = report.date_range_id.date_end
 
     def draft2done(self):
         self.ensure_one()
@@ -204,8 +207,8 @@ class OliveAgrimerReport(models.Model):
         smo = self.env['stock.move']
         move_common_domain = [
             ('state', '=', 'done'),
-            ('date', '>=', self.date_start + ' 00:00:00'),
-            ('date', '<=', self.date_end + ' 23:59:59'),
+            ('date', '>=', '%s 00:00:00' % self.date_start),
+            ('date', '<=', '%s 23:59:59' % self.date_end),
             ('company_id', '=', self.company_id.id),
             ]
         # Withdrawal
@@ -316,8 +319,8 @@ class OliveAgrimerReport(models.Model):
         ppo = self.env['product.product']
         for oil_type, domain in oil_product_domain.items():
             oiltype2oilproducts[oil_type] = ppo.search(
-                domain + [('olive_type', '=', 'oil')])
-        regular_bottles = ppo.search([('olive_type', '=', 'bottle_full')])
+                domain + [('detailed_type', '=', 'olive_oil')])
+        regular_bottles = ppo.search([('detailed_type', '=', 'olive_bottle_full')])
         for bottle in regular_bottles:
             bom, oil_product, bottle_volume =\
                 bottle.oil_bottle_full_get_bom_and_oil_product()
@@ -335,7 +338,7 @@ class OliveAgrimerReport(models.Model):
             oil_type = '%s_%s' % (culture_type, oil_product.olive_oil_type)
             bottle2oiltypevol[bottle] = {oil_type: bottle_volume}
 
-        pack_bottles = ppo.search([('olive_type', '=', 'bottle_full_pack')])
+        pack_bottles = ppo.search([('detailed_type', '=', 'olive_bottle_full_pack')])
         for pbottle in pack_bottles:
             bottle2oiltypevol[pbottle] = {}
             pack_dict = pbottle.oil_bottle_full_pack_get_bottles()
@@ -347,7 +350,7 @@ class OliveAgrimerReport(models.Model):
                     bottle2oiltypevol[pbottle][oil_type] = bottle_volume * qty
 
         pack_bottles_kit = ppo.search(
-            [('olive_type', '=', 'bottle_full_pack_phantom')])
+            [('detailed_type', '=', 'olive_bottle_full_pack_phantom')])
         # Here, we just do a check to be sure that it's properly configured
         # But it has no impact on computation, because kits
         # appear as separate components in stock moves
@@ -381,7 +384,7 @@ class OliveAgrimerReport(models.Model):
     def generate_report(self):
         vals = self.report_compute_values()
         self.write(vals)
-        self.message_post(_("AgriMer report generated."))
+        self.message_post(body=_("AgriMer report generated."))
 
     def olive_stock_levels(self, vals):
         vals['olive_stock_start']

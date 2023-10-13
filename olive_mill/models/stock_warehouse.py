@@ -1,4 +1,4 @@
-# Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+# Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -15,12 +15,10 @@ class StockWarehouse(models.Model):
     olive_mill = fields.Boolean(string='Olive Mill')
     olive_regular_case_total = fields.Integer(string='Regular Cases Total')
     olive_regular_case_stock = fields.Integer(
-        compute='_compute_cases', string='Regular Cases in Stock',
-        readonly=True)
+        compute='_compute_cases', string='Regular Cases in Stock')
     olive_organic_case_total = fields.Integer(string='Organic Cases Total')
     olive_organic_case_stock = fields.Integer(
-        compute='_compute_cases', string='Organic Cases in Stock',
-        readonly=True)
+        compute='_compute_cases', string='Organic Cases in Stock')
     olive_withdrawal_loc_id = fields.Many2one(
         'stock.location', string='Olive Oil Withdrawal Location',
         domain=[('olive_tank_type', '=', False), ('usage', '=', 'internal')])
@@ -71,12 +69,10 @@ class StockWarehouse(models.Model):
 
     def olive_oil_compensation_ratio_update(self):
         today = fields.Date.context_today(self)
-        today_dt = fields.Date.from_string(today)
         if not self.olive_mill:
             return
-        start_date_dt = today_dt - relativedelta(
+        start_date = today - relativedelta(
             days=self.olive_oil_compensation_ratio_days)
-        start_date = fields.Date.to_string(start_date_dt)
         rg = self.env['olive.arrival.line'].read_group([
             ('production_state', '=', 'done'),
             ('production_date', '<=', today),

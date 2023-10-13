@@ -11,17 +11,16 @@
     <field name="name">olive.mill.product.template.form</field>
     <field name="model">product.template</field>
     <field name="inherit_id" ref="product.product_template_form_view"/>
-    <field name="priority">1000</field>  <!-- to have olive_type right after type -->
+    <field name="priority">1000</field>  <!-- to have olive_culture_type right after type -->
     <field name="arch" type="xml">
-        <field name="type" position="after">
-            <field name="olive_type"/>
-            <field name="olive_culture_type" attrs="{'invisible': [('olive_type', '!=', 'oil')], 'required': [('olive_type', '=', 'oil')]}"/>
-            <field name="olive_bottle_free_full" attrs="{'invisible': [('olive_type', '!=', 'bottle')]}"/>
-            <field name="olive_invoice_service_ids" widget="many2many_tags" attrs="{'invisible': [('olive_type', '!=', 'oil')]}"/>
-            <field name="olive_analysis_uom" attrs="{'invisible': [('olive_type', '!=', 'analysis')], 'required': [('olive_type', '=', 'analysis')]}"/>
-            <field name="olive_analysis_decimal_precision" attrs="{'invisible': [('olive_type', '!=', 'analysis')], 'required': [('olive_type', '=', 'analysis')]}"/>
-            <field name="olive_analysis_instrument" attrs="{'invisible': [('olive_type', '!=', 'analysis')]}"/>
-            <field name="olive_analysis_precision" attrs="{'invisible': [('olive_type', '!=', 'analysis')]}"/>
+        <field name="detailed_type" position="after">
+            <field name="olive_culture_type" attrs="{'invisible': [('detailed_type', '!=', 'olive_oil')], 'required': [('detailed_type', '=', 'olive_oil')]}"/>
+            <field name="olive_bottle_free_full" attrs="{'invisible': [('detailed_type', '!=', 'olive_bottle')]}"/>
+            <field name="olive_invoice_service_ids" widget="many2many_tags" attrs="{'invisible': [('detailed_type', '!=', 'olive_oil')]}"/>
+            <field name="olive_analysis_uom" attrs="{'invisible': [('detailed_type', '!=', 'olive_analysis')], 'required': [('detailed_type', '=', 'olive_analysis')]}"/>
+            <field name="olive_analysis_decimal_precision" attrs="{'invisible': [('detailed_type', '!=', 'olive_analysis')], 'required': [('detailed_type', '=', 'olive_analysis')]}"/>
+            <field name="olive_analysis_instrument" attrs="{'invisible': [('detailed_type', '!=', 'olive_analysis')]}"/>
+            <field name="olive_analysis_precision" attrs="{'invisible': [('detailed_type', '!=', 'olive_analysis')]}"/>
         </field>
     </field>
 </record>
@@ -32,7 +31,7 @@
     <field name="inherit_id" ref="product.product_normal_form_view"/>
     <field name="arch" type="xml">
         <field name="default_code" position="before">
-            <field name="shrinkage_prodlot_id" attrs="{'invisible': [('olive_type', '!=', 'oil')]}" context="{'default_product_id': active_id}" domain="[('product_id', '=', active_id)]"/>
+            <field name="shrinkage_prodlot_id" attrs="{'invisible': [('detailed_type', '!=', 'olive_oil')]}" context="{'default_product_id': active_id}" domain="[('product_id', '=', active_id)]"/>
         </field>
     </field>
 </record>
@@ -43,14 +42,9 @@
     <field name="inherit_id" ref="product.product_template_search_view"/>
     <field name="arch" type="xml">
         <filter name="filter_to_sell" position="before">
-            <filter name="olive_mill" string="Olive Mill" domain="[('olive_type', '!=', False)]"/>
+            <filter name="olive_mill" string="Olive Mill" domain="[('detailed_type', '=like', 'olive_%')]"/>
             <separator/>
         </filter>
-        <field name="pricelist_id" position="after">
-            <group name="groupbyolive">
-                <filter name="olive_type_groupby" string="Olive Type" context="{'group_by': 'olive_type'}"/>
-            </group>
-        </field>
     </field>
 </record>
 
@@ -58,7 +52,7 @@
     <field name="name">Products</field>
     <field name="res_model">product.product</field>
     <field name="view_mode">tree,form,kanban</field>
-    <field name="context">{'default_type': 'product', 'search_default_olive_mill': True}</field>
+    <field name="context">{'search_default_olive_mill': True}</field>
 </record>
 
 <menuitem id="olive_product_menu" action="olive_product_action" parent="olive_data_menu" sequence="30"/>

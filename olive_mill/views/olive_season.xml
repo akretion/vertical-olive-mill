@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018-2019 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -11,9 +11,9 @@
     <field name="name">olive.season.form</field>
     <field name="model">olive.season</field>
     <field name="arch" type="xml">
-        <form string="Olive Season">
+        <form>
             <header>
-                <button class="btn-primary" string="Generate Partner Organic Certification" type="object" name="generate_partner_organic_certif" attrs="{'invisible': [('partner_organic_certif_generated', '=', True)]}"/>
+                <button class="btn-primary" string="Generate Partner Organic Certification" type="object" name="generate_partner_organic_certif" attrs="{'invisible': [('partner_organic_certif_generated', '=', True)]}" groups="olive_mill.olive_organic"/>
             </header>
             <group name="main">
                 <field name="name"/>
@@ -33,12 +33,13 @@
     <field name="name">olive.season.tree</field>
     <field name="model">olive.season</field>
     <field name="arch" type="xml">
-        <tree string="Olive Seasons">
+        <tree>
             <field name="name"/>
             <field name="start_date"/>
             <field name="end_date"/>
-            <field name="early_bird_date"/>
-            <field name="default_expiry_date"/>
+            <field name="early_bird_date" optional="show"/>
+            <field name="default_expiry_date" optional="show"/>
+            <field name="company_id" groups="base.group_multi_company" optional="hide"/>
         </tree>
     </field>
 </record>
@@ -47,7 +48,7 @@
     <field name="name">olive.season.search</field>
     <field name="model">olive.season</field>
     <field name="arch" type="xml">
-        <search string="Search Olive Seasons">
+        <search>
             <field name="name"/>
             <separator/>
             <filter name="dashboard" string="Favorites" domain="[('show_on_dashboard', '=', True)]"/>
@@ -104,46 +105,54 @@
                     </div>
                 </t>
                 <t t-name="SeasonBody">
-                    <div class="col-xs-6 o_kanban_primary_left">
+                    <div class="col-12 col-sm-6 mb-3 mb-sm-0 o_kanban_primary_left">
                         <div class="row">
-                            <div class="col-xs-6">
+                            <div class="col overflow-hidden text-left">
                                 <span title="Total Olive">Total Olive Arrived</span>
                             </div>
-                            <div class="col-xs-6 text-right">
+                            <div class="col-auto text-right">
                                 <span><t t-esc="record.olive_qty_arrived.raw_value"/> kg</span>
                             </div>
-                            <div class="col-xs-6">
+                        </div>
+                        <div class="row">
+                            <div class="col overflow-hidden text-left">
                                 <span title="Total Olive">Total Olive Pressed</span>
                             </div>
-                            <div class="col-xs-6 text-right">
+                            <div class="col-auto text-right">
                                 <span><t t-esc="record.olive_qty.raw_value"/> kg</span>
                             </div>
-                            <div class="col-xs-6">
+                        </div>
+                        <div class="row">
+                            <div class="col overflow-hidden text-left">
                                 <span title="Total Olive">Gross Ratio</span>
                             </div>
-                            <div class="col-xs-6 text-right">
+                            <div class="col-auto text-right">
                                 <span><t t-esc="record.gross_ratio.raw_value"/> %</span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-6 o_kanban_primary_right">
+                    <div class="col-12 col-sm-6 o_kanban_primary_right">
                         <div class="row">
-                            <div class="col-xs-6">
+                            <div class="col overflow-hidden text-left">
                                 <span title="Total Olive">Total Oil</span>
                             </div>
-                            <div class="col-xs-6 text-right">
+                            <div class="col-auto text-right">
                                 <span><t t-esc="record.oil_qty_with_compensation.raw_value"/> L</span>
                             </div>
-                            <div class="col-xs-6">
+                        </div>
+                        <div class="row">
+                            <div class="col overflow-hidden text-left">
                                 <span title="Total Olive">Total Sale Oil</span>
                             </div>
-                            <div class="col-xs-6 text-right">
+                            <div class="col-auto text-right">
                                 <span><t t-esc="record.sale_oil_qty.raw_value"/> L</span>
                             </div>
-                            <div class="col-xs-6">
+                        </div>
+                        <div class="row">
+                            <div class="col overflow-hidden text-left">
                                 <span title="Total Olive">Total Withdrawal Oil</span>
                             </div>
-                            <div class="col-xs-6 text-right">
+                            <div class="col-auto text-right">
                                 <span><t t-esc="record.withdrawal_oil_qty.raw_value"/> L</span>
                             </div>
                         </div>

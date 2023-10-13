@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2019 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2019-2023 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -25,7 +25,7 @@
     <field name="inherit_id" ref="product.product_pricelist_view_tree"/>
     <field name="arch" type="xml">
         <field name="currency_id" position="after">
-            <field name="olive_oil_distributor"/>
+            <field name="olive_oil_distributor" optional="show"/>
         </field>
     </field>
 </record>

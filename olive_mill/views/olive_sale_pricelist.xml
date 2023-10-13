@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -11,19 +11,14 @@
     <field name="name">olive.sale.pricelist.form</field>
     <field name="model">olive.sale.pricelist</field>
     <field name="arch" type="xml">
-        <form string="Olive Sale Pricelist">
+        <form>
             <sheet>
-                <div class="oe_button_box" name="button_box">
-                    
-            <field name="active" invisible="1" />
-            <widget
-                name="web_ribbon"
-                title="Archived"
-                bg_color="bg-danger"
-                attrs="{'invisible': [('active', '=', True)]}"
-            />
-            
-                </div>
+                <widget
+                    name="web_ribbon"
+                    title="Archived"
+                    bg_color="bg-danger"
+                    attrs="{'invisible': [('active', '=', True)]}"
+                />
                 <div class="oe_title">
                     <label for="name" class="oe_edit_only"/>
                     <h1>
@@ -32,6 +27,7 @@
                 </div>
                 <group name="main">
                     <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="active" invisible="1" />
                 </group>
                 <group name="lines" string="Sale Prices">
                     <field name="line_ids" nolabel="1"/>
@@ -45,7 +41,7 @@
     <field name="name">olive.sale.pricelist.tree</field>
     <field name="model">olive.sale.pricelist</field>
     <field name="arch" type="xml">
-        <tree string="Olive Sale Pricelists">
+        <tree>
             <field name="sequence" widget="handle"/>
             <field name="name"/>
             <field name="company_id" groups="base.group_multi_company"/>
@@ -57,7 +53,7 @@
     <field name="name">olive.sale.pricelist.search</field>
     <field name="model">olive.sale.pricelist</field>
     <field name="arch" type="xml">
-        <search string="Search Olive Sale Pricelists">
+        <search>
             <field name="name"/>
             <separator/>
             <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
@@ -69,10 +65,10 @@
     <field name="name">olive.sale.pricelist.line.tree</field>
     <field name="model">olive.sale.pricelist.line</field>
     <field name="arch" type="xml">
-        <tree string="Olive Sale Pricelist Lines" editable="bottom">
+        <tree editable="bottom">
             <field name="pricelist_id" invisible="not context.get('olive_sale_pricelist_line_main_view')"/>
             <field name="product_id"/>
-            <field name="price"/>
+            <field name="price" widget="monetary" options="{'currency_field': 'currency_id'}"/>
             <field name="currency_id" invisible="1"/>
         </tree>
     </field>

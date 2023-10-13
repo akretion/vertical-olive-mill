@@ -1,10 +1,13 @@
-# Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+# Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl)
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
-from odoo.tools import float_compare, float_round
+from odoo.tools import float_compare
+
+import logging
+logger = logging.getLogger(__name__)
 
 
 class StockLocation(models.Model):
@@ -18,51 +21,48 @@ class StockLocation(models.Model):
         ], string='Olive Oil Tank Type')
     olive_season_id = fields.Many2one(
         'olive.season', string='Olive Season', ondelete='restrict')
-    olive_season_year = fields.Char(
-        related='olive_season_id.year', store=True)
+    olive_season_year = fields.Char(related='olive_season_id.year', store=True)
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Product',
-        domain=[('olive_type', '=', 'oil')])
+        domain=[('detailed_type', '=', 'olive_oil')])
     olive_shrinkage_oil_product_ids = fields.Many2many(
         'product.product', 'stock_location_shrinkage_oil_product_rel',
-        'location_id', 'product_id', domain=[('olive_type', '=', 'oil')],
+        'location_id', 'product_id', domain=[('detailed_type', '=', 'olive_oil')],
         string='Allowed Oil Products')
     olive_oil_qty = fields.Float(
-        compute='_compute_olive_oil_qty', readonly=True,
+        compute='_compute_olive_oil_qty',
         string='Olive Oil Qty (L)',
         digits='Product Unit of Measure')
 
     def _compute_olive_oil_qty(self):
-        prec = self.env['decimal.precision'].precision_get('Product Unit of Measure')
         rg_res = self.env['stock.quant'].read_group(
             [('location_id', 'in', self.ids)],
-            ['qty', 'location_id'],
+            ['quantity', 'location_id'],
             ['location_id'])
-        for rg_re in rg_res:
-            loc = self.browse(rg_re['location_id'][0])
-            qty = loc.olive_tank_type and rg_re['qty'] and float_round(rg_re['qty'], precision_digits=prec) or 0
-            loc.olive_oil_qty = qty
+        map_data = dict([(x['location_id'][0], x['quantity']) for x in rg_res])
+        for location in self:
+            location.olive_oil_qty = map_data.get(location.id, 0)
 
     @api.onchange('olive_tank_type')
     def olive_tank_type_change(self):
         if self.olive_tank_type:
             if not self.olive_season_id:
-                season = self.env['olive.season'].get_current_season()
+                season = self.company_id and self.company_id.current_season_id
                 if season:
                     self.olive_season_id = season
         else:
             self.olive_season_id = False
 
     def name_get(self):
-        res = super(StockLocation, self).name_get()
+        res = super().name_get()
         new_res = []
-        for entry in res:
-            loc = self.browse(entry[0])
-            new_name = entry[1]
+        for (location_id, name) in res:
+            loc = self.browse(location_id)
+            new_name = name
             if loc.olive_tank_type and loc.oil_product_id:
                 new_name = '%s (%s, %s)' % (
                     new_name, loc.olive_season_year, loc.oil_product_id.name)
-            new_res.append((entry[0], new_name))
+            new_res.append((location_id, new_name))
         return new_res
 
     def olive_oil_tank_compatibility_check(self, oil_product, season):
@@ -87,14 +87,124 @@ class StockLocation(models.Model):
                         self.display_name,
                         self.olive_season_id.name))
 
-    def olive_oil_tank_check(self, raise_if_not_merged=True, raise_if_empty=True):
+    def olive_oil_tank_merge(self):
+        self.ensure_one()
+        # The strategy in this implementation is the following:
+        # - for tracability, we need an mrp.production with consume_line_ids
+        # - but we don't try to reproduce the regular use of an mrp.production
+        # because we don't have a BOM (a constraint blocks BOM with product used both as finished product and raw material)
+        # and mrp.production also blocks when the finished product is used in raw move lines
+        origin = _('Olive oil tank merge')
+        splo = self.env['stock.production.lot']
+        sqo = self.env['stock.quant']
+        mpo = self.env['mrp.production']
+        liter_uom = self.env.ref('uom.product_uom_litre')
+        company_id = self.company_id.id
+        fin_product = self.oil_product_id
+        assert fin_product.tracking == 'lot'
+        assert fin_product.detailed_type == 'olive_oil'
+        # Check if already merged
+        quants = sqo.search([('location_id', '=', self.id)])
+        if self.olive_tank_type == 'risouletto':
+            if len(quants) == 1 and quants.product_id == self.oil_product_id:
+                return
+        else:
+            if len(quants) == 1:
+                return
+
+        # Create finished lot
+        merge_lot_name = self.env['ir.sequence'].next_by_code('olive.oil.merge.lot')
+        new_lot = splo.create({
+            'product_id': fin_product.id,
+            'name': merge_lot_name,
+            })
+
+        mo = mpo.create({
+            'origin': origin,
+            'location_src_id': self.id,
+            'location_dest_id': self.id,
+            'product_id': fin_product.id,
+            'product_uom_id': fin_product.uom_id.id,
+            'lot_producing_id': new_lot.id,
+            })
+        logger.info('mrp.production %s created to merge tank %s', mo.display_name, self.display_name)
+        # Raw material moves
+        total_qty = 0
+        raw_moves = self.env['stock.move']
+        for quant in quants:
+            assert quant.lot_id
+            product = quant.product_id
+            assert product.uom_id == liter_uom
+            total_qty += quant.quantity
+            virtualprod_loc_id = product.with_company(company_id).property_stock_production.id
+            raw_move_vals = {
+                'raw_material_production_id': mo.id,
+                'name': product.display_name,
+                'origin': origin,
+                'company_id': company_id,
+                'product_id': product.id,
+                'product_uom': product.uom_id.id,
+                'product_uom_qty': quant.quantity,
+                'location_id': self.id,
+                'location_dest_id': virtualprod_loc_id,
+                'move_line_ids': [(0, 0, {
+                    'product_id': product.id,
+                    'product_uom_id': product.uom_id.id,
+                    'qty_done': quant.quantity,
+                    'location_id': self.id,
+                    'location_dest_id': virtualprod_loc_id,
+                    'lot_id': quant.lot_id.id,
+                    })],
+                }
+            raw_move = self.env['stock.move'].create(raw_move_vals)
+            logger.debug('Generated raw stock.move ID %d', raw_move.id)
+            raw_move._action_done()
+            raw_moves |= raw_move
+        # Finished product move
+        virtualprod_loc_id = fin_product.with_company(company_id).property_stock_production.id
+        fin_move_vals = {
+            'production_id': mo.id,
+            'name': fin_product.display_name,
+            'origin': origin,
+            'company_id': company_id,
+            'product_id': fin_product.id,
+            'product_uom': fin_product.uom_id.id,
+            'product_uom_qty': total_qty,
+            'location_id': virtualprod_loc_id,
+            'location_dest_id': self.id,
+            'move_line_ids': [(0, 0, {
+                'product_id': fin_product.id,
+                'product_uom_id': fin_product.uom_id.id,
+                'qty_done': total_qty,
+                'location_id': virtualprod_loc_id,
+                'location_dest_id': self.id,
+                'lot_id': new_lot.id,
+                'consume_line_ids': [(6, 0, raw_moves.move_line_ids.ids)],
+            })],
+        }
+        fin_move = self.env['stock.move'].create(fin_move_vals)
+        logger.debug('Generated finished product stock.move ID %d', fin_move.id)
+        fin_move._action_done()
+
+        mo.write({
+            'state': 'done',
+            'product_qty': total_qty,
+            'qty_producing': total_qty,
+            })
+        logger.info('Oil tank %s has been successfully merged', self.display_name)
+        return mo
+
+    def olive_oil_tank_check(self, merge_if_not_merged=False, raise_if_empty=True):
         '''Returns quantity
         Always raises when there are reservations
         '''
         self.ensure_one()
         sqo = self.env['stock.quant']
+        smlo = self.env['stock.move.line']
         ppo = self.env['product.product']
         prec = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+        # delete quants at 0 and merge quants
+        sqo._quant_tasks()
         tank_type = self.olive_tank_type
         tank_type_label = dict(self.fields_get('olive_tank_type', 'selection')['olive_tank_type']['selection'])[tank_type]
         # Tank configuration checks
@@ -105,7 +215,7 @@ class StockLocation(models.Model):
         if not self.oil_product_id:
             raise UserError(_(
                 "Missing oil product on tank '%s'.") % self.name)
-        if self.oil_product_id.olive_type != 'oil':
+        if self.oil_product_id.detailed_type != 'olive_oil':
             raise UserError(_(
                 "Oil product '%s' configured on tank '%s' is not "
                 "an olive oil product.") % (
@@ -117,8 +227,8 @@ class StockLocation(models.Model):
         # raise if empty
         quant_qty_rg = sqo.read_group(
             [('location_id', '=', self.id)],
-            ['qty'], [])
-        qty = quant_qty_rg and quant_qty_rg[0]['qty'] or 0
+            ['quantity'], [])
+        qty = quant_qty_rg and quant_qty_rg[0]['quantity'] or 0
         fcompare = float_compare(qty, 0, precision_digits=prec)
         if fcompare < 0:
             raise UserError(_(
@@ -130,38 +240,24 @@ class StockLocation(models.Model):
             return 0  # WARN : no further checks if empty
 
         # raise if there are reservations
-        reserved_quants_count = sqo.search([
-            ('location_id', '=', self.id), ('reservation_id', '!=', False)],
+        mlines_count = smlo.search([
+            ('location_id', '=', self.id), ('state', 'not in', ('draft', 'done'))],
             count=True)
-        if reserved_quants_count:
+        if mlines_count:
             raise UserError(_(
-                "There are %d reserved quants in tank '%s'.")
-                % (reserved_quants_count, self.name))
+                "There are %d reservations in tank '%s'.")
+                % (mlines_count, self.name))
 
-        if raise_if_not_merged:
-            quant_lot_rg = sqo.read_group(
-                [('location_id', '=', self.id)],
-                ['qty', 'lot_id'], ['lot_id'])
-            if len(quant_lot_rg) > 1:
-                raise UserError(_(
-                    "The tank '%s' (type '%s') is not merged: it "
-                    "contains several different lots.") % (
-                        self.name, tank_type_label))
-            # for risouletto, there are additionnal checks for raise_if_not_merged
-            # see below
+        if merge_if_not_merged:
+            self.olive_oil_tank_merge()
 
         quant_product_rg = sqo.read_group(
             [('location_id', '=', self.id)],
-            ['qty', 'product_id'], ['product_id'])
+            ['quantity', 'product_id'], ['product_id'])
         if tank_type == 'risouletto':
             for quant_product in quant_product_rg:
                 product = ppo.browse(quant_product['product_id'][0])
-                if raise_if_not_merged and product != self.oil_product_id:
-                    raise UserError(_(
-                        "The tank '%s' (type '%s') contains '%s', "
-                        "so it not merged.") % (
-                            self.name, tank_type_label, product.display_name))
-                if product.olive_type != 'oil':
+                if product.detailed_type != 'olive_oil':
                     raise UserError(_(
                         "The tank '%s' (type '%s') contains '%s', "
                         "which is not an olive oil product.") % (
@@ -184,7 +280,7 @@ class StockLocation(models.Model):
 
     def olive_oil_transfer(
             self, dest_loc, transfer_type, warehouse, dest_partner=False,
-            partial_transfer_qty=False, origin=False, auto_validate=False):
+            partial_transfer_qty=False, origin=False):
         self.ensure_one()
         assert transfer_type in ('partial', 'full'), 'wrong transfer_type arg'
         if dest_loc == self:
@@ -195,15 +291,14 @@ class StockLocation(models.Model):
         smo = self.env['stock.move']
         pr_oil = self.env['decimal.precision'].precision_get('Olive Oil Volume')
         src_loc = self
-        raise_if_not_merged = False
+        merge_if_not_merged = False
         if transfer_type == 'partial':
-            raise_if_not_merged = True
+            merge_if_not_merged = True
         src_qty = src_loc.olive_oil_tank_check(
-            raise_if_not_merged=raise_if_not_merged)
+            merge_if_not_merged=merge_if_not_merged)
         # compat src/dest
         if dest_loc.olive_tank_type:
-            dest_loc.olive_oil_tank_check(
-                raise_if_not_merged=False, raise_if_empty=False)
+            dest_loc.olive_oil_tank_check(raise_if_empty=False)
             dest_loc.olive_oil_tank_compatibility_check(
                 src_loc.oil_product_id, src_loc.olive_season_id)
 
@@ -219,36 +314,38 @@ class StockLocation(models.Model):
             }
         pick = self.env['stock.picking'].create(vals)
 
+        # Inspired by stock_quant_package_move_wizard from odoo-usability
+        # For the moment, we don't depend on it...
         if transfer_type == 'full':
             quants = sqo.search([('location_id', '=', src_loc.id)])
             for quant in quants:
-                if float_compare(quant.qty, 0, precision_digits=2) < 0:
+                if float_compare(quant.quantity, 0, precision_digits=2) < 0:
                     raise UserError(_(
                         "There is a negative quant ID %d on olive tank %s. "
                         "This should never happen.") % (
                             quant.id, src_loc.display_name))
-                if quant.reservation_id:
-                    raise UserError(_(
-                        "There is a reserved quant ID %d on olive tank %s. "
-                        "This must be investigated before trying a tank "
-                        "transfer again.") % (quant.id, src_loc.display_name))
+                product_id = quant.product_id.id
+                uom_id = quant.product_id.uom_id.id
                 mvals = {
                     'name': _('Full oil tank transfer'),
                     'origin': origin,
-                    'product_id': quant.product_id.id,
+                    'product_id': product_id,
                     'location_id': src_loc.id,
                     'location_dest_id': dest_loc.id,
-                    'product_uom': quant.product_id.uom_id.id,
-                    'product_uom_qty': quant.qty,
-                    'restrict_lot_id': quant.lot_id.id or False,
-                    'restrict_partner_id': quant.owner_id.id or False,
+                    'product_uom': uom_id,
+                    'product_uom_qty': quant.quantity,
                     'picking_id': pick.id,
+                    'move_line_ids': [(0, 0, {
+                        'picking_id': pick.id,
+                        'product_id': product_id,
+                        'product_uom_id': uom_id,
+                        'qty_done': quant.quantity,
+                        'location_id': src_loc.id,
+                        'location_dest_id': dest_loc.id,
+                        'lot_id': quant.lot_id.id,
+                        })],
                 }
                 move = smo.create(mvals)
-                qvals = {'reservation_id': move.id}
-                if dest_partner and quant.owner_id != dest_partner:
-                    qvals['owner_id'] = dest_partner.id
-                quant.sudo().write(qvals)
         elif transfer_type == 'partial':
             # we already checked above that the src loc has 1 lot
             if float_compare(partial_transfer_qty, 0, precision_digits=pr_oil) <= 0:
@@ -260,29 +357,36 @@ class StockLocation(models.Model):
                     "The quantity to transfer (%s L) from tank '%s' is superior "
                     "to its current oil quantity (%s L).") % (
                         partial_transfer_qty, src_loc.name, src_qty))
-            product = src_loc.oil_product_id
+            # raise_if_not_merged = True, so we have a single quant/lot
+            quant = sqo.search([('location_id', '=', src_loc.id)])
+            assert len(quant) == 1
+            product_id = src_loc.oil_product_id.id
+            uom_id = src_loc.oil_product_id.uom_id.id
             mvals = {
                 'name': _('Partial oil tank transfer'),
                 'origin': origin,
-                'product_id': product.id,
+                'product_id': product_id,
                 'location_id': src_loc.id,
                 'location_dest_id': dest_loc.id,
-                'product_uom': product.uom_id.id,
+                'product_uom': uom_id,
                 'product_uom_qty': partial_transfer_qty,
                 'picking_id': pick.id,
+                'move_line_ids': [(0, 0, {
+                    'picking_id': pick.id,
+                    'product_id': product_id,
+                    'product_uom_id': uom_id,
+                    'qty_done': partial_transfer_qty,
+                    'location_id': src_loc.id,
+                    'location_dest_id': dest_loc.id,
+                    'lot_id': quant.lot_id.id,
+                    })],
                 }
             move = smo.create(mvals)
             # No need to reserve a particular quant, because we only have 1 lot
             # Hack for dest_partner is at the end of the method
-        pick.action_confirm()
-        pick.action_assign()
-        pick.action_pack_operation_auto_fill()
-        if auto_validate:
-            pick.do_transfer()
-            if transfer_type == 'partial' and dest_partner:
-                move.quant_ids.sudo().write({'owner_id': dest_partner.id})
-        elif transfer_type == 'partial' and dest_partner:
-            raise UserError(
-                "We don't support partial transferts without auto_validate and "
-                "with dest_partner")
+        move._action_done()
+        assert move.state == 'done'
+        # TODO check mig
+        if transfer_type == 'partial' and dest_partner:
+            move.quant_ids.sudo().write({'owner_id': dest_partner.id})
         return pick

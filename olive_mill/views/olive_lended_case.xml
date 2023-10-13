@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -11,7 +11,7 @@
     <field name="name">olive.lended.case.form</field>
     <field name="model">olive.lended.case</field>
     <field name="arch" type="xml">
-        <form string="Olive Lended Cases">
+        <form>
             <group name="main">
                 <field name="partner_id" invisible="not context.get('olive_lended_case_main_view')"/>
                 <field name="olive_culture_type" invisible="1"/>
@@ -31,15 +31,15 @@
     <field name="name">olive.lended.case.tree</field>
     <field name="model">olive.lended.case</field>
     <field name="arch" type="xml">
-        <tree string="Olive Lended Cases">
+        <tree>
             <field name="partner_id" invisible="not context.get('olive_lended_case_main_view')"/>
-            <field name="season_id"/>
+            <field name="season_id" optional="show"/>
             <field name="date"/>
-            <field name="warehouse_id"/>
+            <field name="warehouse_id" optional="show"/>
             <field name="regular_qty" sum="1"/>
-            <field name="organic_qty" sum="1"/>
-            <field name="notes"/>
-            <field name="company_id" groups="base.group_multi_company"/>
+            <field name="organic_qty" sum="1" optional="show"/>
+            <field name="notes" optional="show"/>
+            <field name="company_id" groups="base.group_multi_company" optional="hide"/>
         </tree>
     </field>
 </record>
@@ -48,7 +48,7 @@
     <field name="name">olive.lended.case.search</field>
     <field name="model">olive.lended.case</field>
     <field name="arch" type="xml">
-        <search string="Search Olive Lended Cases">
+        <search>
             <field name="partner_id"/>
             <field name="warehouse_id"/>
             <separator/>

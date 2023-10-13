@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2023 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo noupdate="1">
+
+<record id="bottle_bom" model="mrp.bom">
+    <field name="product_tmpl_id" ref="bottle_product_template"/>
+    <field name="product_qty">1</field>
+    <field name="product_uom_id" ref="uom.product_uom_unit"/>
+    <field name="type">normal</field>
+    <field name="consumption">strict</field>
+</record>
+
+<record id="bottle_bom_line1" model="mrp.bom.line">
+    <field name="product_id" ref="empty_bottle"/>
+    <field name="product_qty">1</field>
+    <field name="product_uom_id" ref="uom.product_uom_unit"/>
+    <field name="bom_id" ref="bottle_bom"/>
+</record>
+<record id="bottle_bom_line2" model="mrp.bom.line">
+    <field name="product_id" ref="cap_bottle"/>
+    <field name="product_qty">1</field>
+    <field name="product_uom_id" ref="uom.product_uom_unit"/>
+    <field name="bom_id" ref="bottle_bom"/>
+</record>
+<record id="bottle_bom_line3" model="mrp.bom.line">
+    <field name="product_id" ref="oil"/>
+    <field name="product_qty">0.75</field>
+    <field name="product_uom_id" ref="uom.product_uom_litre"/>
+    <field name="bom_id" ref="bottle_bom"/>
+</record>
+
+<!-- Black 75cl -->
+<record id="bottle_black_bom" model="mrp.bom">
+    <field name="product_tmpl_id" ref="bottle_black_product_template"/>
+    <field name="product_qty">1</field>
+    <field name="product_uom_id" ref="uom.product_uom_unit"/>
+    <field name="type">normal</field>
+    <field name="consumption">strict</field>
+</record>
+
+<record id="bottle_black_bom_line1" model="mrp.bom.line">
+    <field name="product_id" ref="empty_bottle"/>
+    <field name="product_qty">1</field>
+    <field name="product_uom_id" ref="uom.product_uom_unit"/>
+    <field name="bom_id" ref="bottle_black_bom"/>
+</record>
+<record id="bottle_black_bom_line2" model="mrp.bom.line">
+    <field name="product_id" ref="cap_bottle"/>
+    <field name="product_qty">1</field>
+    <field name="product_uom_id" ref="uom.product_uom_unit"/>
+    <field name="bom_id" ref="bottle_black_bom"/>
+</record>
+<record id="bottle_black_bom_line3" model="mrp.bom.line">
+    <field name="product_id" ref="black_oil"/>
+    <field name="product_qty">0.75</field>
+    <field name="product_uom_id" ref="uom.product_uom_litre"/>
+    <field name="bom_id" ref="bottle_black_bom"/>
+</record>
+
+<!-- organic 75cl  -->
+<record id="bottle_organic_bom" model="mrp.bom">
+    <field name="product_tmpl_id" ref="bottle_organic_product_template"/>
+    <field name="product_qty">1</field>
+    <field name="product_uom_id" ref="uom.product_uom_unit"/>
+    <field name="type">normal</field>
+    <field name="consumption">strict</field>
+</record>
+
+<record id="bottle_organic_bom_line1" model="mrp.bom.line">
+    <field name="product_id" ref="empty_bottle"/>
+    <field name="product_qty">1</field>
+    <field name="product_uom_id" ref="uom.product_uom_unit"/>
+    <field name="bom_id" ref="bottle_organic_bom"/>
+</record>
+<record id="bottle_organic_bom_line2" model="mrp.bom.line">
+    <field name="product_id" ref="cap_bottle"/>
+    <field name="product_qty">1</field>
+    <field name="product_uom_id" ref="uom.product_uom_unit"/>
+    <field name="bom_id" ref="bottle_organic_bom"/>
+</record>
+<record id="bottle_organic_bom_line3" model="mrp.bom.line">
+    <field name="product_id" ref="oil_organic"/>
+    <field name="product_qty">0.75</field>
+    <field name="product_uom_id" ref="uom.product_uom_litre"/>
+    <field name="bom_id" ref="bottle_organic_bom"/>
+</record>
+
+<!-- conversion 75cl  -->
+<record id="bottle_conversion_bom" model="mrp.bom">
+    <field name="product_tmpl_id" ref="bottle_conversion_product_template"/>
+    <field name="product_qty">1</field>
+    <field name="product_uom_id" ref="uom.product_uom_unit"/>
+    <field name="type">normal</field>
+    <field name="consumption">strict</field>
+</record>
+
+<record id="bottle_conversion_bom_line1" model="mrp.bom.line">
+    <field name="product_id" ref="empty_bottle"/>
+    <field name="product_qty">1</field>
+    <field name="product_uom_id" ref="uom.product_uom_unit"/>
+    <field name="bom_id" ref="bottle_conversion_bom"/>
+</record>
+<record id="bottle_conversion_bom_line2" model="mrp.bom.line">
+    <field name="product_id" ref="cap_bottle"/>
+    <field name="product_qty">1</field>
+    <field name="product_uom_id" ref="uom.product_uom_unit"/>
+    <field name="bom_id" ref="bottle_conversion_bom"/>
+</record>
+<record id="bottle_conversion_bom_line3" model="mrp.bom.line">
+    <field name="product_id" ref="oil_conversion"/>
+    <field name="product_qty">0.75</field>
+    <field name="product_uom_id" ref="uom.product_uom_litre"/>
+    <field name="bom_id" ref="bottle_conversion_bom"/>
+</record>
+
+
+
+</odoo>

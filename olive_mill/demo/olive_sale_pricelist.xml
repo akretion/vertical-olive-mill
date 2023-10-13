@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -9,10 +9,12 @@
 
 <record id="sale_pricelist1" model="olive.sale.pricelist">
     <field name="name">Professional</field>
+    <field name="company_id" ref="base.main_company"/>
 </record>
 
 <record id="sale_pricelist2" model="olive.sale.pricelist">
     <field name="name">Amateur</field>
+    <field name="company_id" ref="base.main_company"/>
 </record>
 
 <record id="sale_pricelist1_price1" model="olive.sale.pricelist.line">

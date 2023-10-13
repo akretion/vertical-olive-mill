@@ -1,10 +1,11 @@
-# Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+# Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api, _
 from dateutil.relativedelta import relativedelta
 import math
+import pytz
 
 ARRIVAL_TYPES = ('arrival_leaf_removal', 'arrival_no_leaf_removal')
 
@@ -13,40 +14,35 @@ class OliveAppointment(models.Model):
     _name = 'olive.appointment'
     _description = 'Olive Appointment'
     _order = 'start_datetime desc'
-    _inherit = ['mail.thread']
+    _check_company_auto = True
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     # name is used when you create from calendar via the quick create pop-up
     # it is also used for appointments with type = 'other'
     name = fields.Char(string='Notes')
     company_id = fields.Many2one(
-        'res.company', string='Company',
-        ondelete='cascade', required=True,
-        default=lambda self: self.env['res.company']._company_default_get())
+        'res.company',
+        ondelete='cascade', required=True, default=lambda self: self.env.company)
     season_id = fields.Many2one(
-        'olive.season', string='Season', required=True, index=True,
-        default=lambda self: self.env.user.company_id.current_season_id.id)
+        'olive.season', required=True, index=True, check_company=True,
+        default=lambda self: self.env.company.current_season_id.id)
     partner_id = fields.Many2one(
         'res.partner', string='Olive Farmer', required=True, copy=False,
         domain=[('olive_farmer', '=', True)], tracking=True)
     commercial_partner_id = fields.Many2one(
-        related='partner_id.commercial_partner_id', readonly=True, store=True)
+        related='partner_id.commercial_partner_id', store=True)
     olive_cultivation_form_ko = fields.Boolean(
-        related='partner_id.commercial_partner_id.olive_cultivation_form_ko',
-        readonly=True)
+        related='partner_id.commercial_partner_id.olive_cultivation_form_ko')
     olive_parcel_ko = fields.Boolean(
-        related='partner_id.commercial_partner_id.olive_parcel_ko', readonly=True)
+        related='partner_id.commercial_partner_id.olive_parcel_ko')
     olive_organic_certif_ko = fields.Boolean(
-        related='partner_id.commercial_partner_id.olive_organic_certif_ko',
-        readonly=True)
+        related='partner_id.commercial_partner_id.olive_organic_certif_ko')
     olive_invoicing_ko = fields.Boolean(
-        related='partner_id.commercial_partner_id.olive_invoicing_ko',
-        readonly=True)
+        related='partner_id.commercial_partner_id.olive_invoicing_ko')
     olive_culture_type = fields.Selection(
-        related='partner_id.commercial_partner_id.olive_culture_type',
-        readonly=True)
+        related='partner_id.commercial_partner_id.olive_culture_type')
     olive_organic_certified_logo = fields.Binary(
-        related='partner_id.commercial_partner_id.olive_organic_certified_logo',
-        readonly=True)
+        related='partner_id.commercial_partner_id.olive_organic_certified_logo')
     appointment_type = fields.Selection([
         ('lend', 'Lend Palox/Cases'),
         ('arrival_leaf_removal', 'Arrival with Leaf Removal'),
@@ -65,17 +61,24 @@ class OliveAppointment(models.Model):
         'olive.variant', string='Olive Variant', tracking=True)
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Type',
-        domain=[('olive_type', '=', 'oil')])
+        domain=[('detailed_type', '=', 'olive_oil')])
     qty = fields.Integer(
-        string='Quantity', help="Olive quantity in kg",
-        tracking=True)
+        string='Quantity', help="Olive quantity in kg", tracking=True)
     start_datetime = fields.Datetime(
         string='Start', required=True, tracking=True)
     end_datetime = fields.Datetime(string='End', required=True)
-    date = fields.Date(
-        compute='_compute_date', string='Date', store=True, readonly=True)
-    day_of_week = fields.Char(
-        compute='_compute_date', string='Day of Week', store=True, readonly=True)
+    date = fields.Date(compute='_compute_date', string='Date', store=True)
+    # Stop using day of week as fields.Char() in day_of_week_sel for
+    # translation purposes
+    day_of_week_sel = fields.Selection([
+        ('0', 'Monday'),
+        ('1', 'Tuesday'),
+        ('2', 'Wednesday'),
+        ('3', 'Thursday'),
+        ('4', 'Friday'),
+        ('5', 'Saturday'),
+        ('6', 'Sunday'),
+        ], string='Day of Week', compute='_compute_date', store=True)
     oil_destination = fields.Selection([
         ('withdrawal', 'Withdrawal'),
         ('sale', 'Sale'),
@@ -84,19 +87,18 @@ class OliveAppointment(models.Model):
     withdrawal_oil_qty = fields.Integer(
         string='Withdrawal Oil Quantity', tracking=True)
     palox_qty = fields.Float(
-        compute='_compute_palox_qty', string='Estimated Palox Qty', readonly=True,
+        compute='_compute_palox_qty', string='Estimated Palox Qty',
         store=True, digits=(16, 1))
     total_qty_same_day = fields.Integer(
         compute='_compute_total_qty_same_day',
-        string='Total Olive Arrival Same Day', readonly=True,
+        string='Total Olive Arrival Same Day',
         help="Total qty of olive arrival on the same day, including this appointment.")
     total_palox_same_day = fields.Float(
         compute='_compute_total_qty_same_day',
-        string='Total Palox Same Day', readonly=True, digits=(16, 1),
+        string='Total Palox Same Day', digits=(16, 1),
         help="Total qty of olive arrival on the same day, including this appointment.")
     display_calendar_label = fields.Char(
-        compute='_compute_display_calendar_label',
-        string='Label in Calendar View', readonly=True)
+        compute='_compute_display_calendar_label', string='Label in Calendar View')
 
     _sql_constraints = [(
         'qty_positive',
@@ -109,24 +111,30 @@ class OliveAppointment(models.Model):
 
     @api.depends('start_datetime')
     def _compute_date(self):
-        # TODO add support for TZ
+        tz = self.env.user.tz and pytz.timezone(self.env.user.tz) or pytz.utc
+        utc_tz = pytz.utc
         for app in self:
             date = day_of_week = False
             if app.start_datetime:
-                date = app.start_datetime[:10]
-                date_dt = fields.Date.from_string(date)
-                day_of_week = date_dt.strftime('%A')
+                datetime_utc = app.start_datetime
+                datetime_utc_aware = utc_tz.localize(datetime_utc)
+                datetime_local_aware = datetime_utc_aware.astimezone(tz)
+                date = datetime_local_aware.date()
+                day_of_week = str(date.weekday())
             app.date = date
-            app.day_of_week = day_of_week
+            app.day_of_week_sel = day_of_week
 
     @api.depends('start_datetime', 'qty', 'palox_qty')
     def _compute_total_qty_same_day(self):
+        tz = self.env.user.tz and pytz.timezone(self.env.user.tz) or pytz.utc
+        utc_tz = pytz.utc
         for app in self:
             total_qty_same_day = 0
             total_palox_same_day = 0.0
             if app.start_datetime:
+                date = utc_tz.localize(app.start_datetime).astimezone(tz).date()
                 rg_res = self.read_group([
-                    ('date', '=', app.start_datetime[:10]),
+                    ('date', '=', date),
                     ('appointment_type', 'in', ARRIVAL_TYPES)], ['qty', 'palox_qty'], [])
                 total_qty_same_day = rg_res and rg_res[0]['qty'] or 0
                 total_palox_same_day = rg_res and rg_res[0]['palox_qty'] or 0
@@ -193,14 +201,14 @@ class OliveAppointment(models.Model):
     @api.depends('partner_id', 'start_datetime')
     def name_get(self):
         res = []
+        # TODO finish port/test
         for app in self:
-            start_dt = fields.Datetime.from_string(app.start_datetime)
             start_dt_in_tz = fields.Datetime.context_timestamp(
-                self, start_dt)
+                self, app.start_datetime)
             start_in_tz = fields.Datetime.to_string(start_dt_in_tz)
             res.append((
                 app.id,
-                u'%s %s' % (app.partner_id.display_name, start_in_tz[:16])))
+                '%s %s' % (app.partner_id.display_name, start_in_tz[:16])))
         return res
 
     @api.onchange('start_datetime', 'appointment_type', 'qty')
@@ -208,7 +216,6 @@ class OliveAppointment(models.Model):
         if self.start_datetime and self.appointment_type and self.company_id:
             minutes = False
             company = self.company_id
-            start_dt = fields.Datetime.from_string(self.start_datetime)
             if self.appointment_type in ARRIVAL_TYPES:
                 if self.appointment_type == 'arrival_leaf_removal':
                     duration_coef = company.olive_appointment_arrival_leaf_removal_minutes
@@ -223,7 +230,7 @@ class OliveAppointment(models.Model):
             elif self.appointment_type in ('withdrawal', 'other'):
                 minutes = company.olive_appointment_withdrawal_minutes
             if minutes:
-                end_dt = start_dt + relativedelta(minutes=minutes)
+                end_dt = self.start_datetime + relativedelta(minutes=minutes)
                 self.end_datetime = fields.Datetime.to_string(end_dt)
 
     @api.depends('qty')
@@ -246,8 +253,8 @@ class OliveAppointment(models.Model):
             }
         if self.appointment_type == 'arrival_leaf_removal':
             context['default_default_leaf_removal'] = True
-        action = self.env['ir.actions.act_window'].for_xml_id(
-            'olive_mill', 'olive_arrival_action')
+        action = self.env['ir.actions.actions']._for_xml_id(
+            'olive_mill.olive_arrival_action')
         action.update({
             'view_mode': 'form,tree',
             'views': False,
@@ -267,8 +274,8 @@ class OliveAppointment(models.Model):
             'default_qty': self.qty,
             'default_withdrawal_oil_qty': self.withdrawal_oil_qty,
             }
-        action = self.env['ir.actions.act_window'].for_xml_id(
-            'olive_mill', 'olive_appointment_action')
+        action = self.env['ir.actions.actions']._for_xml_id(
+            'olive_mill.olive_appointment_action')
         action.update({
             'view_mode': 'form,tree,calendar',
             'views': False,
@@ -278,8 +285,8 @@ class OliveAppointment(models.Model):
 
     def show_arrival_appointments_same_day(self):
         self.ensure_one()
-        action = self.env['ir.actions.act_window'].for_xml_id(
-            'olive_mill', 'olive_appointment_tree_action')
+        action = self.env['ir.actions.actions']._for_xml_id(
+            'olive_mill.olive_appointment_tree_action')
         action.update({
             'views': False,
             'context': {},
@@ -291,11 +298,12 @@ class OliveAppointment(models.Model):
 
     def open_new_appointment_after_this(self):
         self.ensure_one()
-        action = self.env['ir.actions.act_window'].for_xml_id(
-            'olive_mill', 'olive_appointment_action')
+        action = self.env['ir.actions.actions']._for_xml_id(
+            'olive_mill.olive_appointment_action')
         action.update({
             'view_mode': 'form,tree,calendar',
             'views': False,
+            # TODO check it's not a pb to have datetime obj in ctx
             'context': {'default_start_datetime': self.end_datetime},
             })
         return action
@@ -314,6 +322,6 @@ class OliveAppointment(models.Model):
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super(OliveAppointment, self).fields_view_get(
+        res = super().fields_view_get(
             view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        return self.env.user.company_id.current_season_update(res, view_type)
+        return self.env.company.current_season_update(res, view_type)

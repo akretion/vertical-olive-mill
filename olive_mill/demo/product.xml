@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -14,11 +14,10 @@
     <field name="categ_id" ref="product.product_category_5"/>
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="False"/>
-    <field name="type">service</field>
-    <field name="olive_type">service</field>
+    <field name="detailed_type">olive_service</field>
     <field name="list_price">0.04</field>
-    <field name="uom_id" ref="product.product_uom_kgm"/>
-    <field name="uom_po_id" ref="product.product_uom_kgm"/>
+    <field name="uom_id" ref="uom.product_uom_kgm"/>
+    <field name="uom_po_id" ref="uom.product_uom_kgm"/>
 </record>
 
 <record id="black_option_product" model="product.product">
@@ -27,11 +26,10 @@
     <field name="categ_id" ref="product.product_category_5"/>
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="False"/>
-    <field name="type">service</field>
-    <field name="olive_type">service</field>
+    <field name="detailed_type">olive_service</field>
     <field name="list_price">0.04</field>
-    <field name="uom_id" ref="product.product_uom_kgm"/>
-    <field name="uom_po_id" ref="product.product_uom_kgm"/>
+    <field name="uom_id" ref="uom.product_uom_kgm"/>
+    <field name="uom_po_id" ref="uom.product_uom_kgm"/>
 </record>
 
 
@@ -42,11 +40,10 @@
     <field name="categ_id" ref="product.product_category_5"/>
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="True"/>
-    <field name="type">product</field>
-    <field name="olive_type">oil</field>
+    <field name="detailed_type">olive_oil</field>
     <field name="olive_culture_type">regular</field>
-    <field name="uom_id" ref="product.product_uom_litre"/>
-    <field name="uom_po_id" ref="product.product_uom_litre"/>
+    <field name="uom_id" ref="uom.product_uom_litre"/>
+    <field name="uom_po_id" ref="uom.product_uom_litre"/>
     <field name="tracking">lot</field>
 </record>
 
@@ -56,11 +53,10 @@
     <field name="categ_id" ref="product.product_category_5"/>
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="True"/>
-    <field name="type">product</field>
-    <field name="olive_type">oil</field>
+    <field name="detailed_type">olive_oil</field>
     <field name="olive_culture_type">regular</field>
-    <field name="uom_id" ref="product.product_uom_litre"/>
-    <field name="uom_po_id" ref="product.product_uom_litre"/>
+    <field name="uom_id" ref="uom.product_uom_litre"/>
+    <field name="uom_po_id" ref="uom.product_uom_litre"/>
     <field name="tracking">lot</field>
     <field name="olive_invoice_service_ids" eval="[(4, ref('black_option_product'))]"/>
 </record>
@@ -71,11 +67,10 @@
     <field name="categ_id" ref="product.product_category_5"/>
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="True"/>
-    <field name="type">product</field>
-    <field name="olive_type">oil</field>
+    <field name="detailed_type">olive_oil</field>
     <field name="olive_culture_type">organic</field>
-    <field name="uom_id" ref="product.product_uom_litre"/>
-    <field name="uom_po_id" ref="product.product_uom_litre"/>
+    <field name="uom_id" ref="uom.product_uom_litre"/>
+    <field name="uom_po_id" ref="uom.product_uom_litre"/>
     <field name="tracking">lot</field>
     <field name="olive_invoice_service_ids" eval="[(4, ref('organic_option_product'))]"/>
 </record>
@@ -86,11 +81,10 @@
     <field name="categ_id" ref="product.product_category_5"/>
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="True"/>
-    <field name="type">product</field>
-    <field name="olive_type">oil</field>
+    <field name="detailed_type">olive_oil</field>
     <field name="olive_culture_type">conversion</field>
-    <field name="uom_id" ref="product.product_uom_litre"/>
-    <field name="uom_po_id" ref="product.product_uom_litre"/>
+    <field name="uom_id" ref="uom.product_uom_litre"/>
+    <field name="uom_po_id" ref="uom.product_uom_litre"/>
     <field name="tracking">lot</field>
     <field name="olive_invoice_service_ids" eval="[(4, ref('organic_option_product'))]"/>
 </record>
@@ -98,45 +92,81 @@
 
 <!-- BOTTLE -->
 <record id="bottle" model="product.product">
-    <field name="name">Olive Oil Bottle</field>
-    <field name="default_code">BOTTLE</field>
+    <field name="name">75cl Olive Oil Bottle</field>
+    <field name="default_code">BOTTLE75</field>
     <field name="categ_id" ref="product.product_category_5"/>
     <field name="sale_ok" eval="True"/>
-    <field name="purchase_ok" eval="True"/>
-    <field name="type">product</field>
-    <field name="olive_type">bottle</field>
+    <field name="purchase_ok" eval="False"/>
+    <field name="detailed_type">olive_bottle_full</field>
     <field name="olive_culture_type">regular</field>
-    <field name="uom_id" ref="product.product_uom_unit"/>
-    <field name="uom_po_id" ref="product.product_uom_unit"/>
+    <field name="uom_id" ref="uom.product_uom_unit"/>
+    <field name="uom_po_id" ref="uom.product_uom_unit"/>
     <field name="tracking">lot</field>
+    <field name="route_ids" eval="[(6, 0, [ref('mrp.route_warehouse0_manufacture')])]"/>
+</record>
+
+<record id="bottle_black" model="product.product">
+    <field name="name">Black Fruity 75cl Olive Oil Bottle</field>
+    <field name="default_code">BLACK_BOTTLE75</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="False"/>
+    <field name="detailed_type">olive_bottle_full</field>
+    <field name="olive_culture_type">regular</field>
+    <field name="uom_id" ref="uom.product_uom_unit"/>
+    <field name="uom_po_id" ref="uom.product_uom_unit"/>
+    <field name="tracking">lot</field>
+    <field name="route_ids" eval="[(6, 0, [ref('mrp.route_warehouse0_manufacture')])]"/>
 </record>
 
 <record id="bottle_organic" model="product.product">
-    <field name="name">Organic Olive Oil Bottle</field>
-    <field name="default_code">ORG_BOTTLE</field>
+    <field name="name">75cl Organic Olive Oil Bottle</field>
+    <field name="default_code">ORG_BOTTLE75</field>
     <field name="categ_id" ref="product.product_category_5"/>
     <field name="sale_ok" eval="True"/>
-    <field name="purchase_ok" eval="True"/>
-    <field name="type">product</field>
-    <field name="olive_type">bottle</field>
+    <field name="purchase_ok" eval="False"/>
+    <field name="detailed_type">olive_bottle_full</field>
     <field name="olive_culture_type">organic</field>
-    <field name="uom_id" ref="product.product_uom_unit"/>
-    <field name="uom_po_id" ref="product.product_uom_unit"/>
+    <field name="uom_id" ref="uom.product_uom_unit"/>
+    <field name="uom_po_id" ref="uom.product_uom_unit"/>
     <field name="tracking">lot</field>
+    <field name="route_ids" eval="[(6, 0, [ref('mrp.route_warehouse0_manufacture')])]"/>
 </record>
 
 <record id="bottle_conversion" model="product.product">
-    <field name="name">Conversion Organic Olive Oil Bottle</field>
+    <field name="name">75cl Conversion Organic Olive Oil Bottle</field>
     <field name="default_code">CONV_BOTTLE</field>
     <field name="categ_id" ref="product.product_category_5"/>
     <field name="sale_ok" eval="True"/>
-    <field name="purchase_ok" eval="True"/>
-    <field name="type">product</field>
-    <field name="olive_type">bottle</field>
+    <field name="purchase_ok" eval="False"/>
+    <field name="detailed_type">olive_bottle_full</field>
     <field name="olive_culture_type">conversion</field>
-    <field name="uom_id" ref="product.product_uom_unit"/>
-    <field name="uom_po_id" ref="product.product_uom_unit"/>
+    <field name="uom_id" ref="uom.product_uom_unit"/>
+    <field name="uom_po_id" ref="uom.product_uom_unit"/>
     <field name="tracking">lot</field>
+    <field name="route_ids" eval="[(6, 0, [ref('mrp.route_warehouse0_manufacture')])]"/>
+</record>
+
+<record id="empty_bottle" model="product.product">
+    <field name="name">75cl Empty Bottle</field>
+    <field name="default_code">EMPTY_BOTTLE75CL</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="False"/>
+    <field name="purchase_ok" eval="True"/>
+    <field name="detailed_type">olive_bottle_empty</field>
+    <field name="uom_id" ref="uom.product_uom_unit"/>
+    <field name="uom_po_id" ref="uom.product_uom_unit"/>
+</record>
+
+<record id="cap_bottle" model="product.product">
+    <field name="name">Cap for Olive Oil Bottle</field>
+    <field name="default_code">CAP</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="False"/>
+    <field name="purchase_ok" eval="True"/>
+    <field name="detailed_type">product</field>
+    <field name="uom_id" ref="uom.product_uom_unit"/>
+    <field name="uom_po_id" ref="uom.product_uom_unit"/>
 </record>
 
 <record id="inox_can" model="product.product">
@@ -145,10 +175,9 @@
     <field name="categ_id" ref="product.product_category_5"/>
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="True"/>
-    <field name="type">product</field>
-    <field name="olive_type">bottle</field>
-    <field name="uom_id" ref="product.product_uom_unit"/>
-    <field name="uom_po_id" ref="product.product_uom_unit"/>
+    <field name="detailed_type">olive_bottle_empty</field>
+    <field name="uom_id" ref="uom.product_uom_unit"/>
+    <field name="uom_po_id" ref="uom.product_uom_unit"/>
 </record>
 
 <record id="customer_inox_can" model="product.product">
@@ -157,11 +186,10 @@
     <field name="categ_id" ref="product.product_category_5"/>
     <field name="sale_ok" eval="False"/>
     <field name="purchase_ok" eval="False"/>
-    <field name="type">consu</field>
-    <field name="olive_type">bottle</field>
+    <field name="detailed_type">olive_barrel_farmer</field>
     <field name="olive_bottle_free_full" eval="True"/>
-    <field name="uom_id" ref="product.product_uom_unit"/>
-    <field name="uom_po_id" ref="product.product_uom_unit"/>
+    <field name="uom_id" ref="uom.product_uom_unit"/>
+    <field name="uom_po_id" ref="uom.product_uom_unit"/>
 </record>
 
 <record id="can20l" model="product.product">
@@ -170,11 +198,10 @@
     <field name="categ_id" ref="product.product_category_5"/>
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="True"/>
-    <field name="type">product</field>
-    <field name="olive_type">bottle</field>
+    <field name="detailed_type">olive_bottle_empty</field>
     <field name="olive_bottle_free_full" eval="True"/>
-    <field name="uom_id" ref="product.product_uom_unit"/>
-    <field name="uom_po_id" ref="product.product_uom_unit"/>
+    <field name="uom_id" ref="uom.product_uom_unit"/>
+    <field name="uom_po_id" ref="uom.product_uom_unit"/>
 </record>
 
 <record id="can10l" model="product.product">
@@ -183,11 +210,10 @@
     <field name="categ_id" ref="product.product_category_5"/>
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="True"/>
-    <field name="type">product</field>
-    <field name="olive_type">bottle</field>
+    <field name="detailed_type">olive_bottle_empty</field>
     <field name="olive_bottle_free_full" eval="True"/>
-    <field name="uom_id" ref="product.product_uom_unit"/>
-    <field name="uom_po_id" ref="product.product_uom_unit"/>
+    <field name="uom_id" ref="uom.product_uom_unit"/>
+    <field name="uom_po_id" ref="uom.product_uom_unit"/>
 </record>
 
 <record id="can5l" model="product.product">
@@ -196,11 +222,10 @@
     <field name="categ_id" ref="product.product_category_5"/>
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="True"/>
-    <field name="type">product</field>
-    <field name="olive_type">bottle</field>
+    <field name="detailed_type">olive_bottle_empty</field>
     <field name="olive_bottle_free_full" eval="True"/>
-    <field name="uom_id" ref="product.product_uom_unit"/>
-    <field name="uom_po_id" ref="product.product_uom_unit"/>
+    <field name="uom_id" ref="uom.product_uom_unit"/>
+    <field name="uom_po_id" ref="uom.product_uom_unit"/>
 </record>
 
 <!-- Analysis -->
@@ -210,10 +235,9 @@
     <field name="categ_id" ref="product.product_category_5"/>
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="False"/>
-    <field name="type">consu</field>
-    <field name="olive_type">analysis</field>
-    <field name="uom_id" ref="product.product_uom_unit"/>
-    <field name="uom_po_id" ref="product.product_uom_unit"/>
+    <field name="detailed_type">olive_analysis</field>
+    <field name="uom_id" ref="uom.product_uom_unit"/>
+    <field name="uom_po_id" ref="uom.product_uom_unit"/>
     <field name="list_price">25</field>
 </record>
 
@@ -223,10 +247,9 @@
     <field name="categ_id" ref="product.product_category_5"/>
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="False"/>
-    <field name="type">consu</field>
-    <field name="olive_type">analysis</field>
-    <field name="uom_id" ref="product.product_uom_unit"/>
-    <field name="uom_po_id" ref="product.product_uom_unit"/>
+    <field name="detailed_type">olive_analysis</field>
+    <field name="uom_id" ref="uom.product_uom_unit"/>
+    <field name="uom_po_id" ref="uom.product_uom_unit"/>
     <field name="list_price">30</field>
 </record>
 
@@ -238,11 +261,10 @@
     <field name="categ_id" ref="product.product_category_5"/>
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="False"/>
-    <field name="type">service</field>
-    <field name="olive_type">service</field>
+    <field name="detailed_type">olive_service</field>
     <field name="list_price">0.04</field>
-    <field name="uom_id" ref="product.product_uom_kgm"/>
-    <field name="uom_po_id" ref="product.product_uom_kgm"/>
+    <field name="uom_id" ref="uom.product_uom_kgm"/>
+    <field name="uom_po_id" ref="uom.product_uom_kgm"/>
 </record>
 
 <record id="production_product" model="product.product">
@@ -251,11 +273,10 @@
     <field name="categ_id" ref="product.product_category_5"/>
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="False"/>
-    <field name="type">service</field>
-    <field name="olive_type">service</field>
+    <field name="detailed_type">olive_service</field>
     <field name="list_price">0.49</field>
-    <field name="uom_id" ref="product.product_uom_kgm"/>
-    <field name="uom_po_id" ref="product.product_uom_kgm"/>
+    <field name="uom_id" ref="uom.product_uom_kgm"/>
+    <field name="uom_po_id" ref="uom.product_uom_kgm"/>
 </record>
 
 <record id="tax_product" model="product.product">
@@ -264,11 +285,10 @@
     <field name="categ_id" ref="product.product_category_5"/>
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="False"/>
-    <field name="type">service</field>
-    <field name="olive_type">tax</field>
+    <field name="detailed_type">olive_tax</field>
     <field name="list_price">0.129</field>
-    <field name="uom_id" ref="product.product_uom_litre"/>
-    <field name="uom_po_id" ref="product.product_uom_litre"/>
+    <field name="uom_id" ref="uom.product_uom_kgm"/>
+    <field name="uom_po_id" ref="uom.product_uom_kgm"/>
 </record>
 
 <record id="early_bird_discount_product" model="product.product">
@@ -277,11 +297,10 @@
     <field name="categ_id" ref="product.product_category_5"/>
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="False"/>
-    <field name="type">service</field>
-    <field name="olive_type">service</field>
+    <field name="detailed_type">olive_service</field>
     <field name="list_price">0.04</field>
-    <field name="uom_id" ref="product.product_uom_kgm"/>
-    <field name="uom_po_id" ref="product.product_uom_kgm"/>
+    <field name="uom_id" ref="uom.product_uom_kgm"/>
+    <field name="uom_po_id" ref="uom.product_uom_kgm"/>
 </record>
 
 <!-- INVENTORY for bottles  -->

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2020-2023 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="olive_oil_production_done_last_form" model="ir.ui.view">
+    <field name="name">olive.oil.production.done.last.form</field>
+    <field name="model">olive.oil.production.done.last</field>
+    <field name="arch" type="xml">
+        <form>
+            <div name="help">
+                <p>You have just validated a last-of-day production in withdrawal. The next first-of-day production has already been created and the oil destination is sale. You are invited to select now the compensation sale tank for the next first-of-day production.</p>
+            </div>
+            <group name="main">
+                <field name="company_id" invisible="1"/>
+                <field name="warehouse_id"/>
+                <field name="season_id"/>
+                <field name="last_production_id"/>
+                <field name="compensation_oil_product_id"/>
+                <field name="compensation_location_id"/>
+                <field name="next_first_production_id"/>
+                <field name="next_first_compensation_sale_location_id" domain="[('olive_tank_type', '=', 'regular'), ('oil_product_id', '=', compensation_oil_product_id), ('olive_season_id', '=', season_id), ('company_id', '=', company_id)]"/>
+            </group>
+            <footer>
+                <button name="validate" type="object" string="Validate" class="btn-primary"/>
+                <button special="cancel" string="Select Later" class="btn-default"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+<record id="olive_oil_production_done_last_action" model="ir.actions.act_window">
+    <field name="name">Olive Oil Production Done Last</field>
+    <field name="res_model">olive.oil.production.done.last</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+</record>
+
+</odoo>

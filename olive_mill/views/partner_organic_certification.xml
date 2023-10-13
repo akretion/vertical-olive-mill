@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -11,7 +11,7 @@
     <field name="name">partner.organic.certification.form</field>
     <field name="model">partner.organic.certification</field>
     <field name="arch" type="xml">
-        <form string="Farmer Organic Certification">
+        <form>
             <header>
                 <button name="validate" string="Validate" type="object" confirm="I certify that I have seen the organic certificate of that olive farmer." states="draft" groups="stock.group_stock_user"/>
                 <field name="state" widget="statusbar" statusbar_colors="{'draft': 'blue'}"/>
@@ -33,14 +33,24 @@
     <field name="name">partner.organic.certification.tree</field>
     <field name="model">partner.organic.certification</field>
     <field name="arch" type="xml">
-        <tree string="Farmer Organic Certifications" decoration-info="state == 'draft'">
+        <tree decoration-info="state == 'draft'">
             <field name="partner_id" invisible="not context.get('partner_organic_certification_main_view')"/>
             <field name="season_id"/>
             <field name="certifying_entity_id"/>
             <field name="conversion"/>
             <field name="company_id" groups="base.group_multi_company"/>
-            <field name="state"/>
+            <field name="state" widget="badge" decoration-success="state == 'done'" decoration-info="state == 'draft'"/>
         </tree>
+    </field>
+</record>
+
+<record id="partner_organic_certification_pivot" model="ir.ui.view">
+    <field name="model">partner.organic.certification</field>
+    <field name="arch" type="xml">
+        <pivot>
+            <field name="season_id" type="col"/>
+            <field name="certifying_entity_id" type="row"/>
+        </pivot>
     </field>
 </record>
 
@@ -48,8 +58,9 @@
     <field name="name">partner.organic.certification.search</field>
     <field name="model">partner.organic.certification</field>
     <field name="arch" type="xml">
-        <search string="Farmer Organic Certifications">
+        <search>
             <field name="partner_id"/>
+            <separator/>
             <filter name="draft" domain="[('state', '=', 'draft')]" string="Draft"/>
             <filter name="done" domain="[('state', '=', 'done')]" string="Valid"/>
             <separator/>
@@ -70,10 +81,10 @@
 <record id="partner_organic_certification_action" model="ir.actions.act_window">
     <field name="name">Organic Certifications</field>
     <field name="res_model">partner.organic.certification</field>
-    <field name="view_mode">tree,form</field>
+    <field name="view_mode">tree,form,pivot</field>
     <field name="context">{'partner_organic_certification_main_view': True, 'search_default_current_season': True}</field>
 </record>
 
-<menuitem id="partner_organic_certification_menu" action="partner_organic_certification_action" parent="olive_data_menu" sequence="40"/>
+<menuitem id="partner_organic_certification_menu" action="partner_organic_certification_action" parent="olive_data_menu" sequence="40" groups="olive_mill.olive_organic"/>
 
 </odoo>

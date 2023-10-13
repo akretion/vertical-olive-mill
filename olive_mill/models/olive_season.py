@@ -1,4 +1,4 @@
-# Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+# Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -15,15 +15,14 @@ class OliveSeason(models.Model):
     _description = 'Olive Season'
     _order = 'start_date desc'
 
-    name = fields.Char(string='Name', required=True)
+    name = fields.Char(required=True)
     company_id = fields.Many2one(
-        'res.company', string='Company',
-        default=lambda self: self.env['res.company']._company_default_get())
-    start_date = fields.Date(string='Start Date', required=True)
-    end_date = fields.Date(string='End Date', required=True)
+        'res.company', default=lambda self: self.env.company)
+    start_date = fields.Date(required=True)
+    end_date = fields.Date(required=True)
     year = fields.Char(compute='_compute_year', string='Year', store=True)
     early_bird_date = fields.Date(string='Early Bird Limit Date')
-    default_expiry_date = fields.Date(string='Default Oil Expiry Date')
+    default_expiry_date = fields.Date(string='Default Oil Expiry Date', compute="_compute_default_expiry_date", readonly=False, store=True)
     olive_qty_arrived = fields.Integer(
         compute='_compute_totals', string='Arrived Olive Qty (kg)', readonly=True)
     olive_qty = fields.Integer(
@@ -49,7 +48,7 @@ class OliveSeason(models.Model):
     @api.depends('start_date')
     def _compute_year(self):
         for season in self:
-            season.year = season.start_date[:4]
+            season.year = season.start_date.year
 
     def _compute_totals(self):
         oalo = self.env['olive.arrival.line']
@@ -59,18 +58,18 @@ class OliveSeason(models.Model):
             ('season_id', 'in', self.ids),
             ('state', '=', 'done')],
             ['season_id', 'olive_qty'], ['season_id'])
-        for arrival_re in arrival_res:
-            season = self.browse(arrival_re['season_id'][0])
-            season.olive_qty_arrived = arrival_re['olive_qty']
+        olive_qty_arrived_map = dict([(x['season_id'][0], x['olive_qty']) for x in arrival_res])
+        for season in self:
+            season.olive_qty_arrived = olive_qty_arrived_map.get(season.id, 0)
         arrival_prod_done_res = oalo.read_group([
             ('season_id', 'in', self.ids),
             ('production_state', '=', 'done')],
             ['season_id', 'olive_qty', 'oil_qty_with_compensation', 'sale_oil_qty', 'withdrawal_oil_qty'],
             ['season_id'])
-        for re in arrival_prod_done_res:
-            season = self.browse(re['season_id'][0])
-            olive_qty = re['olive_qty']
-            oil_qty_with_compensation = re['oil_qty_with_compensation']
+        map_data = dict([(x['season_id'][0], {'olive_qty': x['olive_qty'], 'oil_qty_with_compensation': x['oil_qty_with_compensation'], 'sale_oil_qty': x['sale_oil_qty'], 'withdrawal_oil_qty': x['withdrawal_oil_qty']}) for x in arrival_prod_done_res])
+        for season in self:
+            olive_qty = map_data.get('olive_qty', 0)
+            oil_qty_with_compensation = map_data.get('oil_qty_with_compensation', 0)
             gross_ratio = 0
             if olive_qty:
                 gross_ratio = float_round(
@@ -79,8 +78,8 @@ class OliveSeason(models.Model):
             season.olive_qty = int(round(olive_qty))
             season.oil_qty_with_compensation = int(round(oil_qty_with_compensation))
             season.gross_ratio = gross_ratio
-            season.sale_oil_qty = int(round(re['sale_oil_qty']))
-            season.withdrawal_oil_qty = int(round(re['withdrawal_oil_qty']))
+            season.sale_oil_qty = int(round(map_data.get('sale_oil_qty', 0)))
+            season.withdrawal_oil_qty = int(round(map_data.get('withdrawal_oil_qty', 0)))
 
     @api.constrains('start_date', 'end_date', 'early_bird_date')
     def season_check(self):
@@ -112,17 +111,14 @@ class OliveSeason(models.Model):
                         oseasons[0].name, oseasons[0].start_date,
                         oseasons[0].end_date, season.name))
 
-    @api.onchange('start_date')
-    def start_date_change(self):
-        if self.start_date:
-            start_date_dt = fields.Date.from_string(self.start_date)
-            expiry_date_dt = start_date_dt + relativedelta(
-                month=1, years=3, day=1)
-            self.default_expiry_date = fields.Date.to_string(expiry_date_dt)
-
-    @api.model
-    def get_current_season(self):
-        return self.env.user.company_id.get_current_season()
+    @api.depends('start_date')
+    def _compute_default_expiry_date(self):
+        for season in self:
+            default_expiry_date = False
+            if season.start_date:
+                default_expiry_date = season.start_date + relativedelta(
+                    month=1, years=3, day=1)
+            season.default_expiry_date = default_expiry_date
 
     def _compute_kanban_dashboard_graph(self):
         for season in self:
@@ -164,8 +160,8 @@ class OliveSeason(models.Model):
 
     def dashboard_open_action(self):
         self.ensure_one()
-        action = self.env['ir.actions.act_window'].for_xml_id(
-            'olive_mill', 'olive_arrival_line_action')
+        action = self.env['ir.actions.actions']._for_xml_id(
+            'olive_mill.olive_arrival_line_action')
         action.update({
             'context': {
                 'search_default_season_id': self.id,
@@ -217,7 +213,8 @@ class OliveSeason(models.Model):
         if not cert_ids:
             raise UserError(_("No organic certification generated."))
         self.partner_organic_certif_generated = True
-        action = self.env.ref('olive_mill.partner_organic_certification_action').read()[0]
+        action = self.env['ir.actions.actions']._for_xml_id(
+            'olive_mill.partner_organic_certification_action')
         action.update({
             'context': {'partner_organic_certification_main_view': True},
             'domain': [('id', 'in', cert_ids)],

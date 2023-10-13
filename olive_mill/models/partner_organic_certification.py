@@ -1,4 +1,4 @@
-# Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+# Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -9,18 +9,19 @@ class PartnerOrganicCertification(models.Model):
     _name = 'partner.organic.certification'
     _description = 'Farmer Organic Certification'
     _order = 'season_id desc'
+    _check_company_auto = True
 
     partner_id = fields.Many2one(
         'res.partner', string='Farmer', ondelete='cascade', index=True,
         domain=[('parent_id', '=', False), ('olive_farmer', '=', True)],
         states={'done': [('readonly', True)]})
     season_id = fields.Many2one(
-        'olive.season', string='Season', required=True, index=True,
-        default=lambda self: self.env.user.company_id.current_season_id.id,
-        states={'done': [('readonly', True)]})
+        'olive.season', required=True, index=True, check_company=True,
+        default=lambda self: self.env.company.current_season_id.id,
+        states={'done': [('readonly', True)]},
+        domain="[('company_id', '=', company_id)]")
     company_id = fields.Many2one(
-        related='season_id.company_id', store=True, readonly=True,
-        string='Company')
+        'res.company', default=lambda self: self.env.company, required=True)
     certifying_entity_id = fields.Many2one(
         'organic.certifying.entity', string='Certifying Entity', required=True,
         ondelete='restrict', states={'done': [('readonly', True)]},
@@ -37,7 +38,7 @@ class PartnerOrganicCertification(models.Model):
 
     @api.model
     def default_get(self, fields_list):
-        res = super(PartnerOrganicCertification, self).default_get(fields_list)
+        res = super().default_get(fields_list)
         if self._context.get('default_partner_id'):
             previous_cert = self.search([
                 ('partner_id', '=', self._context['default_partner_id']),
@@ -64,6 +65,6 @@ class PartnerOrganicCertification(models.Model):
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super(PartnerOrganicCertification, self).fields_view_get(
+        res = super().fields_view_get(
             view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        return self.env.user.company_id.current_season_update(res, view_type)
+        return self.env.company.current_season_update(res, view_type)

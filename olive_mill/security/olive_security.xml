@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -11,6 +11,16 @@
 
 <record id="olive_operator" model="res.groups">
     <field name="name">Olive Mill Operator</field>
+</record>
+
+<record id="olive_organic" model="res.groups">
+    <field name="name">Organic Olive Mill</field>
+    <field name="category_id" ref="base.module_category_hidden"/>
+</record>
+
+<record id="olive_compensation" model="res.groups">
+    <field name="name">Olive Mill with Compensation</field>
+    <field name="category_id" ref="base.module_category_hidden"/>
 </record>
 
 </data>
@@ -31,7 +41,7 @@
     <field name="name">Olive operator restricted to olive products</field>
     <field name="model_id" ref="product.model_product_template"/>
     <field name="groups" eval="[(4, ref('olive_operator'))]"/>
-    <field name="domain_force">[('olive_type', '!=', False)]</field>
+    <field name="domain_force">[('detailed_type', '=like', 'olive_%')]</field>
 </record>
 
 <record id="olive_operator_stock_warehouse_rule" model="ir.rule">
@@ -48,73 +58,73 @@
 <record id="olive_season_multicompany_rule" model="ir.rule">
     <field name="name">Olive season multi-company</field>
     <field name="model_id" ref="model_olive_season"/>
-    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
+    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
 </record>
 
 <record id="olive_cultivation_multicompany_rule" model="ir.rule">
     <field name="name">Olive cultivation multi-company</field>
     <field name="model_id" ref="model_olive_cultivation"/>
-    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
+    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
 </record>
 
 <record id="olive_palox_multicompany_rule" model="ir.rule">
     <field name="name">Olive Palox multi-company</field>
     <field name="model_id" ref="model_olive_palox"/>
-    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
+    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
 </record>
 
 <record id="olive_palox_borrow_history_multicompany_rule" model="ir.rule">
     <field name="name">Olive Palox Borrow History multi-company</field>
     <field name="model_id" ref="model_olive_palox_borrow_history"/>
-    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
+    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
 </record>
 
 <record id="olive_lended_case_multicompany_rule" model="ir.rule">
     <field name="name">Olive lended cases multi-company</field>
     <field name="model_id" ref="model_olive_lended_case"/>
-    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
+    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
 </record>
 
 <record id="partner_organic_certification_multicompany_rule" model="ir.rule">
     <field name="name">Partner Organic certification multi-company</field>
     <field name="model_id" ref="model_partner_organic_certification"/>
-    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
+    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
 </record>
 
 <record id="olive_preseason_poll_rule" model="ir.rule">
     <field name="name">Olive Pre-season Poll multi-company</field>
     <field name="model_id" ref="model_olive_preseason_poll"/>
-    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
+    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
 </record>
 
 <record id="olive_appointment_multicompany_rule" model="ir.rule">
     <field name="name">Olive Appointment multi-company</field>
     <field name="model_id" ref="model_olive_appointment"/>
-    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
+    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
 </record>
 
 <record id="olive_arrival_multicompany_rule" model="ir.rule">
     <field name="name">Olive Arrival multi-company</field>
     <field name="model_id" ref="model_olive_arrival"/>
-    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
+    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
 </record>
 
 <record id="olive_oil_production_multicompany_rule" model="ir.rule">
     <field name="name">Olive Oil Production multi-company</field>
     <field name="model_id" ref="model_olive_oil_production"/>
-    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
+    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
 </record>
 
 <record id="olive_sale_pricelist_rule" model="ir.rule">
     <field name="name">Olive Sale Pricelist multi-company</field>
     <field name="model_id" ref="model_olive_sale_pricelist"/>
-    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
+    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
 </record>
 
 <record id="olive_oil_analysis_rule" model="ir.rule">
     <field name="name">Olive Oil Analysis multi-company</field>
     <field name="model_id" ref="model_olive_oil_analysis"/>
-    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'child_of', [user.company_id.id])]</field>
+    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
 </record>
 
 

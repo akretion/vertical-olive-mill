@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018-2019 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -12,22 +12,22 @@
     <field name="name">olive.arrival.form</field>
     <field name="model">olive.arrival</field>
     <field name="arch" type="xml">
-        <form string="Olive Arrival">
+        <form>
             <header>
                 <button name="check" string="Check" states="draft,weighted" type="object"/>
                 <button name="weighted" string="Weighted" class="btn-primary" states="draft" type="object"/>
                 <button name="validate" string="Validate" class="btn-primary" states="draft,weighted" type="object"/>
-                <button name="print_report" string="Show Report" type="object"/>
+                <button name="%(olive_arrival_report)d" string="Show Report" type="action"/>
                 <button name="cancel" string="Cancel" class="btn-default" states="draft,weighted,done" confirm="Are you sure you want to cancel this arrival ?" type="object"/>
                 <button name="back2draft" string="Back to Draft" class="btn-default" states="cancel" type="object"/>
                 <button type="action" name="%(olive_palox_lend_action)d" string="Lend Palox and/or Cases" context="{'default_partner_id': commercial_partner_id, 'default_arrival_id': active_id}" attrs="{'invisible': [('hide_lend_palox_case_button', '=', True)]}"/>
-                <span name="olive_cultivation_form_ko" attrs="{'invisible': ['|', ('olive_cultivation_form_ko', '=', False), ('partner_id', '=', False)]}" class="label label-danger">Cultivation form missing</span>
-                <span name="olive_parcel_ko" attrs="{'invisible': ['|', ('olive_parcel_ko', '=', False), ('partner_id', '=', False)]}" class="label label-warning">Parcel information incomplete</span>
-                <span name="olive_organic_certif_ko" attrs="{'invisible': ['|', ('olive_organic_certif_ko', '=', False), ('partner_id', '=', False)]}" class="label label-success">Organic certification missing</span>
                 <field name="state" widget="statusbar" statusbar_visible="draft,weighted,done"/>
             </header>
             <sheet>
                 <div name="button_box" class="oe_button_box">
+                    <span name="olive_cultivation_form_ko" attrs="{'invisible': ['|', ('olive_cultivation_form_ko', '=', False), ('partner_id', '=', False)]}" class="badge badge-pill badge-danger font-weight-bold">Cultivation form missing</span>
+                    <span name="olive_parcel_ko" attrs="{'invisible': ['|', ('olive_parcel_ko', '=', False), ('partner_id', '=', False)]}" class="badge badge-pill badge-warning font-weight-bold">Parcel information incomplete</span>
+                    <span name="olive_organic_certif_ko" attrs="{'invisible': ['|', ('olive_organic_certif_ko', '=', False), ('partner_id', '=', False)]}" class="badge badge-pill badge-success font-weight-bold" groups="olive_mill.olive_organic">Organic certification missing</span>
                     <button class="oe_stat_button" type="action"
                         name="%(olive_mill.olive_palox_action)d"
                         context="{'default_borrower_partner_id': commercial_partner_id, 'search_default_borrower_partner_id': commercial_partner_id, 'no_create': True}"
@@ -38,14 +38,13 @@
                         name="%(olive_mill.olive_lended_case_action)d"
                         context="{'default_partner_id': commercial_partner_id, 'search_default_partner_id': commercial_partner_id, 'olive_lended_case_main_view': 1}"
                         icon="fa-codepen">
-                        <div class="o_form_field o_stat_info">
-                            <span class="o_stat_value">
-                                <field name="lended_regular_case" widget="statinfo" nolabel="1"/>
-                                + <field name="lended_organic_case" widget="statinfo" nolabel="1"/>
-                                organic
-                            </span>
-                            <span class="o_stat_text">Lended Cases</span>
-                        </div>
+                        <field name="lended_regular_case" widget="statinfo" string="Lended Cases"/>
+                    </button>
+                    <button class="oe_stat_button" type="action"
+                        name="%(olive_mill.olive_lended_case_action)d"
+                        context="{'default_partner_id': commercial_partner_id, 'search_default_partner_id': commercial_partner_id, 'olive_lended_case_main_view': 1}"
+                        icon="fa-codepen" groups="olive_mill.olive_organic">
+                        <field name="lended_organic_case" widget="statinfo" string="Lended Organic Cases"/>
                     </button>
                     <button class="oe_stat_button" type="action"
                         name="%(olive_mill.olive_ochard_action)d"
@@ -64,11 +63,11 @@
                 <group name="main">
                     <group name="left">
                         <field name="partner_id"/>
-                        <field name="olive_culture_type" invisible="0"/>
+                        <field name="olive_culture_type" invisible="0" groups="olive_mill.olive_organic"/>
                         <field name="harvest_start_date"/>
                         <field name="default_ochard_id" domain="[('partner_id', '=', commercial_partner_id)]" context="{'default_partner_id': commercial_partner_id}"/>
                         <field name="default_variant_id" widget="selection"/>
-                        <field name="default_oil_product_id" domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', olive_culture_type)]" widget="selection"/>
+                        <field name="default_oil_product_id" domain="[('detailed_type', '=', 'olive_oil'), ('olive_culture_type', '=', olive_culture_type)]" widget="selection"/>
                         <field name="default_oil_destination"/>
                         <field name="default_leaf_removal"/>
                         <field name="commercial_partner_id" invisible="1"/>
@@ -80,11 +79,10 @@
                         <field name="date"/>
                         <label for="olive_qty" string="Total Quantity"/>
                         <div name="olive_qty">
-                            <field name="olive_qty" class="oe_inline"/>
-                            <label string=" kg"/>
+                            <field name="olive_qty" class="oe_inline"/> kg
                         </div>
                         <field name="returned_regular_case" attrs="{'readonly': ['|', ('olive_culture_type', 'in', ('organic', 'conversion')), ('state', '=', 'done')]}"/>
-                        <field name="returned_organic_case" attrs="{'readonly': ['|', ('olive_culture_type', '=', 'regular'), ('state', '=', 'done')]}"/>
+                        <field name="returned_organic_case" attrs="{'readonly': ['|', ('olive_culture_type', '=', 'regular'), ('state', '=', 'done')]}" groups="olive_mill.olive_organic"/>
                         <field name="returned_palox_ids" widget="many2many_tags"
                             domain="[('borrower_partner_id', '=', commercial_partner_id)]"/>
                         <field name="operator_user_id" widget="selection"/>
@@ -92,22 +90,22 @@
                 </group>
                 <notebook>
                     <page name="lines" string="Arrival Lines">
-                        <field name="line_ids" nolabel="1"
+                        <field name="line_ids" nolabel="1" colspan="2"
                             context="{'default_leaf_removal': default_leaf_removal, 'default_variant_id': default_variant_id, 'default_oil_product_id': default_oil_product_id, 'default_ochard_id': default_ochard_id, 'default_commercial_partner_id': commercial_partner_id, 'default_oil_destination': default_oil_destination, 'default_olive_culture_type': olive_culture_type, 'form_view_ref': 'olive_mill.olive_arrival_line_arrival_form'}">
                             <tree>
-                                <field name="name"/>
+                                <field name="name" decoration-bf="1"/>
                                 <field name="olive_qty" sum="1"/>
-                                <field name="leaf_removal"/>
+                                <field name="leaf_removal" optional="show"/>
                                 <field name="variant_id"/>
-                                <field name="ripeness"/>
-                                <field name="sanitary_state"/>
+                                <field name="ripeness" optional="show"/>
+                                <field name="sanitary_state" optional="show"/>
                                 <field name="oil_product_id"/>
-                                <field name="ochard_id"/>
+                                <field name="ochard_id" optional="show"/>
                                 <field name="palox_id"/>
-                                <field name="oil_destination"/>
+                                <field name="oil_destination" widget="badge" decoration-danger="oil_destination == 'mix'" decoration-warning="oil_destination == 'sale'" decoration-info="oil_destination == 'withdrawal'"/>
                                 <field name="mix_withdrawal_oil_qty" string="Withdrawal (L)" sum="1"/>
-                                <field name="extra_count" string="Extras"/>
-                                <field name="state"/>
+                                <field name="extra_count" string="Extras" optional="show"/>
+                                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'done'"/>
                             </tree>
                         </field>
                     </page>
@@ -116,23 +114,19 @@
                             <group name="results" string="Production Results">
                                 <label for="olive_qty_pressed" string="Olive Qty Pressed"/>
                                 <div name="olive_qty_pressed">
-                                    <field name="olive_qty_pressed" class="oe_inline"/>
-                                    <label string=" kg"/>
+                                    <field name="olive_qty_pressed" class="oe_inline"/> kg
                                 </div>
                                 <label for="oil_qty_net" string="Net Oil Qty"/>
                                 <div name="oil_qty_net">
-                                    <field name="oil_qty_net" class="oe_inline"/>
-                                    <label string=" L"/>
+                                    <field name="oil_qty_net" class="oe_inline"/> L
                                 </div>
                                 <label for="oil_ratio_net" string="Oil Net Ratio"/>
                                 <div name="oil_ratio_net">
-                                    <field name="oil_ratio_net" class="oe_inline"/>
-                                    <label string=" %"/>
+                                    <field name="oil_ratio_net" class="oe_inline"/> %
                                 </div>
                                 <label for="olive_ratio_net" string="Olive Net Ratio"/>
                                 <div name="olive_ratio_net">
-                                    <field name="olive_ratio_net" class="oe_inline"/>
-                                    <label string=" kg / L"/>
+                                    <field name="olive_ratio_net" class="oe_inline"/> kg / L
                                 </div>
                             </group>
                             <group name="tech" string="Additional Info">
@@ -149,6 +143,7 @@
             </sheet>
             <div class="oe_chatter">
                 <field name="message_follower_ids" widget="mail_followers"/>
+                <field name="activity_ids" widget="mail_activity"/>
                 <field name="message_ids" widget="mail_thread"/>
             </div>
         </form>
@@ -159,15 +154,15 @@
     <field name="name">olive.arrival.tree</field>
     <field name="model">olive.arrival</field>
     <field name="arch" type="xml">
-        <tree string="Olive Arrivals" decoration-info="state == 'draft'" decoration-success="state == 'weighted'" decoration-muted="state == 'cancel'">
-            <field name="name"/>
+        <tree>
+            <field name="name" decoration-bf="1"/>
             <field name="date"/>
-            <field name="harvest_start_date"/>
+            <field name="harvest_start_date" optional="show"/>
             <field name="partner_id"/>
             <field name="commercial_partner_id" invisible="1"/>
             <field name="olive_qty" sum="1"/>
-            <field name="state"/>
-            <field name="company_id" groups="base.group_multi_company"/>
+            <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-warning="state == 'weighted'" decoration-success="state == 'done'"/>
+            <field name="company_id" groups="base.group_multi_company" optional="hide"/>
         </tree>
     </field>
 </record>
@@ -176,7 +171,7 @@
     <field name="name">olive.arrival.pivot</field>
     <field name="model">olive.arrival</field>
     <field name="arch" type="xml">
-        <pivot string="Olive Arrivals">
+        <pivot>
             <field name="commercial_partner_id" type="row"/>
             <field name="olive_qty" type="measure"/>
         </pivot>
@@ -187,7 +182,7 @@
     <field name="name">olive.arrival.graph</field>
     <field name="model">olive.arrival</field>
     <field name="arch" type="xml">
-        <graph string="Olive Arrivals">
+        <graph>
             <field name="date" type="row" interval="week"/>
             <field name="olive_qty" type="measure"/>
         </graph>
@@ -200,7 +195,7 @@
     <field name="name">olive.arrival.search</field>
     <field name="model">olive.arrival</field>
     <field name="arch" type="xml">
-        <search string="Search Olive Arrivals">
+        <search>
             <field name="name"/>
             <field name="partner_id" operator="child_of"/>
             <field name="warehouse_id"/>
@@ -239,7 +234,7 @@
     <field name="name">olive.arrival.line.form</field>
     <field name="model">olive.arrival.line</field>
     <field name="arch" type="xml">
-        <form string="Olive Arrival Lines">
+        <form>
             <header>
                 <field name="state" widget="statusbar" statusbar_visible="draft,weighted,done"/>
             </header>
@@ -249,26 +244,24 @@
                 <field name="arrival_id"/>
                 <field name="arrival_date"/>
                 <field name="commercial_partner_id"/>
-                <field name="olive_culture_type"/>
+                <field name="olive_culture_type" groups="olive_mill.olive_organic"/>
                 <label for="olive_qty" string="Olive Qty"/>
                 <div name="olive_qty">
-                    <field name="olive_qty" class="oe_inline"/>
-                    <label string=" kg"/>
+                    <field name="olive_qty" class="oe_inline"/> kg
                 </div>
                 <field name="leaf_removal"/>
                 <field name="variant_id" widget="selection"/>
                 <field name="ripeness"/>
                 <field name="sanitary_state"/>
                 <field name="oil_product_id"
-                   domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', olive_culture_type)]" widget="selection"/>
+                   domain="[('detailed_type', '=', 'olive_oil'), ('olive_culture_type', '=', olive_culture_type)]" widget="selection"/>
                 <field name="ochard_id" domain="[('partner_id', '=', commercial_partner_id)]" context="{'default_partner_id': commercial_partner_id}"/>
                 <field name="palox_id" domain="['|', ('oil_product_id', '=', False), ('oil_product_id', '=', oil_product_id), '|', ('borrower_partner_id', '=', False), ('borrower_partner_id', '=', commercial_partner_id)]"/>
                 <field name="oil_destination"/>
                 <label for="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}" string="Requested Withdrawal Qty"/>
                 <div name="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}">
                     <field name="mix_withdrawal_oil_qty"
-                        attrs="{'required': [('oil_destination', '=', 'mix')]}" class="oe_inline"/>
-                    <label string=" L"/>
+                        attrs="{'required': [('oil_destination', '=', 'mix')]}" class="oe_inline"/> L
                 </div>
             </group>
             <group name="main-right" string="Production">
@@ -278,65 +271,51 @@
                 <field name="compensation_type"/>
                 <label for="oil_qty" string="Oil Qty"/>
                 <div name="oil_qty">
-                    <field name="oil_qty" class="oe_inline"/>
-                    <label string=" L / " class="oe_inline"/>
-                    <field name="oil_qty_kg" class="oe_inline"/>
-                    <label string=" kg" class="oe_inline"/>
+                    <field name="oil_qty" class="oe_inline"/> L /
+                    <field name="oil_qty_kg" class="oe_inline"/> kg
                 </div>
                 <label for="compensation_oil_qty" string="Compensation Oil Qty" attrs="{'invisible': [('compensation_type', 'not in', ('last', 'first'))]}"/>
                 <div name="compensation_oil_qty" attrs="{'invisible': [('compensation_type', 'not in', ('last', 'first'))]}">
-                    <field name="compensation_oil_qty" class="oe_inline"/>
-                    <label string=" L"/>
+                    <field name="compensation_oil_qty" class="oe_inline"/> L
                 </div>
                 <label for="oil_qty_with_compensation" string="Oil Qty with Compensation"/>
                 <div name="oil_qty_with_compensation">
-                    <field name="oil_qty_with_compensation" class="oe_inline"/>
-                    <label string=" L"/>
+                    <field name="oil_qty_with_compensation" class="oe_inline"/> L
                 </div>
 
                 <label for="shrinkage_oil_qty" string="Shrinkage Oil Qty"/>
                 <div name="shrinkage_oil_qty">
-                    <field name="shrinkage_oil_qty" class="oe_inline"/>
-                    <label string=" L / " class="oe_inline"/>
-                    <field name="shrinkage_oil_qty_kg" class="oe_inline"/>
-                    <label string=" kg" class="oe_inline"/>
+                    <field name="shrinkage_oil_qty" class="oe_inline"/> L /
+                    <field name="shrinkage_oil_qty_kg" class="oe_inline"/> kg
                 </div>
                 <label for="withdrawal_oil_qty" string="Withdrawal Oil Qty" attrs="{'invisible': [('oil_destination', 'not in', ('withdrawal', 'mix'))]}"/>
                 <div name="withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', 'not in', ('withdrawal', 'mix'))]}">
-                    <field name="withdrawal_oil_qty" class="oe_inline"/>
-                    <label string=" L / " class="oe_inline"/>
-                    <field name="withdrawal_oil_qty_kg" class="oe_inline"/>
-                    <label string=" kg" class="oe_inline"/>
+                    <field name="withdrawal_oil_qty" class="oe_inline"/> L /
+                    <field name="withdrawal_oil_qty_kg" class="oe_inline"/> kg
                 </div>
                 <label for="filter_loss_oil_qty" string="Oil Qty Lost in Filter" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}"/>
                 <div name="filter_loss_oil_qty" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}">
-                    <field name="filter_loss_oil_qty" class="oe_inline"/>
-                    <label string=" L" class="oe_inline"/>
+                    <field name="filter_loss_oil_qty" class="oe_inline"/> L
                 </div>
                 <label for="to_sale_tank_oil_qty" string="Oil Qty to Sale Tank" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}"/>
                 <div name="to_sale_tank_oil_qty" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}">
-                    <field name="to_sale_tank_oil_qty" class="oe_inline"/>
-                    <label string=" L" class="oe_inline"/>
+                    <field name="to_sale_tank_oil_qty" class="oe_inline"/> L
                 </div>
                 <label for="sale_oil_qty" string="Oil Qty Sold" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}"/>
                 <div name="sale_oil_qty" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}">
-                    <field name="sale_oil_qty" class="oe_inline"/>
-                    <label string=" L" class="oe_inline"/>
+                    <field name="sale_oil_qty" class="oe_inline"/> L
                 </div>
                 <label for="oil_qty_net" string="Net Oil Qty"/>
                 <div name="oil_qty_net">
-                    <field name="oil_qty_net" class="oe_inline"/>
-                    <label string=" L" class="oe_inline"/>
+                    <field name="oil_qty_net" class="oe_inline"/> L
                 </div>
                 <label for="oil_ratio" string="Oil Gross Ratio"/>
                 <div name="oil_ratio">
-                    <field name="oil_ratio" class="oe_inline"/>
-                    <label string=" % (L)" class="oe_inline"/>
+                    <field name="oil_ratio" class="oe_inline"/> % (L)
                 </div>
                 <label for="oil_ratio_net" string="Oil Net Ratio"/>
                 <div name="oil_ratio_net">
-                    <field name="oil_ratio_net" class="oe_inline"/>
-                    <label string=" % (L)" class="oe_inline"/>
+                    <field name="oil_ratio_net" class="oe_inline"/> % (L)
                 </div>
             </group>
             </group>
@@ -374,7 +353,7 @@
     <field name="model">olive.arrival.line</field>
     <field name="priority">1000</field>
     <field name="arch" type="xml">
-        <form string="Olive Arrival Line">
+        <form>
             <header>
                 <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
             </header>
@@ -384,12 +363,11 @@
                 <label for="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}" string="Requested Withdrawal Qty"/>
                 <div name="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}">
                     <field name="mix_withdrawal_oil_qty"
-                        attrs="{'required': [('oil_destination', '=', 'mix')]}" class="oe_inline"/>
-                    <label string=" L"/>
+                        attrs="{'required': [('oil_destination', '=', 'mix')]}" class="oe_inline"/> L
                 </div>
 
                 <field name="oil_product_id"
-                   domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', olive_culture_type)]" widget="selection"/>
+                   domain="[('detailed_type', '=', 'olive_oil'), ('olive_culture_type', '=', olive_culture_type)]" widget="selection"/>
                 <field name="palox_id" domain="['|', ('oil_product_id', '=', False), ('oil_product_id', '=', oil_product_id), '|', ('borrower_partner_id', '=', False), ('borrower_partner_id', '=', commercial_partner_id)]"/>
                 <label for="palox_weight" string="Palox Weight"/>
                 <div name="palox_weight">
@@ -419,7 +397,7 @@
     <field name="name">olive.arrival.line.tree</field>
     <field name="model">olive.arrival.line</field>
     <field name="arch" type="xml">
-        <tree string="Olive Arrival Lines" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" edit="0" create="0">
+        <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" edit="0" create="0">
             <field name="name"/>
             <field name="arrival_id"/>
             <field name="production_id"/>
@@ -442,15 +420,15 @@
     <field name="name">olive.arrival.line.search</field>
     <field name="model">olive.arrival.line</field>
     <field name="arch" type="xml">
-        <search string="Search Arrival Lines">
+        <search>
             <field name="name"/>
             <field name="commercial_partner_id"/>
             <field name="season_id"/>
             <field name="warehouse_id"/>
             <separator/>
-            <filter name="regular" string="Regular" domain="[('olive_culture_type', '=', 'regular')]"/>
-            <filter name="conversion" string="Conversion" domain="[('olive_culture_type', '=', 'conversion')]"/>
-            <filter name="organic" string="Organic" domain="[('olive_culture_type', '=', 'organic')]"/>
+            <filter name="regular" string="Regular" domain="[('olive_culture_type', '=', 'regular')]" groups="olive_mill.olive_organic"/>
+            <filter name="conversion" string="Conversion" domain="[('olive_culture_type', '=', 'conversion')]" groups="olive_mill.olive_organic"/>
+            <filter name="organic" string="Organic" domain="[('olive_culture_type', '=', 'organic')]" groups="olive_mill.olive_organic"/>
             <separator/>
             <filter name="arrival_draft" string="Draft Arrivals" domain="[('state', '=', 'draft')]"/>
             <filter name="arrival_done" string="Done Arrivals" domain="[('state', '=', 'done')]"/>
@@ -486,7 +464,7 @@
     <field name="name">olive.arrival.line.pivot</field>
     <field name="model">olive.arrival.line</field>
     <field name="arch" type="xml">
-        <pivot string="Olive Arrival Lines">
+        <pivot>
             <field name="oil_product_id" type="row"/>
             <field name="season_id" type="col"/>
             <field name="olive_qty" type="measure"/>
@@ -503,7 +481,7 @@
     <field name="model">olive.arrival.line</field>
     <field name="priority">1000</field>
     <field name="arch" type="xml">
-        <pivot string="Olive Arrival Lines">
+        <pivot>
             <field name="season_id" type="col"/>
             <field name="oil_product_id" type="row"/>
             <field name="olive_qty" type="measure"/>
@@ -519,7 +497,7 @@
     <field name="name">olive.arrival.line.graph</field>
     <field name="model">olive.arrival.line</field>
     <field name="arch" type="xml">
-        <graph string="Olive Arrival Lines">
+        <graph>
             <field name="arrival_date" type="row" interval="week"/>
             <field name="olive_qty" type="measure"/>
         </graph>
@@ -533,7 +511,7 @@
     <field name="context">{'search_default_current_season': True, 'search_default_arrival_done': True}</field>
 </record>
 
-<menuitem id="olive_arrival_line_menu" action="olive_arrival_line_action" parent="olive_report_menu" sequence="10" groups="stock.group_stock_manager"/>  <!-- maybe we will remove group once appropriate prodections are setup -->
+<menuitem id="olive_arrival_line_menu" action="olive_arrival_line_action" parent="olive_report_menu" sequence="10" groups="stock.group_stock_manager"/>  <!-- maybe we will remove group once appropriate protections are setup -->
 
 <record id="olive_arrival_line_extra_form" model="ir.ui.view">
     <field name="name">olive.arrival.line.extra.form</field>
@@ -542,18 +520,17 @@
         <form>
             <group name="main">
                 <field name="product_id"/>
-                <field name="product_olive_type" invisible="1"/>
+                <field name="product_detailed_type" invisible="1"/>
                 <label for="qty"/>
                 <div name="qty">
                     <field name="qty" class="oe_inline"/>
                     <field name="uom_id" class="oe_inline"/>
                 </div>
-                <field name="fillup"/>
+                <field name="fillup" attrs="{'invisible': [('product_detailed_type', 'not in', ('olive_bottle_empty', 'olive_barrel_farmer'))]}"/>
             </group>
         </form>
     </field>
 </record>
-
 
 <record id="olive_arrival_line_extra_tree" model="ir.ui.view">
     <field name="name">olive.arrival.line.extra.tree</field>
@@ -561,15 +538,13 @@
     <field name="arch" type="xml">
         <tree editable="bottom">
             <field name="product_id"/>
-            <field name="product_olive_type" invisible="1"/>
+            <field name="product_detailed_type" invisible="1"/>
             <field name="qty"/>
-            <field name="uom_id" groups="product.group_uom"/>
-            <field name="fillup"/>
+            <field name="uom_id" groups="uom.group_uom"/>
+            <field name="fillup" attrs="{'invisible': [('product_detailed_type', 'not in', ('olive_bottle_empty', 'olive_barrel_farmer'))]}"/>
         </tree>
     </field>
 </record>
-
-
 
 
 </odoo>

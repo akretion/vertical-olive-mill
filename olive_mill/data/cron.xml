@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -14,9 +14,9 @@
     <field name="interval_number">1</field>
     <field name="interval_type">days</field>
     <field name="numbercall">-1</field> <!-- don't limit the number of calls -->
-    <field name="model">stock.warehouse</field>
-    <field name="function">olive_oil_compensation_ratio_update_cron</field>
-    <field name="args">()</field>
+    <field name="model_id" ref="stock.model_stock_warehouse"/>
+    <field name="state">code</field>
+    <field name="code">model.olive_oil_compensation_ratio_update_cron()</field>
 </record>
 
 </odoo>

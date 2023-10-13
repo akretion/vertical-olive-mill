@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -10,21 +10,25 @@
 <record id="oil_shrinkage_lot" model="stock.production.lot">
     <field name="name">OOIL-SHRINK</field>
     <field name="product_id" ref="oil"/>
+    <field name="company_id" ref="base.main_company"/>
 </record>
 
 <record id="black_oil_shrinkage_lot" model="stock.production.lot">
     <field name="name">OOILBLACK-SHRINK</field>
     <field name="product_id" ref="black_oil"/>
+    <field name="company_id" ref="base.main_company"/>
 </record>
 
 <record id="oil_organic_shrinkage_lot" model="stock.production.lot">
     <field name="name">ORG_OOIL-SHRINK</field>
     <field name="product_id" ref="oil_organic"/>
+    <field name="company_id" ref="base.main_company"/>
 </record>
 
 <record id="oil_conversion_shrinkage_lot" model="stock.production.lot">
     <field name="name">CONV_OOIL-SHRINK</field>
     <field name="product_id" ref="oil_conversion"/>
+    <field name="company_id" ref="base.main_company"/>
 </record>
 
 <record id="oil" model="product.product">

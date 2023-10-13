@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -11,15 +11,14 @@
     <field name="name">olive.parcel.form</field>
     <field name="model">olive.parcel</field>
     <field name="arch" type="xml">
-        <form string="Olive Parcel">
+        <form>
             <group name="main">
                 <field name="ochard_id" invisible="not context.get('olive_parcel_main_view')"/>
                 <field name="partner_id" invisible="not context.get('olive_parcel_main_view')"/>
                 <field name="land_registry_ref"/>
                 <label for="area"/>
                 <div name="area">
-                    <field name="area" class="oe_inline"/>
-                    <label string=" ha" class="oe_inline"/>
+                    <field name="area" class="oe_inline"/> ha
                 </div>
                 <field name="tree_qty"/>
                 <field name="variant_ids" widget="many2many_tags"/>
@@ -37,17 +36,17 @@
     <field name="name">olive.parcel.tree</field>
     <field name="model">olive.parcel</field>
     <field name="arch" type="xml">
-        <tree string="Olive Parcels">
+        <tree>
             <field name="ochard_id" invisible="not context.get('olive_parcel_main_view')"/>
             <field name="partner_id" invisible="not context.get('olive_parcel_main_view')"/>
-            <field name="land_registry_ref"/>
-            <field name="area" sum="1"/>
-            <field name="tree_qty" sum="1"/>
-            <field name="variant_label"/>
-            <field name="density"/>
-            <field name="planted_year"/>
-            <field name="irrigation"/>
-            <field name="cultivation_method"/>
+            <field name="land_registry_ref" optional="show"/>
+            <field name="area" sum="1" optional="show"/>
+            <field name="tree_qty" sum="1" optional="show"/>
+            <field name="variant_label" optional="show" string="Olive Variants"/>
+            <field name="density" optional="show"/>
+            <field name="planted_year" optional="show"/>
+            <field name="irrigation" optional="show"/>
+            <field name="cultivation_method" optional="show"/>
         </tree>
     </field>
 </record>
@@ -56,7 +55,7 @@
     <field name="name">olive.parcel.search</field>
     <field name="model">olive.parcel</field>
     <field name="arch" type="xml">
-        <search string="Search Olive Parcels">
+        <search>
             <field name="partner_id"/>
             <field name="ochard_id"/>
             <group string="Group By" name="groupby">

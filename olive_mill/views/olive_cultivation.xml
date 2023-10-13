@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -11,7 +11,7 @@
     <field name="name">olive.cultivation.form</field>
     <field name="model">olive.cultivation</field>
     <field name="arch" type="xml">
-        <form string="Cultivation Method">
+        <form>
             <group name="main">
                 <field name="partner_id" invisible="not context.get('olive_cultivation_main_view')"/>
                 <field name="season_id"/>
@@ -33,14 +33,15 @@
     <field name="name">olive.cultivation.tree</field>
     <field name="model">olive.cultivation</field>
     <field name="arch" type="xml">
-        <tree string="Cultivation Methods">
+        <tree>
             <field name="partner_id" invisible="not context.get('olive_cultivation_main_view')"/>
             <field name="season_id"/>
             <field name="treatment_type"/>
             <field name="date"/>
             <field name="treatment_id"/>
             <field name="quantity"/>
-            <field name="notes"/>
+            <field name="notes" optional="show"/>
+            <field name="company_id" groups="base.group_multi_company" optional="hide"/>
         </tree>
     </field>
 </record>
@@ -49,7 +50,7 @@
     <field name="name">olive.cultivation.search</field>
     <field name="model">olive.cultivation</field>
     <field name="arch" type="xml">
-        <search string="Search Cultivation Methods">
+        <search>
             <field name="partner_id"/>
             <separator/>
             <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>

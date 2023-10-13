@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -27,20 +27,20 @@
     <field name="name">olive.appointment.form</field>
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
-        <form string="Appointment">
+        <form>
             <header>
                 <button name="%(olive_palox_lend_action)d" type="action" string="Lend Palox/Cases" attrs="{'invisible': [('appointment_type', '!=', 'lend')]}" context="{'default_partner_id': partner_id, 'default_regular_case_qty': lend_regular_case_qty, 'default_organic_case_qty': lend_organic_case_qty}" class="btn-primary"/>
                 <button name="open_arrival" class="btn-primary" attrs="{'invisible': [('appointment_type', 'not in', ('arrival_leaf_removal', 'arrival_no_leaf_removal'))]}" string="Arrival" type="object"/>
                 <button name="open_new_appointment" attrs="{'invisible': [('appointment_type', 'not in', ('arrival_leaf_removal', 'arrival_no_leaf_removal'))]}" string="New Appointment" type="object"/>
                 <button name="%(olive_withdrawal_action)d" type="action" string="New Withdrawal" attrs="{'invisible': [('appointment_type', '!=', 'withdrawal')]}" context="{'default_partner_id': partner_id}" class="btn-primary"/>
                 <button name="%(olive_invoice_create_action)d" type="action" string="Create Invoice" attrs="{'invisible': [('appointment_type', '!=', 'withdrawal')]}" context="{'default_partner_id': partner_id}"/>
-                <span name="olive_cultivation_form_ko" attrs="{'invisible': ['|', ('olive_cultivation_form_ko', '=', False), ('partner_id', '=', False)]}" class="label label-danger">Cultivation form missing</span>
-                <span name="olive_parcel_ko" attrs="{'invisible': ['|', ('olive_parcel_ko', '=', False), ('partner_id', '=', False)]}" class="label label-warning">Parcel information incomplete</span>
-                <span name="olive_organic_certif_ko" attrs="{'invisible': ['|', ('olive_organic_certif_ko', '=', False), ('partner_id', '=', False)]}" class="label label-success">Organic certification missing</span>
-                <span name="olive_invoicing_ko" attrs="{'invisible': ['|', ('olive_invoicing_ko', '=', False), ('partner_id', '=', False)]}" class="label label-info">Invoicing to do</span>
             </header>
             <sheet>
                 <div name="button_box" class="oe_button_box">
+                    <span name="olive_cultivation_form_ko" attrs="{'invisible': ['|', ('olive_cultivation_form_ko', '=', False), ('partner_id', '=', False)]}" class="badge badge-pill badge-danger font-weight-bold">Cultivation form missing</span>
+                    <span name="olive_parcel_ko" attrs="{'invisible': ['|', ('olive_parcel_ko', '=', False), ('partner_id', '=', False)]}" class="badge badge-pill badge-warning font-weight-bold">Parcel information incomplete</span>
+                    <span name="olive_organic_certif_ko" attrs="{'invisible': ['|', ('olive_organic_certif_ko', '=', False), ('partner_id', '=', False)]}" class="badge badge-pill badge-success font-weight-bold" groups="olive_mill.olive_organic">Organic certification missing</span>
+                    <span name="olive_invoicing_ko" attrs="{'invisible': ['|', ('olive_invoicing_ko', '=', False), ('partner_id', '=', False)]}" class="badge badge-pill badge-info font-weight-bold">Invoicing to do</span>
                     <button class="oe_stat_button" type="object"
                         name="show_arrival_appointments_same_day"
                         icon="fa-arrow-down">  <!-- use fa-tractor when we'll have access to FA 5.4 -->
@@ -91,12 +91,11 @@
                             <field name="qty" class="oe_inline"/> kg
                         </div>
                         <field name="palox_qty"/>
-                        <field name="oil_product_id" domain="[('olive_type', '=', 'oil'), ('olive_culture_type', '=', olive_culture_type)]" widget="selection"/>
+                        <field name="oil_product_id" domain="[('detailed_type', '=', 'olive_oil'), ('olive_culture_type', '=', olive_culture_type)]" widget="selection"/>
                         <field name="oil_destination"/>
                         <label for="withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}"/>
                         <div name="withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}">
-                            <field name="withdrawal_oil_qty" class="oe_inline"/>
-                            <label string=" L" class="oe_inline"/>
+                            <field name="withdrawal_oil_qty" class="oe_inline"/> L
                         </div>
                     </group>
                     <group name="withdrawal" attrs="{'invisible': [('appointment_type', '!=', 'withdrawal')]}">
@@ -105,12 +104,13 @@
                     <group name="lend" attrs="{'invisible': [('appointment_type', '!=', 'lend')]}">
                         <field name="lend_palox_qty" />
                         <field name="lend_regular_case_qty" attrs="{'readonly': [('olive_culture_type', 'in', ('organic', 'conversion'))]}"/>
-                        <field name="lend_organic_case_qty" attrs="{'readonly': [('olive_culture_type', '=', 'regular')]}"/>
+                        <field name="lend_organic_case_qty" attrs="{'readonly': [('olive_culture_type', '=', 'regular')]}" groups="olive_mill.olive_organic"/>
                     </group>
                 </group>
             </sheet>
             <div class="oe_chatter">
                 <field name="message_follower_ids" widget="mail_followers"/>
+                <field name="activity_ids" widget="mail_activity"/>
                 <field name="message_ids" widget="mail_thread"/>
             </div>
         </form>
@@ -121,17 +121,18 @@
     <field name="name">olive.appointment.tree</field>
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
-        <tree string="Appointments" decoration-info="appointment_type == 'withdrawal'" decoration-warning="appointment_type == 'arrival_no_leaf_removal'" decoration-danger="appointment_type == 'arrival_leaf_removal'" decoration-success="appointment_type == 'lend'">
-            <field name="day_of_week"/>
+        <tree>
+            <field name="day_of_week_sel"/>
             <field name="start_datetime"/>
             <field name="end_datetime"/>
-            <field name="appointment_type"/>
+            <field name="appointment_type" widget="badge" decoration-info="appointment_type == 'withdrawal'" decoration-warning="appointment_type == 'arrival_no_leaf_removal'" decoration-danger="appointment_type == 'arrival_leaf_removal'" decoration-success="appointment_type == 'lend'"/>
             <field name="partner_id"/>
             <field name="commercial_partner_id" invisible="1"/>
-            <field name="variant_id"/>
+            <field name="variant_id" optional="show"/>
             <field name="qty" sum="1"/>
             <field name="palox_qty" sum="1"/>
-            <field name="oil_destination"/>
+            <field name="oil_destination" optional="show"/>
+            <field name="withdrawal_oil_qty" optional="hide"/>
         </tree>
     </field>
 </record>
@@ -140,7 +141,7 @@
     <field name="name">olive.appointment.calendar</field>
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
-        <calendar string="Appointments" color="appointment_type" date_start="start_datetime" date_stop="end_datetime" mode="day" quick_add="false">
+        <calendar color="appointment_type" date_start="start_datetime" date_stop="end_datetime" mode="day" quick_add="false">
             <field name="display_calendar_label"/>
         </calendar>
     </field>
@@ -150,7 +151,7 @@
     <field name="name">olive.appointment.search</field>
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
-        <search string="Search Appointments">
+        <search>
             <field name="partner_id" operator="child_of"/>
             <field name="date"/>
             <separator/>

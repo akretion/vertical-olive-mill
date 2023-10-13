@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -11,19 +11,14 @@
     <field name="name">olive.ochard.form</field>
     <field name="model">olive.ochard</field>
     <field name="arch" type="xml">
-        <form string="Olive Ochard">
+        <form>
             <sheet>
-                <div class="oe_button_box" name="button_box">
-                    
-            <field name="active" invisible="1" />
             <widget
                 name="web_ribbon"
                 title="Archived"
                 bg_color="bg-danger"
                 attrs="{'invisible': [('active', '=', True)]}"
             />
-            
-                </div>
                 <div class="oe_title">
                     <label for="name" string="Ochard Name"/>
                     <h1>
@@ -31,14 +26,13 @@
                     </h1>
                 </div>
                 <group name="main">
+                    <field name="active" invisible="1" />
                     <field name="partner_id" invisible="not context.get('olive_ochard_main_view')"/>
-                    <field name="zip_id"/>
                     <field name="city"/>
                     <field name="tree_total"/>
                     <label for="area_total"/>
                     <div name="area_total">
-                        <field name="area_total" class="oe_inline"/>
-                        <label string=" ha" class="oe_inline"/>
+                        <field name="area_total" class="oe_inline"/> ha
                     </div>
                 </group>
                 <group name="parcel" string="Parcels">
@@ -47,6 +41,7 @@
             </sheet>
             <div class="oe_chatter">
                 <field name="message_follower_ids" widget="mail_followers"/>
+                <field name="activity_ids" widget="mail_activity"/>
                 <field name="message_ids" widget="mail_thread"/>
             </div>
         </form>
@@ -57,7 +52,7 @@
     <field name="name">olive.ochard.tree</field>
     <field name="model">olive.ochard</field>
     <field name="arch" type="xml">
-        <tree string="Olive Ochards">
+        <tree>
             <field name="partner_id" invisible="not context.get('olive_ochard_main_view')"/>
             <field name="name"/>
             <field name="city"/>
@@ -71,7 +66,7 @@
     <field name="name">olive.ochard.pivot</field>
     <field name="model">olive.ochard</field>
     <field name="arch" type="xml">
-        <pivot string="Olive Ochards">
+        <pivot>
             <field name="partner_id" type="row"/>
             <field name="tree_total" type="measure"/>
             <field name="area_total" type="measure"/>
@@ -83,7 +78,7 @@
     <field name="name">olive.ochard.search</field>
     <field name="model">olive.ochard</field>
     <field name="arch" type="xml">
-        <search string="Search Olive Ochards">
+        <search>
             <field name="name"/>
             <field name="partner_id"/>
             <field name="city"/>

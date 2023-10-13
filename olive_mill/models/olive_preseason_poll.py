@@ -1,4 +1,4 @@
-# Copyright 2019 Barroux Abbey (http://www.barroux.org/)
+# Copyright 2019-2023 Barroux Abbey (http://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -12,22 +12,20 @@ class OlivePreseasonPoll(models.Model):
     _order = 'season_id desc, id desc'
 
     company_id = fields.Many2one(
-        'res.company', string='Company',
-        ondelete='cascade', required=True,
-        default=lambda self: self.env['res.company']._company_default_get())
+        'res.company', ondelete='cascade', required=True, default=lambda self: self.env.company)
     season_id = fields.Many2one(
-        'olive.season', string='Season', required=True, index=True,
-        default=lambda self: self.env.user.company_id.current_season_id.id)
+        'olive.season', string='Season', required=True, index=True, check_company=True,
+        default=lambda self: self.env.company.current_season_id.id,
+        domain="[('company_id', '=', company_id)]")
     partner_id = fields.Many2one(
         'res.partner', string='Olive Farmer', required=True, index=True,
         domain=[('parent_id', '=', False), ('olive_farmer', '=', True)])
     olive_culture_type = fields.Selection(
-        related='partner_id.commercial_partner_id.olive_culture_type', readonly=True)
+        related='partner_id.commercial_partner_id.olive_culture_type')
     commercial_partner_id = fields.Many2one(
-        related='partner_id.commercial_partner_id', readonly=True, store=True)
+        related='partner_id.commercial_partner_id', store=True)
     olive_organic_certified_logo = fields.Binary(
-        related='partner_id.commercial_partner_id.olive_organic_certified_logo',
-        readonly=True)
+        related='partner_id.commercial_partner_id.olive_organic_certified_logo')
     line_ids = fields.One2many(
         'olive.preseason.poll.line', 'poll_id', string='Lines')
     past_data_ok = fields.Boolean(readonly=True)
@@ -174,9 +172,9 @@ class OlivePreseasonPoll(models.Model):
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super(OlivePreseasonPoll, self).fields_view_get(
+        res = super().fields_view_get(
             view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        return self.env.user.company_id.current_season_update(res, view_type)
+        return self.env.company.current_season_update(res, view_type)
 
 
 class OlivePreseasonPollLine(models.Model):
@@ -185,17 +183,18 @@ class OlivePreseasonPollLine(models.Model):
 
     poll_id = fields.Many2one(
         'olive.preseason.poll', string='Pre-Season Poll', ondelete='cascade')
-    olive_qty = fields.Integer(
-        string='Olive Qty (kg)', required=True)
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Type', index=True,
-        domain=[('olive_type', '=', 'oil')])
+        domain=[('detailed_type', '=', 'olive_oil')])
+    olive_qty = fields.Integer(compute="_compute_olive_qty", store=True, readonly=False, string='Olive Qty (kg)', required=True)
+    oil_qty = fields.Integer(compute='_compute_oil_qty', store=True, readonly=False, string='Oil Qty (L)')
     sale_olive_qty = fields.Integer(
+        compute='_compute_sale_olive_qty', store=True, readonly=False,
         string='Sale Olive Qty (kg)', required=True)
-    oil_qty = fields.Integer(string='Oil Qty (L)')
-    sale_oil_qty = fields.Integer(string='Sale Oil Qty (L)')
+    sale_oil_qty = fields.Integer(
+        compute='_compute_sale_oil_qty', store=True, readonly=False, string='Sale Oil Qty (L)')
     olive_culture_type = fields.Selection(
-        related='poll_id.partner_id.commercial_partner_id.olive_culture_type', readonly=True)
+        related='poll_id.partner_id.commercial_partner_id.olive_culture_type')
     commercial_partner_id = fields.Many2one(
         related='poll_id.partner_id.commercial_partner_id', store=True,
         string='Olive Farmer')
@@ -220,36 +219,32 @@ class OlivePreseasonPollLine(models.Model):
             ratio = poll.company_id.olive_preseason_poll_ratio_no_history
         return ratio
 
-    @api.onchange('olive_qty')
-    def olive_qty_change(self):
-        if not self._context.get('olive_onchange'):
-            self.env.context = self.with_context(olive_onchange=True).env.context
-            self.oil_qty = int(self.olive_qty * self._get_ratio() / 100)
+    @api.depends('olive_qty')
+    def _compute_oil_qty(self):
+        for line in self:
+            line.oil_qty = int(round(line.olive_qty * line._get_ratio() / 100))
 
-    @api.onchange('oil_qty')
-    def oil_qty_change(self):
-        if not self._context.get('olive_onchange'):
-            ratio = self._get_ratio()
+    @api.depends('oil_qty')
+    def _compute_olive_qty(self):
+        for line in self:
+            ratio = line._get_ratio()
             if ratio > 0:
-                self.env.context = self.with_context(olive_onchange=True).env.context
-                self.olive_qty = int(self.oil_qty * 100 / ratio)
+                line.olive_qty = int(round(line.oil_qty * 100 / ratio))
 
-    @api.onchange('sale_olive_qty')
-    def sale_olive_qty_change(self):
-        if not self._context.get('sale_olive_onchange'):
-            self.env.context = self.with_context(sale_olive_onchange=True).env.context           
-            self.sale_oil_qty = int(self.sale_olive_qty * self._get_ratio() / 100)
+    @api.depends('sale_olive_qty')
+    def _compute_sale_oil_qty(self):
+        for line in self:
+            line.sale_oil_qty = int(round(line.sale_olive_qty * line._get_ratio() / 100))
 
-    @api.onchange('sale_oil_qty')
-    def sale_oil_qty_onchange(self):
-        if not self._context.get('sale_olive_onchange'):
-            ratio = self._get_ratio()
+    @api.depends('sale_oil_qty')
+    def _compute_sale_olive_qty(self):
+        for line in self:
+            ratio = line._get_ratio()
             if ratio > 0:
-                self.env.context = self.with_context(sale_olive_onchange=True).env.context
-                self.sale_olive_qty = int(100 * self.sale_oil_qty / ratio)
+                line.sale_olive_qty = int(round(100 * line.sale_oil_qty / ratio))
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super(OlivePreseasonPollLine, self).fields_view_get(
+        res = super().fields_view_get(
             view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        return self.env.user.company_id.current_season_update(res, view_type)
+        return self.env.company.current_season_update(res, view_type)

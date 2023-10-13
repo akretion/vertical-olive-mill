@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
 
 <odoo>
 
-<menuitem id="olive_root_menu" name="Olive Mill" sequence="31" groups="stock.group_stock_user,olive_operator"/>
+<menuitem id="olive_root_menu" name="Olive Mill" sequence="31" groups="stock.group_stock_user,olive_operator" web_icon="olive_mill,static/description/icon.png"/>
 
 <menuitem id="olive_operations_menu" parent="olive_root_menu" name="Operations" sequence="10"/>
 

@@ -1,4 +1,4 @@
-# Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+# Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -11,48 +11,54 @@ class OliveOilProduction(models.Model):
     _name = 'olive.oil.production'
     _description = 'Olive Oil Production'
     _order = 'date desc, sequence, id desc'
-    _inherit = ['mail.thread']
+    _check_company_auto = True
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
-    name = fields.Char(string='Production Number', required=True, default='/')
+    name = fields.Char(
+        string='Production Number', required=True, default=lambda self: _('New'))
     company_id = fields.Many2one(
         'res.company', string='Company', ondelete='cascade', required=True,
         states={'done': [('readonly', True)]},
-        default=lambda self: self.env['res.company']._company_default_get())
+        default=lambda self: self.env.company)
     season_id = fields.Many2one(
         'olive.season', string='Season', required=True, index=True,
-        default=lambda self: self.env.user.company_id.current_season_id.id,
-        states={'done': [('readonly', True)]})
+        default=lambda self: self.env.company.current_season_id.id,
+        domain="[('company_id', '=', company_id)]",
+        states={'done': [('readonly', True)]}, check_company=True)
     warehouse_id = fields.Many2one(
         'stock.warehouse', string='Warehouse', required=True, index=True,
-        domain=[('olive_mill', '=', True)],
+        domain="[('olive_mill', '=', True), ('company_id', '=', company_id)]",
         default=lambda self: self.env.user._default_olive_mill_wh(),
-        tracking=True)
+        check_company=True, tracking=True)
     palox_id = fields.Many2one(
         'olive.palox', string='Palox', required=True, readonly=True,
-        ondelete='restrict',
+        ondelete='restrict', check_company=True,
         states={'draft': [('readonly', False)]}, tracking=True)
     # STOCK LOCATIONS
     sale_location_id = fields.Many2one(
-        'stock.location', string='Sale Tank',
+        'stock.location', string='Sale Tank', check_company=True,
         states={'done': [('readonly', True)]},
+        domain="[('olive_tank_type', '=', 'regular'), ('oil_product_id', '=', oil_product_id), ('olive_season_id', '=', season_id), ('company_id', '=', company_id)]",
         tracking=True)
     # not a pb to have withdrawal_location_id required because
     # this field has a default value
     withdrawal_location_id = fields.Many2one(
-        'stock.location', string='Withdrawal Location', required=True,
-        states={'done': [('readonly', True)]},
-        domain=[('olive_tank_type', '=', False), ('usage', '=', 'internal')])
+        'stock.location', compute="_compute_locations", store=True, readonly=False,
+        string='Withdrawal Location', required=True,
+        states={'done': [('readonly', True)]}, check_company=True,
+        domain="[('olive_tank_type', '=', False), ('usage', '=', 'internal'), ('company_id', '=', company_id)]")
     shrinkage_location_id = fields.Many2one(
         'stock.location', string='Shrinkage Tank',
-        states={'done': [('readonly', True)]},
+        domain="[('olive_tank_type', '=', 'shrinkage'), ('olive_season_id', '=', season_id), ('company_id', '=', company_id)]",
+        states={'done': [('readonly', True)]}, check_company=True,
         tracking=True)
     compensation_location_id = fields.Many2one(
-        'stock.location', string='Compensation Tank', readonly=True,
-        states={'draft': [('readonly', False)]},  # so that the onchange works
-        tracking=True)
+        'stock.location', compute="_compute_locations", store=True,
+        string='Compensation Tank', readonly=True,
+        check_company=True, tracking=True)
     compensation_sale_location_id = fields.Many2one(
         'stock.location', string='Compensation Sale Tank',
-        states={'done': [('readonly', True)]}, tracking=True)
+        states={'done': [('readonly', True)]}, check_company=True, tracking=True)
     compensation_oil_product_id = fields.Many2one(
         'product.product', string='Compensation Oil Type', readonly=True)
     compensation_type = fields.Selection([
@@ -70,36 +76,32 @@ class OliveOilProduction(models.Model):
         readonly=True, tracking=True)
     olive_qty = fields.Float(
         string='Olive Qty', compute='_compute_lines',
-        digits='Olive Weight', readonly=True, store=True,
-        tracking=True,
+        digits='Olive Weight', store=True, tracking=True,
         help='Olive quantity without compensation in kg')
     to_sale_tank_oil_qty = fields.Float(
         string='Oil Qty to Sale Tank (L)', compute='_compute_lines',
-        digits='Olive Oil Volume', readonly=True, store=True)
+        digits='Olive Oil Volume', store=True)
     to_compensation_sale_tank_oil_qty = fields.Float(
         string='Oil Qty to Compensation Sale Tank (L)', compute='_compute_lines',
-        digits='Olive Oil Volume', readonly=True, store=True)
+        digits='Olive Oil Volume', store=True)
     compensation_oil_qty = fields.Float(
         string='Oil Compensation (L)',
-        digits='Olive Oil Volume', readonly=True,
-        tracking=True)
+        digits='Olive Oil Volume', readonly=True, tracking=True)
     compensation_oil_qty_kg = fields.Float(
-        string='Oil Compensation (kg)',
-        digits='Olive Weight', readonly=True)
+        string='Oil Compensation (kg)', digits='Olive Weight', readonly=True)
     oil_destination = fields.Selection([
         ('withdrawal', 'Withdrawal'),
         ('sale', 'Sale'),
         ('mix', 'Mix'),
-        ], string='Oil Destination', compute='_compute_oil_destination',
-        readonly=True)
+        ], string='Oil Destination', compute='_compute_oil_destination')
     oil_product_id = fields.Many2one(
-        'product.product', string='Oil Type', readonly=True,
-        tracking=True)
+        'product.product', compute="_compute_oil_product_id", store=True,
+        string='Oil Type', tracking=True)
     olive_culture_type = fields.Selection(
-        related='oil_product_id.olive_culture_type', readonly=True, store=True)
+        related='oil_product_id.olive_culture_type', store=True)
     olive_culture_type_logo = fields.Binary(
         compute='_compute_olive_culture_type_logo',
-        string='Olive Culture Type Logo', readonly=True)
+        string='Olive Culture Type Logo')
     oil_qty_kg = fields.Float(
         string='Oil Quantity (kg)', digits='Olive Weight',
         readonly=True, tracking=True)  # written by ratio2force wizard
@@ -115,7 +117,7 @@ class OliveOilProduction(models.Model):
         string='Date', default=fields.Date.context_today, required=True,
         states={'done': [('readonly', True)]}, tracking=True)
     day_position = fields.Integer(
-        compute='_compute_day_position', readonly=True, string='Order')
+        compute='_compute_day_position', string='Order')
     sample = fields.Boolean(
         string='Sample', readonly=True,
         states={'draft': [('readonly', False)], 'ratio': [('readonly', False)]})
@@ -152,31 +154,32 @@ class OliveOilProduction(models.Model):
         ]
 
     @api.constrains('compensation_ratio', 'compensation_type')
-    def check_production(self):
+    def _check_production(self):
         for prod in self:
             min_ratio, max_ratio = prod.company_id.olive_min_max_ratio()
             if prod.compensation_type == 'last':
                 cratio = prod.compensation_ratio
                 if cratio < min_ratio or cratio > max_ratio:
                     raise ValidationError(_(
-                        "The compensation ratio (%s %%) is not realistic.")
-                        % cratio)
+                        "The compensation ratio (%s %%) is not realistic.") % cratio)
 
-    @api.onchange('warehouse_id')
-    def warehouse_change(self):
-        if self.warehouse_id:
-            wh = self.warehouse_id
-            if wh.olive_withdrawal_loc_id:
-                self.withdrawal_location_id = wh.olive_withdrawal_loc_id
-            if wh.olive_compensation_loc_id:
-                self.compensation_location_id = wh.olive_compensation_loc_id
+    @api.depends('warehouse_id')
+    def _compute_locations(self):
+        for prod in self:
+            if prod.warehouse_id:
+                wh = prod.warehouse_id
+                if wh.olive_withdrawal_loc_id:
+                    prod.withdrawal_location_id = wh.olive_withdrawal_loc_id
+                if wh.olive_compensation_loc_id:
+                    prod.compensation_location_id = wh.olive_compensation_loc_id
 
-    @api.onchange('palox_id')
-    def palox_change(self):
-        if self.palox_id:
-            self.oil_product_id = self.palox_id.oil_product_id
-        else:
-            self.oil_product_id = False
+    @api.depends('palox_id')
+    def _compute_oil_product_id(self):
+        for prod in self:
+            oil_product_id = False
+            if prod.palox_id:
+                oil_product_id = prod.palox_id.oil_product_id
+            prod.oil_product_id = oil_product_id
 
     @api.depends(
         'line_ids.olive_qty', 'line_ids.to_sale_tank_oil_qty',
@@ -230,12 +233,15 @@ class OliveOilProduction(models.Model):
                     logo = f_binary.encode('base64')
             prod.olive_culture_type_logo = logo
 
-    @api.model
-    def create(self, vals):
-        if vals.get('name', '/') == '/':
-            vals['name'] = self.env['ir.sequence'].next_by_code(
-                'olive.oil.production')
-        return super(OliveOilProduction, self).create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if 'company_id' in vals:
+                self = self.with_company(vals['company_id'])
+            if vals.get('name', _("New")) == _("New"):
+                vals['name'] = self.env['ir.sequence'].next_by_code(
+                    'olive.oil.production') or _('New')
+        return super().create(vals_list)
 
     def cancel(self):
         for production in self:
@@ -287,43 +293,43 @@ class OliveOilProduction(models.Model):
                     % self.palox_id.name)
             done_lines.write({'production_id': self.id})
             # Free the palox
-            self.palox_id.oil_product_id = False
+            self.palox_id.write({'oil_product_id': False})
         oil_dests = []
         oil_product = False
         sample = False
         farmers = []
-        for l in self.line_ids:
-            oil_dests.append(l.oil_destination)
+        for line in self.line_ids:
+            oil_dests.append(line.oil_destination)
             if oil_product:
-                if oil_product != l.oil_product_id:
+                if oil_product != line.oil_product_id:
                     raise UserError(_(
                         "The oil type of arrival line %s is %s, "
                         "but it is %s on the first arrival line "
                         "of palox %s.") % (
-                            l.name,
-                            l.oil_product_id.name,
+                            line.name,
+                            line.oil_product_id.name,
                             oil_product.name,
                             self.palox_id.name))
             else:
-                oil_product = l.oil_product_id
-            if l.season_id != self.season_id:
+                oil_product = line.oil_product_id
+            if line.season_id != self.season_id:
                 raise UserError(_(
                     "The season of arrival line %s is '%s', but the oil "
                     "production %s is attached to season '%s'.") % (
-                        l.name, l.season_id.name, self.name, self.season_id.name))
-            farmers.append(l.commercial_partner_id.name)
-            if float_compare(l.olive_qty, 0, precision_digits=pr_oli) <= 0:
+                        line.name, line.season_id.name, self.name, self.season_id.name))
+            farmers.append(line.commercial_partner_id.name)
+            if float_compare(line.olive_qty, 0, precision_digits=pr_oli) <= 0:
                 raise UserError(_(
-                    "On line %s, the olive quantity is null.") % l.name)
+                    "On line %s, the olive quantity is null.") % line.name)
             if not sample:
-                for extra in l.extra_ids:
-                    if extra.product_olive_type == 'analysis':
+                for extra in line.extra_ids:
+                    if extra.product_detailed_type == 'olive_analysis':
                         sample = True
                         break
         sloc = self.warehouse_id.olive_get_shrinkage_tank(oil_product)
 
         self.write({
-            'farmers': u' / '.join(farmers),
+            'farmers': ' / '.join(farmers),
             'sample': sample,
             'state': 'ratio',
             'oil_product_id': oil_product.id,
@@ -342,7 +348,7 @@ class OliveOilProduction(models.Model):
             # cloc.oil_product_id will be written a second time in
             # check2done (in case the wizard swap product is used)
             cloc.sudo().oil_product_id = self.oil_product_id.id
-        compensation_oil_qty = self.compensation_check_tank()
+        compensation_oil_qty = self._compensation_check_tank()
         if self.compensation_type == 'first':
             density = self.company_id.olive_oil_density
             self.write({
@@ -350,8 +356,8 @@ class OliveOilProduction(models.Model):
                 'compensation_oil_qty_kg': compensation_oil_qty * density,
                 'compensation_oil_product_id': cloc.oil_product_id.id,
                 })
-        action = self.env['ir.actions.act_window'].for_xml_id(
-            'olive_mill', 'olive_oil_production_ratio2force_action')
+        action = self.env['ir.actions.actions']._for_xml_id(
+            'olive_mill.olive_oil_production_ratio2force_action')
         action['context'] = {
             'default_production_id': self.id,
             'default_compensation_sale_location_id': self.compensation_sale_location_id.id or False,
@@ -367,9 +373,7 @@ class OliveOilProduction(models.Model):
             new_state = 'pack'
             if self.oil_destination == 'sale':  # Skip pack
                 new_state = 'check'
-        self.write({
-            'state': new_state,
-            })
+        self.write({'state': new_state})
         self.set_qty_on_lines()
 
     def force2pack(self):
@@ -444,7 +448,7 @@ class OliveOilProduction(models.Model):
             # Write on other lines
             line.write(vals)
 
-    def compensation_check_tank(self):
+    def _compensation_check_tank(self):
         '''Performs check and return the qty of the tank'''
         self.ensure_one()
         ctype = self.compensation_type
@@ -456,8 +460,7 @@ class OliveOilProduction(models.Model):
             raise UserError(_(
                 "The production %s uses compensation, so you must set the "
                 "compensation tank.") % self.name)
-        cloc.olive_oil_tank_check(raise_if_not_merged=False, raise_if_empty=False)
-        cqty = cloc.olive_oil_qty
+        cqty = cloc.olive_oil_tank_check(raise_if_empty=False)
         if ctype in ('last', 'none'):
             # cloc must be empty
             if float_compare(cqty, 0, precision_digits=pr_oil) > 0:
@@ -485,7 +488,7 @@ class OliveOilProduction(models.Model):
         to_shrinkage_tank_oil_qty = 0.0
         ctype = self.compensation_type
 
-        self.compensation_check_tank()
+        self._compensation_check_tank()
         if ctype == 'last':
             if float_compare(self.compensation_oil_qty, 0, precision_digits=pr_oil) <= 0:
                 raise UserError(_(
@@ -497,47 +500,87 @@ class OliveOilProduction(models.Model):
             'olive_production_id': self.id,
             'product_id': oil_product.id,
             'name': self.name,
+            'company_id': self.company_id.id,
             })
         for line in self.line_ids:
             if float_compare(line.withdrawal_oil_qty, 0, precision_digits=pr_oil) > 0:
                 # create move from virtual prod > Withdrawal loc
                 wmove = smo.create({
-                    'product_id': oil_product.id,
+                    'olive_oil_production_id': self.id,
+                    'company_id': self.company_id.id,
                     'name': _('Olive oil production %s: oil withdrawal related to arrival line %s') % (self.name, line.name),
+                    'product_id': oil_product.id,
+                    'product_uom': oil_product.uom_id.id,
                     'location_id': oil_product.property_stock_production.id,
                     'location_dest_id': wloc.id,
-                    'product_uom': oil_product.uom_id.id,
                     'origin': self.name,
                     'product_uom_qty': line.withdrawal_oil_qty,
-                    'restrict_lot_id': prodlot.id,
-                    'restrict_partner_id': line.commercial_partner_id.id,
+                    'move_line_ids': [(0, 0, {
+                        'product_id': oil_product.id,
+                        'product_uom_id': oil_product.uom_id.id,
+                        'location_id': oil_product.property_stock_production.id,
+                        'location_dest_id': wloc.id,
+                        'qty_done': line.withdrawal_oil_qty,
+                        'lot_id': prodlot.id,
+                        'owner_id': line.commercial_partner_id.id,
+                        })],
                     })
-                wmove.action_done()
+                wmove._action_done()
                 assert wmove.state == 'done'
-                line.withdrawal_move_id = wmove.id
-            for extra in line.extra_ids:
+                line.write({'withdrawal_move_id': wmove.id})
+            for extra in line.extra_ids.filtered(lambda x: x.product_id.detailed_type in ('olive_bottle_empty', 'olive_barrel_farmer')):
                 if extra.product_id.tracking and extra.product_id.tracking != 'none':
                     raise UserError(_(
                         "Can't select the product '%s' in extra items of "
                         "line %s because it is tracked by lot or serial.")
                         % (extra.product_id.display_name, line.name))
-                # Cannot use 'restrict_partner_id'
-                # because it would create a negative quant with owner
-                # on src location
-                extra_move = smo.create({
+                # For empty plastic bottles, We have to create 2 stock moves:
+                # 1. from stock to virtual-prod without owner
+                # 2. from virtual-prod to withdrawal with owner_id
+                # For inox barrels of farmer, we just have to create stock move n°2
+                if extra.product_id.detailed_type == 'olive_bottle_empty':
+                    extra_move1 = smo.create({
+                        'olive_oil_production_id': self.id,
+                        'company_id': self.company_id.id,
+                        'name': _('Oil production %s: extra item related to arrival line %s (stock to virtual prod without owner)') % (self.name, line.name),
+                        'product_id': extra.product_id.id,
+                        'product_uom': extra.product_id.uom_id.id,
+                        'location_id': stock_loc.id,
+                        'location_dest_id': extra.product_id.property_stock_production.id,
+                        'origin': self.name,
+                        'product_uom_qty': extra.qty,
+                        'move_line_ids': [(0, 0, {
+                            'product_id': extra.product_id.id,
+                            'product_uom_id': extra.product_id.uom_id.id,
+                            'location_id': stock_loc.id,
+                            'location_dest_id': extra.product_id.property_stock_production.id,
+                            'qty_done': extra.qty,
+                            })],
+                        })
+                    extra_move1._action_done()
+                    assert extra_move1.state == 'done'
+                extra_move2 = smo.create({
+                    'olive_oil_production_id': self.id,
+                    'company_id': self.company_id.id,
+                    'name': _('Oil production %s: extra item related to arrival line %s (virtual prod to withdrawal location with owner)') % (self.name, line.name),
                     'product_id': extra.product_id.id,
-                    'name': _('Olive oil production %s: extra item withdrawal related to arrival line %s') % (self.name, line.name),
-                    'location_id': stock_loc.id,
-                    'location_dest_id': wloc.id,
                     'product_uom': extra.product_id.uom_id.id,
+                    'location_id': extra.product_id.property_stock_production.id,
+                    'location_dest_id': wloc.id,
                     'origin': self.name,
                     'product_uom_qty': extra.qty,
+                    'move_line_ids': [(0, 0, {
+                        'product_id': extra.product_id.id,
+                        'product_uom_id': extra.product_id.uom_id.id,
+                        'location_id': extra.product_id.property_stock_production.id,
+                        'location_dest_id': wloc.id,
+                        'qty_done': extra.qty,
+                        'owner_id': line.commercial_partner_id.id,
+                        })],
                     })
-                extra_move.action_done()
-                # set owner on quants
-                extra_move.sudo().quant_ids.write(
-                    {'owner_id': line.commercial_partner_id.id})
-                assert extra_move.state == 'done'
+                extra_move2._action_done()
+                assert extra_move2.state == 'done'
+
             if line.oil_destination == 'withdrawal':
                 to_shrinkage_tank_oil_qty += line.shrinkage_oil_qty
         prod_vals = {
@@ -549,20 +592,28 @@ class OliveOilProduction(models.Model):
             if not sale_loc:
                 raise UserError(_(
                     "Sale tank is not set on oil production %s.") % self.name)
-            sale_loc.olive_oil_tank_check(
-                raise_if_not_merged=False, raise_if_empty=False)
+            sale_loc.olive_oil_tank_check(raise_if_empty=False)
             sale_loc.olive_oil_tank_compatibility_check(oil_product, season)
             sale_move = smo.create({
-                'product_id': oil_product.id,
+                'olive_oil_production_id': self.id,
+                'company_id': self.company_id.id,
                 'name': _('Olive oil production %s to sale tank') % self.name,
+                'product_id': oil_product.id,
+                'product_uom': oil_product.uom_id.id,
                 'location_id': oil_product.property_stock_production.id,
                 'location_dest_id': sale_loc.id,
-                'product_uom': oil_product.uom_id.id,
                 'origin': self.name,
                 'product_uom_qty': self.to_sale_tank_oil_qty,
-                'restrict_lot_id': prodlot.id,
+                'move_line_ids': [(0, 0, {
+                    'product_id': oil_product.id,
+                    'product_uom_id': oil_product.uom_id.id,
+                    'location_id': oil_product.property_stock_production.id,
+                    'location_dest_id': sale_loc.id,
+                    'qty_done': self.to_sale_tank_oil_qty,
+                    'lot_id': prodlot.id,
+                    })],
                 })
-            sale_move.action_done()
+            sale_move._action_done()
             assert sale_move.state == 'done'
             prod_vals['sale_move_id'] = sale_move.id
 
@@ -571,16 +622,25 @@ class OliveOilProduction(models.Model):
                 ctype == 'last' and
                 float_compare(self.compensation_oil_qty, 0, precision_digits=pr_oil) > 0):
             cmove = smo.create({
-                'product_id': oil_product.id,
+                'olive_oil_production_id': self.id,
+                'company_id': self.company_id.id,
                 'name': _('Olive oil production %s to compensation tank') % self.name,
+                'product_id': oil_product.id,
+                'product_uom': oil_product.uom_id.id,
                 'location_id': oil_product.property_stock_production.id,
                 'location_dest_id': cloc.id,
-                'product_uom': oil_product.uom_id.id,
                 'origin': self.name,
                 'product_uom_qty': self.compensation_oil_qty,
-                'restrict_lot_id': prodlot.id,
+                'move_line_ids': [(0, 0, {
+                    'product_id': oil_product.id,
+                    'product_uom_id': oil_product.uom_id.id,
+                    'location_id': oil_product.property_stock_production.id,
+                    'location_dest_id': cloc.id,
+                    'qty_done': self.compensation_oil_qty,
+                    'lot_id': prodlot.id,
+                    })],
                 })
-            cmove.action_done()
+            cmove._action_done()
             assert cmove.state == 'done'
             prod_vals['compensation_last_move_id'] = cmove.id
             cloc.sudo().oil_product_id = oil_product.id
@@ -604,16 +664,26 @@ class OliveOilProduction(models.Model):
                     "Missing shrinkage production lot on product '%s'.")
                     % shrinkage_product.display_name)
             shrinkage_move = smo.create({
-                'product_id': shrinkage_product.id,
+                'olive_oil_production_id': self.id,
+                'company_id': self.company_id.id,
                 'name': _('Olive Oil Production %s: Shrinkage') % self.name,
+                'product_id': shrinkage_product.id,
+                'product_uom': shrinkage_product.uom_id.id,
                 'location_id': shrinkage_product.property_stock_production.id,
                 'location_dest_id': shrinkage_loc.id,
-                'product_uom': shrinkage_product.uom_id.id,
                 'origin': self.name,
                 'product_uom_qty': to_shrinkage_tank_oil_qty,
-                'restrict_lot_id': shrinkage_product.shrinkage_prodlot_id.id,
+                'move_line_ids': [(0, 0, {
+                    'product_id': shrinkage_product.id,
+                    'product_uom_id': shrinkage_product.uom_id.id,
+                    'location_id': shrinkage_product.property_stock_production.id,
+                    'location_dest_id': shrinkage_loc.id,
+                    'qty_done': to_shrinkage_tank_oil_qty,
+                    'lot_id': shrinkage_product.shrinkage_prodlot_id.id,
+                    })],
                 })
-            shrinkage_move.action_done()
+            shrinkage_move._action_done()
+            assert shrinkage_move.state == 'done'
             prod_vals['shrinkage_move_id'] = shrinkage_move.id
         action = {}
         # Distribute compensation
@@ -627,7 +697,7 @@ class OliveOilProduction(models.Model):
                         "compensation, you must set a compensation sale tank.") % self.name)
                 cloc.olive_oil_transfer(
                     csale_loc, 'full', self.warehouse_id,
-                    origin=_('Empty compensation tank to sale tank'), auto_validate=True)
+                    origin=_('Empty compensation tank to sale tank'))
             else:
                 # partial trf
                 if float_compare(self.to_compensation_sale_tank_oil_qty, 0, precision_digits=pr_oil) > 0:
@@ -638,9 +708,8 @@ class OliveOilProduction(models.Model):
                     cloc.olive_oil_transfer(
                         csale_loc, 'partial', self.warehouse_id,
                         partial_transfer_qty=self.to_compensation_sale_tank_oil_qty,
-                        origin=_('Partial transfer of compensation tank to sale tank'),
-                        auto_validate=True)
-                wlines = [l for l in self.line_ids if l.oil_destination == 'withdrawal']
+                        origin=_('Partial transfer of compensation tank to sale tank'))
+                wlines = [line for line in self.line_ids if line.oil_destination == 'withdrawal']
                 origin = _('Transfer of compensation tank to withdrawal location')
                 while wlines:
                     # work on 1st line of wlines
@@ -649,13 +718,13 @@ class OliveOilProduction(models.Model):
                         cloc.olive_oil_transfer(
                             wloc, 'full', self.warehouse_id,
                             dest_partner=wlines[0].commercial_partner_id,
-                            origin=origin, auto_validate=True)
+                            origin=origin)
                     else:
                         cloc.olive_oil_transfer(
                             wloc, 'partial', self.warehouse_id,
                             dest_partner=wlines[0].commercial_partner_id,
                             partial_transfer_qty=wlines[0].compensation_oil_qty,
-                            origin=origin, auto_validate=True)
+                            origin=origin)
 
                     # remove first line of wlines
                     wlines.pop(0)
@@ -669,6 +738,7 @@ class OliveOilProduction(models.Model):
         elif ctype == 'last':
             # try to find first of day compensation in the future
             next_first_prod = self.search([
+                ('company_id', '=', self.company_id.id),
                 ('warehouse_id', '=', self.warehouse_id.id),
                 ('season_id', '=', self.season_id.id),
                 ('compensation_location_id', '=', self.compensation_location_id.id),
@@ -730,7 +800,7 @@ class OliveOilProduction(models.Model):
                 raise UserError(_(
                     "Cannot delete production %s which is in Done state.")
                     % production.name)
-        return super(OliveOilProduction, self).unlink()
+        return super().unlink()
 
     def detach_lines(self):
         self.ensure_one()
@@ -751,8 +821,15 @@ class OliveOilProduction(models.Model):
                 day_position = index + 1
             prod.day_position = day_position
 
+    def open_move_lines(self):
+        self.ensure_one()
+        mlines = self.env['stock.move.line'].search([('olive_oil_production_id', '=', self.id)])
+        action = self.env['ir.actions.actions']._for_xml_id('stock.stock_move_line_action')
+        action['domain'] = [('id', 'in', mlines.ids)]
+        return action
+
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super(OliveOilProduction, self).fields_view_get(
+        res = super().fields_view_get(
             view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        return self.env.user.company_id.current_season_update(res, view_type)
+        return self.env.company.current_season_update(res, view_type)

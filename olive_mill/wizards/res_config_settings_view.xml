@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+
+<record id="res_config_settings_view_form" model="ir.ui.view">
+    <field name="name">olive_config_settings_form</field>
+    <field name="model">res.config.settings</field>
+    <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+    <field name="arch" type="xml">
+        <xpath expr="//div[hasclass('settings')]" position="inside">
+            <div class="app_settings_block" data-string="Olive Mill" string="Olive Mill" data-key="olive_mill" groups="stock.group_stock_manager">
+                    <h2>Optional Features</h2>
+            <div class="row mt16 o_settings_container" name="olive_options_container">
+                <div class='col-12 col-lg-12 o_setting_box' id="olive_options_setting">
+                    <div class="o_setting_left_pane" >
+                        <field name="group_olive_organic"/>
+                    </div>
+                    <div class="o_setting_right_pane">
+                        <label for="group_olive_organic"/>
+                        <div class="text-muted">
+                            For olive mills that have an organic certification and produce both organic and non-organic olive oil
+                        </div>
+                    </div>
+                </div>
+            <div class='col-12 col-lg-12 o_setting_box' id="olive_options_setting">
+                <div class="o_setting_left_pane" >
+                    <field name="group_olive_compensation"/>
+                </div>
+                <div class="o_setting_right_pane">
+                    <label for="group_olive_compensation"/>
+                    <div class="text-muted">
+                        Ability to compensate first-of-day under-production by last-of-day over-production
+                    </div>
+                </div>
+            </div>
+        </div>
+                <h2>Variables</h2>
+            <div class="row mt16 o_settings_container" name="olive_variables_container">
+                <div class='col-12 col-lg-12 o_setting_box' id="olive_variables_setting">
+                    <div class="o_setting_left_pane" />
+                    <div class="o_setting_right_pane">
+                            <div class="row" id="current_season_id">
+                                    <label for="current_season_id" class="col-md-4"/>
+                                    <field name="current_season_id" class="col-md-8"/>
+                </div>
+                <div class="row">
+                    <label for="olive_oil_density" class="col-md-4"/>
+                        <field name="olive_oil_density" class="col-md-2" /> kg / L
+                </div>
+                <div class="row">
+                    <label for="olive_max_qty_per_palox" class="col-md-4"/>
+                    <field name="olive_max_qty_per_palox" class="col-md-2"/> kg
+                </div>
+                <div class="row" id="olive_shrinkage_ratio">
+                    <label for="olive_shrinkage_ratio" class="col-md-4"/>
+                    <field name="olive_shrinkage_ratio" class="col-md-2"/> %
+                </div>
+                <div class="row" id="olive_filter_ratio">
+                    <label for="olive_filter_ratio" class="col-md-4"/>
+                    <field name="olive_filter_ratio" class="col-md-2"/> %
+                </div>
+                <div class="row" id="olive_min_ratio">
+                <label for="olive_min_ratio" class="col-md-4"/>
+                    <field name="olive_min_ratio" class="col-md-2"/> %
+                </div>
+                <div class="row" id="olive_max_ratio">
+                    <label for="olive_max_ratio" class="col-md-4"/>
+                    <field name="olive_max_ratio" class="col-md-2"/> %
+                </div>
+                <div class="row" id="olive_harvest_arrival_max_delta_days">
+
+                <label for="olive_harvest_arrival_max_delta_days" class="col-md-4"/>
+                    <field name="olive_harvest_arrival_max_delta_days" class="col-md-2"/> days
+                </div>
+                </div>
+                </div>
+                </div>
+                <h2>Pre-season Polls</h2>
+
+            <div class="row mt16 o_settings_container" name="olive_polls_container">
+                <div class='col-12 col-lg-12 o_setting_box' id="olive_polls_setting">
+                    <div class="o_setting_left_pane" />
+                    <div class="o_setting_right_pane">
+                <div class="row" id="olive_preseason_poll_ratio_no_history">
+                <label for="olive_preseason_poll_ratio_no_history" class="col-md-4"/>
+                    <field name="olive_preseason_poll_ratio_no_history" class="col-md-2"/> %
+            </div>
+    </div>
+    </div>
+    </div>
+    <h2>Appointments</h2>
+            <div class="row mt16 o_settings_container" name="olive_appointments_container">
+                <div class='col-12 col-lg-12 o_setting_box' id="olive_appointments_setting">
+                    <div class="o_setting_left_pane" />
+                    <div class="o_setting_right_pane">
+                <div class="row" id="olive_appointment_qty_per_palox">
+                    <label for="olive_appointment_qty_per_palox" class="col-md-4"/>
+                    <field name="olive_appointment_qty_per_palox" class="col-md-2"/> kg
+                </div>
+                <div class="row" id="olive_appointment_arrival_no_leaf_removal_minutes">
+                <label for="olive_appointment_arrival_no_leaf_removal_minutes" class="col-md-4"/>
+                    <field name="olive_appointment_arrival_no_leaf_removal_minutes" class="col-md-2"/> minutes / 100 kg of olive
+                </div>
+                <div class="row" id="olive_appointment_arrival_leaf_removal_minutes">
+                <label for="olive_appointment_arrival_leaf_removal_minutes" class="col-md-4"/>
+                    <field name="olive_appointment_arrival_leaf_removal_minutes" class="col-md-2"/> minutes / 100 kg of olive
+                </div>
+                <div class="row" id="olive_appointment_arrival_min_minutes">
+                <label for="olive_appointment_arrival_min_minutes" class="col-md-4"/>
+                    <field name="olive_appointment_arrival_min_minutes" class="col-md-2"/> minutes
+                </div>
+                <div class="row" id="olive_appointment_lend_minutes">
+                <label for="olive_appointment_lend_minutes" class="col-md-4"/>
+                    <field name="olive_appointment_lend_minutes" class="col-md-2"/> minutes
+                </div>
+                <div class="row" id="olive_appointment_withdrawal_minutes">
+                <label for="olive_appointment_withdrawal_minutes" class="col-md-4"/>
+                    <field name="olive_appointment_withdrawal_minutes" class="col-md-2"/> minutes
+                </div>
+                </div>
+                </div>
+                </div>
+                <h2>Oil Production</h2>
+            <div class="row mt16 o_settings_container" name="olive_production_container">
+                <div class='col-12 col-lg-12 o_setting_box' id="olive_production_setting">
+                    <div class="o_setting_left_pane" />
+                    <div class="o_setting_right_pane">
+                <div class="row" id="olive_oil_production_start_hour">
+                    <label for="olive_oil_production_start_hour" class="col-md-4"/>
+                    <field name="olive_oil_production_start_hour" class="col-md-2"/> h
+                </div>
+                <div class="row" id="olive_oil_production_start_minute">
+                    <label for="olive_oil_production_start_minute" class="col-md-4"/>
+                    <field name="olive_oil_production_start_minute" class="col-md-2"/> min
+                </div>
+                <div class="row" id="olive_oil_production_duration_minutes">
+                    <label for="olive_oil_production_duration_minutes" class="col-md-4"/>
+                    <field name="olive_oil_production_duration_minutes" class="col-md-2"/> minutes
+                </div>
+                </div>
+                </div>
+                </div>
+                <h2>Invoicing</h2>
+            <div class="row mt16 o_settings_container" name="olive_invoicing_container">
+                <div class='col-12 col-lg-12 o_setting_box' id="olive_invoicing_setting">
+                    <div class="o_setting_left_pane" />
+                    <div class="o_setting_right_pane">
+                <div class="row" id="olive_oil_leaf_removal_product_id">
+                    <label for="olive_oil_leaf_removal_product_id" class="col-md-4"/>
+                    <field name="olive_oil_leaf_removal_product_id" class="col-md-8"/>
+                </div>
+                <div class="row" id="olive_oil_production_product_id">
+                   <label for="olive_oil_production_product_id" class="col-md-4"/>
+                    <field name="olive_oil_production_product_id" class="col-md-8"/>
+                </div>
+                <div class="row" id="olive_oil_early_bird_discount_product_id">
+                   <label for="olive_oil_early_bird_discount_product_id" class="col-md-4"/>
+                    <field name="olive_oil_early_bird_discount_product_id" class="col-md-8"/>
+                </div>
+                <div class="row" id="olive_oil_tax_product_id">
+                    <label for="olive_oil_tax_product_id" class="col-md-4"/>
+                    <field name="olive_oil_tax_product_id" class="col-md-8"/>
+                </div>
+                </div>
+                </div>
+                </div>
+                <h2>Analysis</h2>
+            <div class="row mt16 o_settings_container" name="olive_analysis_container">
+                <div class='col-12 col-lg-12 o_setting_box' id="olive_analysis_setting">
+                    <div class="o_setting_left_pane" />
+                    <div class="o_setting_right_pane">
+                <div class="row" id="olive_oil_analysis_default_user_id">
+                    <label for="olive_oil_analysis_default_user_id" class="col-md-4"/>
+                    <field name="olive_oil_analysis_default_user_id" class="col-md-8"/>
+                </div>
+                </div>
+                </div>
+                </div>
+        </div>
+        </xpath>
+    </field>
+</record>
+
+<record id="res_config_settings_action" model="ir.actions.act_window">
+    <field name="name">Settings</field>
+    <field name="res_model">res.config.settings</field>
+    <field name="view_id" ref="res_config_settings_view_form"/>
+    <field name="view_mode">form</field>
+    <field name="target">inline</field>
+    <field name="context">{'module' : 'olive_mill', 'bin_size': False}</field>
+</record>
+
+<menuitem id="res_config_settings_menu"
+        action="res_config_settings_action"
+        parent="olive_config_menu"
+        groups="base.group_system"
+        sequence="10"/>
+
+
+</odoo>

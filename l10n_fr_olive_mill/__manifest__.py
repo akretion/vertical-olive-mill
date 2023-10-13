@@ -1,4 +1,4 @@
-# Copyright 2019 Barroux Abbey (https://www.barroux.org/)
+# Copyright 2019-2023 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -18,9 +18,8 @@
         'security/olive_security.xml',
         'security/ir.model.access.csv',
         'views/olive_agrimer_report.xml',
-        'views/product.xml',
+        'views/product_template.xml',
         'views/product_pricelist.xml',
     ],
     'installable': True,
-    'application': True,
 }

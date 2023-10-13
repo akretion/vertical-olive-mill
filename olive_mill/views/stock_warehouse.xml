@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -13,10 +13,10 @@
     <field name="model">stock.warehouse</field>
     <field name="inherit_id" ref="stock.view_warehouse"/>
     <field name="arch" type="xml">
-        <xpath expr="//field[@name='default_resupply_wh_id']" position="before">
+        <field name="code" position="after">
             <field name="olive_mill" />
-        </xpath>
-        <xpath expr="//field[@name='reception_steps']/../.." position="before">
+        </field>
+        <page name="warehouse_config" position="before">
             <page name="olive_mill" string="Olive Mill" attrs="{'invisible': [('olive_mill', '=', False)]}">
                 <group name="olive_mill">
                 <group name="olive_lended_cases" string="Lended Cases">
@@ -29,19 +29,16 @@
                 <group name="olive_mill_right" string="Compensation">
                     <label for="olive_compensation_last_qty"/>
                     <div name="olive_compensation_last_qty">
-                        <field name="olive_compensation_last_qty" class="oe_inline"/>
-                        <label string=" kg"/>
+                        <field name="olive_compensation_last_qty" class="oe_inline"/> kg
                     </div>
                     <label for="olive_oil_compensation_ratio"/>
                     <div name="olive_oil_compensation_ratio">
-                        <field name="olive_oil_compensation_ratio" class="oe_inline"/>
-                        <label string=" %"/>
+                        <field name="olive_oil_compensation_ratio" class="oe_inline"/> %
                     </div>
                     <field name="olive_oil_compensation_ratio_update_date"/>
                     <label for="olive_oil_compensation_ratio_days"/>
                     <div name="olive_oil_compensation_ratio_days">
-                        <field name="olive_oil_compensation_ratio_days" class="oe_inline"/>
-                        <label string=" last days"/>
+                        <field name="olive_oil_compensation_ratio_days" class="oe_inline"/> last days
                     </div>
                     <button name="olive_oil_compensation_ratio_update" type="object" string="Update Compensation Ratio" colspan="2"/>
                 </group>
@@ -52,7 +49,7 @@
 
                 </group>
             </page>
-        </xpath>
+        </page>
     </field>
 </record>
 

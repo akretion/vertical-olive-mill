@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="olive_oil_production_ratio2force_form" model="ir.ui.view">
+    <field name="name">olive.oil.production.ratio2force.form</field>
+    <field name="model">olive.oil.production.ratio2force</field>
+    <field name="arch" type="xml">
+        <form>
+            <group name="main">
+                <field name="production_id" invisible="1"/>
+                <field name="season_id" invisible="1"/>
+                <field name="palox_id"/>
+                <field name="farmers"/>
+                <field name="oil_destination" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}"/>
+                <field name="oil_product_id"/>
+                <field name="sale_location_id" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank_type', '=', 'regular'), ('oil_product_id', '=', oil_product_id), ('olive_season_id', '=', season_id)]"/>
+                <label for="decanter_duration"/>
+                <div name="decanter_duration">
+                    <field name="decanter_duration" class="oe_inline"/> minutes
+                </div>
+                <label for="decanter_speed"/>
+                <div name="decanter_speed">
+                    <field name="decanter_speed" class="oe_inline"/> kg / h
+                </div>
+                <label for="olive_qty"/>
+                <div name="olive_qty">
+                    <field name="olive_qty" class="oe_inline"/> kg
+                </div>
+                <field name="compensation_type"/>
+                <field name="compensation_oil_product_id" attrs="{'invisible': [('compensation_type', '!=', 'first')]}"/>
+                <field name="compensation_sale_location_id" attrs="{'invisible': ['|', ('compensation_type', '!=', 'first'), ('oil_destination', '=', 'withdrawal')]}" domain="[('olive_tank_type', '=', 'regular'), ('oil_product_id', '=', compensation_oil_product_id), ('olive_season_id', '=', season_id)]"/>
+                <label for="compensation_oil_qty" string="Compensation Oil Qty" attrs="{'invisible': [('compensation_type', '!=', 'first')]}"/>
+                <div name="compensation_oil_qty" attrs="{'invisible': [('compensation_type', '!=', 'first')]}">
+                    <field name="compensation_oil_qty" class="oe_inline"/> L
+                </div>
+                <label for="compensation_last_olive_qty" string="Olive Compensation Qty" attrs="{'invisible': [('compensation_type', '!=', 'last')]}"/>
+                <div name="compensation_last_olive_qty" attrs="{'invisible': [('compensation_type', '!=', 'last')]}">
+                    <field name="compensation_last_olive_qty" class="oe_inline"/> kg
+                </div>
+                <label for="oil_qty_kg" string="Oil Qty"/>
+                <div name="oil_qty_kg">
+                    <field name="oil_qty_kg" class="oe_inline"/> kg
+                </div>
+                <label for="oil_qty" string="Oil Qty"/>
+                <div name="oil_qty">
+                    <field name="oil_qty" class="oe_inline"/> L
+                </div>
+
+                <label for="ratio" string="Gross Ratio"/>
+                <div name="ratio">
+                    <field name="ratio" class="oe_inline"/> % (L)
+                </div>
+            </group>
+            <footer>
+                <button name="validate" type="object" string="Validate" class="btn-primary"/>
+                <button special="cancel" string="Cancel" class="btn-default"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+<record id="olive_oil_production_ratio2force_action" model="ir.actions.act_window">
+    <field name="name">Olive Oil Production Ratio2force</field>
+    <field name="res_model">olive.oil.production.ratio2force</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+</record>
+
+</odoo>

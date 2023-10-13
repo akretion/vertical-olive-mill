@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -11,11 +11,11 @@
     <field name="name">olive.oil.analysis.form</field>
     <field name="model">olive.oil.analysis</field>
     <field name="arch" type="xml">
-        <form string="Olive Oil Analysis">
+        <form>
             <header>
                 <button name="validate" states="draft" string="Validate" type="object" class="btn-primary"/>
                 <button name="back2draft" states="cancel" string="Back to Draft" type="object"/>
-                <button name="print_report" states="done" string="Print Report" type="object" class="btn-primary"/>
+                <button name="%(olive_oil_analysis_report)d" states="done" string="Print Report" type="action" class="btn-primary"/>
                 <button name="cancel" states="done" string="Cancel" type="object" confirm="Are you sure you want to cancel this analysis?"/>
                 <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
             </header>
@@ -33,11 +33,11 @@
                         <field name="location_id" attrs="{'invisible': [('oil_source_type', '!=', 'tank')], 'required': [('oil_source_type', '=', 'tank')]}"/>
                         <field name="season_id"/>
                         <field name="oil_product_id"/>
-                        <field name="lot_id" attrs="{'invisible': [('oil_source_type', '!=', 'tank')]}" domain="[('product_id', '=', oil_product_id)]"/>
-                        <field name="date"/>
+                        <field name="lot_id" attrs="{'invisible': [('oil_source_type', '!=', 'tank')]}"/>
+                        <field name="date" options="{'datepicker': {'warn_future': true}}"/>
                         <field name="execution_mode"/>
                         <field name="execution_user_id" attrs="{'invisible': [('execution_mode', '!=', 'internal')]}"/>
-                        <field name="execution_partner_id" attrs="{'invisible': [('execution_mode', '!=', 'external')]}"/>
+                        <field name="execution_partner_id" attrs="{'invisible': [('execution_mode', '!=', 'external')]}" string="Analysis Made by"/>
                     </group>
                     <group name="main-right">
                         <field name="partner_id" attrs="{'invisible': [('oil_source_type', '!=', 'arrival')]}"/>
@@ -53,6 +53,7 @@
             </sheet>
             <div class="oe_chatter">
                 <field name="message_follower_ids" widget="mail_followers"/>
+                <field name="activity_ids" widget="mail_activity"/>
                 <field name="message_ids" widget="mail_thread"/>
             </div>
         </form>
@@ -63,15 +64,16 @@
     <field name="name">olive.oil.analysis.tree</field>
     <field name="model">olive.oil.analysis</field>
     <field name="arch" type="xml">
-        <tree string="Olive Oil Analysis" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
-            <field name="name"/>
-            <field name="oil_source_type"/>
+        <tree>
+            <field name="name" decoration-bf="1"/>
+            <field name="oil_source_type" widget="badge" decoration-warning="oil_source_type == 'tank'" decoration-danger="oil_source_type == 'arrival'"/>
             <field name="partner_id"/>
-            <field name="location_id"/>
+            <field name="location_id" attrs="{'invisible': [('oil_source_type', '!=', 'tank')]}"/>
             <field name="oil_product_id"/>
-            <field name="season_id"/>
+            <field name="lot_id" optional="hide"/>
+            <field name="season_id" optional="show"/>
             <field name="date"/>
-            <field name="state"/>
+            <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'"/>
         </tree>
     </field>
 </record>
@@ -80,7 +82,7 @@
     <field name="name">olive.oil.analysis.search</field>
     <field name="model">olive.oil.analysis</field>
     <field name="arch" type="xml">
-        <search string="Cultivation Methods">
+        <search>
             <field name="name"/>
             <field name="partner_id"/>
             <field name="location_id"/>

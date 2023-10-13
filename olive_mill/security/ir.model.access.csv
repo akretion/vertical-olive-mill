@@ -45,5 +45,36 @@ access_olive_oil_analysis_user,Full access on olive.oil.analysis,model_olive_oil
 access_olive_oil_analysis_line_user,Full access on olive.oil.analysis.line,model_olive_oil_analysis_line,stock.group_stock_user,1,1,1,1
 access_stock_warehouse_operator,Read access on stock.warehouse,stock.model_stock_warehouse,olive_operator,1,0,0,0
 access_stock_location_operator,Read access on stock.location,stock.model_stock_location,olive_operator,1,0,0,0
-access_stock_location_operator,Read access on stock.location,stock.model_stock_location,olive_operator,1,0,0,0
 access_stock_move_operator,Read access on stock.move,stock.model_stock_move,olive_operator,1,0,0,0
+access_olive_appointment_print_operator,Full access on olive.appointment.print wizard,model_olive_appointment_print,olive_operator,1,1,1,1
+access_olive_appointment_print_user,Full access on olive.appointment.print wizard,model_olive_appointment_print,stock.group_stock_user,1,1,1,1
+access_olive_arrival_warning_operator,Full access on olive.arrival.warning wizard,model_olive_arrival_warning,olive_operator,1,1,1,1
+access_olive_arrival_warning_user,Full access on olive.arrival.warning wizard,model_olive_arrival_warning,stock.group_stock_user,1,1,1,1
+access_olive_invoice_create_user,Full access on olive.invoice.create wizard,model_olive_invoice_create,account.group_account_invoice,1,1,1,1
+access_olive_oil_bottling_operator,Full access on olive.oil.bottling wizard,model_olive_oil_bottling,olive_operator,1,1,1,1
+access_olive_oil_bottling_user,Full access on olive.oil.bottling wizard,model_olive_oil_bottling,stock.group_stock_user,1,1,1,1
+access_olive_oil_picking_user,Full access on olive.oil.picking wizard,model_olive_oil_picking,stock.group_stock_user,1,1,1,1
+access_olive_oil_picking_container_user,Full access on olive.oil.picking.container wizard,model_olive_oil_picking_container,stock.group_stock_user,1,1,1,1
+access_olive_oil_production_compensation_operator,Full access on olive.oil.production.compensation,model_olive_oil_production_compensation,olive_operator,1,1,1,1
+access_olive_oil_production_compensation_user,Full access on olive.oil.production.compensation,model_olive_oil_production_compensation,stock.group_stock_user,1,1,1,1
+access_olive_oil_production_day_print_operator,Full access on olive.oil.production.day.print,model_olive_oil_production_day_print,olive_operator,1,1,1,1
+access_olive_oil_production_day_print_user,Full access on olive.oil.production.day.print,model_olive_oil_production_day_print,stock.group_stock_user,1,1,1,1
+access_olive_oil_production_done_last_operator,Full access on olive.oil.production.done.last,model_olive_oil_production_done_last,olive_operator,1,1,1,1
+access_olive_oil_production_done_last_user,Full access on olive.oil.production.done.last,model_olive_oil_production_done_last,stock.group_stock_user,1,1,1,1
+access_olive_oil_production_force_ratio_operator,Full access on olive.oil.production.force.ratio,model_olive_oil_production_force_ratio,olive_operator,1,1,1,1
+access_olive_oil_production_force_ratio_user,Full access on olive.oil.production.force.ratio,model_olive_oil_production_force_ratio,stock.group_stock_user,1,1,1,1
+access_olive_oil_production_pack2check_operator,Full access on olive.oil.production.pack2check,model_olive_oil_production_pack2check,olive_operator,1,1,1,1
+access_olive_oil_production_pack2check_user,Full access on olive.oil.production.pack2check,model_olive_oil_production_pack2check,stock.group_stock_user,1,1,1,1
+access_olive_oil_production_product_swap_operator,Full access on olive.oil.production.product.swap,model_olive_oil_production_product_swap,stock.group_stock_user,1,1,1,1
+access_olive_oil_production_ratio2force_operator,Full access on olive.oil.production.ratio2force,model_olive_oil_production_ratio2force,olive_operator,1,1,1,1
+access_olive_oil_production_ratio2force_user,Full access on olive.oil.production.ratio2force,model_olive_oil_production_ratio2force,stock.group_stock_user,1,1,1,1
+access_olive_oil_tank_transfer_operator,Full access on olive.oil.tank.transfer,model_olive_oil_tank_transfer,olive_operator,1,1,1,1
+access_olive_oil_tank_transfer_user,Full access on olive.oil.tank.transfer,model_olive_oil_tank_transfer,stock.group_stock_user,1,1,1,1
+access_olive_palox_case_lend_operator,Full access on olive.palox.case.lend,model_olive_palox_case_lend,olive_operator,1,1,1,1
+access_olive_palox_case_lend_user,Full access on olive.palox.case.lend,model_olive_palox_case_lend,stock.group_stock_user,1,1,1,1
+access_olive_palox_generate_production_operator,Full access on olive.palox.generate.production,model_olive_palox_generate_production,olive_operator,1,1,1,1
+access_olive_palox_generate_production_user,Full access on olive.palox.generate.production,model_olive_palox_generate_production,stock.group_stock_user,1,1,1,1
+access_olive_partner_warning_print_operator,Full access on olive.partner.warning.print,model_olive_partner_warning_print,olive_operator,1,1,1,1
+access_olive_partner_warning_print_user,Full access on olive.partner.warning.print,model_olive_partner_warning_print,stock.group_stock_user,1,1,1,1
+access_olive_withdrawal_operator,Full access on olive.withdrawal,model_olive_withdrawal,olive_operator,1,1,1,1
+access_olive_withdrawal_user,Full access on olive.withdrawal,model_olive_withdrawal,stock.group_stock_user,1,1,1,1

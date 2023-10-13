@@ -1,4 +1,4 @@
-# Copyright 2018 Barroux Abbey (https://www.barroux.org/)
+# Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -8,14 +8,13 @@ from odoo import api, models, fields
 class OliveOchard(models.Model):
     _name = 'olive.ochard'
     _description = 'Olive Ochard'
-    _inherit = ['mail.thread']
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char(string='Name', required=True)
     partner_id = fields.Many2one(
         'res.partner', string='Olive Farmer', ondelete='cascade', index=True,
         domain=[('parent_id', '=', False), ('olive_farmer', '=', True)])
     active = fields.Boolean(default=True)
-    zip_id = fields.Many2one('res.better.zip', 'City/Zip Shortcut')
     city = fields.Char('City')
     parcel_ids = fields.One2many(
         'olive.parcel', 'ochard_id', string='Parcels')
@@ -40,14 +39,6 @@ class OliveOchard(models.Model):
                 area += parcel.area
             ochard.tree_total = tree
             ochard.area_total = area
-
-    @api.onchange('zip_id')
-    def zip_id_onchange(self):
-        if self.zip_id:
-            name = self.zip_id.city
-            if self.zip_id.name:
-                name = u'%s %s' % (self.zip_id.name, name)
-            self.city = name
 
     @api.depends('name', 'city')
     def name_get(self):

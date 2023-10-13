@@ -1,9 +1,7 @@
-
-from . import partner
-from . import users
+from . import res_partner
+from . import res_users
 from . import product
-from . import company
-from . import olive_config_settings
+from . import res_company
 from . import stock_warehouse
 from . import olive_variant
 from . import olive_treatment
@@ -22,7 +20,7 @@ from . import olive_oil_production
 from . import olive_oil_analysis
 from . import olive_sale_pricelist
 from . import stock_location
+from . import stock_move
 from . import stock_production_lot
 from . import stock_picking
-from . import mrp_bom
-from . import account_invoice
+from . import account_move
