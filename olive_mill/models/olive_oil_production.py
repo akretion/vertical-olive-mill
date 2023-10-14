@@ -697,7 +697,7 @@ class OliveOilProduction(models.Model):
                         "compensation, you must set a compensation sale tank.") % self.name)
                 cloc.olive_oil_transfer(
                     csale_loc, 'full', self.warehouse_id,
-                    origin=_('Empty compensation tank to sale tank'))
+                    origin=_('Empty compensation tank to sale tank'), olive_oil_production_id=self.id)
             else:
                 # partial trf
                 if float_compare(self.to_compensation_sale_tank_oil_qty, 0, precision_digits=pr_oil) > 0:
@@ -708,7 +708,8 @@ class OliveOilProduction(models.Model):
                     cloc.olive_oil_transfer(
                         csale_loc, 'partial', self.warehouse_id,
                         partial_transfer_qty=self.to_compensation_sale_tank_oil_qty,
-                        origin=_('Partial transfer of compensation tank to sale tank'))
+                        origin=_('Partial transfer of compensation tank to sale tank'),
+                        olive_oil_production_id=self.id)
                 wlines = [line for line in self.line_ids if line.oil_destination == 'withdrawal']
                 origin = _('Transfer of compensation tank to withdrawal location')
                 while wlines:
@@ -718,13 +719,13 @@ class OliveOilProduction(models.Model):
                         cloc.olive_oil_transfer(
                             wloc, 'full', self.warehouse_id,
                             dest_partner=wlines[0].commercial_partner_id,
-                            origin=origin)
+                            origin=origin, olive_oil_production_id=self.id)
                     else:
                         cloc.olive_oil_transfer(
                             wloc, 'partial', self.warehouse_id,
                             dest_partner=wlines[0].commercial_partner_id,
                             partial_transfer_qty=wlines[0].compensation_oil_qty,
-                            origin=origin)
+                            origin=origin, olive_oil_production_id=self.id)
 
                     # remove first line of wlines
                     wlines.pop(0)

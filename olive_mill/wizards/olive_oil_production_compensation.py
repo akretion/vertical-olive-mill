@@ -14,6 +14,7 @@ class OliveOilProductionCompensation(models.TransientModel):
 
     production_id = fields.Many2one(
         'olive.oil.production', string='Olive Oil Production', required=True)
+    company_id = fields.Many2one(related='production_id.company_id')
     warehouse_id = fields.Many2one(related='production_id.warehouse_id')
     season_id = fields.Many2one(related='production_id.season_id')
     palox_id = fields.Many2one(related='production_id.palox_id')
@@ -62,6 +63,16 @@ class OliveOilProductionCompensation(models.TransientModel):
         pr_ratio = self.env['decimal.precision'].precision_get('Olive Oil Ratio')
         res = {'warning': {}}
         wh = self.warehouse_id
+        if self.compensation_type in ('last', 'first'):
+            comp_locs = self.env['stock.location'].search([
+                ('olive_tank_type', '=', 'compensation'),
+                ('olive_season_id', '=', self.season_id.id),
+                ('company_id', '=', self.company_id.id),
+                ])
+            if len(comp_locs) == 1:
+                self.compensation_location_id = comp_locs
+        else:
+            self.compensation_location_id = False
         if self.compensation_type == 'last':
             today_dt = fields.Date.from_string(fields.Date.context_today(self))
             yesterday = fields.Date.to_string(today_dt - relativedelta(days=1))

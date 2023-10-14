@@ -103,18 +103,18 @@
                         <group name="lines">
                             <field name="line_ids" nolabel="1">
                                 <tree editable="bottom">
-                                    <field name="name" decoration-bf="1"/>
-                                    <field name="commercial_partner_id"/>
+                                    <field name="name" decoration-bf="1" optional="show"/>
+                                    <field name="commercial_partner_id" optional="show"/>
                                     <field name="withdrawal_oil_qty_kg" sum="1"/>
-                                    <field name="oil_destination" widget="badge" decoration-danger="oil_destination == 'mix'" decoration-warning="oil_destination == 'sale'" decoration-info="oil_destination == 'withdrawal'"/>
+                                    <field name="oil_destination" widget="badge" decoration-danger="oil_destination == 'mix'" decoration-warning="oil_destination == 'sale'" decoration-info="oil_destination == 'withdrawal'" attrs="{'column_invisible': [('parent.oil_destination', '!=', 'mix')]}"/>
                                     <field name="olive_qty" sum="1"/>
-                                    <field name="shrinkage_oil_qty" sum="1"/>
-                                    <field name="filter_loss_oil_qty" sum="1"/>
-                                    <field name="withdrawal_oil_qty" sum="1"/>
-                                    <field name="to_sale_tank_oil_qty" sum="1"/>
-                                    <field name="sale_oil_qty" sum="1"/>
-                                    <field name="oil_ratio_net"/>
-                                    <field name="state" invisible="1"/>
+                                    <field name="shrinkage_oil_qty" sum="1" optional="show"/>
+                                    <field name="filter_loss_oil_qty" sum="1" optional="show" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')], 'column_invisible': [('parent.oil_destination', '=', 'withdrawal')]}"/>
+                                    <field name="withdrawal_oil_qty" sum="1" attrs="{'invisible': [('oil_destination', '=', 'sale')], 'column_invisible': [('parent.oil_destination', '=', 'sale')]}"/>
+                                    <field name="to_sale_tank_oil_qty" sum="1" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')], 'column_invisible': [('parent.oil_destination', '=', 'withdrawal')]}"/>
+                                    <field name="sale_oil_qty" sum="1" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')], 'column_invisible': [('parent.oil_destination', '=', 'withdrawal')]}"/>
+                                    <field name="oil_ratio_net" optional="show"/>
+                                    <field name="state" invisible="1" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'done'"/>
                                 </tree>
                             </field>
                         </group>

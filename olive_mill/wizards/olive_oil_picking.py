@@ -107,11 +107,11 @@ class OliveOilPicking(models.TransientModel):
                 % self.warehouse_id.display_name)
         # Move oil
         assert self.oil_product_id == self.src_location_id.oil_product_id
-        opicking = self.src_location_id.olive_oil_transfer(
+        opickings = self.src_location_id.olive_oil_transfer(
             self.dest_location_id, 'partial', self.warehouse_id,
             partial_transfer_qty=self.oil_qty, origin=origin)
-        oil_lot = opicking.move_lines[0].move_line_ids[0].lot_id
-        assert self.oil_product_id == opicking.move_lines[0].product_id
+        oil_lot = opickings[0].move_line_ids[0].lot_id
+        assert self.oil_product_id == opickings[0].move_lines[0].product_id
         # Move containers too
         # TODO don't test !=, test "is not child_of"
         if (

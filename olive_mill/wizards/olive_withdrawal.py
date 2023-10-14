@@ -31,14 +31,15 @@ class OliveWithdrawal(models.TransientModel):
         domain="[('olive_mill', '=', True), ('company_id', '=', company_id)]",
         default=lambda self: self.env.user._default_olive_mill_wh())
 
-    def _prepare_picking(self):
+    def _prepare_move_vals(self, picking):
         src_loc = self.warehouse_id.olive_withdrawal_loc_id
         commercial_partner = self.partner_id.commercial_partner_id
+        location_dest_id = commercial_partner.property_stock_customer.id
         quants = self.env['stock.quant'].search([
             ('location_id', '=', src_loc.id),
             ('owner_id', '=', commercial_partner.id),
             ('quantity', '>', 0),
-            ])
+            ], order="product_id")
         if not quants:
             raise UserError(_(
                 "There are no quants on the stock location '%s' "
@@ -50,37 +51,53 @@ class OliveWithdrawal(models.TransientModel):
             ('company_id', '=', self.company_id.id),
             ('owner_id', '=', commercial_partner.id),
             ('location_id', '=', src_loc.id),
-            ('location_dest_id', '=', self.partner_id.property_stock_customer.id),
+            ('location_dest_id', '=', location_dest_id),
             ])
         if mlines:
-            pickings = self.env['stock.picking']
+            other_pickings = self.env['stock.picking']
             for mline in mlines:
                 if mline.picking_id:
-                    pickings |= mline.picking_id
-            raise UserError(_("There are ongoing withdrawal pickings for olive farmer '%s': %s. It probably means that you have already launched this wizard.") % (commercial_partner.display_name, ', '.join([p.name for p in pickings])))
-        moves = []
+                    other_pickings |= mline.picking_id
+            raise UserError(_("There are ongoing withdrawal pickings for olive farmer '%s': %s. It probably means that you have already launched this wizard.") % (commercial_partner.display_name, ', '.join([p.name for p in other_pickings])))
+        mvals_list = []
         for quant in quants:
             product = quant.product_id
             mvals = {
+                'picking_id': picking.id,
                 'company_id': self.company_id.id,
                 'name': _('Withdrawal of Olive Oil'),
                 'product_id': product.id,
                 'product_uom': product.uom_id.id,
                 'location_id': src_loc.id,
-                'location_dest_id': self.partner_id.property_stock_customer.id,
+                'location_dest_id': location_dest_id,
                 'product_uom_qty': quant.quantity,
-                'origin': _('Olive Withdrawal Wizard'),
-                'restrict_partner_id': commercial_partner.id,
+                'origin': picking.origin,
+                'state': 'assigned',
+                'move_line_ids': [(0, 0, {
+                    'picking_id': picking.id,
+                    'product_id': product.id,
+                    'product_uom_id': product.uom_id.id,
+                    'product_uom_qty': quant.quantity,
+                    'qty_done': quant.quantity,
+                    'location_id': src_loc.id,
+                    'location_dest_id': location_dest_id,
+                    'lot_id': quant.lot_id.id,
+                    'owner_id': commercial_partner.id,
+                    })],
                 }
-            moves.append((0, 0, mvals))
+            mvals_list.append(mvals)
+            quant.sudo().write({'reserved_quantity': quant.quantity})
+        return mvals_list
+
+    def _prepare_picking(self):
         vals = {
             'company_id': self.company_id.id,
             'partner_id': self.partner_id.id,
             'picking_type_id': self.warehouse_id.out_type_id.id,
-            'move_lines': moves,
             'origin': _('Olive Withdrawal Wizard'),
-            'location_id': src_loc.id,
-            'location_dest_id': commercial_partner.property_stock_customer.id,
+            'location_id': self.warehouse_id.olive_withdrawal_loc_id.id,
+            'location_dest_id': self.partner_id.commercial_partner_id.property_stock_customer.id,
+            'state': 'assigned',
             }
         return vals
 
@@ -92,9 +109,8 @@ class OliveWithdrawal(models.TransientModel):
                 "warehouse '%s'") % self.warehouse_id.display_name)
         vals = self._prepare_picking()
         pick = self.env['stock.picking'].create(vals)
-        pick.action_assign()
-        for ml in pick.move_line_ids:
-            ml.write({'qty_done': ml.product_uom_qty})
+        move_vals_list = self._prepare_move_vals(pick)
+        self.env['stock.move'].create(move_vals_list)
         action = self.env['ir.actions.actions']._for_xml_id(
             'stock.action_picking_tree_all')
         action.update({

@@ -37,13 +37,16 @@ class OliveOilTankTransfer(models.TransientModel):
         partial_transfer_qty = False
         if self.transfer_type == 'partial':
             partial_transfer_qty = self.quantity
-        pick = self.src_location_id.olive_oil_transfer(
+        pickings = self.src_location_id.olive_oil_transfer(
             self.dest_location_id, self.transfer_type, self.warehouse_id,
             origin=origin, partial_transfer_qty=partial_transfer_qty)
         action = self.env['ir.actions.actions']._for_xml_id('stock.action_picking_tree_all')
-        action.update({
-            'res_id': pick.id,
-            'views': False,
-            'view_mode': 'form,tree,kanban,calendar',
-            })
+        if len(pickings) == 1:
+            action.update({
+                'res_id': pickings.id,
+                'views': False,
+                'view_mode': 'form,tree,kanban,calendar',
+                })
+        else:
+            action['domain'] = [('id', 'in', pickings.ids)]
         return action

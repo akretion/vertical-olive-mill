@@ -411,7 +411,7 @@ class OliveArrival(models.Model):
                 return action
             else:
                 for warn_msg in warn_msgs:
-                    self.message_post(warn_msg)
+                    self.message_post(body=warn_msg)
 
         arrival_vals = {
             'state': 'done',

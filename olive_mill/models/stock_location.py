@@ -280,15 +280,16 @@ class StockLocation(models.Model):
 
     def olive_oil_transfer(
             self, dest_loc, transfer_type, warehouse, dest_partner=False,
-            partial_transfer_qty=False, origin=False):
+            partial_transfer_qty=False, origin=False, olive_oil_production_id=False):
         self.ensure_one()
         assert transfer_type in ('partial', 'full'), 'wrong transfer_type arg'
         if dest_loc == self:
             raise UserError(_(
                 "You are trying to transfer oil from '%s' to the same location!")
                 % self.display_name)
-        sqo = self.env['stock.quant']
+        spo = self.env['stock.picking']
         smo = self.env['stock.move']
+        sqo = self.env['stock.quant']
         pr_oil = self.env['decimal.precision'].precision_get('Olive Oil Volume')
         src_loc = self
         merge_if_not_merged = False
@@ -306,46 +307,86 @@ class StockLocation(models.Model):
             raise UserError(_(
                 "Internal picking type not configured on warehouse %s.")
                 % warehouse.display_name)
-        vals = {
+        virtual_prod_loc_id = src_loc.oil_product_id.property_stock_production.id
+        location_dest_id1 = dest_partner and virtual_prod_loc_id or dest_loc.id
+        pvals1 = {
             'picking_type_id': warehouse.int_type_id.id,
             'origin': origin,
             'location_id': src_loc.id,
-            'location_dest_id': dest_loc.id,
+            'location_dest_id': location_dest_id1,
             }
-        pick = self.env['stock.picking'].create(vals)
-
+        pick1 = spo.create(pvals1)
+        pickings = pick1
+        if dest_partner:
+            pvals2 = {
+                'picking_type_id': warehouse.int_type_id.id,
+                'origin': origin,
+                'location_id': virtual_prod_loc_id,
+                'location_dest_id': dest_loc.id,
+                }
+            pick2 = spo.create(pvals2)
+            pickings |= pick2
+        moves = self.env['stock.move']
         # Inspired by stock_quant_package_move_wizard from odoo-usability
         # For the moment, we don't depend on it...
         if transfer_type == 'full':
             quants = sqo.search([('location_id', '=', src_loc.id)])
             for quant in quants:
-                if float_compare(quant.quantity, 0, precision_digits=2) < 0:
+                if float_compare(quant.quantity, 0, precision_digits=2) <= 0:
                     raise UserError(_(
-                        "There is a negative quant ID %d on olive tank %s. "
+                        "There is a negative or null quant ID %d on olive tank %s. "
                         "This should never happen.") % (
                             quant.id, src_loc.display_name))
                 product_id = quant.product_id.id
                 uom_id = quant.product_id.uom_id.id
-                mvals = {
+                mvals1 = {
+                    'olive_oil_production_id': olive_oil_production_id,
                     'name': _('Full oil tank transfer'),
                     'origin': origin,
                     'product_id': product_id,
                     'location_id': src_loc.id,
-                    'location_dest_id': dest_loc.id,
+                    'location_dest_id': location_dest_id1,
                     'product_uom': uom_id,
                     'product_uom_qty': quant.quantity,
-                    'picking_id': pick.id,
+                    'picking_id': pick1.id,
                     'move_line_ids': [(0, 0, {
-                        'picking_id': pick.id,
+                        'picking_id': pick1.id,
                         'product_id': product_id,
                         'product_uom_id': uom_id,
                         'qty_done': quant.quantity,
                         'location_id': src_loc.id,
-                        'location_dest_id': dest_loc.id,
+                        'location_dest_id': location_dest_id1,
                         'lot_id': quant.lot_id.id,
                         })],
                 }
-                move = smo.create(mvals)
+                move1 = smo.create(mvals1)
+                moves |= move1
+                if dest_partner:
+                    mvals2 = {
+                        'olive_oil_production_id': olive_oil_production_id,
+                        'name': _('Full oil tank transfer'),
+                        'origin': origin,
+                        'product_id': product_id,
+                        'location_id': virtual_prod_loc_id,
+                        'location_dest_id': dest_loc.id,
+                        'product_uom': uom_id,
+                        'product_uom_qty': quant.quantity,
+                        'picking_id': pick2.id,
+                        'move_orig_ids': [(6, 0, [move1.id])],
+                        'move_line_ids': [(0, 0, {
+                            'picking_id': pick2.id,
+                            'product_id': product_id,
+                            'product_uom_id': uom_id,
+                            'qty_done': quant.quantity,
+                            'location_id': virtual_prod_loc_id,
+                            'location_dest_id': dest_loc.id,
+                            'lot_id': quant.lot_id.id,
+                            'owner_id': dest_partner.id,
+                            })],
+                    }
+                    move2 = smo.create(mvals2)
+                    moves |= move2
+
         elif transfer_type == 'partial':
             # we already checked above that the src loc has 1 lot
             if float_compare(partial_transfer_qty, 0, precision_digits=pr_oil) <= 0:
@@ -362,31 +403,57 @@ class StockLocation(models.Model):
             assert len(quant) == 1
             product_id = src_loc.oil_product_id.id
             uom_id = src_loc.oil_product_id.uom_id.id
-            mvals = {
+            mvals1 = {
+                'olive_oil_production_id': olive_oil_production_id,
                 'name': _('Partial oil tank transfer'),
                 'origin': origin,
                 'product_id': product_id,
                 'location_id': src_loc.id,
-                'location_dest_id': dest_loc.id,
+                'location_dest_id': location_dest_id1,
                 'product_uom': uom_id,
                 'product_uom_qty': partial_transfer_qty,
-                'picking_id': pick.id,
+                'picking_id': pick1.id,
                 'move_line_ids': [(0, 0, {
-                    'picking_id': pick.id,
+                    'picking_id': pick1.id,
                     'product_id': product_id,
                     'product_uom_id': uom_id,
                     'qty_done': partial_transfer_qty,
                     'location_id': src_loc.id,
-                    'location_dest_id': dest_loc.id,
+                    'location_dest_id': location_dest_id1,
                     'lot_id': quant.lot_id.id,
                     })],
                 }
-            move = smo.create(mvals)
+            move1 = smo.create(mvals1)
+            moves |= move1
+            if dest_partner:
+                mvals2 = {
+                    'olive_oil_production_id': olive_oil_production_id,
+                    'name': _('Partial oil tank transfer'),
+                    'origin': origin,
+                    'product_id': product_id,
+                    'location_id': virtual_prod_loc_id,
+                    'location_dest_id': dest_loc.id,
+                    'product_uom': uom_id,
+                    'product_uom_qty': partial_transfer_qty,
+                    'picking_id': pick2.id,
+                    'move_orig_ids': [(6, 0, [move1.id])],
+                    'move_line_ids': [(0, 0, {
+                        'picking_id': pick2.id,
+                        'product_id': product_id,
+                        'product_uom_id': uom_id,
+                        'qty_done': partial_transfer_qty,
+                        'location_id': virtual_prod_loc_id,
+                        'location_dest_id': dest_loc.id,
+                        'lot_id': quant.lot_id.id,
+                        'owner_id': dest_partner.id,
+                        })],
+                    }
+                move2 = smo.create(mvals2)
+                moves |= move2
+
             # No need to reserve a particular quant, because we only have 1 lot
             # Hack for dest_partner is at the end of the method
-        move._action_done()
-        assert move.state == 'done'
-        # TODO check mig
-        if transfer_type == 'partial' and dest_partner:
-            move.quant_ids.sudo().write({'owner_id': dest_partner.id})
-        return pick
+        for move in moves:
+            move._action_done()
+            assert move.state == 'done'
+        return pickings
