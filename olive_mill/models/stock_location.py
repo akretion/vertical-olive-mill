@@ -5,6 +5,7 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 from odoo.tools import float_compare
+from collections import defaultdict
 
 import logging
 logger = logging.getLogger(__name__)
@@ -326,67 +327,74 @@ class StockLocation(models.Model):
                 }
             pick2 = spo.create(pvals2)
             pickings |= pick2
-        moves = self.env['stock.move']
         # Inspired by stock_quant_package_move_wizard from odoo-usability
         # For the moment, we don't depend on it...
         if transfer_type == 'full':
+            # I cannot do a single stock move, because quants are not always from the same product
             quants = sqo.search([('location_id', '=', src_loc.id)])
+            product2quants = defaultdict(list)
+            product2qty = defaultdict(float)
             for quant in quants:
                 if float_compare(quant.quantity, 0, precision_digits=2) <= 0:
                     raise UserError(_(
                         "There is a negative or null quant ID %d on olive tank %s. "
                         "This should never happen.") % (
                             quant.id, src_loc.display_name))
-                product_id = quant.product_id.id
-                uom_id = quant.product_id.uom_id.id
+                product2quants[quant.product_id].append(quant)
+                product2qty[quant.product_id] += quant.quantity
+            for product, quant_list in product2quants.items():
                 mvals1 = {
                     'olive_oil_production_id': olive_oil_production_id,
                     'name': _('Full oil tank transfer'),
                     'origin': origin,
-                    'product_id': product_id,
+                    'product_id': product.id,
                     'location_id': src_loc.id,
                     'location_dest_id': location_dest_id1,
-                    'product_uom': uom_id,
-                    'product_uom_qty': quant.quantity,
+                    'product_uom': product.uom_id.id,
+                    'product_uom_qty': product2qty[product.id],
                     'picking_id': pick1.id,
-                    'move_line_ids': [(0, 0, {
+                    'move_line_ids': [],
+                    }
+                for quant in quant_list:
+                    mvals1['move_line_ids'].append((0, 0, {
                         'picking_id': pick1.id,
-                        'product_id': product_id,
-                        'product_uom_id': uom_id,
+                        'product_id': product.id,
+                        'product_uom_id': product.uom_id.id,
                         'qty_done': quant.quantity,
                         'location_id': src_loc.id,
                         'location_dest_id': location_dest_id1,
                         'lot_id': quant.lot_id.id,
-                        })],
-                }
+                        }))
                 move1 = smo.create(mvals1)
-                moves |= move1
+                # I validate all moves at the end, so the 'quantity' field on quant is not modified
+                # for the code below
                 if dest_partner:
                     mvals2 = {
                         'olive_oil_production_id': olive_oil_production_id,
                         'name': _('Full oil tank transfer'),
                         'origin': origin,
-                        'product_id': product_id,
+                        'product_id': product.id,
                         'location_id': virtual_prod_loc_id,
                         'location_dest_id': dest_loc.id,
-                        'product_uom': uom_id,
-                        'product_uom_qty': quant.quantity,
+                        'product_uom': product.uom_id.id,
+                        'product_uom_qty': product2qty[product.id],
                         'picking_id': pick2.id,
+                        'restrict_partner_id': dest_partner.id,
                         'move_orig_ids': [(6, 0, [move1.id])],
-                        'move_line_ids': [(0, 0, {
+                        'move_line_ids': [],
+                        }
+                    for quant in quant_list:
+                        mvals2['move_line_ids'].append((0, 0, {
                             'picking_id': pick2.id,
-                            'product_id': product_id,
-                            'product_uom_id': uom_id,
+                            'product_id': product.id,
+                            'product_uom_id': product.uom_id.id,
                             'qty_done': quant.quantity,
                             'location_id': virtual_prod_loc_id,
                             'location_dest_id': dest_loc.id,
                             'lot_id': quant.lot_id.id,
                             'owner_id': dest_partner.id,
-                            })],
-                    }
-                    move2 = smo.create(mvals2)
-                    moves |= move2
-
+                            }))
+                    smo.create(mvals2)
         elif transfer_type == 'partial':
             # we already checked above that the src loc has 1 lot
             if float_compare(partial_transfer_qty, 0, precision_digits=pr_oil) <= 0:
@@ -401,8 +409,8 @@ class StockLocation(models.Model):
             # raise_if_not_merged = True, so we have a single quant/lot
             quant = sqo.search([('location_id', '=', src_loc.id)])
             assert len(quant) == 1
-            product_id = src_loc.oil_product_id.id
-            uom_id = src_loc.oil_product_id.uom_id.id
+            product_id = quant.product_id.id
+            uom_id = quant.product_id.uom_id.id
             mvals1 = {
                 'olive_oil_production_id': olive_oil_production_id,
                 'name': _('Partial oil tank transfer'),
@@ -424,7 +432,6 @@ class StockLocation(models.Model):
                     })],
                 }
             move1 = smo.create(mvals1)
-            moves |= move1
             if dest_partner:
                 mvals2 = {
                     'olive_oil_production_id': olive_oil_production_id,
@@ -436,6 +443,7 @@ class StockLocation(models.Model):
                     'product_uom': uom_id,
                     'product_uom_qty': partial_transfer_qty,
                     'picking_id': pick2.id,
+                    'restrict_partner_id': dest_partner.id,
                     'move_orig_ids': [(6, 0, [move1.id])],
                     'move_line_ids': [(0, 0, {
                         'picking_id': pick2.id,
@@ -448,12 +456,11 @@ class StockLocation(models.Model):
                         'owner_id': dest_partner.id,
                         })],
                     }
-                move2 = smo.create(mvals2)
-                moves |= move2
+                smo.create(mvals2)
 
             # No need to reserve a particular quant, because we only have 1 lot
             # Hack for dest_partner is at the end of the method
-        for move in moves:
-            move._action_done()
-            assert move.state == 'done'
+        for pick in pickings:
+            pick._action_done()
+            assert pick.state == 'done'
         return pickings
