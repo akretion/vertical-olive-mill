@@ -58,7 +58,7 @@ class OliveAppointment(models.Model):
     withdrawal_invoice = fields.Selection([
         ('invoice', 'With Invoice'),
         ('noinvoice', 'Without Invoice'),
-        ], string='Invoicing', track_visibility='onchange')
+        ], string='Invoicing', track_visibility='onchange', default='invoice')
     lend_palox_qty = fields.Integer(string='Number of Palox')
     lend_regular_case_qty = fields.Integer(string='Number of Regular Cases')
     lend_organic_case_qty = fields.Integer(string='Number of Organic Cases')

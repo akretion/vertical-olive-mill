@@ -580,13 +580,13 @@ class OliveArrivalLine(models.Model):
         ('optimal', 'Optimal'),
         ('overripen', 'Over Ripen'),  # surmatures
         ], string='Ripeness', required=True,
-        states={'done': [('readonly', True)]})
+        states={'done': [('readonly', True)]}, default='green')
     sanitary_state = fields.Selection([
         ('good', 'Good'),
         ('average', 'Average'),
         ('fair', 'Fair'),  # Passable
         ], string='Sanitary State', required=True,
-        states={'done': [('readonly', True)]})
+        states={'done': [('readonly', True)]}, default='good')
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Type', required=True, index=True,
         domain=[('olive_type', '=', 'oil')], ondelete='restrict',
