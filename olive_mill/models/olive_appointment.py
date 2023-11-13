@@ -41,6 +41,8 @@ class OliveAppointment(models.Model):
         related='partner_id.commercial_partner_id.olive_organic_certif_ko')
     olive_invoicing_ko = fields.Boolean(
         related='partner_id.commercial_partner_id.olive_invoicing_ko')
+    olive_withdrawal_ko = fields.Boolean(
+        related='partner_id.commercial_partner_id.olive_withdrawal_ko')
     olive_culture_type = fields.Selection(
         related='partner_id.commercial_partner_id.olive_culture_type')
     olive_organic_certified_logo = fields.Binary(

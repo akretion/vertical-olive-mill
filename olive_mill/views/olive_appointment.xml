@@ -41,6 +41,7 @@
                     <span name="olive_parcel_ko" attrs="{'invisible': ['|', ('olive_parcel_ko', '=', False), ('partner_id', '=', False)]}" class="badge badge-pill badge-warning font-weight-bold">Parcel information incomplete</span>
                     <span name="olive_organic_certif_ko" attrs="{'invisible': ['|', ('olive_organic_certif_ko', '=', False), ('partner_id', '=', False)]}" class="badge badge-pill badge-success font-weight-bold" groups="olive_mill.olive_organic">Organic certification missing</span>
                     <span name="olive_invoicing_ko" attrs="{'invisible': ['|', ('olive_invoicing_ko', '=', False), ('partner_id', '=', False)]}" class="badge badge-pill badge-info font-weight-bold">Invoicing to do</span>
+                    <span name="olive_withdrawal_ko" attrs="{'invisible': ['|', ('olive_withdrawal_ko', '=', False), ('partner_id', '=', False)]}" class="badge badge-pill badge-dark font-weight-bold">Pending Withdrawal</span>
                     <button class="oe_stat_button" type="object"
                         name="show_arrival_appointments_same_day"
                         icon="fa-arrow-down">  <!-- use fa-tractor when we'll have access to FA 5.4 -->
@@ -76,6 +77,7 @@
                         <field name="olive_parcel_ko" invisible="1"/>
                         <field name="olive_organic_certif_ko" invisible="1"/>
                         <field name="olive_invoicing_ko" invisible="1"/>
+                        <field name="olive_withdrawal_ko" invisible="1"/>
                     </group>
                     <group name="top-right">
                         <field name="start_datetime"/>

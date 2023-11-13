@@ -78,6 +78,9 @@ class ResPartner(models.Model):
     olive_invoicing_ko = fields.Boolean(
         compute='_compute_organic_and_warnings',
         string='Invoicing to do')
+    olive_withdrawal_ko = fields.Boolean(
+        compute='_compute_organic_and_warnings',
+        string="Pending Withdrawal")
     olive_organic_certification_ids = fields.One2many(
         'partner.organic.certification', 'partner_id', 'Organic Certifications')
     olive_culture_type = fields.Selection([
@@ -210,6 +213,8 @@ class ResPartner(models.Model):
             # 'cultivation_method', no warning if empty
             ]
         for partner in self:
+            company = self.env.company
+            company_id = company.id
             culture_type = 'regular'
             filename = False
             logo = False
@@ -217,6 +222,7 @@ class ResPartner(models.Model):
             parcel_ko = True
             certif_ko = False
             invoicing_ko = False
+            olive_withdrawal_ko = False
             if partner.olive_farmer and not partner.parent_id:
                 # parcel_ok if all ochards have at least one parcel
                 # and alls parcels have complete info
@@ -240,14 +246,29 @@ class ResPartner(models.Model):
                     if not ochard_ids and parcels_complete:
                         parcel_ko = False
 
+                whs = self.env['stock.warehouse'].search([
+                    ('company_id', '=', company_id),
+                    ('olive_mill', '=', True),
+                    ])
+                withdrawal_loc_ids = whs.olive_withdrawal_loc_id.ids
+                quant_count = self.env['stock.quant'].search_count([
+                    ('location_id', 'in', withdrawal_loc_ids),
+                    ('company_id', '=', company_id),
+                    ('owner_id', '=', partner.id),
+                    ('quantity', '>', 0),
+                    ])
+                if quant_count:
+                    olive_withdrawal_ko = True
+
                 season_id = self._context.get('season_id')
                 if not season_id:
-                    season = self.env.company.current_season_id
+                    season = company.current_season_id
                     if season:
                         season_id = season.id
 
                 if season_id:
                     cert = poco.search([
+                        ('company_id', '=', company_id),
                         ('partner_id', '=', partner.id),
                         ('season_id', '=', season_id),
                         ], limit=1)
@@ -266,11 +287,13 @@ class ResPartner(models.Model):
                         certif_ko = True
 
                     cultivation_count = oco.search_count([
+                        ('company_id', '=', company_id),
                         ('season_id', '=', season_id),
                         ('partner_id', '=', partner.id)])
                     if cultivation_count:
                         cultivation_form_ko = False
                     lines_to_out_invoice = oalo.search_count([
+                        ('company_id', '=', company_id),
                         ('commercial_partner_id', '=', partner.id),
                         ('season_id', '=', season_id),
                         ('production_state', '=', 'done'),
@@ -280,6 +303,7 @@ class ResPartner(models.Model):
                         invoicing_ko = True
                     else:
                         lines_to_in_invoice = oalo.search_count([
+                            ('company_id', '=', company_id),
                             ('commercial_partner_id', '=', partner.id),
                             ('production_state', '=', 'done'),
                             ('in_invoice_line_id', '=', False),
@@ -301,6 +325,7 @@ class ResPartner(models.Model):
             partner.olive_parcel_ko = parcel_ko
             partner.olive_organic_certif_ko = certif_ko
             partner.olive_invoicing_ko = invoicing_ko
+            partner.olive_withdrawal_ko = olive_withdrawal_ko
 
     def olive_check_in_invoice_fiscal_position(self):
         self.ensure_one()

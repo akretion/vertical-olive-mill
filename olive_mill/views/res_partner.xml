@@ -46,6 +46,7 @@
                     <div name="olive_parcel_ko" attrs="{'invisible': [('olive_parcel_ko', '=', False)]}" class="badge badge-pill badge-warning font-weight-bold">Parcel information incomplete</div>
                     <div name="olive_organic_certif_ko" attrs="{'invisible': [('olive_organic_certif_ko', '=', False)]}" class="badge badge-pill badge-success font-weight-bold" groups="olive_mill.olive_organic">Organic certification missing</div>
                     <div name="olive_invoicing_ko" attrs="{'invisible': [('olive_invoicing_ko', '=', False)]}" class="badge badge-pill badge-info font-weight-bold">Invoicing to do</div>
+                    <div name="olive_withdrawal_ko" attrs="{'invisible': [('olive_withdrawal_ko', '=', False)]}" class="badge badge-pill badge-dark font-weight-bold">Pending Withdrawal</div>
                     <button class="oe_stat_button" type="action"
                         name="%(olive_mill.olive_ochard_action)d"
                         icon="fa-pagelines"
@@ -80,6 +81,7 @@
                     <field name="olive_parcel_ko" invisible="1"/>
                     <field name="olive_organic_certif_ko" invisible="1"/>
                     <field name="olive_invoicing_ko" invisible="1"/>
+                    <field name="olive_withdrawal_ko" invisible="1"/>
                 </div>
                 <group name="olive_main">
                     <group name="left">

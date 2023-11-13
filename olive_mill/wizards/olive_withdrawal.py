@@ -26,6 +26,8 @@ class OliveWithdrawal(models.TransientModel):
         related='partner_id.commercial_partner_id.olive_organic_certif_ko')
     olive_invoicing_ko = fields.Boolean(
         related='partner_id.commercial_partner_id.olive_invoicing_ko')
+    olive_withdrawal_ko = fields.Boolean(
+        related='partner_id.commercial_partner_id.olive_withdrawal_ko')
     warehouse_id = fields.Many2one(
         'stock.warehouse', string='Olive Mill', required=True, check_company=True,
         domain="[('olive_mill', '=', True), ('company_id', '=', company_id)]",
