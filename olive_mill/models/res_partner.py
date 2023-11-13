@@ -120,10 +120,10 @@ class ResPartner(models.Model):
                 if cases_res:
                     olive_lended_regular_case = cases_res[0]['regular_qty'] or 0
                     olive_lended_organic_case = cases_res[0]['organic_qty'] or 0
-                olive_lended_palox = self.env['olive.palox'].search([
+                olive_lended_palox = self.env['olive.palox'].search_count([
                     ('borrower_partner_id', '=', partner.id),
                     ('company_id', '=', company.id),
-                    ], count=True)
+                    ])
 
                 parcel_res = self.env['olive.parcel'].read_group([
                     ('partner_id', '=', partner.id)],
@@ -265,28 +265,28 @@ class ResPartner(models.Model):
                     if cert.state == 'draft':
                         certif_ko = True
 
-                    cultivations = oco.search([
+                    cultivation_count = oco.search_count([
                         ('season_id', '=', season_id),
-                        ('partner_id', '=', partner.id)], limit=1)
-                    if cultivations:
+                        ('partner_id', '=', partner.id)])
+                    if cultivation_count:
                         cultivation_form_ko = False
-                    lines_to_out_invoice = oalo.search([
+                    lines_to_out_invoice = oalo.search_count([
                         ('commercial_partner_id', '=', partner.id),
                         ('season_id', '=', season_id),
                         ('production_state', '=', 'done'),
                         ('out_invoice_id', '=', False),
-                        ], count=True)
+                        ])
                     if lines_to_out_invoice:
                         invoicing_ko = True
                     else:
-                        lines_to_in_invoice = oalo.search([
+                        lines_to_in_invoice = oalo.search_count([
                             ('commercial_partner_id', '=', partner.id),
                             ('production_state', '=', 'done'),
                             ('in_invoice_line_id', '=', False),
                             ('oil_destination', 'in', ('sale', 'mix')),
                             ('sale_oil_qty', '>', 0),
                             ('season_id', '=', season_id),
-                            ], count=True)
+                            ])
                         if lines_to_in_invoice:
                             invoicing_ko = True
             if filename:

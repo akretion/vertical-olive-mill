@@ -20,10 +20,10 @@ class StockWarehouse(models.Model):
     olive_organic_case_stock = fields.Integer(
         compute='_compute_cases', string='Organic Cases in Stock')
     olive_withdrawal_loc_id = fields.Many2one(
-        'stock.location', string='Olive Oil Withdrawal Location',
+        'stock.location', string='Olive Oil Withdrawal Location', check_company=True,
         domain=[('olive_tank_type', '=', False), ('usage', '=', 'internal')])
     olive_compensation_loc_id = fields.Many2one(
-        'stock.location', string='Olive Oil Compensation Tank',
+        'stock.location', string='Olive Oil Compensation Tank', check_company=True,
         domain=[('olive_tank_type', '=', 'compensation')])
     olive_compensation_last_qty = fields.Float(
         string='Olive Compensation Quantity', default=45.0,
