@@ -67,7 +67,7 @@
             <filter name="regular" domain="[('conversion', '=', False)]" string="Regular"/>
             <filter name="conversion" domain="[('conversion', '=', True)]" string="Conversion"/>
             <separator/>
-            <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
+            <filter name="current_season" string="Current Season" domain="[('current_season', '=', True)]"/>
             <separator/>
             <group string="Group By" name="groupby">
                 <filter name="partner_groupby" string="Farmer" context="{'group_by': 'partner_id'}"/>

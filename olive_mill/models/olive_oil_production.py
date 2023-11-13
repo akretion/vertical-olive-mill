@@ -25,6 +25,8 @@ class OliveOilProduction(models.Model):
         default=lambda self: self.env.company.current_season_id.id,
         domain="[('company_id', '=', company_id)]",
         states={'done': [('readonly', True)]}, check_company=True)
+    current_season = fields.Boolean(
+        compute='_compute_current_season', search='_search_current_season')
     warehouse_id = fields.Many2one(
         'stock.warehouse', string='Warehouse', required=True, index=True,
         domain="[('olive_mill', '=', True), ('company_id', '=', company_id)]",
@@ -232,6 +234,16 @@ class OliveOilProduction(models.Model):
                 if f_binary:
                     logo = f_binary.encode('base64')
             prod.olive_culture_type_logo = logo
+
+    def _compute_current_season(self):
+        for prod in self:
+            if prod.company_id.current_season_id == prod.season_id:
+                prod.current_season = True
+            else:
+                prod.current_season = False
+
+    def _search_current_season(self, operator, value):
+        return self.env['res.company']._search_current_season(operator, value)
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -828,9 +840,3 @@ class OliveOilProduction(models.Model):
         action = self.env['ir.actions.actions']._for_xml_id('stock.stock_move_line_action')
         action['domain'] = [('id', 'in', mlines.ids)]
         return action
-
-    @api.model
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super().fields_view_get(
-            view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        return self.env.company.current_season_update(res, view_type)

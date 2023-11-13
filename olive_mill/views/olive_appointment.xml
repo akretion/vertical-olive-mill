@@ -163,7 +163,7 @@
             <filter name="withdrawal" string="Withdrawal" domain="[('appointment_type', '=', 'withdrawal')]"/>
             <filter name="other" string="Other" domain="[('appointment_type', '=', 'other')]"/>
             <separator/>
-            <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
+            <filter name="current_season" string="Current Season" domain="[('current_season', '=', True)]"/>
             <separator/>
             <group string="Group By" name="groupby">
                 <filter name="day_groupby" string="Day" context="{'group_by': 'start_datetime:day'}"/>

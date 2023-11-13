@@ -17,6 +17,8 @@ class OlivePreseasonPoll(models.Model):
         'olive.season', string='Season', required=True, index=True, check_company=True,
         default=lambda self: self.env.company.current_season_id.id,
         domain="[('company_id', '=', company_id)]")
+    current_season = fields.Boolean(
+        compute='_compute_current_season', search='_search_current_season')
     partner_id = fields.Many2one(
         'res.partner', string='Olive Farmer', required=True, index=True,
         domain=[('parent_id', '=', False), ('olive_farmer', '=', True)])
@@ -91,6 +93,16 @@ class OlivePreseasonPoll(models.Model):
             # TODO when poll.past_average_ratio is null because there is no past
             poll.oil_qty = poll.olive_qty * poll.past_average_ratio / 100.0
             poll.sale_oil_qty = poll.sale_olive_qty * poll.past_average_ratio / 100.0
+
+    def _compute_current_season(self):
+        for poll in self:
+            if poll.company_id.current_season_id == poll.season_id:
+                poll.current_season = True
+            else:
+                poll.current_season = False
+
+    def _search_current_season(self, operator, value):
+        return self.env['res.company']._search_current_season(operator, value)
 
     @api.onchange('partner_id')
     def partner_id_change(self):
@@ -170,12 +182,6 @@ class OlivePreseasonPoll(models.Model):
             res.append((rec.id, name))
         return res
 
-    @api.model
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super().fields_view_get(
-            view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        return self.env.company.current_season_update(res, view_type)
-
 
 class OlivePreseasonPollLine(models.Model):
     _name = 'olive.preseason.poll.line'
@@ -199,6 +205,8 @@ class OlivePreseasonPollLine(models.Model):
         related='poll_id.partner_id.commercial_partner_id', store=True,
         string='Olive Farmer')
     season_id = fields.Many2one(related='poll_id.season_id', store=True)
+    current_season = fields.Boolean(
+        compute='_compute_current_season', search='_search_current_season')
 
     _sql_constraints = [(
         'partner_season_oil_product_unique',
@@ -243,8 +251,12 @@ class OlivePreseasonPollLine(models.Model):
             if ratio > 0:
                 line.sale_olive_qty = int(round(100 * line.sale_oil_qty / ratio))
 
-    @api.model
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super().fields_view_get(
-            view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        return self.env.company.current_season_update(res, view_type)
+    def _compute_current_season(self):
+        for line in self:
+            if line.company_id.current_season_id == line.season_id:
+                line.current_season = True
+            else:
+                line.current_season = False
+
+    def _search_current_season(self, operator, value):
+        return self.env['res.company']._search_current_season(operator, value)

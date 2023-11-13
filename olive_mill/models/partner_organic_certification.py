@@ -20,6 +20,8 @@ class PartnerOrganicCertification(models.Model):
         default=lambda self: self.env.company.current_season_id.id,
         states={'done': [('readonly', True)]},
         domain="[('company_id', '=', company_id)]")
+    current_season = fields.Boolean(
+        compute='_compute_current_season', search='_search_current_season')
     company_id = fields.Many2one(
         'res.company', default=lambda self: self.env.company, required=True)
     certifying_entity_id = fields.Many2one(
@@ -35,6 +37,16 @@ class PartnerOrganicCertification(models.Model):
     validation_user_id = fields.Many2one(
         'res.users', string='Validated by', ondelete='restrict', readonly=True)
     validation_datetime = fields.Datetime(string='Validated on', readonly=True)
+
+    def _compute_current_season(self):
+        for certif in self:
+            if certif.company_id.current_season_id == certif.season_id:
+                certif.current_season = True
+            else:
+                certif.current_season = False
+
+    def _search_current_season(self, operator, value):
+        return self.env['res.company']._search_current_season(operator, value)
 
     @api.model
     def default_get(self, fields_list):
@@ -62,9 +74,3 @@ class PartnerOrganicCertification(models.Model):
         'partner_season_unique',
         'unique(season_id, partner_id)',
         'This farmer already has a certification for that season.')]
-
-    @api.model
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super().fields_view_get(
-            view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        return self.env.company.current_season_update(res, view_type)

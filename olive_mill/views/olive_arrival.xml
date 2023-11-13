@@ -200,7 +200,7 @@
             <field name="partner_id" operator="child_of"/>
             <field name="warehouse_id"/>
             <separator/>
-            <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
+            <filter name="current_season" string="Current Season" domain="[('current_season', '=', True)]"/>
             <separator/>
             <filter string="Draft" domain="[('state', '=', 'draft')]" name="draft"/>
             <filter string="Weighted" domain="[('state', '=', 'weighted')]" name="weighted"/>
@@ -444,7 +444,7 @@
             <filter name="to_purchase" string="To Purchase" domain="[('oil_destination', 'in', ('sale', 'mix')), ('in_invoice_line_id', '=', False), ('state', '=', 'done'), ('production_state', '=', 'done')]"/>
             <filter name="purchased" string="Purchased" domain="[('oil_destination', 'in', ('sale', 'mix')), ('in_invoice_line_id', '!=', False), ('state', '=', 'done'), ('production_state', '=', 'done')]"/>
             <separator/>
-            <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
+            <filter name="current_season" string="Current Season" domain="[('current_season', '=', True)]"/>
             <separator/>
             <group string="Group By" name="groupby">
                 <filter name="commercial_partner_groupby" string="Farmer" context="{'group_by': 'commercial_partner_id'}"/>

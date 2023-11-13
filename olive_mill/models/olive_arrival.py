@@ -27,6 +27,9 @@ class OliveArrival(models.Model):
         'olive.season', required=True, index=True,
         default=lambda self: self.env.company.current_season_id.id, check_company=True,
         states={'done': [('readonly', True)]}, ondelete='restrict')
+    # current_season is only for filtering purposes
+    current_season = fields.Boolean(
+        compute='_compute_current_season', search='_search_current_season')
     partner_id = fields.Many2one(
         'res.partner', string='Olive Farmer', required=True, index=True,
         domain=[('parent_id', '=', False), ('olive_farmer', '=', True)],
@@ -181,6 +184,16 @@ class OliveArrival(models.Model):
                     if line.palox_id in lended_palox:
                         lended_palox -= line.palox_id
             arrival.lended_palox = len(lended_palox)
+
+    def _compute_current_season(self):
+        for arrival in self:
+            if arrival.company_id.current_season_id == arrival.season_id:
+                arrival.current_season = True
+            else:
+                arrival.current_season = False
+
+    def _search_current_season(self, operator, value):
+        return self.env['res.company']._search_current_season(operator, value)
 
     @api.constrains('date', 'harvest_start_date')
     def arrival_check(self):
@@ -473,12 +486,6 @@ class OliveArrival(models.Model):
                     % arrival.name)
         return super().unlink()
 
-    @api.model
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super().fields_view_get(
-            view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        return self.env.company.current_season_update(res, view_type)
-
 
 class OliveArrivalLine(models.Model):
     _name = 'olive.arrival.line'
@@ -505,6 +512,8 @@ class OliveArrivalLine(models.Model):
     arrival_state = fields.Selection(related='arrival_id.state', store=True, string="Arrival State")
     arrival_date = fields.Date(related='arrival_id.date', store=True)
     season_id = fields.Many2one(related='arrival_id.season_id', store=True, index=True)
+    current_season = fields.Boolean(
+        compute='_compute_current_season', search='_search_current_season')
     warehouse_id = fields.Many2one(related='arrival_id.warehouse_id', store=True, index=True)
     commercial_partner_id = fields.Many2one(
         related='arrival_id.partner_id.commercial_partner_id',
@@ -774,6 +783,16 @@ class OliveArrivalLine(models.Model):
                         olive_qty - sale_olive_qty, precision_digits=prec)
             line.sale_olive_qty = sale_olive_qty
             line.withdrawal_olive_qty = withdrawal_olive_qty
+
+    def _compute_current_season(self):
+        for line in self:
+            if line.company_id.current_season_id == line.season_id:
+                line.current_season = True
+            else:
+                line.current_season = False
+
+    def _search_current_season(self, operator, value):
+        return self.env['res.company']._search_current_season(operator, value)
 
     @api.onchange('oil_destination')
     def oil_destination_change(self):
@@ -1169,12 +1188,6 @@ class OliveArrivalLine(models.Model):
 
     def check_arrival_line_hook(self, i, warn_msgs):
         return
-
-    @api.model
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super().fields_view_get(
-            view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        return self.env.company.current_season_update(res, view_type)
 
 
 class OliveArrivalLineExtra(models.Model):

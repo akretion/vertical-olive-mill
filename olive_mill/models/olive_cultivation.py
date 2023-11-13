@@ -18,6 +18,8 @@ class OliveCultivation(models.Model):
         'olive.season', string='Season', required=True, index=True, check_company=True,
         default=lambda self: self.env.company.current_season_id.id,
         domain="[('company_id', '=', company_id)]")
+    current_season = fields.Boolean(
+        compute='_compute_current_season', search='_search_current_season')
     company_id = fields.Many2one(
         'res.company', required=True, default=lambda self: self.env.company, ondelete='cascade')
     ochard_ids = fields.Many2many('olive.ochard', string='Ochards')
@@ -36,6 +38,16 @@ class OliveCultivation(models.Model):
     notes = fields.Text(string='Notes')
     scan = fields.Binary(string='Cultivation Form Scan')
     scan_filename = fields.Char(string='Filename')
+
+    def _compute_current_season(self):
+        for cult in self:
+            if cult.company_id.current_season_id == cult.season_id:
+                cult.current_season = True
+            else:
+                cult.current_season = False
+
+    def _search_current_season(self, operator, value):
+        return self.env['res.company']._search_current_season(operator, value)
 
     @api.constrains('date', 'season_id')
     def check_cultivation(self):
@@ -64,9 +76,3 @@ class OliveCultivation(models.Model):
             self.date = False
             self.treatment_id = False
             self.quantity = False
-
-    @api.model
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super().fields_view_get(
-            view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        return self.env.company.current_season_update(res, view_type)

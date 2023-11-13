@@ -47,6 +47,8 @@ class OliveOilAnalysis(models.Model):
         'olive.season', string='Season', required=True, index=True,
         domain="[('company_id', '=', company_id)]",
         states={'done': [('readonly', True)]}, check_company=True)
+    current_season = fields.Boolean(
+        compute='_compute_current_season', search='_search_current_season')
     location_id = fields.Many2one(
         'stock.location', string='Oil Tank',
         domain="[('olive_tank_type', '!=', False), ('company_id', '=', company_id)]",
@@ -81,6 +83,16 @@ class OliveOilAnalysis(models.Model):
     line_ids = fields.One2many(
         'olive.oil.analysis.line', 'analysis_id', string='Analysis Lines',
         states={'done': [('readonly', True)]})
+
+    def _compute_current_season(self):
+        for ana in self:
+            if ana.company_id.current_season_id == ana.season_id:
+                ana.current_season = True
+            else:
+                ana.current_season = False
+
+    def _search_current_season(self, operator, value):
+        return self.env['res.company']._search_current_season(operator, value)
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -164,12 +176,6 @@ class OliveOilAnalysis(models.Model):
     def cancel(self):
         self.write({'state': 'cancel'})
 
-    @api.model
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super(OliveOilAnalysis, self).fields_view_get(
-            view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        return self.env.company.current_season_update(res, view_type)
-
 
 class OliveOilAnalysisLine(models.Model):
     _name = 'olive.oil.analysis.line'
@@ -208,6 +214,8 @@ class OliveOilAnalysisLine(models.Model):
         related='analysis_id.oil_product_id', store=True, index=True)
     date = fields.Date(related='analysis_id.date', store=True)
     season_id = fields.Many2one(related='analysis_id.season_id', store=True)
+    current_season = fields.Boolean(
+        compute='_compute_current_season', search='_search_current_season')
     partner_id = fields.Many2one(
         related='analysis_id.arrival_line_id.arrival_id.partner_id.commercial_partner_id',
         store=True, index=True, string='Olive Farmer')
@@ -241,8 +249,12 @@ class OliveOilAnalysisLine(models.Model):
                 res = formatLang(env_lang, round(line.result_p2, 2), digits=2)
             line.result_string = res
 
-    @api.model
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super().fields_view_get(
-            view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        return self.env.company.current_season_update(res, view_type)
+    def _compute_current_season(self):
+        for line in self:
+            if line.company_id.current_season_id == line.season_id:
+                line.current_season = True
+            else:
+                line.current_season = False
+
+    def _search_current_season(self, operator, value):
+        return self.env['res.company']._search_current_season(operator, value)

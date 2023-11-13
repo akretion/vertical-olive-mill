@@ -53,7 +53,7 @@
         <search>
             <field name="partner_id"/>
             <separator/>
-            <filter name="current_season" string="Current Season" domain="[('season_id', '=', 'CURRENT_SEASON_ID')]"/>
+            <filter name="current_season" string="Current Season" domain="[('current_season', '=', True)]"/>
             <group string="Group By" name="groupby">
                 <filter name="partner_groupby" string="Farmer" context="{'group_by': 'partner_id'}"/>
                 <filter name="season_groupby" string="Season" context="{'group_by': 'season_id'}"/>

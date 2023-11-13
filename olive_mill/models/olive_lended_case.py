@@ -25,6 +25,8 @@ class OliveLendedCase(models.Model):
         'olive.season', required=True, index=True, check_company=True,
         default=lambda self: self.env.company.current_season_id.id,
         ondelete='restrict', domain="[('company_id', '=', company_id)]")
+    current_season = fields.Boolean(
+        compute='_compute_current_season', search='_search_current_season')
     company_id = fields.Many2one(
         'res.company', index=True, required=True,
         ondelete='cascade', default=lambda self: self.env.company)
@@ -39,6 +41,16 @@ class OliveLendedCase(models.Model):
         "It is negative when the case is returned.")
     notes = fields.Char(string='Notes')
 
+    def _compute_current_season(self):
+        for lcase in self:
+            if lcase.company_id.current_season_id == lcase.season_id:
+                lcase.current_season = True
+            else:
+                lcase.current_season = False
+
+    def _search_current_season(self, operator, value):
+        return self.env['res.company']._search_current_season(operator, value)
+
     @api.depends('date', 'partner_id', 'regular_qty', 'organic_qty')
     def name_get(self):
         res = []
@@ -50,9 +62,3 @@ class OliveLendedCase(models.Model):
                 rec.organic_qty)
             res.append((rec.id, name))
         return res
-
-    @api.model
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super().fields_view_get(
-            view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        return self.env.company.current_season_update(res, view_type)

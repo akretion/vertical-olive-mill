@@ -182,8 +182,14 @@ class ResCompany(models.Model):
         for company in self:
             company.current_season_id = company.get_current_season()
 
-    def current_season_update(self, fields_view_get_result, view_type):
-        self.ensure_one()
-        fields_view_get_result['arch'] = fields_view_get_result['arch'].replace(
-            "'CURRENT_SEASON_ID'", str(self.current_season_id.id))
-        return fields_view_get_result
+    @api.model
+    def _search_current_season(self, operator, value):
+        if operator not in ('=', '!=') or not isinstance(value, bool):
+            raise UserError(_('Operation not supported.'))
+        companies = self.search([])
+        operator_map = {
+            '=': 'in',
+            '!=': 'not in',
+            }
+        res = [('season_id', operator_map[operator], companies.current_season_id.ids)]
+        return res

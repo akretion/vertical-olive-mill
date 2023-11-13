@@ -26,6 +26,8 @@ class OliveAppointment(models.Model):
     season_id = fields.Many2one(
         'olive.season', required=True, index=True, check_company=True,
         default=lambda self: self.env.company.current_season_id.id)
+    current_season = fields.Boolean(
+        compute='_compute_current_season', search='_search_current_season')
     partner_id = fields.Many2one(
         'res.partner', string='Olive Farmer', required=True, copy=False,
         domain=[('olive_farmer', '=', True)], tracking=True)
@@ -179,6 +181,16 @@ class OliveAppointment(models.Model):
                     label += ', ' + app.name
             app.display_calendar_label = label
 
+    def _compute_current_season(self):
+        for app in self:
+            if app.company_id.current_season_id == app.season_id:
+                app.current_season = True
+            else:
+                app.current_season = False
+
+    def _search_current_season(self, operator, value):
+        return self.env['res.company']._search_current_season(operator, value)
+
     @api.onchange('oil_destination')
     def oil_destination_change(self):
         if self.oil_destination in ('sale', 'withdrawal'):
@@ -319,9 +331,3 @@ class OliveAppointment(models.Model):
             fields.Datetime.to_string(start_datetime_tz)[11:16],
             fields.Datetime.to_string(end_datetime_tz)[11:16])
         return label
-
-    @api.model
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super().fields_view_get(
-            view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        return self.env.company.current_season_update(res, view_type)
