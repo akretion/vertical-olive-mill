@@ -59,8 +59,6 @@ class OliveSeason(models.Model):
             ('state', '=', 'done')],
             ['season_id', 'olive_qty'], ['season_id'])
         olive_qty_arrived_map = dict([(x['season_id'][0], x['olive_qty']) for x in arrival_res])
-        for season in self:
-            season.olive_qty_arrived = olive_qty_arrived_map.get(season.id, 0)
         arrival_prod_done_res = oalo.read_group([
             ('season_id', 'in', self.ids),
             ('production_state', '=', 'done')],
@@ -68,18 +66,19 @@ class OliveSeason(models.Model):
             ['season_id'])
         map_data = dict([(x['season_id'][0], {'olive_qty': x['olive_qty'], 'oil_qty_with_compensation': x['oil_qty_with_compensation'], 'sale_oil_qty': x['sale_oil_qty'], 'withdrawal_oil_qty': x['withdrawal_oil_qty']}) for x in arrival_prod_done_res])
         for season in self:
-            olive_qty = map_data.get('olive_qty', 0)
-            oil_qty_with_compensation = map_data.get('oil_qty_with_compensation', 0)
+            olive_qty = map_data.get(season.id, {}).get('olive_qty', 0)
+            oil_qty_with_compensation = map_data.get(season.id, {}).get('oil_qty_with_compensation', 0)
             gross_ratio = 0
             if olive_qty:
                 gross_ratio = float_round(
                     100 * oil_qty_with_compensation / olive_qty,
                     precision_digits=pr_ratio)
+            season.olive_qty_arrived = olive_qty_arrived_map.get(season.id, 0)
             season.olive_qty = int(round(olive_qty))
             season.oil_qty_with_compensation = int(round(oil_qty_with_compensation))
             season.gross_ratio = gross_ratio
-            season.sale_oil_qty = int(round(map_data.get('sale_oil_qty', 0)))
-            season.withdrawal_oil_qty = int(round(map_data.get('withdrawal_oil_qty', 0)))
+            season.sale_oil_qty = int(round(map_data.get(season.id, {}).get('sale_oil_qty', 0)))
+            season.withdrawal_oil_qty = int(round(map_data.get(season.id, {}).get('withdrawal_oil_qty', 0)))
 
     @api.constrains('start_date', 'end_date', 'early_bird_date')
     def season_check(self):
