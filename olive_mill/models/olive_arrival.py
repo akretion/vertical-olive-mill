@@ -1216,7 +1216,8 @@ class OliveArrivalLineExtra(models.Model):
         for extra in self:
             if (
                     extra.product_id and
-                    extra.product_id.detailed_type in ('olive_bottle_empty', 'olive_barrel_farmer')):
+                    extra.product_id.detailed_type in ('olive_bottle_empty', 'olive_barrel_farmer') and
+                    extra.line_id.oil_destination in ('mix', 'withdrawal')):
                 extra.fillup = True
             else:
                 extra.fillup = False

@@ -11,7 +11,7 @@ class OliveOilProductionPack2Check(models.TransientModel):
 
     production_id = fields.Many2one(
         'olive.oil.production', string='Olive Oil Production', required=True)
-    palox_id = fields.Many2one(related='production_id.palox_id')
+    palox_ids = fields.Many2many(related='production_id.palox_ids')
     oil_product_id = fields.Many2one(related='production_id.oil_product_id')
     todo_arrival_line_ids = fields.Many2many(
         'olive.arrival.line', string='Arrival Lines Left to Process')

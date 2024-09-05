@@ -31,7 +31,8 @@ class OliveCultivation(models.Model):
         ('treatment', 'Treatment'),
         ('fertilisation', 'Fertilisation'),
         ('weeding', 'Weeding'),  # désherbage
-        ], string='Treatment Type', required=True)
+        ], string='Treatment Type', required=True,
+        compute='_compute_treatment_type', store=True, readonly=False)
     treatment_id = fields.Many2one(
         'olive.treatment', string='Treatment Product', ondelete='restrict')
     quantity = fields.Char(string='Quantity')
@@ -48,6 +49,19 @@ class OliveCultivation(models.Model):
 
     def _search_current_season(self, operator, value):
         return self.env['res.company']._search_current_season(operator, value)
+
+    @api.depends('partner_id', 'season_id', 'company_id')
+    def _compute_treatment_type(self):
+        for cult in self:
+            if cult.partner_id and cult.season_id and cult.season_id.previous_season_id:
+                has_no_treatment = self.search_count([
+                    ('partner_id', '=', cult.partner_id.id),
+                    ('company_id', '=', cult.company_id.id),
+                    ('season_id', '=', cult.season_id.previous_season_id.id),
+                    ('treatment_type', '=', 'none'),
+                    ])
+                if has_no_treatment:
+                    cult.treatment_type = 'none'
 
     @api.constrains('date', 'season_id')
     def check_cultivation(self):

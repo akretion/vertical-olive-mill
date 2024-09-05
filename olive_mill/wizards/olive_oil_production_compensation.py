@@ -17,7 +17,7 @@ class OliveOilProductionCompensation(models.TransientModel):
     company_id = fields.Many2one(related='production_id.company_id')
     warehouse_id = fields.Many2one(related='production_id.warehouse_id')
     season_id = fields.Many2one(related='production_id.season_id')
-    palox_id = fields.Many2one(related='production_id.palox_id')
+    palox_ids = fields.Many2many(related='production_id.palox_ids')
     farmers = fields.Char(related='production_id.farmers')
     compensation_type = fields.Selection([
         ('none', 'No Compensation'),

@@ -21,8 +21,6 @@ class OlivePalox(models.Model):
         domain=[('parent_id', '=', False), ('olive_farmer', '=', True)])
     borrowed_date = fields.Date('Borrowed Date')
     active = fields.Boolean(default=True)
-    production_ids = fields.One2many(
-        'olive.oil.production', 'palox_id', string='Oil Productions')
     arrival_line_ids = fields.One2many(
         'olive.arrival.line', 'palox_id', string='Arrival Lines')
     line_ids = fields.One2many(
@@ -79,7 +77,7 @@ class OlivePalox(models.Model):
                 oil_destination = 'withdrawal'
             palox.oil_destination = oil_destination
             palox.farmers = ' / '.join(farmers)
-            palox.arrival_date = min(arrival_dates)
+            palox.arrival_date = arrival_dates and min(arrival_dates) or False
 
     @api.constrains('borrower_partner_id', 'borrowed_date')
     def palox_check(self):

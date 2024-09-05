@@ -131,6 +131,11 @@
                 <div class='col-12 col-lg-12 o_setting_box' id="olive_production_setting">
                     <div class="o_setting_left_pane" />
                     <div class="o_setting_right_pane">
+
+                <div class="row" id="olive_oil_production_result_uom">
+                    <label for="olive_oil_production_result_uom" class="col-md-4"/>
+                    <field name="olive_oil_production_result_uom" class="col-md-2"/>
+                </div>
                 <div class="row" id="olive_oil_production_start_hour">
                     <label for="olive_oil_production_start_hour" class="col-md-4"/>
                     <field name="olive_oil_production_start_hour" class="col-md-2"/> h

@@ -75,6 +75,10 @@ class ResCompany(models.Model):
     olive_oil_early_bird_discount_product_id = fields.Many2one(
         'product.product', string='Early Bird Discount Product',
         domain=[('detailed_type', '=', 'olive_service')])
+    olive_oil_production_result_uom = fields.Selection([
+        ('kg', 'Kg'),
+        ('liter', 'Liter'),
+        ], default='kg', string='Enter Oil Production Result as')
     olive_oil_production_start_hour = fields.Integer(
         string='Default Oil Production Start Hour', default=8)
     olive_oil_production_start_minute = fields.Integer(
@@ -157,31 +161,31 @@ class ResCompany(models.Model):
         self.ensure_one()
         return (self.olive_min_ratio, self.olive_max_ratio)
 
-    def get_current_season(self):
+    def _get_current_season(self):
         self.ensure_one()
         today = fields.Date.context_today(self)
         season = self.env['olive.season'].search([
             ('start_date', '<=', today),
             ('end_date', '>=', today),
-            ('company_id', '=', self.id),
+            ('company_id', 'in', (self.id, False)),
             ], limit=1)
         if season:
             return season
         season = self.env['olive.season'].search([
             ('year', '=', str(today.year)),
-            ('company_id', '=', self.id),
+            ('company_id', 'in', (self.id, False)),
             ], limit=1)
         if season:
             return season
         season = self.env['olive.season'].search([
             ('start_date', '<=', today),
-            ('company_id', '=', self.id)],
+            ('company_id', 'in', (self.id, False))],
             order='start_date desc', limit=1)
         return season or False
 
     def _compute_current_season_id(self):
         for company in self:
-            company.current_season_id = company.get_current_season()
+            company.current_season_id = company._get_current_season()
 
     @api.model
     def _search_current_season(self, operator, value):

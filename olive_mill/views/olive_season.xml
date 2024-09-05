@@ -23,6 +23,7 @@
                 <field name="early_bird_date"/>
                 <field name="default_expiry_date"/>
                 <field name="show_on_dashboard"/>
+                <field name="previous_season_id"/>
                 <field name="partner_organic_certif_generated" invisible="1"/>
             </group>
         </form>

@@ -39,6 +39,9 @@ class OliveSeason(models.Model):
     show_on_dashboard = fields.Boolean(string='Show on Dashboard', default=True)
     kanban_dashboard_graph = fields.Text(compute='_compute_kanban_dashboard_graph')
     partner_organic_certif_generated = fields.Boolean(readonly=True)
+    # previous_season_id is used to set some default values, for example on olive.cultivation
+    previous_season_id = fields.Many2one(
+        'olive.season', compute="_compute_previous_season_id", store=True)
 
     _sql_constrains = [(
         'name_unique',
@@ -219,3 +222,12 @@ class OliveSeason(models.Model):
             'domain': [('id', 'in', cert_ids)],
             })
         return action
+
+    @api.depends('company_id', 'start_date')
+    def _compute_previous_season_id(self):
+        for season in self:
+            previous_season = self.search([
+                ('company_id', '=', season.company_id.id or False),
+                ('start_date', '<', season.start_date),
+                ], order='start_date desc', limit=1)
+            season.previous_season_id = previous_season and previous_season.id or False

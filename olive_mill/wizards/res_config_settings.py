@@ -51,6 +51,8 @@ class ResConfigSettings(models.TransientModel):
         related='company_id.olive_oil_tax_product_id', readonly=False)
     olive_oil_early_bird_discount_product_id = fields.Many2one(
         related='company_id.olive_oil_early_bird_discount_product_id', readonly=False)
+    olive_oil_production_result_uom = fields.Selection(
+        related='company_id.olive_oil_production_result_uom', readonly=False)
     olive_oil_production_start_hour = fields.Integer(
         related='company_id.olive_oil_production_start_hour', readonly=False)
     olive_oil_production_start_minute = fields.Integer(

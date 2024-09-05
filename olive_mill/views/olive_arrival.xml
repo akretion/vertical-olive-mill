@@ -196,7 +196,7 @@
     <field name="model">olive.arrival</field>
     <field name="arch" type="xml">
         <search>
-            <field name="name"/>
+            <field name="name" filter_domain="['|', ('name', 'ilike', self), ('partner_id', 'ilike', self)]" string="Arrival Number or Olive Farmer"/>
             <field name="partner_id" operator="child_of"/>
             <field name="warehouse_id"/>
             <separator/>

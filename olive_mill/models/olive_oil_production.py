@@ -32,10 +32,11 @@ class OliveOilProduction(models.Model):
         domain="[('olive_mill', '=', True), ('company_id', '=', company_id)]",
         default=lambda self: self.env.user._default_olive_mill_wh(),
         check_company=True, tracking=True)
-    palox_id = fields.Many2one(
-        'olive.palox', string='Palox', required=True, readonly=True,
+    palox_ids = fields.Many2many(
+        'olive.palox', string='Paloxes', required=True, readonly=True,
         ondelete='restrict', check_company=True,
         states={'draft': [('readonly', False)]}, tracking=True)
+    palox_ids_str = fields.Char(compute='_compute_palox_ids_str', store=True)
     # STOCK LOCATIONS
     sale_location_id = fields.Many2one(
         'stock.location', string='Sale Tank', check_company=True,
@@ -165,6 +166,14 @@ class OliveOilProduction(models.Model):
                     raise ValidationError(_(
                         "The compensation ratio (%s %%) is not realistic.") % cratio)
 
+    @api.depends('palox_ids')
+    def _compute_palox_ids_str(self):
+        for prod in self:
+            palox_ids_str = False
+            if prod.palox_ids:
+                palox_ids_str = ', '.join([x.name for x in prod.palox_ids])
+            prod.palox_ids_str = palox_ids_str
+
     @api.depends('warehouse_id')
     def _compute_locations(self):
         for prod in self:
@@ -175,12 +184,12 @@ class OliveOilProduction(models.Model):
                 if wh.olive_compensation_loc_id:
                     prod.compensation_location_id = wh.olive_compensation_loc_id
 
-    @api.depends('palox_id')
+    @api.depends('palox_ids')
     def _compute_oil_product_id(self):
         for prod in self:
             oil_product_id = False
-            if prod.palox_id:
-                oil_product_id = prod.palox_id.oil_product_id
+            if prod.palox_ids:
+                oil_product_id = prod.palox_ids[0].oil_product_id
             prod.oil_product_id = oil_product_id
 
     @api.depends(
@@ -282,48 +291,50 @@ class OliveOilProduction(models.Model):
         oalo = self.env['olive.arrival.line']
         pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
         if not self.line_ids:
-            draft_lines = oalo.search([
-                ('palox_id', '=', self.palox_id.id),
+            draft_line = oalo.search([
+                ('palox_id', 'in', self.palox_ids.ids),
                 ('warehouse_id', '=', self.warehouse_id.id),
                 ('state', '=', 'draft'),
-                ('production_id', '=', False)])
-            if draft_lines:
+                ('production_id', '=', False)], limit=1)
+            if draft_line:
                 raise UserError(_(
                     "Arrival line %s is linked to palox %s but it is still "
                     "in draft state. If you want to take this arrival line "
                     "in this production, you should validate the arrival. "
                     "Otherwise, you should cancel the arrival.")
-                    % (draft_lines[0].name, self.palox_id.name))
-            done_lines = oalo.search([
-                ('palox_id', '=', self.palox_id.id),
-                ('warehouse_id', '=', self.warehouse_id.id),
-                ('state', '=', 'done'),
-                ('production_id', '=', False)])
-            if not done_lines:
-                raise UserError(_(
-                    "The palox %s is empty or currently in production.")
-                    % self.palox_id.name)
-            done_lines.write({'production_id': self.id})
+                    % (draft_line.name, draft_line.palox_id.name))
+            lines_to_attach = oalo
+            for palox in self.palox_ids:
+                done_lines = oalo.search([
+                    ('palox_id', '=', palox.id),
+                    ('warehouse_id', '=', self.warehouse_id.id),
+                    ('state', '=', 'done'),
+                    ('production_id', '=', False)])
+                if not done_lines:
+                    raise UserError(_(
+                        "The palox %s is empty or currently in production.")
+                        % palox.name)
+                lines_to_attach |= done_lines
+            lines_to_attach.write({'production_id': self.id})
             # Free the palox
-            self.palox_id.write({'oil_product_id': False})
+            self.palox_ids.write({'oil_product_id': False})
         oil_dests = []
         oil_product = False
+        first_arrival_line = self.line_ids[0]
+        oil_product = first_arrival_line.oil_product_id
         sample = False
         farmers = []
         for line in self.line_ids:
             oil_dests.append(line.oil_destination)
-            if oil_product:
-                if oil_product != line.oil_product_id:
-                    raise UserError(_(
-                        "The oil type of arrival line %s is %s, "
-                        "but it is %s on the first arrival line "
-                        "of palox %s.") % (
-                            line.name,
-                            line.oil_product_id.name,
-                            oil_product.name,
-                            self.palox_id.name))
-            else:
-                oil_product = line.oil_product_id
+            if line.oil_product_id != oil_product:
+                raise UserError(_(
+                    "The oil type of arrival line %s is %s, "
+                    "but it is %s on the first arrival line %s. All the "
+                    "arrival lines must have the same oil type.") % (
+                        line.name,
+                        line.oil_product_id.name,
+                        oil_product.name,
+                        first_arrival_line.name))
             if line.season_id != self.season_id:
                 raise UserError(_(
                     "The season of arrival line %s is '%s', but the oil "
@@ -817,8 +828,8 @@ class OliveOilProduction(models.Model):
 
     def detach_lines(self):
         self.ensure_one()
+        self.palox_ids.write({'oil_product_id': self.oil_product_id.id})
         self.line_ids.write({'production_id': False})
-        self.palox_id.oil_product_id = self.oil_product_id.id
 
     def _compute_day_position(self):
         for prod in self:

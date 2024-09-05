@@ -19,7 +19,7 @@
                 </h1>
             </div>
             <group name="main">
-                <field name="msg" nolabel="1"/>
+                <field name="msg" nolabel="1" colspan="2"/>
                 <field name="show_validation_button" invisible="1"/>
             </group>
             <footer>

@@ -14,7 +14,7 @@
         <form>
             <group name="main">
                 <field name="production_id" invisible="1"/>
-                <field name="palox_id"/>
+                <field name="palox_ids" widget="many2many_tags"/>
                 <field name="oil_product_id"/>
                 <field name="todo_arrival_line_ids" invisible="1"/>
                 <field name="arrival_line_id" domain="[('production_id', '=', production_id)]"/>

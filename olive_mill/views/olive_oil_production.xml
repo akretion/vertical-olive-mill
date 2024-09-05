@@ -42,7 +42,7 @@
                 </div>
                 <group name="main">
                     <group name="left">
-                        <field name="palox_id" domain="[('oil_product_id', '!=', False)]"/>
+                        <field name="palox_ids" domain="[('oil_product_id', '!=', False)]" widget="many2many_tags"/>
                         <field name="date"/>
                         <field name="day_position"/>
                         <field name="oil_product_id"/>
@@ -149,7 +149,7 @@
             <field name="sequence" widget="handle"/>
             <field name="name" decoration-bf="1"/>
             <field name="date"/>
-            <field name="palox_id"/>
+            <field name="palox_ids_str" string="Paloxes"/>
             <field name="compensation_type" groups="olive_mill.olive_compensation"/>
             <field name="oil_destination" widget="badge" decoration-danger="oil_destination == 'mix'" decoration-warning="oil_destination == 'sale'" decoration-info="oil_destination == 'withdrawal'"/>
             <field name="farmers"/>

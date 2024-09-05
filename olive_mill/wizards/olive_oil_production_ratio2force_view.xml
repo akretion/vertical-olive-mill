@@ -15,7 +15,8 @@
             <group name="main">
                 <field name="production_id" invisible="1"/>
                 <field name="season_id" invisible="1"/>
-                <field name="palox_id"/>
+                <field name="olive_oil_production_result_uom" invisible="0"/>
+                <field name="palox_ids" widget="many2many_tags"/>
                 <field name="farmers"/>
                 <field name="oil_destination" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}"/>
                 <field name="oil_product_id"/>
@@ -45,11 +46,11 @@
                 </div>
                 <label for="oil_qty_kg" string="Oil Qty"/>
                 <div name="oil_qty_kg">
-                    <field name="oil_qty_kg" class="oe_inline"/> kg
+                    <field name="oil_qty_kg" class="oe_inline" attrs="{'required': [('olive_oil_production_result_uom', '=', 'kg')], 'readonly': [('olive_oil_production_result_uom', '!=', 'kg')]}"/> kg
                 </div>
                 <label for="oil_qty" string="Oil Qty"/>
                 <div name="oil_qty">
-                    <field name="oil_qty" class="oe_inline"/> L
+                    <field name="oil_qty" class="oe_inline" attrs="{'required': [('olive_oil_production_result_uom', '=', 'liter')], 'readonly': [('olive_oil_production_result_uom', '!=', 'liter')]}"/> L
                 </div>
 
                 <label for="ratio" string="Gross Ratio"/>
