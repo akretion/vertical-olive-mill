@@ -5,6 +5,7 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 from dateutil.relativedelta import relativedelta
+from collections import defaultdict
 
 
 class OliveAgrimerReport(models.Model):
@@ -343,14 +344,11 @@ class OliveAgrimerReport(models.Model):
 
         pack_bottles = ppo.search([('detailed_type', '=', 'olive_bottle_full_pack')])
         for pbottle in pack_bottles:
-            bottle2oiltypevol[pbottle] = {}
+            bottle2oiltypevol[pbottle] = defaultdict(float)
             pack_dict = pbottle.oil_bottle_full_pack_get_bottles()
             for cbottle, qty in pack_dict.items():
-                oil_type, bottle_volume = bottle2oiltypevol[cbottle].items()[0]
-                if oil_type in bottle2oiltypevol[pbottle]:
-                    bottle2oiltypevol[pbottle][oil_type] += bottle_volume * qty
-                else:
-                    bottle2oiltypevol[pbottle][oil_type] = bottle_volume * qty
+                oil_type, bottle_volume = list(bottle2oiltypevol[cbottle].items())[0]
+                bottle2oiltypevol[pbottle][oil_type] += bottle_volume * qty
 
         pack_bottles_kit = ppo.search(
             [('detailed_type', '=', 'olive_bottle_full_pack_phantom')])

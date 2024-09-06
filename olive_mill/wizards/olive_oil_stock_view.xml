@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2024 Akretion France (https://www.akretion.com/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+        <record id="olive_oil_stock_form" model="ir.ui.view">
+                <field name="model">olive.oil.stock</field>
+                <field name="arch" type="xml">
+                        <form>
+                            <div>Current stock of olive oil (withdrawal oil excluded). All quantities are in liter.</div>
+                            <group name="main">
+                                    <field name="company_id" groups="base.group_multi_company"/>
+                                    <field name="location_ids" widget="many2many_tags"/>
+                            </group>
+                                <group name="lines">
+                                        <field name="line_ids" nolabel="1" colspan="2">
+                                                <tree>
+                                                        <field name="product_id"/>
+                                                        <field name="loose_qty" sum="1"/>
+                                                        <field name="in_bottle_qty" sum="1"/>
+                                                        <field name="total_qty" sum="1"/>
+                                                </tree>
+                                            </field>
+                                    </group>
+                                    <footer>
+                                            <button special="cancel" string="Close" class="btn-primary"/>
+                                    </footer>
+                            </form>
+                    </field>
+            </record>
+
+            <record id="olive_oil_stock_action" model="ir.actions.act_window">
+                    <field name="name">Current Oil Stock</field>
+                    <field name="res_model">olive.oil.stock</field>
+                    <field name="view_mode">form</field>
+                    <field name="target">new</field>
+            </record>
+
+            <menuitem id="olive_oil_stock_menu" action="olive_oil_stock_action" sequence="5" parent="olive_report_menu"/>
+
+</odoo>
