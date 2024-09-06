@@ -16,7 +16,6 @@ class StockLocation(models.Model):
 
     olive_tank_type = fields.Selection([
         ('regular', 'Regular'),
-        ('compensation', 'Compensation'),
         ('shrinkage', 'Shrinkage'),
         ('risouletto', 'Risouletto'),
         ], string='Olive Oil Tank Type')

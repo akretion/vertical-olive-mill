@@ -291,18 +291,6 @@
     <field name="uom_po_id" ref="uom.product_uom_kgm"/>
 </record>
 
-<record id="early_bird_discount_product" model="product.product">
-    <field name="name">Early Bird Discount</field>
-    <field name="default_code">EARLYBIRD</field>
-    <field name="categ_id" ref="product.product_category_5"/>
-    <field name="sale_ok" eval="True"/>
-    <field name="purchase_ok" eval="False"/>
-    <field name="detailed_type">olive_service</field>
-    <field name="list_price">0.04</field>
-    <field name="uom_id" ref="uom.product_uom_kgm"/>
-    <field name="uom_po_id" ref="uom.product_uom_kgm"/>
-</record>
-
 <!-- INVENTORY for bottles  -->
 
 

@@ -18,11 +18,6 @@
     <field name="category_id" ref="base.module_category_hidden"/>
 </record>
 
-<record id="olive_compensation" model="res.groups">
-    <field name="name">Olive Mill with Compensation</field>
-    <field name="category_id" ref="base.module_category_hidden"/>
-</record>
-
 </data>
 
 

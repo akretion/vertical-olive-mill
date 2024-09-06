@@ -268,21 +268,11 @@
                 <field name="production_id"/>
                 <field name="production_date"/>
                 <field name="production_state"/>
-                <field name="compensation_type"/>
                 <label for="oil_qty" string="Oil Qty"/>
                 <div name="oil_qty">
                     <field name="oil_qty" class="oe_inline"/> L /
                     <field name="oil_qty_kg" class="oe_inline"/> kg
                 </div>
-                <label for="compensation_oil_qty" string="Compensation Oil Qty" attrs="{'invisible': [('compensation_type', 'not in', ('last', 'first'))]}"/>
-                <div name="compensation_oil_qty" attrs="{'invisible': [('compensation_type', 'not in', ('last', 'first'))]}">
-                    <field name="compensation_oil_qty" class="oe_inline"/> L
-                </div>
-                <label for="oil_qty_with_compensation" string="Oil Qty with Compensation"/>
-                <div name="oil_qty_with_compensation">
-                    <field name="oil_qty_with_compensation" class="oe_inline"/> L
-                </div>
-
                 <label for="shrinkage_oil_qty" string="Shrinkage Oil Qty"/>
                 <div name="shrinkage_oil_qty">
                     <field name="shrinkage_oil_qty" class="oe_inline"/> L /
@@ -485,7 +475,7 @@
             <field name="season_id" type="col"/>
             <field name="oil_product_id" type="row"/>
             <field name="olive_qty" type="measure"/>
-            <field name="oil_qty_with_compensation" type="measure"/>
+            <field name="oil_qty" type="measure"/>
             <field name="withdrawal_oil_qty" type="measure"/>
             <field name="sale_oil_qty" type="measure"/>
         </pivot>

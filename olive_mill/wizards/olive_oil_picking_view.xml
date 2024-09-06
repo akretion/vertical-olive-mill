@@ -13,6 +13,7 @@
     <field name="arch" type="xml">
         <form>
             <group name="main">
+                <field name="move_id" invisible="1"/>
                 <field name="company_id" invisible="1"/>
                 <field name="picking_id" attrs="{'invisible': [('picking_id', '=', False)]}"/>
                 <field name="oil_product_id"/>
@@ -21,7 +22,7 @@
                 <div name="oil_qty">
                     <field name="oil_qty" class="oe_inline"/> L
                 </div>
-                <field name="src_location_id" domain="[('olive_tank_type', 'in', ('regular', 'risouletto')), ('usage', '=', 'internal'), ('oil_product_id', '=', oil_product_id)]"/>
+                <field name="src_location_id"/>
                 <field name="dest_location_id"/>
                 <field name="container_src_location_id"/>
             </group>

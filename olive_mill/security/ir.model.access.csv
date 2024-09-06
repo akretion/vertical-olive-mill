@@ -55,12 +55,8 @@ access_olive_oil_bottling_operator,Full access on olive.oil.bottling wizard,mode
 access_olive_oil_bottling_user,Full access on olive.oil.bottling wizard,model_olive_oil_bottling,stock.group_stock_user,1,1,1,1
 access_olive_oil_picking_user,Full access on olive.oil.picking wizard,model_olive_oil_picking,stock.group_stock_user,1,1,1,1
 access_olive_oil_picking_container_user,Full access on olive.oil.picking.container wizard,model_olive_oil_picking_container,stock.group_stock_user,1,1,1,1
-access_olive_oil_production_compensation_operator,Full access on olive.oil.production.compensation,model_olive_oil_production_compensation,olive_operator,1,1,1,1
-access_olive_oil_production_compensation_user,Full access on olive.oil.production.compensation,model_olive_oil_production_compensation,stock.group_stock_user,1,1,1,1
 access_olive_oil_production_day_print_operator,Full access on olive.oil.production.day.print,model_olive_oil_production_day_print,olive_operator,1,1,1,1
 access_olive_oil_production_day_print_user,Full access on olive.oil.production.day.print,model_olive_oil_production_day_print,stock.group_stock_user,1,1,1,1
-access_olive_oil_production_done_last_operator,Full access on olive.oil.production.done.last,model_olive_oil_production_done_last,olive_operator,1,1,1,1
-access_olive_oil_production_done_last_user,Full access on olive.oil.production.done.last,model_olive_oil_production_done_last,stock.group_stock_user,1,1,1,1
 access_olive_oil_production_force_ratio_operator,Full access on olive.oil.production.force.ratio,model_olive_oil_production_force_ratio,olive_operator,1,1,1,1
 access_olive_oil_production_force_ratio_user,Full access on olive.oil.production.force.ratio,model_olive_oil_production_force_ratio,stock.group_stock_user,1,1,1,1
 access_olive_oil_production_pack2check_operator,Full access on olive.oil.production.pack2check,model_olive_oil_production_pack2check,olive_operator,1,1,1,1

@@ -4,9 +4,6 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
-from dateutil.relativedelta import relativedelta
-import logging
-logger = logging.getLogger(__name__)
 
 
 class StockWarehouse(models.Model):
@@ -22,27 +19,6 @@ class StockWarehouse(models.Model):
     olive_withdrawal_loc_id = fields.Many2one(
         'stock.location', string='Olive Oil Withdrawal Location', check_company=True,
         domain=[('olive_tank_type', '=', False), ('usage', '=', 'internal')])
-    olive_compensation_loc_id = fields.Many2one(
-        'stock.location', string='Olive Oil Compensation Tank', check_company=True,
-        domain=[('olive_tank_type', '=', 'compensation')])
-    olive_compensation_last_qty = fields.Float(
-        string='Olive Compensation Quantity', default=45.0,
-        digits='Olive Weight')
-    olive_oil_compensation_ratio = fields.Float(
-        string='Compensation Ratio',
-        digits='Olive Oil Ratio', default=17)
-    olive_oil_compensation_ratio_update_date = fields.Date(
-        string='Last Update of the Compensation Ratio')
-    olive_oil_compensation_ratio_days = fields.Integer(
-        string='Base for Compensation Ratio Computation', default=7)
-
-    _sql_constraints = [(
-        'olive_oil_compensation_ratio_positive',
-        'CHECK(olive_oil_compensation_ratio >= 0)',
-        'Oil compensation ratio must be positive or null.'),
-        ('olive_compensation_last_qty_positive',
-         'CHECK(olive_compensation_last_qty >= 0)',
-         'Olive Compensation Quantity must be positive or null.')]
 
     @api.depends('olive_organic_case_total', 'olive_regular_case_total')
     def _compute_cases(self):
@@ -60,38 +36,6 @@ class StockWarehouse(models.Model):
             for wh in self:
                 wh.olive_regular_case_stock = wh.olive_regular_case_total
                 wh.olive_organic_case_stock = wh.olive_organic_case_total
-
-    @api.model
-    def olive_oil_compensation_ratio_update_cron(self):
-        logger.info('Starting oil compensation ratio update cron')
-        for wh in self.search([('olive_mill', '=', True)]):
-            wh.olive_oil_compensation_ratio_update()
-
-    def olive_oil_compensation_ratio_update(self):
-        today = fields.Date.context_today(self)
-        if not self.olive_mill:
-            return
-        start_date = today - relativedelta(
-            days=self.olive_oil_compensation_ratio_days)
-        rg = self.env['olive.arrival.line'].read_group([
-            ('production_state', '=', 'done'),
-            ('production_date', '<=', today),
-            ('production_date', '>=', start_date),
-            ], ['olive_qty', 'oil_qty'], [])
-        if rg and rg[0]['olive_qty']:
-            ratio = 100 * rg[0]['oil_qty'] / rg[0]['olive_qty']
-            self.write({
-                'olive_oil_compensation_ratio_update_date': today,
-                'olive_oil_compensation_ratio': ratio,
-                })
-            logger.info(
-                'Oil compensation ratio updated to %s on warehouse %s '
-                'start_date %s ', ratio, self.name, start_date)
-        else:
-            logger.warning(
-                'Oil compensation ratio not updated on warehouse %s '
-                'because there is no production data between %s and %s',
-                self.name, start_date, today)
 
     def olive_get_shrinkage_tank(self, oil_product, raise_if_not_found=True):
         self.ensure_one()

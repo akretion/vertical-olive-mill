@@ -21,7 +21,6 @@ class OliveSeason(models.Model):
     start_date = fields.Date(required=True)
     end_date = fields.Date(required=True)
     year = fields.Char(compute='_compute_year', string='Year', store=True)
-    early_bird_date = fields.Date(string='Early Bird Limit Date')
     default_expiry_date = fields.Date(string='Default Oil Expiry Date', compute="_compute_default_expiry_date", readonly=False, store=True)
     olive_qty_arrived = fields.Integer(
         compute='_compute_totals', string='Arrived Olive Qty (kg)', readonly=True)
@@ -29,8 +28,8 @@ class OliveSeason(models.Model):
         compute='_compute_totals', string='Pressed Olive Qty (kg)', readonly=True)
     sale_oil_qty = fields.Integer(
         compute='_compute_totals', string='Sale Oil Qty (L)', readonly=True)
-    oil_qty_with_compensation = fields.Integer(
-        compute='_compute_totals', string='Oil Qty with Compensation (L)', readonly=True)
+    oil_qty = fields.Integer(
+        compute='_compute_totals', string='Oil Qty (L)', readonly=True)
     withdrawal_oil_qty = fields.Integer(
         compute='_compute_totals', string='Withdrawal Oil Qty (L)', readonly=True)
     gross_ratio = fields.Float(
@@ -65,44 +64,31 @@ class OliveSeason(models.Model):
         arrival_prod_done_res = oalo.read_group([
             ('season_id', 'in', self.ids),
             ('production_state', '=', 'done')],
-            ['season_id', 'olive_qty', 'oil_qty_with_compensation', 'sale_oil_qty', 'withdrawal_oil_qty'],
+            ['season_id', 'olive_qty', 'oil_qty', 'sale_oil_qty', 'withdrawal_oil_qty'],
             ['season_id'])
-        map_data = dict([(x['season_id'][0], {'olive_qty': x['olive_qty'], 'oil_qty_with_compensation': x['oil_qty_with_compensation'], 'sale_oil_qty': x['sale_oil_qty'], 'withdrawal_oil_qty': x['withdrawal_oil_qty']}) for x in arrival_prod_done_res])
+        map_data = dict([(x['season_id'][0], {'olive_qty': x['olive_qty'], 'oil_qty': x['oil_qty'], 'sale_oil_qty': x['sale_oil_qty'], 'withdrawal_oil_qty': x['withdrawal_oil_qty']}) for x in arrival_prod_done_res])
         for season in self:
             olive_qty = map_data.get(season.id, {}).get('olive_qty', 0)
-            oil_qty_with_compensation = map_data.get(season.id, {}).get('oil_qty_with_compensation', 0)
+            oil_qty = map_data.get(season.id, {}).get('oil_qty', 0)
             gross_ratio = 0
             if olive_qty:
                 gross_ratio = float_round(
-                    100 * oil_qty_with_compensation / olive_qty,
+                    100 * oil_qty / olive_qty,
                     precision_digits=pr_ratio)
             season.olive_qty_arrived = olive_qty_arrived_map.get(season.id, 0)
             season.olive_qty = int(round(olive_qty))
-            season.oil_qty_with_compensation = int(round(oil_qty_with_compensation))
+            season.oil_qty = int(round(oil_qty))
             season.gross_ratio = gross_ratio
             season.sale_oil_qty = int(round(map_data.get(season.id, {}).get('sale_oil_qty', 0)))
             season.withdrawal_oil_qty = int(round(map_data.get(season.id, {}).get('withdrawal_oil_qty', 0)))
 
-    @api.constrains('start_date', 'end_date', 'early_bird_date')
+    @api.constrains('start_date', 'end_date')
     def season_check(self):
         for season in self:
             if season.end_date <= season.start_date:
                 raise ValidationError(_(
                     "End Date must be after Start Date on season '%s'")
                     % season.name)
-            if season.early_bird_date:
-                if season.early_bird_date <= season.start_date:
-                    raise ValidationError(_(
-                        "On season '%s', the Early Bird Date (%s) must be "
-                        "after the Start Date (%s).") % (
-                            season.name, season.early_bird_date,
-                            season.start_date))
-                if season.early_bird_date >= season.end_date:
-                    raise ValidationError(_(
-                        "On season '%s', the Early Bird Date (%s) must be "
-                        "before the End Date (%s).") % (
-                            season.name, season.early_bird_date,
-                            season.end_date))
             oseasons = self.search([
                 ('year', '=', season.year),
                 ('id', '!=', season.id)])

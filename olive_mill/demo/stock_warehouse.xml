@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
+  Copyright 2018-2024 Barroux Abbey (https://www.barroux.org/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -11,7 +11,6 @@
 <record id="stock.warehouse0" model="stock.warehouse">
     <field name="olive_mill">1</field>
     <field name="olive_withdrawal_loc_id" ref="withdrawal"/>
-    <field name="olive_compensation_loc_id" ref="compensation"/>
     <field name="olive_regular_case_total">1000</field>
     <field name="olive_organic_case_total">500</field>
 </record>

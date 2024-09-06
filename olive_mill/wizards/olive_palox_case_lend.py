@@ -15,7 +15,7 @@ class OlivePaloxCaseLend(models.TransientModel):
         'res.company', ondelete='cascade', required=True, readonly=True,
         default=lambda self: self.env.company)
     arrival_id = fields.Many2one(
-        'olive.arrival', string='Arrival', readonly=True)
+        'olive.arrival', string='Arrival', readonly=True, check_company=True)
     way = fields.Selection([
         ('lend', 'Lend'),
         ('return', 'Return'),
@@ -25,10 +25,10 @@ class OlivePaloxCaseLend(models.TransientModel):
         domain=[('olive_farmer', '=', True), ('parent_id', '=', False)])
     lend_palox_ids = fields.Many2many(
         'olive.palox', 'olive_palox_wizard_lend_rel', 'wizard_id', 'palox_id',
-        string='Lended Palox')
+        string='Lended Palox', domain="[('borrower_partner_id', '=', False)]")
     return_palox_ids = fields.Many2many(
         'olive.palox', 'olive_palox_wizard_return_rel', 'wizard_id', 'palox_id',
-        string='Returned Palox')
+        string='Returned Palox', domain="[('borrower_partner_id', '=', partner_id)]")
     olive_culture_type = fields.Selection(related='partner_id.olive_culture_type')
     regular_case_qty = fields.Integer(string='Case Qty')
     organic_case_qty = fields.Integer(string='Organic Case Qty')

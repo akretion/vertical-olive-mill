@@ -10,6 +10,7 @@ from odoo.exceptions import UserError
 class OliveOilPicking(models.TransientModel):
     _name = 'olive.oil.picking'
     _description = 'Wizard to ship loose olive oil'
+    _check_company_auto = True
 
     move_id = fields.Many2one(
         'stock.move', string='Stock Move', readonly=True, required=True)
@@ -21,24 +22,29 @@ class OliveOilPicking(models.TransientModel):
         string='Oil Qty', readonly=True,
         digits='Product Unit of Measure')
     warehouse_id = fields.Many2one(
-        'stock.warehouse', string='Warehouse',
-        domain=[('olive_mill', '=', True)],
+        'stock.warehouse', string='Warehouse', check_company=True, required=True,
+        domain="[('olive_mill', '=', True), ('company_id', '=', company_id)]",
         default=lambda self: self.env.user._default_olive_mill_wh())
     src_location_id = fields.Many2one(
-        'stock.location', string='Olive Tank', required=True)
+        'stock.location', string='Olive Tank', required=True, check_company=True,
+        domain="[('olive_tank_type', 'in', ('regular', 'risouletto')), ('usage', '=', 'internal'), ('oil_product_id', '=', oil_product_id), ('company_id', '=', company_id)]")
     dest_location_id = fields.Many2one(
         'stock.location', string='Destination Location',
-        readonly=True, required=True)
+        readonly=True, required=True, check_company=True)
     container_src_location_id = fields.Many2one(
-        'stock.location', string='Source Location for Empty Containers',
-        domain=[('usage', '=', 'internal')])
+        'stock.location',
+        compute="_compute_container_src_location_id", store=True, readonly=False,
+        string='Source Location for Empty Containers',
+        domain="[('usage', '=', 'internal'), ('company_id', '=', company_id)]",
+        check_company=True)
     container_ids = fields.One2many(
         'olive.oil.picking.container', 'wizard_id', 'Containers Used')
 
-    @api.onchange('warehouse_id')
-    def warehouse_id_change(self):
-        if self.warehouse_id:
-            self.container_src_location_id = self.warehouse_id.lot_stock_id
+    @api.depends('warehouse_id')
+    def _compute_container_src_location_id(self):
+        for wiz in self:
+            if wiz.warehouse_id:
+                wiz.container_src_location_id = wiz.warehouse_id.lot_stock_id.id
 
     def validate(self):
         self.ensure_one()

@@ -11,8 +11,6 @@ class ResConfigSettings(models.TransientModel):
 
     group_olive_organic = fields.Boolean(
         string="Organic Olive Mill", implied_group='olive_mill.olive_organic')
-    group_olive_compensation = fields.Boolean(
-        string="Olive Mill with Compensations", implied_group='olive_mill.olive_compensation')
     current_season_id = fields.Many2one(
         related='company_id.current_season_id')
     olive_preseason_poll_ratio_no_history = fields.Float(
@@ -49,8 +47,6 @@ class ResConfigSettings(models.TransientModel):
         related='company_id.olive_oil_production_product_id', readonly=False)
     olive_oil_tax_product_id = fields.Many2one(
         related='company_id.olive_oil_tax_product_id', readonly=False)
-    olive_oil_early_bird_discount_product_id = fields.Many2one(
-        related='company_id.olive_oil_early_bird_discount_product_id', readonly=False)
     olive_oil_production_result_uom = fields.Selection(
         related='company_id.olive_oil_production_result_uom', readonly=False)
     olive_oil_production_start_hour = fields.Integer(

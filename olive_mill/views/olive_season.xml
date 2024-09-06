@@ -20,7 +20,6 @@
                 <field name="company_id" groups="base.group_multi_company"/>
                 <field name="start_date"/>
                 <field name="end_date"/>
-                <field name="early_bird_date"/>
                 <field name="default_expiry_date"/>
                 <field name="show_on_dashboard"/>
                 <field name="previous_season_id"/>
@@ -38,7 +37,6 @@
             <field name="name"/>
             <field name="start_date"/>
             <field name="end_date"/>
-            <field name="early_bird_date" optional="show"/>
             <field name="default_expiry_date" optional="show"/>
             <field name="company_id" groups="base.group_multi_company" optional="hide"/>
         </tree>
@@ -75,7 +73,7 @@
             <field name="name"/>
             <field name="olive_qty_arrived"/>
             <field name="olive_qty"/>
-            <field name="oil_qty_with_compensation"/>
+            <field name="oil_qty"/>
             <field name="gross_ratio"/>
             <field name="sale_oil_qty"/>
             <field name="withdrawal_oil_qty"/>
@@ -138,7 +136,7 @@
                                 <span title="Total Olive">Total Oil</span>
                             </div>
                             <div class="col-auto text-right">
-                                <span><t t-esc="record.oil_qty_with_compensation.raw_value"/> L</span>
+                                <span><t t-esc="record.oil_qty.raw_value"/> L</span>
                             </div>
                         </div>
                         <div class="row">

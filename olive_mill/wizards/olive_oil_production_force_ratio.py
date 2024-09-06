@@ -2,24 +2,35 @@
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import fields, models, _
+from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
 
 class OliveOilProductionForceRatio(models.TransientModel):
     _name = 'olive.oil.production.force.ratio'
     _description = 'Olive Oil Production Force Ratio'
+    _check_company_auto = True
 
     production_id = fields.Many2one(
         'olive.oil.production', string='Olive Oil Production', required=True)
+    company_id = fields.Many2one(related='production_id.company_id')
     palox_ids = fields.Many2many(related='production_id.palox_ids')
     farmers = fields.Char(related='production_id.farmers')
     oil_product_id = fields.Many2one(related='production_id.oil_product_id')
     global_ratio = fields.Float(related='production_id.ratio', string='Global Ratio')
     arrival_line_id = fields.Many2one(
-        'olive.arrival.line', required=True, string='Production Line')
+        'olive.arrival.line', required=True, string='Production Line',
+        domain="[('production_id', '=', production_id)]", check_company=True)
     force_ratio = fields.Float(
         string='Force Ratio', digits='Olive Oil Ratio', required=True)
+
+    @api.model
+    def default_get(self, fields_list):
+        res = super().default_get(fields_list)
+        assert self._context.get('active_model') == 'olive.oil.production'
+        assert self._context.get('active_id')
+        res['production_id'] = self._context['active_id']
+        return res
 
     def validate(self):
         self.ensure_one()
@@ -33,3 +44,12 @@ class OliveOilProductionForceRatio(models.TransientModel):
                 "The ratio (%s %%) is not realistic.") % self.force_ratio)
         prod.set_qty_on_lines(
             force_ratio=(self.arrival_line_id, self.force_ratio))
+
+
+# Keep temporarily the model olive.oil.production.compensation
+# that has a selection field
+# bug https://github.com/odoo/odoo/issues/179392
+# TODO remove once update done on prod DB
+class OliveOilProductionCompensation(models.TransientModel):
+    _name = 'olive.oil.production.compensation'
+    _description = 'To remove'

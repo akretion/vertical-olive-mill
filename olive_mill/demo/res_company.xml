@@ -12,7 +12,6 @@
     <field name="olive_oil_leaf_removal_product_id" ref="leaf_remove_product"/>
     <field name="olive_oil_production_product_id" ref="production_product"/>
     <field name="olive_oil_tax_product_id" ref="tax_product"/>
-    <field name="olive_oil_early_bird_discount_product_id" ref="early_bird_discount_product"/>
 </record>
 
 

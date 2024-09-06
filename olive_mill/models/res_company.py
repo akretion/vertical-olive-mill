@@ -72,9 +72,6 @@ class ResCompany(models.Model):
     olive_oil_tax_product_id = fields.Many2one(
         'product.product', string='AFIDOL Tax Product',
         domain=[('detailed_type', '=', 'olive_tax')])
-    olive_oil_early_bird_discount_product_id = fields.Many2one(
-        'product.product', string='Early Bird Discount Product',
-        domain=[('detailed_type', '=', 'olive_service')])
     olive_oil_production_result_uom = fields.Selection([
         ('kg', 'Kg'),
         ('liter', 'Liter'),

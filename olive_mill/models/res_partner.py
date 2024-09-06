@@ -155,7 +155,7 @@ class ResPartner(models.Model):
                         ('commercial_partner_id', '=', partner.id),
                         ('state', '=', 'done'),
                         ('production_state', '=', 'done')],
-                        ['olive_qty', 'sale_olive_qty', 'withdrawal_olive_qty', 'sale_oil_qty', 'oil_qty_net', 'withdrawal_oil_qty_with_compensation'],
+                        ['olive_qty', 'sale_olive_qty', 'withdrawal_olive_qty', 'sale_oil_qty', 'oil_qty_net', 'withdrawal_oil_qty'],
                         [])
                     if arrival_prod_res:
                         olive_qty_triturated_current_season = arrival_prod_res[0]['olive_qty'] or 0.0
@@ -163,7 +163,7 @@ class ResPartner(models.Model):
                         olive_qty_withdrawal_current_season = arrival_prod_res[0]['withdrawal_olive_qty'] or 0.0
                         olive_sale_oil_qty_current_season = arrival_prod_res[0]['sale_oil_qty'] or 0.0
                         olive_oil_qty_current_season = arrival_prod_res[0]['oil_qty_net'] or 0.0
-                        olive_oil_qty_withdrawal_current_season = arrival_prod_res[0]['withdrawal_oil_qty_with_compensation'] or 0.0
+                        olive_oil_qty_withdrawal_current_season = arrival_prod_res[0]['withdrawal_oil_qty'] or 0.0
                         if olive_qty_triturated_current_season:
                             olive_oil_ratio_current_season = 100 * olive_oil_qty_current_season / olive_qty_triturated_current_season
                 olive_products = self.env['product.product'].search([

@@ -4,7 +4,7 @@
 
 {
     'name': 'Olive Mill',
-    'version': "14.0.2.0.0",
+    'version': "14.0.3.0.0",
     'category': 'Manufacturing',
     'license': 'AGPL-3',
     'summary': 'Manage an olive mill',
@@ -28,7 +28,6 @@
         'data/decimal_precision.xml',
         'data/sequence.xml',
         'data/organic_certifying_entity.xml',
-        'data/cron.xml',
         'report/report.xml',
         'views/menu.xml',
         'wizards/olive_palox_case_lend_view.xml',
@@ -40,9 +39,7 @@
         'wizards/olive_oil_production_pack2check_view.xml',
         'wizards/olive_oil_tank_transfer.xml',
         'wizards/olive_arrival_warning_view.xml',
-        'wizards/olive_oil_production_compensation_view.xml',
         'wizards/olive_oil_production_product_swap_view.xml',
-        'wizards/olive_oil_production_done_last_view.xml',
         'wizards/olive_oil_bottling_view.xml',
         'wizards/olive_oil_picking_view.xml',
         'wizards/olive_appointment_print_view.xml',

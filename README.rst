@@ -23,7 +23,6 @@ Here is a list of features provided by the **olive_mill** module:
 * Configure cultivation methods for each olive farmer (treatments, date of treatment, ...)
 * Manage the arrival of olives from olive farmers (weighing, control, ...)
 * For each arrival, the olive farmer decides if he wants to get back the oil, or sell it to the olive mill, or a mix of both,
-* Manage the press (with first-of-day and last-of-day compensations if the press requires it),
 * Handle shrinkage on each press sent to a special shrinkage tank,
 * Manage retreival of olive oil (if the farmer wants to get back his olive oil),
 * Computation of ratios per press, per arrival, per farmer and per campaign,

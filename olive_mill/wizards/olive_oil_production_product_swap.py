@@ -1,14 +1,15 @@
-# Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
+# Copyright 2018-2024 Barroux Abbey (https://www.barroux.org/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import fields, models, _
+from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
 
-class OliveOilProductionCompensation(models.TransientModel):
+class OliveOilProductionProductSwap(models.TransientModel):
     _name = 'olive.oil.production.product.swap'
     _description = 'Swap oil type on olive oil production'
+    _check_company_auto = True
 
     production_id = fields.Many2one(
         'olive.oil.production', string='Olive Oil Production', required=True)
@@ -21,8 +22,20 @@ class OliveOilProductionCompensation(models.TransientModel):
         related='production_id.oil_product_id', string='Current Oil Type')
     new_oil_product_id = fields.Many2one(
         'product.product', string='New Oil Type',
-        domain=[('detailed_type', '=', 'olive_oil')], required=True)
-    sale_location_id = fields.Many2one('stock.location', string='New Sale Tank')
+        domain="[('detailed_type', '=', 'olive_oil'), ('id', '!=', current_oil_product_id)]",
+        required=True)
+    sale_location_id = fields.Many2one(
+        'stock.location', string='New Sale Tank', check_company=True,
+        domain="[('olive_tank_type', '=', 'regular'), ('oil_product_id', '=', new_oil_product_id), ('olive_season_id', '=', season_id), ('company_id', '=', company_id)]",
+        )
+
+    @api.model
+    def default_get(self, fields_list):
+        res = super().default_get(fields_list)
+        assert self._context.get('active_model') == 'olive.oil.production'
+        assert self._context.get('active_id')
+        res['production_id'] = self._context['active_id']
+        return res
 
     def validate(self):
         self.ensure_one()

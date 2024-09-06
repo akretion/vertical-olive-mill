@@ -58,7 +58,6 @@ class StockPicking(models.Model):
                     mline.lot_id and
                     mline.lot_id.olive_production_id):
                 for line in mline.lot_id.olive_production_id.line_ids:
-                    # also check partner to remove first-of-day compensation lots
                     if line.commercial_partner_id == cpartner:
                         arrivals |= line.arrival_id
         res = [arrival for arrival in arrivals]

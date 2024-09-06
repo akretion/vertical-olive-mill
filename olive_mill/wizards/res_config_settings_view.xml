@@ -28,18 +28,7 @@
                         </div>
                     </div>
                 </div>
-            <div class='col-12 col-lg-12 o_setting_box' id="olive_options_setting">
-                <div class="o_setting_left_pane" >
-                    <field name="group_olive_compensation"/>
-                </div>
-                <div class="o_setting_right_pane">
-                    <label for="group_olive_compensation"/>
-                    <div class="text-muted">
-                        Ability to compensate first-of-day under-production by last-of-day over-production
-                    </div>
-                </div>
             </div>
-        </div>
                 <h2>Variables</h2>
             <div class="row mt16 o_settings_container" name="olive_variables_container">
                 <div class='col-12 col-lg-12 o_setting_box' id="olive_variables_setting">
@@ -163,10 +152,6 @@
                 <div class="row" id="olive_oil_production_product_id">
                    <label for="olive_oil_production_product_id" class="col-md-4"/>
                     <field name="olive_oil_production_product_id" class="col-md-8"/>
-                </div>
-                <div class="row" id="olive_oil_early_bird_discount_product_id">
-                   <label for="olive_oil_early_bird_discount_product_id" class="col-md-4"/>
-                    <field name="olive_oil_early_bird_discount_product_id" class="col-md-8"/>
                 </div>
                 <div class="row" id="olive_oil_tax_product_id">
                     <label for="olive_oil_tax_product_id" class="col-md-4"/>
