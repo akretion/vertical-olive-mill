@@ -4,6 +4,7 @@
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
+from dateutil.relativedelta import relativedelta
 
 
 class OliveAgrimerReport(models.Model):
@@ -152,12 +153,14 @@ class OliveAgrimerReport(models.Model):
         'unique(date_start, date_end, company_id)',
         'An AgriMer report with the same start/end date already exists!')]
 
-    @api.depends('date_range_id')
+    @api.depends('date_range_id', 'date_start')
     def _compute_dates(self):
         for report in self:
             if report.date_range_id:
                 report.date_start = report.date_range_id.date_start
                 report.date_end = report.date_range_id.date_end
+            elif report.date_start and report.date_start.day == 1 and not report.date_end:
+                report.date_end = report.date_start + relativedelta(day=31)
 
     def draft2done(self):
         self.ensure_one()
@@ -225,16 +228,16 @@ class OliveAgrimerReport(models.Model):
                     ('product_id', 'in', oil_products.ids),
                     ('location_id', 'in', withdrawal_locs.ids),
                     ('location_dest_id.usage', '=', 'customer'),
-                ], ['product_uom_qty'], [])
+                ], ['product_qty'], [])
             return_move_rg = smo.read_group(
                 move_common_domain + [
                     ('product_id', 'in', oil_products.ids),
                     ('location_id.usage', '=', 'customer'),
                     ('location_dest_id', 'in', withdrawal_locs.ids),
-                ], ['product_uom_qty'], [])
-            qty = move_rg and move_rg[0]['product_uom_qty'] or 0.0
+                ], ['product_qty'], [])
+            qty = move_rg and move_rg[0]['product_qty'] or 0.0
             return_qty = return_move_rg and\
-                return_move_rg[0]['product_uom_qty'] or 0.0
+                return_move_rg[0]['product_qty'] or 0.0
             withdrawal_fieldname = 'withdrawal_%s_oil' % oil_type
             vals[withdrawal_fieldname] = qty - return_qty
         # Loose
@@ -244,17 +247,17 @@ class OliveAgrimerReport(models.Model):
                     ('product_id', 'in', oil_products.ids),
                     ('location_id', 'not in', withdrawal_locs.ids),
                     ('location_dest_id.usage', '=', 'customer'),
-                ], ['product_uom_qty'], [])
+                ], ['product_qty'], [])
             return_move_rg = smo.read_group(
                 move_common_domain + [
                     ('product_id', 'in', oil_products.ids),
                     ('location_id.usage', '=', 'customer'),
                     ('location_dest_id', 'not in', withdrawal_locs.ids),
-                ], ['product_uom_qty'], [])
+                ], ['product_qty'], [])
             loose_fieldname = 'sale_loose_%s_oil' % oil_type
-            qty = move_rg and move_rg[0]['product_uom_qty'] or 0.0
+            qty = move_rg and move_rg[0]['product_qty'] or 0.0
             return_qty = return_move_rg and\
-                return_move_rg[0]['product_uom_qty'] or 0.0
+                return_move_rg[0]['product_qty'] or 0.0
             vals[loose_fieldname] = qty - return_qty
         # Sale bottles
         rpo = self.env['res.partner']
@@ -267,17 +270,17 @@ class OliveAgrimerReport(models.Model):
                     ('product_id', '=', bottle.id),
                     ('location_id.usage', '=', 'internal'),
                     ('location_dest_id.usage', '=', 'customer'),
-                ], ['product_uom_qty', 'partner_id'], ['partner_id'])
+                ], ['product_qty', 'partner_id'], ['partner_id'])
             return_move_rg = smo.read_group(
                 move_common_domain + [
                     ('product_id', '=', bottle.id),
                     ('location_id.usage', '=', 'customer'),
                     ('location_dest_id.usage', '=', 'internal'),
-                ], ['product_uom_qty', 'partner_id'], ['partner_id'])
+                ], ['product_qty', 'partner_id'], ['partner_id'])
             for return_r in return_move_rg:
-                return_r['product_uom_qty'] *= -1
+                return_r['product_qty'] *= -1
             for r in move_rg + return_move_rg:
-                product_qty = r['product_uom_qty']
+                product_qty = r['product_qty']
                 if r['partner_id'] and distri_pricelists:
                     partner = rpo.browse(r['partner_id'][0])
                     if (
