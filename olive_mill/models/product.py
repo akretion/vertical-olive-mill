@@ -14,15 +14,15 @@ class ProductTemplate(models.Model):
     detailed_type = fields.Selection(selection_add=[
         # Olives are not handled as products
         ('olive_oil', 'Olive Oil'),
+        ('olive_bottle_full', 'Oil Bottle'),
         ('olive_bottle_empty', 'Empty Oil Bottle'),  # CAUTION MIG: I added '_empty'
         ('olive_barrel_farmer', 'Oil Barrel of Farmer'),  # New in v14
-        ('olive_bottle_full', 'Full Oil Bottle'),
-        ('olive_bottle_full_pack', 'Manufacture Pack of Full Oil Bottles'),
-        ('olive_bottle_full_pack_phantom', 'Kit Pack of Full Oil Bottles'),
+        ('olive_bottle_full_pack', 'Manufacture Pack of Oil Bottles'),
+        ('olive_bottle_full_pack_phantom', 'Kit Pack of Oil Bottles'),
         ('olive_analysis', 'Oil Analysis'),
         ('olive_extra_service', 'Oil Extra Service'),
         ('olive_service', 'Oil Production Service'),
-        ('olive_tax', 'Oil Federation Tax'),
+        ('olive_tax', 'Oil Tax'),
         ], ondelete={
             'olive_oil': 'set default',
             'olive_bottle_empty': 'set default',
@@ -56,6 +56,10 @@ class ProductTemplate(models.Model):
         string='Instrument used for the Olive Oil Analysis')
     olive_analysis_precision = fields.Char(
         string='Precision of the Olive Oil Analysis')
+    shrinkage_prodlot_id = fields.Many2one(
+        'stock.production.lot', string='Shrinkage Production Lot',
+        copy=False, compute="_compute_shrinkage_prodlot_id",
+        inverse='_set_shrinkage_prodlot_id')
 
     _sql_constraints = [(
         'olive_analysis_decimal_precision_positive',
@@ -79,6 +83,19 @@ class ProductTemplate(models.Model):
             'olive_tax': 'service',
             })
         return res
+
+    @api.depends('product_variant_ids', 'product_variant_ids.shrinkage_prodlot_id')
+    def _compute_shrinkage_prodlot_id(self):
+        unique_variants = self.filtered(lambda template: len(template.product_variant_ids) == 1)
+        for template in unique_variants:
+            template.shrinkage_prodlot_id = template.product_variant_ids.shrinkage_prodlot_id
+        for template in (self - unique_variants):
+            template.shrinkage_prodlot_id = False
+
+    def _set_shrinkage_prodlot_id(self):
+        for template in self:
+            if len(template.product_variant_ids) == 1:
+                template.product_variant_ids.shrinkage_prodlot_id = template.shrinkage_prodlot_id
 
     # DUPLICATED in product product
     @api.onchange('detailed_type')
