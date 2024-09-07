@@ -216,7 +216,7 @@ class ProductProduct(models.Model):
             'Product Unit of Measure')
         if float_compare(volume, 0, precision_digits=prec) <= 0:
             raise UserError(_(
-                "The oil volume (%s) can't negative on bill of "
+                "The oil volume (%s) cannot be negative on bill of "
                 "material '%s' (ID %d).") % (
                     volume, bom.display_name, bom.id))
         return (bom, oil_bom_lines[0].product_id, volume)

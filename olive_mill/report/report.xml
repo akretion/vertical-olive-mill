@@ -8,7 +8,7 @@
 <odoo>
 
 <record id="olive_culture_report" model="ir.actions.report">
-    <field name="name">Olive Culture Form</field>
+    <field name="name">Olive Cultivation Form</field>
     <field name="model">res.partner</field>
     <field name="report_name">res.partner.olive.culture</field>
     <field name="report_type">py3o</field>

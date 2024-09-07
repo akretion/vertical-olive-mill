@@ -565,7 +565,7 @@ class OliveArrivalLine(models.Model):
     sale_olive_qty = fields.Float(
         string='Sale Olive Qty', digits='Olive Weight',
         compute='_compute_sale_withdrawal_olive_qty', store=True,
-        help="Equivalent in olive quantity (in Kg) of the oil sold."
+        help="Equivalent in olive quantity (in Kg) of the oil sold. "
         "This field is for reporting purposes, it is not very accurate.")
     ochard_id = fields.Many2one(
         'olive.ochard', string='Ochard', required=True, ondelete='restrict',
