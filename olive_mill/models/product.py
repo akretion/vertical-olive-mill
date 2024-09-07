@@ -5,6 +5,7 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import float_compare
+from collections import defaultdict
 
 
 class ProductTemplate(models.Model):
@@ -233,3 +234,22 @@ class ProductProduct(models.Model):
             else:
                 res[full_bottle_line.product_id] = full_bottle_line.product_qty
         return res
+
+    @api.model
+    def _get_bottle2oilandvolume(self):
+        # bottles and manufactured pack of bottles
+        bottle2oilandvolume = {}
+        # {bottle1_id: {oil_product1_id: 0.75, oil_product2_id: 0.75}}
+        regular_bottles = self.search([('detailed_type', '=', 'olive_bottle_full')])
+        for bottle in regular_bottles:
+            bom, oil_product, bottle_volume =\
+                bottle.oil_bottle_full_get_bom_and_oil_product()
+            bottle2oilandvolume[bottle.id] = {oil_product.id: bottle_volume}
+        pack_bottles = self.search([('detailed_type', '=', 'olive_bottle_full_pack')])
+        for pbottle in pack_bottles:
+            bottle2oilandvolume[pbottle.id] = defaultdict(float)
+            pack_dict = pbottle.oil_bottle_full_pack_get_bottles()
+            for cbottle, qty in pack_dict.items():
+                oil_product_id, bottle_volume = list(bottle2oilandvolume[cbottle.id].items())[0]
+                bottle2oilandvolume[pbottle.id][oil_product_id] += qty * bottle_volume
+        return bottle2oilandvolume

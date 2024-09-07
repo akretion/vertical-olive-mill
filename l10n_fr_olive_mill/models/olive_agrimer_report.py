@@ -206,6 +206,32 @@ class OliveAgrimerReport(models.Model):
             vals[shrinkage_fieldname] =\
                 rg and rg[0]['shrinkage_oil_qty'] or 0.0
 
+    def _get_stock_move_total_qty_with_return(self, products, src_location_ids, dest_location_ids):
+        self.ensure_one()
+        smo = self.env['stock.move']
+        move_common_domain = [
+            ('company_id', '=', self.company_id.id),
+            ('date', '>=', '%s 00:00:00' % self.date_start),
+            ('date', '<=', '%s 23:59:59' % self.date_end),
+            ('product_id', 'in', products.ids),
+            ('state', '=', 'done'),
+            ]
+        move_rg = smo.read_group(
+            move_common_domain + [
+                ('location_id', 'in', src_location_ids),
+                ('location_dest_id', 'in', dest_location_ids),
+            ], ['product_qty'], [])
+        qty = move_rg and move_rg[0]['product_qty'] or 0.0
+        return_move_rg = smo.read_group(
+            move_common_domain + [
+                ('location_id', 'in', dest_location_ids),
+                ('location_dest_id', 'in', src_location_ids),
+            ], ['product_qty'], [])
+        return_qty = return_move_rg and\
+            return_move_rg[0]['product_qty'] or 0.0
+        res = qty - return_qty
+        return res
+
     def _compute_oil_out(
             self, vals, oiltype2oilproducts, bottle2oiltypevol):
         smo = self.env['stock.move']
@@ -216,50 +242,21 @@ class OliveAgrimerReport(models.Model):
             ('company_id', '=', self.company_id.id),
             ]
         # Withdrawal
-        olive_whs = self.env['stock.warehouse'].search([
-            ('olive_mill', '=', True),
-            ('olive_withdrawal_loc_id', '!=', False),
-            ('company_id', '=', self.company_id.id)])
-        withdrawal_locs = self.env['stock.location']
-        for olive_wh in olive_whs:
-            withdrawal_locs += olive_wh.olive_withdrawal_loc_id
+        withdrawal_loc_ids = self.company_id._get_withdrawal_location_ids()
+        customer_loc_ids = self.env['stock.location'].search([('usage', '=', 'customer')]).ids
+        internal_loc_without_withdrawal_ids = self.company_id._get_internal_locations_without_withdrawal_ids()
+        internal_loc_ids = self.company_id._get_internal_location_ids()
         for oil_type, oil_products in oiltype2oilproducts.items():
-            move_rg = smo.read_group(
-                move_common_domain + [
-                    ('product_id', 'in', oil_products.ids),
-                    ('location_id', 'in', withdrawal_locs.ids),
-                    ('location_dest_id.usage', '=', 'customer'),
-                ], ['product_qty'], [])
-            return_move_rg = smo.read_group(
-                move_common_domain + [
-                    ('product_id', 'in', oil_products.ids),
-                    ('location_id.usage', '=', 'customer'),
-                    ('location_dest_id', 'in', withdrawal_locs.ids),
-                ], ['product_qty'], [])
-            qty = move_rg and move_rg[0]['product_qty'] or 0.0
-            return_qty = return_move_rg and\
-                return_move_rg[0]['product_qty'] or 0.0
             withdrawal_fieldname = 'withdrawal_%s_oil' % oil_type
-            vals[withdrawal_fieldname] = qty - return_qty
+            withdrawal_qty = self._get_stock_move_total_qty_with_return(
+                oil_products, withdrawal_loc_ids, customer_loc_ids)
+            vals[withdrawal_fieldname] = withdrawal_qty
         # Loose
         for oil_type, oil_products in oiltype2oilproducts.items():
-            move_rg = smo.read_group(
-                move_common_domain + [
-                    ('product_id', 'in', oil_products.ids),
-                    ('location_id', 'not in', withdrawal_locs.ids),
-                    ('location_dest_id.usage', '=', 'customer'),
-                ], ['product_qty'], [])
-            return_move_rg = smo.read_group(
-                move_common_domain + [
-                    ('product_id', 'in', oil_products.ids),
-                    ('location_id.usage', '=', 'customer'),
-                    ('location_dest_id', 'not in', withdrawal_locs.ids),
-                ], ['product_qty'], [])
             loose_fieldname = 'sale_loose_%s_oil' % oil_type
-            qty = move_rg and move_rg[0]['product_qty'] or 0.0
-            return_qty = return_move_rg and\
-                return_move_rg[0]['product_qty'] or 0.0
-            vals[loose_fieldname] = qty - return_qty
+            loose_qty = self._get_stock_move_total_qty_with_return(
+                oil_products, internal_loc_without_withdrawal_ids, customer_loc_ids)
+            vals[loose_fieldname] = loose_qty
         # Sale bottles
         rpo = self.env['res.partner']
         distri_pricelists = self.env['product.pricelist'].search([
@@ -269,14 +266,14 @@ class OliveAgrimerReport(models.Model):
             move_rg = smo.read_group(
                 move_common_domain + [
                     ('product_id', '=', bottle.id),
-                    ('location_id.usage', '=', 'internal'),
-                    ('location_dest_id.usage', '=', 'customer'),
+                    ('location_id', 'in', internal_loc_ids),
+                    ('location_dest_id', 'in', customer_loc_ids),
                 ], ['product_qty', 'partner_id'], ['partner_id'])
             return_move_rg = smo.read_group(
                 move_common_domain + [
                     ('product_id', '=', bottle.id),
-                    ('location_id.usage', '=', 'customer'),
-                    ('location_dest_id.usage', '=', 'internal'),
+                    ('location_id', 'in', customer_loc_ids),
+                    ('location_dest_id', 'in', internal_loc_ids),
                 ], ['product_qty', 'partner_id'], ['partner_id'])
             for return_r in return_move_rg:
                 return_r['product_qty'] *= -1

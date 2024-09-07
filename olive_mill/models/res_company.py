@@ -195,3 +195,33 @@ class ResCompany(models.Model):
             }
         res = [('season_id', operator_map[operator], companies.current_season_id.ids)]
         return res
+
+    def _get_withdrawal_location_ids(self):
+        self.ensure_one()
+        olive_whs = self.env['stock.warehouse'].search([
+            ('olive_mill', '=', True),
+            ('olive_withdrawal_loc_id', '!=', False),
+            ('company_id', '=', self.id)])
+        withdrawal_locs = self.env['stock.location']
+        for olive_wh in olive_whs:
+            assert olive_wh.olive_withdrawal_loc_id.usage == 'internal'
+            withdrawal_locs |= olive_wh.olive_withdrawal_loc_id
+        return withdrawal_locs.ids
+
+    def _get_internal_locations_without_withdrawal_ids(self):
+        self.ensure_one()
+        withdrawal_loc_ids = self._get_withdrawal_location_ids()
+        locations = self.env['stock.location'].search([
+            ('company_id', '=', self.id),
+            ('usage', '=', 'internal'),
+            ('id', 'not in', withdrawal_loc_ids),
+            ])
+        return locations.ids
+
+    def _get_internal_location_ids(self):
+        self.ensure_one()
+        locations = self.env['stock.location'].search([
+            ('company_id', '=', self.id),
+            ('usage', '=', 'internal'),
+            ])
+        return locations.ids
