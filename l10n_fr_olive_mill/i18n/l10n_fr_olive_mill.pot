@@ -7,10 +7,9 @@ msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-09-07 18:02+0000\n"
-"PO-Revision-Date: 2024-09-07 18:03+0000\n"
-"Last-Translator: Alexis de Lattre <alexis.delattre@akretion.com>\n"
+"PO-Revision-Date: 2024-09-07 18:02+0000\n"
+"Last-Translator: \n"
 "Language-Team: \n"
-"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -19,546 +18,546 @@ msgstr ""
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__message_needaction
 msgid "Action Needed"
-msgstr "Action requise"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__activity_ids
 msgid "Activities"
-msgstr "Activités"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__activity_exception_decoration
 msgid "Activity Exception Decoration"
-msgstr "Style d'affichage de l'activité-alerte"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__activity_state
 msgid "Activity State"
-msgstr "État de l'activité"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__activity_type_icon
 msgid "Activity Type Icon"
-msgstr "Îcone du type d'activité"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.actions.act_window,name:l10n_fr_olive_mill.olive_agrimer_report_action
 #: model:ir.ui.menu,name:l10n_fr_olive_mill.olive_agrimer_report_menu
 msgid "AgriMer"
-msgstr "AgriMer"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: code:addons/l10n_fr_olive_mill/models/olive_agrimer_report.py:0
 #, python-format
 msgid "AgriMer Report"
-msgstr "Rapport AgriMer"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: code:addons/l10n_fr_olive_mill/models/olive_agrimer_report.py:0
 #, python-format
 msgid "AgriMer report generated."
-msgstr "Rapport AgriMer généré."
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.constraint,message:l10n_fr_olive_mill.constraint_olive_agrimer_report_date_company_uniq
 msgid "An AgriMer report with the same start/end date already exists!"
-msgstr "Un rapport AgriMer avec la même date de début/fin existe déjà !"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Are you sure you want to go back to draft?"
-msgstr "Êtes-vous sûr de vouloir revenir à l'état brouillon ?"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__message_attachment_count
 msgid "Attachment Count"
-msgstr "Nombre de pièces jointes"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Back to Draft"
-msgstr "Remettre en brouillon"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: code:addons/l10n_fr_olive_mill/models/olive_agrimer_report.py:0
 #, python-format
 msgid "Cannot delete %s because it is in done state."
-msgstr "Impossible de supprimer %s parce qu'il est à l'état \"Terminé\"."
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__company_id
 msgid "Company"
-msgstr "Société"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__create_uid
 msgid "Created by"
-msgstr "Créé par"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__create_date
 msgid "Created on"
-msgstr "Créé le"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: code:addons/l10n_fr_olive_mill/models/olive_agrimer_report.py:0
 #, python-format
 msgid "Culture type not configured on oil product '%s'."
-msgstr "Type de culture non configuré sur l'article d'huile '%s'."
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__date_range_id
 msgid "Date Range"
-msgstr "Intervalle de dates"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__display_name
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_product_pricelist__display_name
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_product_template__display_name
 msgid "Display Name"
-msgstr "Nom affiché"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields.selection,name:l10n_fr_olive_mill.selection__olive_agrimer_report__state__done
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_search
 msgid "Done"
-msgstr "Terminé"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields.selection,name:l10n_fr_olive_mill.selection__olive_agrimer_report__state__draft
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_search
 msgid "Draft"
-msgstr "Brouillon"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__date_end
 msgid "End Date"
-msgstr "Date de fin"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields.selection,name:l10n_fr_olive_mill.selection__product_template__olive_oil_type__extravirgin
 msgid "Extra-Virgin"
-msgstr "Vierge extra"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,help:l10n_fr_olive_mill.field_product_pricelist__olive_oil_distributor
 msgid "Field used for AgriMer reports"
-msgstr "Champ utilisé pour les rapports AgriMer"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__message_follower_ids
 msgid "Followers"
-msgstr "Abonnés"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__message_channel_ids
 msgid "Followers (Channels)"
-msgstr "Suiveurs (chaînes)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__message_partner_ids
 msgid "Followers (Partners)"
-msgstr "Abonnés (partenaires)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,help:l10n_fr_olive_mill.field_olive_agrimer_report__activity_type_icon
 msgid "Font awesome icon e.g. fa-tasks"
-msgstr "Îcone font-awesome, par exemple fa-task"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Generate Report"
-msgstr "Générer le rapport"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_search
 msgid "Group By"
-msgstr "Grouper par"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__id
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_product_pricelist__id
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_product_template__id
 msgid "ID"
-msgstr "ID"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__activity_exception_icon
 msgid "Icon"
-msgstr "Îcone"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,help:l10n_fr_olive_mill.field_olive_agrimer_report__activity_exception_icon
 msgid "Icon to indicate an exception activity."
-msgstr "Îcone pour indiquer une activité-alerte"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,help:l10n_fr_olive_mill.field_olive_agrimer_report__message_needaction
 #: model:ir.model.fields,help:l10n_fr_olive_mill.field_olive_agrimer_report__message_unread
 msgid "If checked, new messages require your attention."
-msgstr "Si activé, de nouveaux messages nécessitent votre attention."
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,help:l10n_fr_olive_mill.field_olive_agrimer_report__message_has_error
 msgid "If checked, some messages have a delivery error."
-msgstr "Si activé, des messages ont une erreur d'envoi."
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__message_is_follower
 msgid "Is Follower"
-msgstr "Est abonné"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report____last_update
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_product_pricelist____last_update
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_product_template____last_update
 msgid "Last Modified on"
-msgstr "Dernière modification le"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__write_uid
 msgid "Last Updated by"
-msgstr "Dernière mise à jour par"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__write_date
 msgid "Last Updated on"
-msgstr "Dernière mise à jour le"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__sale_loose_organic_extravirgin_oil
 msgid "Loose Sale of Organic Extra Virgin Oil (L)"
-msgstr "Vente en vrac d'huile vierge extra bio (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__sale_loose_organic_virgin_oil
 msgid "Loose Sale of Organic Virgin Oil (L)"
-msgstr "Vente en vrac d'huile vierge bio (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__sale_loose_regular_extravirgin_oil
 msgid "Loose Sale of Regular Extra Virgin Oil (L)"
-msgstr "Vente en vrac d'huile vierge extra conventionnelle (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__sale_loose_regular_virgin_oil
 msgid "Loose Sale of Regular Virgin Oil (L)"
-msgstr "Vente en vrac d'huile vierge conventionnelle (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__message_main_attachment_id
 msgid "Main Attachment"
-msgstr "Pièce jointe principale"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__message_has_error
 msgid "Message Delivery error"
-msgstr "Erreur d'envoi du message"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__message_ids
 msgid "Messages"
-msgstr "Messages"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__my_activity_date_deadline
 msgid "My Activity Deadline"
-msgstr "Date butoir de l'activité"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__activity_date_deadline
 msgid "Next Activity Deadline"
-msgstr "Date butoir de l'activité suivante"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__activity_summary
 msgid "Next Activity Summary"
-msgstr "Résumé de l'activité suivante"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__activity_type_id
 msgid "Next Activity Type"
-msgstr "Type de l'activité suivante"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: code:addons/l10n_fr_olive_mill/models/olive_agrimer_report.py:0
 #, python-format
 msgid "No bill of material with type kit for product '%s'."
-msgstr "Pas de nomenclature avec le type kit pour le produit '%s'."
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__message_needaction_counter
 msgid "Number of Actions"
-msgstr "Nombre d'actions"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__message_has_error_counter
 msgid "Number of errors"
-msgstr "Nombre d'erreurs"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,help:l10n_fr_olive_mill.field_olive_agrimer_report__message_needaction_counter
 msgid "Number of messages which requires an action"
-msgstr "Nombre de messages nécessitant une action"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,help:l10n_fr_olive_mill.field_olive_agrimer_report__message_has_error_counter
 msgid "Number of messages with delivery error"
-msgstr "Nombre de messages en échec d'envoi"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,help:l10n_fr_olive_mill.field_olive_agrimer_report__message_unread_counter
 msgid "Number of unread messages"
-msgstr "Nombre de messages non lus"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Oil In"
-msgstr "Huile en entrée"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Oil Out - Loose Sale"
-msgstr "Huile en sortie - Vente en vrac"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Oil Out - Sale to Consumers"
-msgstr "Huile en sortie - Vente aux consommateurs"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Oil Out - Sale to Distributors"
-msgstr "Huile en sortie - Vente aux distributeurs"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Oil Out - Shrinkage"
-msgstr "Huile en sortie - Freinte"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Oil Out - Withdrawal"
-msgstr "Huile en sortie - Retrait"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_product_product__olive_oil_type
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_product_template__olive_oil_type
 msgid "Oil Type"
-msgstr "Type d'huile"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: code:addons/l10n_fr_olive_mill/models/olive_agrimer_report.py:0
 #, python-format
 msgid "Oil type not configured on oil product '%s'."
-msgstr "Type d'huile non configuré sur l'article d'huile '%s'."
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model,name:l10n_fr_olive_mill.model_olive_agrimer_report
 msgid "Olive AgriMer reports"
-msgstr "Rapports d'Olive AgriMer"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Olive Arrival"
-msgstr "Apport d'olives"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__olive_arrival_qty
 msgid "Olive Arrival (kg)"
-msgstr "Apport d'olives (kg)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Olive In"
-msgstr "Olives en entrée"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_product_pricelist__olive_oil_distributor
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.product_pricelist_view_search
 msgid "Olive Oil Distributor"
-msgstr "Revendeur d'huile d'olive"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Olive Out"
-msgstr "Olives en sortie"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Olive Pressed"
-msgstr "Olives pressées"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__olive_pressed_qty
 msgid "Olive Pressed (kg)"
-msgstr "Olives pressées (kg)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Organic Extra Virgin Oil"
-msgstr "Huile vierge extra bio"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__withdrawal_organic_extravirgin_oil
 msgid "Organic Extra Virgin Oil Withdrawal (L)"
-msgstr "Retrait d'huile vierge extra bio (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Organic Extra Virgin Olive Oil Produced"
-msgstr "Huile vierge extra bio produite"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__organic_extravirgin_oil_produced
 msgid "Organic Extra Virgin Olive Oil Produced (L)"
-msgstr "Huile vierge extra bio produite (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Organic Virgin Oil"
-msgstr "Huile vierge bio"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Organic Virgin Olive Oil Produced"
-msgstr "Huile vierge bio produite"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__organic_virgin_oil_produced
 msgid "Organic Virgin Olive Oil Produced (L)"
-msgstr "Huile vierge bio produite (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Period"
-msgstr "Période"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model,name:l10n_fr_olive_mill.model_product_pricelist
 msgid "Pricelist"
-msgstr "Liste de prix"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model,name:l10n_fr_olive_mill.model_product_template
 msgid "Product Template"
-msgstr "Modèle de produit"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Regular Extra Virgin Oil"
-msgstr "Huile vierge extra conventionnelle"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__withdrawal_regular_extravirgin_oil
 msgid "Regular Extra Virgin Oil Withdrawal (L)"
-msgstr "Huile vierge extra conventionnelle retirée (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Regular Extra Virgin Olive Oil Produced"
-msgstr "Huile vierge extra conventionnelle produite"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__regular_extravirgin_oil_produced
 msgid "Regular Extra Virgin Olive Oil Produced (L)"
-msgstr "Huile vierge extra conventionnelle produite (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Regular Virgin Oil"
-msgstr "Huile vierge conventionnelle"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__withdrawal_regular_virgin_oil
 msgid "Regular Virgin Oil Withdrawal (L)"
-msgstr "Huile vierge conventionnelle retirée (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "Regular Virgin Olive Oil Produced"
-msgstr "Huile vierge conventionnelle produite"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__regular_virgin_oil_produced
 msgid "Regular Virgin Olive Oil Produced (L)"
-msgstr "Huile vierge conventionnelle produite (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__activity_user_id
 msgid "Responsible User"
-msgstr "Utilisateur responsable"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__sale_consumer_organic_extravirgin_oil
 msgid "Sale to Consumers of Organic Extra Virgin Oil (L)"
-msgstr "Vente aux consommateurs d'huile vierge extra bio (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__sale_consumer_organic_virgin_oil
 msgid "Sale to Consumers of Organic Virgin Oil (L)"
-msgstr "Vente aux consommateurs d'huile vierge bio (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__sale_consumer_regular_extravirgin_oil
 msgid "Sale to Consumers of Regular Extra Virgin Oil (L)"
-msgstr "Vente aux consommateurs d'huile vierge extra conventionnelle (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__sale_consumer_regular_virgin_oil
 msgid "Sale to Consumers of Regular Virgin Oil (L)"
-msgstr "Vente aux consommateurs d'huile vierge conventionnelle (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__sale_distributor_organic_extravirgin_oil
 msgid "Sale to Distributors of Organic Extra Virgin Oil (L)"
-msgstr "Vente aux revendeurs d'huile vierge extra bio (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__sale_distributor_organic_virgin_oil
 msgid "Sale to Distributors of Organic Virgin Oil (L)"
-msgstr "Vente aux revendeurs d'huile vierge bio (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__sale_distributor_regular_extravirgin_oil
 msgid "Sale to Distributors of Regular Extra Virgin Oil (L)"
-msgstr "Vente aux revendeurs d'huile vierge extra conventionnelle (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__sale_distributor_regular_virgin_oil
 msgid "Sale to Distributors of Regular Virgin Oil (L)"
-msgstr "Vente aux revendeurs d'huile vierge conventionnelle (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__shrinkage_organic_extravirgin_oil
 msgid "Shrinkage Organic Extra Virgin Oil (L)"
-msgstr "Freinte d'huile vierge extra bio (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__shrinkage_organic_virgin_oil
 msgid "Shrinkage Organic Virgin Oil (L)"
-msgstr "Freinte d'huile vierge bio (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__shrinkage_regular_extravirgin_oil
 msgid "Shrinkage Regular Extra Virgin Oil (L)"
-msgstr "Freinte d'huile vierge extra conventionnelle (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__shrinkage_regular_virgin_oil
 msgid "Shrinkage Regular Virgin Oil (L)"
-msgstr "Freinte d'huile vierge conventionnelle (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__date_start
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_search
 msgid "Start Date"
-msgstr "Date de début"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__state
 msgid "State"
-msgstr "État"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,help:l10n_fr_olive_mill.field_olive_agrimer_report__activity_state
@@ -568,47 +567,43 @@ msgid ""
 "Today: Activity date is today\n"
 "Planned: Future activities."
 msgstr ""
-"Statut basé sur les activités\n"
-"En retard : La date d'échéance est déjà dépassée\n"
-"Aujourd'hui : La date de l'activité est aujourd'hui\n"
-"Planifié : Activités futures."
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,help:l10n_fr_olive_mill.field_olive_agrimer_report__activity_exception_decoration
 msgid "Type of the exception activity on record."
-msgstr "Type de l'activité-alerte sur l'enregistrement."
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__message_unread
 msgid "Unread Messages"
-msgstr "Messages non lus"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__message_unread_counter
 msgid "Unread Messages Counter"
-msgstr "Compteur de messages non lus"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields.selection,name:l10n_fr_olive_mill.selection__product_template__olive_oil_type__virgin
 msgid "Virgin"
-msgstr "Vierge"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__website_message_ids
 msgid "Website Messages"
-msgstr "Messages du site Web"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,help:l10n_fr_olive_mill.field_olive_agrimer_report__website_message_ids
 msgid "Website communication history"
-msgstr "Historique des échanges sur le site Web"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model:ir.model.fields,field_description:l10n_fr_olive_mill.field_olive_agrimer_report__withdrawal_organic_virgin_oil
 msgid "Withdrawal Organic Virgin Oil (L)"
-msgstr "Retrait d'huile vierge bio (L)"
+msgstr ""
 
 #. module: l10n_fr_olive_mill
 #: model_terms:ir.ui.view,arch_db:l10n_fr_olive_mill.olive_agrimer_report_form
 msgid "kg"
-msgstr "kg"
+msgstr ""

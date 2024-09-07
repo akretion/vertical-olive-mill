@@ -20,11 +20,13 @@
             </header>
             <sheet>
                 <group name="main">
-                <group name="dates" string="Period" colspan="2">
-                    <field name="company_id" groups="base.group_multi_company"/>
+                <group name="dates">
                     <field name="date_range_id"/>
                     <field name="date_start"/>
                     <field name="date_end"/>
+                </group>
+                <group name="company">
+                    <field name="company_id" groups="base.group_multi_company"/>
                 </group>
                 <group name="olive_in" string="Olive In">
                     <label for="olive_arrival_qty" string="Olive Arrival"/>
@@ -163,7 +165,7 @@
     <field name="arch" type="xml">
         <tree>
             <field name="date_range_id" optional="hide"/>
-            <field name="date_start"/>
+            <field name="date_start" decoration-bf="1"/>
             <field name="date_end"/>
             <field name="olive_arrival_qty" optional="show"/>
             <field name="olive_pressed_qty" optional="show"/>
