@@ -74,10 +74,10 @@ access_olive_partner_warning_print_operator,Full access on olive.partner.warning
 access_olive_partner_warning_print_user,Full access on olive.partner.warning.print,model_olive_partner_warning_print,stock.group_stock_user,1,1,1,1
 access_olive_withdrawal_operator,Full access on olive.withdrawal,model_olive_withdrawal,olive_operator,1,1,1,1
 access_olive_withdrawal_user,Full access on olive.withdrawal,model_olive_withdrawal,stock.group_stock_user,1,1,1,1
-access_olive_oil_stock_operator,Full access on olive.oil.stock wizard,model_olive_oil_stock,olive_operator,1,1,1,1
-access_olive_oil_stock_user,Full access on olive.oil.stock wizard,model_olive_oil_stock,stock.group_stock_user,1,1,1,1
-access_olive_oil_stock_line_operator,Full access on olive.oil.stock.line wizard,model_olive_oil_stock_line,olive_operator,1,1,1,1
-access_olive_oil_stock_line_user,Full access on olive.oil.stock.line wizard,model_olive_oil_stock_line,stock.group_stock_user,1,1,1,1
+access_olive_oil_stock_operator,Full access on olive.oil.stock wizard,model_olive_oil_stock_report,olive_operator,1,1,1,1
+access_olive_oil_stock_user,Full access on olive.oil.stock wizard,model_olive_oil_stock_report,stock.group_stock_user,1,1,1,1
+access_olive_oil_stock_line_operator,Full access on olive.oil.stock.line wizard,model_olive_oil_stock_report_line,olive_operator,1,1,1,1
+access_olive_oil_stock_line_user,Full access on olive.oil.stock.line wizard,model_olive_oil_stock_report_line,stock.group_stock_user,1,1,1,1
 access_olive_oil_sale_report_operator,Full access on olive.oil.sale.report wizard,model_olive_oil_sale_report,olive_operator,1,1,1,1
 access_olive_oil_sale_report_user,Full access on olive.oil.sale.report wizard,model_olive_oil_sale_report,stock.group_stock_user,1,1,1,1
 access_olive_oil_sale_report_line_operator,Read access on olive.oil.sale.report.line wizard,model_olive_oil_sale_report_line,olive_operator,1,0,0,0

@@ -6,8 +6,8 @@ from odoo import api, fields, models
 from odoo.tools import float_is_zero
 
 
-class OliveOilStock(models.TransientModel):
-    _name = 'olive.oil.stock'
+class OliveOilStockReport(models.TransientModel):
+    _name = 'olive.oil.stock.report'
     _description = 'Wizard to show current stock of olive oil'
 
     company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
@@ -15,7 +15,7 @@ class OliveOilStock(models.TransientModel):
         'stock.location', string="Filter by Location",
         domain="[('company_id', '=', company_id), ('usage', 'in', ('internal', 'view', 'transit'))]",
         help="If empty, the stock will be shown for all the internal and transit locations of the selected company.")
-    line_ids = fields.One2many('olive.oil.stock.line', 'parent_id', string='Stock Lines', readonly=True, compute='_compute_line_ids')
+    line_ids = fields.One2many('olive.oil.stock.report.line', 'parent_id', string='Stock Lines', readonly=True, compute='_compute_line_ids')
 
     @api.depends('company_id', 'location_ids')
     def _compute_line_ids(self):
@@ -79,11 +79,11 @@ class OliveOilStock(models.TransientModel):
             wiz.line_ids = odoo_res
 
 
-class OliveOilStockLine(models.TransientModel):
-    _name = 'olive.oil.stock.line'
+class OliveOilStockReportLine(models.TransientModel):
+    _name = 'olive.oil.stock.report.line'
     _description = 'Wizard line to show current stock of olive oil'
 
-    parent_id = fields.Many2one('olive.oil.stock', ondelete='cascade')
+    parent_id = fields.Many2one('olive.oil.stock.report', ondelete='cascade')
     oil_product_id = fields.Many2one('product.product', string='Olive Oil', readonly=True, required=True)
     loose_qty = fields.Float(
         string='Loose Qty (L)', digits='Product Unit of Measure', readonly=True)

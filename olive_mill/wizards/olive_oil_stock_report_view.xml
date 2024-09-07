@@ -7,8 +7,8 @@
 
 <odoo>
 
-        <record id="olive_oil_stock_form" model="ir.ui.view">
-                <field name="model">olive.oil.stock</field>
+        <record id="olive_oil_stock_report_form" model="ir.ui.view">
+                <field name="model">olive.oil.stock.report</field>
                 <field name="arch" type="xml">
                         <form>
                             <div>Current stock of olive oil (withdrawal oil excluded). All quantities are in liter.</div>
@@ -33,13 +33,13 @@
                     </field>
             </record>
 
-            <record id="olive_oil_stock_action" model="ir.actions.act_window">
+            <record id="olive_oil_stock_report_action" model="ir.actions.act_window">
                     <field name="name">Current Oil Stock</field>
-                    <field name="res_model">olive.oil.stock</field>
+                    <field name="res_model">olive.oil.stock.report</field>
                     <field name="view_mode">form</field>
                     <field name="target">new</field>
             </record>
 
-            <menuitem id="olive_oil_stock_menu" action="olive_oil_stock_action" sequence="5" parent="olive_report_menu"/>
+            <menuitem id="olive_oil_stock_report_menu" action="olive_oil_stock_report_action" sequence="5" parent="olive_report_menu"/>
 
 </odoo>

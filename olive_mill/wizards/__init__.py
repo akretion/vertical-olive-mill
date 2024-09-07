@@ -14,5 +14,5 @@ from . import olive_oil_production_product_swap
 from . import olive_appointment_print
 from . import olive_oil_production_day_print
 from . import olive_partner_warning_print
-from . import olive_oil_stock
+from . import olive_oil_stock_report
 from . import olive_oil_sale_report

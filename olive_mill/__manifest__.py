@@ -46,7 +46,7 @@
         'wizards/olive_oil_production_day_print_view.xml',
         'wizards/olive_partner_warning_print_view.xml',
         'wizards/res_config_settings_view.xml',
-        'wizards/olive_oil_stock_view.xml',
+        'wizards/olive_oil_stock_report_view.xml',
         'wizards/olive_oil_sale_report_view.xml',
         'views/stock_location.xml',
         'views/stock_warehouse.xml',
