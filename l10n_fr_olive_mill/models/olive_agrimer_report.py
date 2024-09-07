@@ -4,6 +4,7 @@
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
+from odoo.tools.misc import format_date
 from dateutil.relativedelta import relativedelta
 from collections import defaultdict
 
@@ -11,9 +12,8 @@ from collections import defaultdict
 class OliveAgrimerReport(models.Model):
     _name = 'olive.agrimer.report'
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    _description = 'Olive ARGIMER reports'
+    _description = 'Olive AgriMer reports'
     _order = 'date_start desc'
-    _rec_name = 'date_start'
 
     company_id = fields.Many2one(
         'res.company', string='Company',
@@ -32,117 +32,91 @@ class OliveAgrimerReport(models.Model):
         string='End Date', tracking=True,
         required=True, states={'done': [('readonly', True)]})
     olive_arrival_qty = fields.Float(
-        string='Olive Arrival (kg)', digits='Olive Weight',
-        states={'done': [('readonly', True)]})
+        string='Olive Arrival (kg)', digits='Olive Weight', readonly=True)
     olive_pressed_qty = fields.Float(
-        string='Olive Pressed (kg)', digits='Olive Weight',
-        states={'done': [('readonly', True)]})
+        string='Olive Pressed (kg)', digits='Olive Weight', readonly=True)
     organic_virgin_oil_produced = fields.Float(
         string='Organic Virgin Olive Oil Produced (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     organic_extravirgin_oil_produced = fields.Float(
         string='Organic Extra Virgin Olive Oil Produced (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     regular_virgin_oil_produced = fields.Float(
         string='Regular Virgin Olive Oil Produced (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     regular_extravirgin_oil_produced = fields.Float(
         string='Regular Extra Virgin Olive Oil Produced (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     # Oil OUT
     # Shrinkage
     shrinkage_organic_virgin_oil = fields.Float(
         string='Shrinkage Organic Virgin Oil (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     shrinkage_organic_extravirgin_oil = fields.Float(
         string='Shrinkage Organic Extra Virgin Oil (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     shrinkage_regular_virgin_oil = fields.Float(
         string='Shrinkage Regular Virgin Oil (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     shrinkage_regular_extravirgin_oil = fields.Float(
         string='Shrinkage Regular Extra Virgin Oil (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     # WITHDRAWAL (product = oil /
     # selected source location wh.olive_withdrawal_loc_id)
     withdrawal_organic_virgin_oil = fields.Float(
         string='Withdrawal Organic Virgin Oil (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     withdrawal_organic_extravirgin_oil = fields.Float(
         string='Organic Extra Virgin Oil Withdrawal (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     withdrawal_regular_virgin_oil = fields.Float(
         string='Regular Virgin Oil Withdrawal (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     withdrawal_regular_extravirgin_oil = fields.Float(
         string='Regular Extra Virgin Oil Withdrawal (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     # CONSUMER sale (product = bottles /
     # no partner or partner with other pricelists)
     # we don't use fiscal positions, because the fp 'import/export dom-tom' can
     # we used both for B2C and B2B
     sale_consumer_organic_virgin_oil = fields.Float(
         string='Sale to Consumers of Organic Virgin Oil (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     sale_consumer_organic_extravirgin_oil = fields.Float(
         string='Sale to Consumers of Organic Extra Virgin Oil (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     sale_consumer_regular_virgin_oil = fields.Float(
         string='Sale to Consumers of Regular Virgin Oil (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     sale_consumer_regular_extravirgin_oil = fields.Float(
         string='Sale to Consumers of Regular Extra Virgin Oil (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     # DISTRIBUTOR sale (product = bottles / partner with selected pricelist)
     sale_distributor_organic_virgin_oil = fields.Float(
         string='Sale to Distributors of Organic Virgin Oil (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     sale_distributor_organic_extravirgin_oil = fields.Float(
         string='Sale to Distributors of Organic Extra Virgin Oil (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     sale_distributor_regular_virgin_oil = fields.Float(
         string='Sale to Distributors of Regular Virgin Oil (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     sale_distributor_regular_extravirgin_oil = fields.Float(
         string='Sale to Distributors of Regular Extra Virgin Oil (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     # LOOSE sale (product = oil / all other source locations)
     sale_loose_organic_virgin_oil = fields.Float(
         string='Loose Sale of Organic Virgin Oil (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     sale_loose_organic_extravirgin_oil = fields.Float(
         string='Loose Sale of Organic Extra Virgin Oil (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     sale_loose_regular_virgin_oil = fields.Float(
         string='Loose Sale of Regular Virgin Oil (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
     sale_loose_regular_extravirgin_oil = fields.Float(
         string='Loose Sale of Regular Extra Virgin Oil (L)',
-        digits='Olive Oil Volume',
-        states={'done': [('readonly', True)]})
+        digits='Olive Oil Volume', readonly=True)
 
     state = fields.Selection([
         ('draft', 'Draft'),
@@ -163,15 +137,32 @@ class OliveAgrimerReport(models.Model):
             elif report.date_start and report.date_start.day == 1 and not report.date_end:
                 report.date_end = report.date_start + relativedelta(day=31)
 
-    def draft2done(self):
-        self.ensure_one()
-        assert self.state == 'draft'
-        self.state = 'done'
-
     def back2draft(self):
         self.ensure_one()
         assert self.state == 'done'
-        self.state = 'draft'
+        vals = {'state': 'draft'}
+        float_fields = self.env['ir.model.fields'].search(
+            [('model', '=', self._name), ('ttype', '=', 'float')])
+        for float_field in float_fields:
+            vals[float_field.name] = False
+        self.write(vals)
+
+    def unlink(self):
+        for rec in self:
+            if rec.state == 'done':
+                raise UserError(_(
+                    "Cannot delete %s because it is in done state.")
+                    % rec.display_name)
+        return super().unlink()
+
+    def name_get(self):
+        res = []
+        for rec in self:
+            name = _('AgriMer Report')
+            if rec.date_start and rec.date_end:
+                name += f' {format_date(self.env, rec.date_start)} → {format_date(self.env, rec.date_end)}'
+            res.append((rec.id, name))
+        return res
 
     def _compute_olive_arrival_qty(self, vals):
         rg = self.env['olive.arrival.line'].read_group([
@@ -379,10 +370,12 @@ class OliveAgrimerReport(models.Model):
         for ffield in ffields:
             vals[ffield.name] = 0.0
 
-    def generate_report(self):
+    def draft2done(self):
+        self.ensure_one()
         vals = self.report_compute_values()
-        self.write(vals)
+        vals['state'] = 'done'
         self.message_post(body=_("AgriMer report generated."))
+        self.write(vals)
 
     def olive_stock_levels(self, vals):
         vals['olive_stock_start']

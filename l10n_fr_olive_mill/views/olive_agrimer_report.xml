@@ -14,8 +14,7 @@
     <field name="arch" type="xml">
         <form>
             <header>
-                <button name="generate_report" type="object" string="Generate Report" states="draft"/>
-                <button name="draft2done" string="Mark as Done" class="btn-primary" states="draft" type="object"/>
+                <button name="draft2done" string="Generate Report" class="btn-primary" states="draft" type="object"/>
                 <button name="back2draft" string="Back to Draft" class="btn-default" states="done" type="object" confirm="Are you sure you want to go back to draft?"/>
                 <field name="state" widget="statusbar"/>
             </header>
@@ -180,10 +179,13 @@
     <field name="arch" type="xml">
         <search>
             <field name="date_start"/>
+            <separator/>
+            <filter name="date_start" string="Start Date" date="date_start"/>
+            <separator/>
             <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
             <filter name="done" string="Done" domain="[('state', '=', 'done')]"/>
             <group string="Group By" name="groupby">
-                <filter name="date_groupby" string="Year" context="{'group_by': 'date_start:year'}"/>
+                <filter name="date_groupby" string="Start Date" context="{'group_by': 'date_start'}"/>
             </group>
         </search>
     </field>
