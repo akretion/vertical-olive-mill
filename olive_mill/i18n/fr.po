@@ -2991,7 +2991,7 @@ msgstr "Nouveau"
 #. module: olive_mill
 #: model_terms:ir.ui.view,arch_db:olive_mill.olive_appointment_form
 msgid "New After This"
-msgstr "Nouveau après cela"
+msgstr "Nouveau après celui-ci"
 
 #. module: olive_mill
 #: model_terms:ir.ui.view,arch_db:olive_mill.olive_appointment_form
