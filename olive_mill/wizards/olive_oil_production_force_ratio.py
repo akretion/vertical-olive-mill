@@ -44,12 +44,3 @@ class OliveOilProductionForceRatio(models.TransientModel):
                 "The ratio (%s %%) is not realistic.") % self.force_ratio)
         prod.set_qty_on_lines(
             force_ratio=(self.arrival_line_id, self.force_ratio))
-
-
-# Keep temporarily the model olive.oil.production.compensation
-# that has a selection field
-# bug https://github.com/odoo/odoo/issues/179392
-# TODO remove once update done on prod DB
-class OliveOilProductionCompensation(models.TransientModel):
-    _name = 'olive.oil.production.compensation'
-    _description = 'To remove'
