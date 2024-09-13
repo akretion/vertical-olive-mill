@@ -14,11 +14,12 @@
     <field name="priority">1000</field>  <!-- to have olive_culture_type right after type -->
     <field name="arch" type="xml">
         <group name="group_standard_price" position="after">
-            <group string="Olive" name="olive" attrs="{'invisible': [('detailed_type', 'not in', ('olive_oil', 'olive_bottle', 'olive_analysis'))]}">
+            <group string="Olive" name="olive" attrs="{'invisible': [('detailed_type', 'not in', ('olive_oil', 'olive_bottle_full', 'olive_bottle_empty', 'olive_analysis', 'olive_bottle_full_pack', 'olive_bottle_full_pack_phantom'))]}">
                 <!-- bottle -->
                 <field name="olive_bottle_free_full" attrs="{'invisible': [('detailed_type', '!=', 'olive_bottle')]}"/>
                 <!-- olive oil -->
                 <field name="olive_culture_type" attrs="{'invisible': [('detailed_type', '!=', 'olive_oil')], 'required': [('detailed_type', '=', 'olive_oil')]}"/>
+                <field name="olive_geo_id" attrs="{'invisible': [('detailed_type', 'not in', ('olive_oil', 'olive_bottle_full', 'olive_bottle_empty', 'olive_bottle_full_pack', 'olive_bottle_full_pack_phantom'))]}" groups="olive_mill.olive_protected_geo_indication"/>
                 <field name="olive_invoice_service_ids" widget="many2many_tags" attrs="{'invisible': [('detailed_type', '!=', 'olive_oil')]}"/>
                 <!-- analysis -->
                 <field name="olive_analysis_uom" attrs="{'invisible': [('detailed_type', '!=', 'olive_analysis')], 'required': [('detailed_type', '=', 'olive_analysis')]}"/>
@@ -57,6 +58,10 @@
     <field name="model">product.template</field>
     <field name="inherit_id" ref="product.product_template_search_view"/>
     <field name="arch" type="xml">
+        <field name="pricelist_id" position="after">
+            <separator/>
+            <field name="olive_geo_id" groups="olive_mill.olive_protected_geo_indication"/>
+        </field>
         <filter name="filter_to_sell" position="before">
             <separator/>
             <filter name="olive_mill" string="All Olive Products" domain="[('detailed_type', '=like', 'olive_%')]"/>

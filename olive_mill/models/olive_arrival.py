@@ -345,6 +345,16 @@ class OliveArrival(models.Model):
                         line.palox_id.name,
                         line.palox_id.oil_product_id.name))
 
+            # check PGI/AOP
+            if line.oil_product_id.olive_geo_id and line.oil_product_id.olive_geo_id != line.ochard_id.geo_id:
+                raise UserError(_(
+                    "On arrival line number %(line)s, the oil '%(oil)s' has "
+                    "the protected geographical indication '%(pgi)s' but the ochard "
+                    "%(ochard)s doesn't have this protected geographical indication.",
+                    line=i, oil=line.oil_product_id.display_name,
+                    pgi=line.oil_product_id.olive_geo_id.display_name,
+                    ochard=line.ochard_id.display_name))
+
             # Warn palox max qty
             new_weight = line.palox_id.weight + line.olive_qty
             if new_weight > palox_max_weight:

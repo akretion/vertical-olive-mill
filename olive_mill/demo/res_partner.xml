@@ -17,4 +17,16 @@
     <field name="olive_farmer" eval="True"/>
 </record>
 
+<record id="res_partner1" model="res.partner">
+    <field name="is_company" eval="False"/>
+    <field name="name">Roberto Olive</field>
+    <field name="olive_sale_pricelist_id" ref="sale_pricelist1"/>
+    <field name="olive_farmer" eval="True"/>
+    <field name="street">42 chemin du lavoir</field>
+    <field name="zip">13990</field>
+    <field name="city">Fontvieille</field>
+    <field name="country_id" ref="base.fr"/>
+</record>
+
+
 </odoo>

@@ -28,6 +28,7 @@
                 <group name="main">
                     <field name="active" invisible="1" />
                     <field name="partner_id" invisible="not context.get('olive_ochard_main_view')"/>
+                    <field name="geo_id" groups="olive_mill.olive_protected_geo_indication"/>
                     <field name="city"/>
                     <field name="tree_total"/>
                     <label for="area_total"/>
@@ -55,9 +56,10 @@
         <tree>
             <field name="partner_id" invisible="not context.get('olive_ochard_main_view')"/>
             <field name="name"/>
-            <field name="city"/>
-            <field name="tree_total" sum="1"/>
-            <field name="area_total" sum="1"/>
+            <field name="geo_id" groups="olive_mill.olive_protected_geo_indication"/>
+            <field name="city" optional="show"/>
+            <field name="tree_total" sum="1" optional="show"/>
+            <field name="area_total" sum="1" optional="show"/>
         </tree>
     </field>
 </record>
@@ -81,11 +83,13 @@
         <search>
             <field name="name"/>
             <field name="partner_id"/>
+            <field name="geo_id" groups="olive_mill.olive_protected_geo_indication"/>
             <field name="city"/>
             <separator/>
             <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
             <group string="Group By" name="groupby">
                 <filter name="partner_groupby" string="Farmer" context="{'group_by': 'partner_id'}"/>
+                <filter name="geo_groupby" string="Protected Geographical Indication" context="{'group_by': 'geo_id'}" groups="olive_mill.olive_protected_geo_indication"/>
             </group>
         </search>
     </field>

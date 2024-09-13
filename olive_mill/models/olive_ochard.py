@@ -23,6 +23,7 @@ class OliveOchard(models.Model):
     area_total = fields.Float(
         compute='_compute_totals', string='Total Area', readonly=True, store=True,
         digits='Olive Parcel Area')
+    geo_id = fields.Many2one('protected.geo.indication', string="Protected Geographical Indication", ondelete='restrict', copy=False)
 
     _sql_constraints = [(
         'name_partner_id_unique',
@@ -40,12 +41,14 @@ class OliveOchard(models.Model):
             ochard.tree_total = tree
             ochard.area_total = area
 
-    @api.depends('name', 'city')
+    @api.depends('name', 'city', 'geo_id')
     def name_get(self):
         res = []
         for ochard in self:
             name = ochard.name
             if ochard.city:
-                name = u'%s (%s)' % (name, ochard.city)
+                name = f'{name} ({ochard.city})'
+            if ochard.geo_id:
+                name = f"{name} [{ochard.geo_id.code or ochard.geo_id.name}]"
             res.append((ochard.id, name))
         return res

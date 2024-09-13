@@ -58,6 +58,6 @@
     <field name="view_mode">tree,form</field>
 </record>
 
-<menuitem id="organic_certifying_entity_menu" action="organic_certifying_entity_action" parent="olive_config_menu" sequence="100" groups="olive_mill.olive_organic"/>
+<menuitem id="organic_certifying_entity_menu" action="organic_certifying_entity_action" parent="olive_config_menu" sequence="70" groups="olive_mill.olive_organic"/>
 
 </odoo>

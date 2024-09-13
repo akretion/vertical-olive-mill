@@ -37,5 +37,13 @@
     <field name="city">84 330 Le Barroux</field>
 </record>
 
+<record id="ochard6" model="olive.ochard">
+    <field name="name">Small Farm Ochard2</field>
+    <field name="partner_id" ref="olive_mill.res_partner1"/>
+    <field name="city">Fontvieille</field>
+    <field name="geo_id" ref="aop_baux_de_provence"/>
+</record>
+
+
 
 </odoo>

@@ -40,6 +40,9 @@ class ProductTemplate(models.Model):
         ('organic', 'Organic'),
         ('conversion', 'Conversion'),
         ], string='Culture Type')
+    olive_geo_id = fields.Many2one(
+        "protected.geo.indication", string="Protected Geographical Indication",
+        ondelete='restrict')
     olive_bottle_free_full = fields.Boolean(
         string="Not Invoiced when Full")
     olive_invoice_service_ids = fields.Many2many(
@@ -97,7 +100,6 @@ class ProductTemplate(models.Model):
             if len(template.product_variant_ids) == 1:
                 template.product_variant_ids.shrinkage_prodlot_id = template.shrinkage_prodlot_id
 
-    # DUPLICATED in product product
     @api.onchange('detailed_type')
     def olive_detailed_type_change(self):
         liter_uom = self.env.ref('uom.product_uom_litre')
@@ -110,6 +112,7 @@ class ProductTemplate(models.Model):
             self.tracking = 'lot'
         if self.detailed_type and not self.detailed_type.startswith('olive_'):
             self.olive_culture_type = False
+            self.olive_geo_id = False
 
     @api.constrains('detailed_type', 'uom_id', 'olive_culture_type')
     def _check_olive_product(self):
@@ -203,6 +206,7 @@ class ProductProduct(models.Model):
                 "with an oil product. This scenario is not supported for "
                 "the moment.") % (bom.display_name, bom.id))
         oil_bom_line = oil_bom_lines[0]
+        oil_product = oil_bom_line.product_id
         liter_uom = self.env.ref('uom.product_uom_litre')
         if oil_bom_line.product_uom_id != liter_uom:
             raise UserError(_(
@@ -211,6 +215,15 @@ class ProductProduct(models.Model):
                 "liters as the unit of measure.") % (
                     oil_bom_line.product_id.display_name,
                     bom.display_name, bom.id))
+        if self.olive_geo_id and self.olive_geo_id != oil_product.olive_geo_id:
+            raise UserError(_(
+                "The oil bottle '%(oil_bottle)s' has the "
+                "protected geographical indication '%(pgi)s' but the "
+                "oil product '%(oil_product)s' of this bottle doesn't have "
+                "this protected geographical indication.",
+                oil_bottle=self.display_name,
+                pgi=self.olive_geo_id.display_name,
+                oil_product=oil_product.display_name))
         volume = oil_bom_line.product_qty
         prec = self.env['decimal.precision'].precision_get(
             'Product Unit of Measure')
@@ -219,7 +232,7 @@ class ProductProduct(models.Model):
                 "The oil volume (%s) cannot be negative on bill of "
                 "material '%s' (ID %d).") % (
                     volume, bom.display_name, bom.id))
-        return (bom, oil_bom_lines[0].product_id, volume)
+        return (bom, oil_product, volume)
 
     def oil_bottle_full_pack_get_bottles(self):
         self.ensure_one()

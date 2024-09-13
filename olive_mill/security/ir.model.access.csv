@@ -82,3 +82,5 @@ access_olive_oil_sale_report_operator,Full access on olive.oil.sale.report wizar
 access_olive_oil_sale_report_user,Full access on olive.oil.sale.report wizard,model_olive_oil_sale_report,stock.group_stock_user,1,1,1,1
 access_olive_oil_sale_report_line_operator,Read access on olive.oil.sale.report.line wizard,model_olive_oil_sale_report_line,olive_operator,1,0,0,0
 access_olive_oil_sale_report_line_user,Read access on olive.oil.sale.report.line wizard,model_olive_oil_sale_report_line,stock.group_stock_user,1,0,0,0
+access_protected_geo_indication_read,Read access on protected.geo.indication,model_protected_geo_indication,base.group_user,1,0,0,0
+access_protected_geo_indication_full,Full access on protected.geo.indication,model_protected_geo_indication,stock.group_stock_manager,1,1,1,1

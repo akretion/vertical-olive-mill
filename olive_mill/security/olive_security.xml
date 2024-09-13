@@ -18,6 +18,12 @@
     <field name="category_id" ref="base.module_category_hidden"/>
 </record>
 
+<record id="olive_protected_geo_indication" model="res.groups">
+    <field name="name">Protected Geographical Indication</field>
+    <field name="category_id" ref="base.module_category_hidden"/>
+</record>
+
+
 </data>
 
 
@@ -122,6 +128,11 @@
     <field name="domain_force">[('company_id', 'in', company_ids + [False])]</field>
 </record>
 
+<record id="protected_geo_indication_rule" model="ir.rule">
+    <field name="name">Protected Geographical Indication multi-company</field>
+    <field name="model_id" ref="model_protected_geo_indication"/>
+    <field name="domain_force">[('company_id', 'in', company_ids + [False])]</field>
+</record>
 
 </data>
 </odoo>

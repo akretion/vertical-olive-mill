@@ -11,6 +11,7 @@ from . import olive_palox
 from . import olive_parcel
 from . import olive_lended_case
 from . import organic_certifying_entity
+from . import protected_geo_indication
 from . import partner_organic_certification
 from . import olive_cultivation
 from . import olive_appointment

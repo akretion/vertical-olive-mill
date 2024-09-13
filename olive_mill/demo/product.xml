@@ -89,6 +89,34 @@
     <field name="olive_invoice_service_ids" eval="[(4, ref('organic_option_product'))]"/>
 </record>
 
+<record id="oil_pgi_baux" model="product.product">
+    <field name="name">AOP Baux de Provence - Fruité vert</field>
+    <field name="default_code">AOP-VERT</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="True"/>
+    <field name="detailed_type">olive_oil</field>
+    <field name="olive_culture_type">regular</field>
+    <field name="olive_geo_id" ref="olive_mill.aop_baux_de_provence"/>
+    <field name="uom_id" ref="uom.product_uom_litre"/>
+    <field name="uom_po_id" ref="uom.product_uom_litre"/>
+    <field name="tracking">lot</field>
+</record>
+
+<record id="black_oil_pgi_baux" model="product.product">
+    <field name="name">AOP Baux de Provence - Fruité noir</field>
+    <field name="default_code">AOP-NOIR</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="True"/>
+    <field name="detailed_type">olive_oil</field>
+    <field name="olive_culture_type">regular</field>
+    <field name="olive_geo_id" ref="olive_mill.aop_baux_de_provence"/>
+    <field name="uom_id" ref="uom.product_uom_litre"/>
+    <field name="uom_po_id" ref="uom.product_uom_litre"/>
+    <field name="tracking">lot</field>
+    <field name="olive_invoice_service_ids" eval="[(4, ref('black_option_product'))]"/>
+</record>
 
 <!-- BOTTLE -->
 <record id="bottle" model="product.product">

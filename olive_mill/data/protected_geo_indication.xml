@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2024 Akretion France (https://www.akretion.com/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo noupdate="1">
+
+<!-- Official Source : https://afidol.org/oleiculteur/aoc/
+ Interesting source : https://www.quechoisir.org/decryptage-huiles-d-olive-aop-aoc-et-igp-n9795/ -->
+
+<record id="aop_nyons" model="protected.geo.indication">
+    <field name="name">AOP Huile d'olive de Nyons</field>
+    <field name="code">NYONS</field>
+    <field name="sequence">10</field>
+</record>
+
+<record id="aop_baux_de_provence" model="protected.geo.indication">
+    <field name="name">AOP Huile d'olive de la vallée des Baux-de-Provence</field>
+    <field name="code">BAUX</field>
+    <field name="sequence">20</field>
+</record>
+
+<record id="aop_aix" model="protected.geo.indication">
+    <field name="name">AOP Huile d'olive d'Aix-en-Provence</field>
+    <field name="code">AIX</field>
+    <field name="sequence">30</field>
+</record>
+
+<record id="aop_haute_provence" model="protected.geo.indication">
+    <field name="name">AOP Huile d'olive de Haute-Provence</field>
+    <field name="code">HPROV</field>
+    <field name="sequence">40</field>
+</record>
+
+<record id="aop_nice" model="protected.geo.indication">
+    <field name="name">AOP Huile d'olive de Nice</field>
+    <field name="code">NICE</field>
+    <field name="sequence">50</field>
+</record>
+
+<record id="aop_nimes" model="protected.geo.indication">
+    <field name="name">AOP Huile d'olive de Nîmes</field>
+    <field name="code">NIMES</field>
+    <field name="sequence">60</field>
+</record>
+
+<record id="aop_corse" model="protected.geo.indication">
+    <field name="name">AOP Oliu di Corsica</field>
+    <field name="code">COS</field>
+    <field name="sequence">70</field>
+</record>
+
+<record id="aop_provence" model="protected.geo.indication">
+    <field name="name">AOP Huile d'olive de Provence</field>
+    <field name="code">PROV</field>
+    <field name="sequence">80</field>
+</record>
+
+
+<record id="aop_languedoc" model="protected.geo.indication">
+    <field name="name">AOP Huile d'olive du Languedoc</field>
+    <field name="code">LGD</field>
+    <field name="sequence">90</field>
+</record>
+
+</odoo>

@@ -57,6 +57,6 @@
     <field name="view_mode">tree,form</field>
 </record>
 
-<menuitem id="olive_treatment_menu" action="olive_treatment_action" parent="olive_config_menu" sequence="90"/>
+<menuitem id="olive_treatment_menu" action="olive_treatment_action" parent="olive_config_menu" sequence="80"/>
 
 </odoo>
