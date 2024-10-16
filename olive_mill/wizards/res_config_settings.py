@@ -12,7 +12,11 @@ class ResConfigSettings(models.TransientModel):
     group_olive_organic = fields.Boolean(
         string="Organic Olive Mill", implied_group='olive_mill.olive_organic')
     group_olive_protected_geo_indication = fields.Boolean(
-        string="Protected Geographical Indication", implied_group="olive_mill.olive_protected_geo_indication")
+        string="Protected Geographical Indication",
+        implied_group="olive_mill.olive_protected_geo_indication")
+    group_oil_ratio_modulation_per_olive_variant = fields.Boolean(
+        string="Oil Ratio Modulation per Olive Variant",
+        implied_group="olive_mill.oil_ratio_modulation_per_olive_variant")
     current_season_id = fields.Many2one(
         related='company_id.current_season_id')
     olive_preseason_poll_ratio_no_history = fields.Float(

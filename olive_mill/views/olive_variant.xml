@@ -20,7 +20,8 @@
                 attrs="{'invisible': [('active', '=', True)]}"
             />
                 <group name="main">
-                    <field name="name"/>
+                        <field name="name"/>
+                        <field name="ratio_coef" groups="olive_mill.oil_ratio_modulation_per_olive_variant"/>
                     <field name="active" invisible="1" />
                 </group>
             </sheet>
@@ -35,6 +36,7 @@
         <tree>
             <field name="sequence" widget="handle"/>
             <field name="name"/>
+            <field name="ratio_coef" groups="olive_mill.oil_ratio_modulation_per_olive_variant" optional="show"/>
         </tree>
     </field>
 </record>

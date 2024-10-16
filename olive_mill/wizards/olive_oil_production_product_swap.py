@@ -56,6 +56,12 @@ class OliveOilProductionProductSwap(models.TransientModel):
             raise UserError(_(
                 "You cannot swap oil type from a regular or organic "
                 "culture type to a conversion culture type."))
+        if new_product.olive_geo_id and cur_product.olive_geo_id != new_product.olive_geo_id:
+            raise UserError(_(
+                "You cannot swap oil type from protected geographical "
+                "indication '%(cur_geo)s' to '%(new_geo)s'.",
+                cur_geo=cur_product.olive_geo_id.display_name or 'None',
+                new_geo=new_product.olive_geo_id.display_name))
         sloc = prod.warehouse_id.olive_get_shrinkage_tank(new_product)
         prod_vals = {
             'oil_product_id': new_product.id,

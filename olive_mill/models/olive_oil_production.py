@@ -336,6 +336,7 @@ class OliveOilProduction(models.Model):
         self.ensure_one()
         pr_oil = self.env['decimal.precision'].precision_get('Olive Oil Volume')
         pr_ratio = self.env['decimal.precision'].precision_get('Olive Oil Ratio')
+        variant_modulation = self.env.user.has_group('olive_mill.oil_ratio_modulation_per_olive_variant')
         total_oil_qty = self.oil_qty
         if force_ratio:
             first_line_to_process = force_ratio[0]
@@ -351,9 +352,13 @@ class OliveOilProduction(models.Model):
         else:
             first_line_to_process = self.line_ids[0]
             first_line_ratio = self.ratio
-            first_line_oil_qty = first_line_to_process.olive_qty * total_oil_qty / self.olive_qty
+            if variant_modulation:
+                total_olive_prorata_coef = sum([line.variant_id.ratio_coef * line.olive_qty for line in self.line_ids])
+                first_line_oil_qty = total_oil_qty * first_line_to_process.olive_qty * first_line_to_process.variant_id.ratio_coef / total_olive_prorata_coef
+            else:
+                total_olive_prorata = self.olive_qty
+                first_line_oil_qty = total_oil_qty * first_line_to_process.olive_qty / total_olive_prorata
             total_oil_prorata = total_oil_qty
-            total_olive_prorata = self.olive_qty
         first_line_vals = first_line_to_process._oil_qty_compute_other_vals(
             first_line_oil_qty, first_line_ratio)
         # Write on first line
@@ -362,7 +367,10 @@ class OliveOilProduction(models.Model):
         for line in lines:
             # compute oil qty with a pro-rata using special values total_oil_prorata
             # and total_olive_prorata
-            oil_qty = line.olive_qty * total_oil_prorata / total_olive_prorata
+            if variant_modulation:
+                oil_qty = total_oil_prorata * line.olive_qty * line.variant_id.ratio_coef / total_olive_prorata_coef
+            else:
+                oil_qty = total_oil_prorata * line.olive_qty / total_olive_prorata
             oil_qty_for_ratio = oil_qty
             ratio = float_round(
                 100 * oil_qty_for_ratio / line.olive_qty, precision_digits=pr_ratio)

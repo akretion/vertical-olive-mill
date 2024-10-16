@@ -40,12 +40,24 @@
     <field name="company_id" ref="base.main_company"/>
 </record>
 
+<record id="aop_tank1" model="stock.location">
+    <field name="name">AOP Tank</field>
+    <field name="usage">internal</field>
+    <field name="olive_tank_type">regular</field>
+    <field name="oil_product_id" ref="oil_aop_baux"/>
+    <field name="olive_season_id" ref="current_season"/>
+    <field name="location_id" model="stock.location"
+        search="[('usage', '=', 'view'), ('location_id', '=', ref('stock.stock_location_locations')), ('company_id', '=', ref('base.main_company'))]"/>
+    <field name="company_id" ref="base.main_company"/>
+</record>
+
+
 <record id="shrinkage" model="stock.location">
     <field name="name">Shrinkage Tank</field>
     <field name="usage">internal</field>
     <field name="olive_tank_type">shrinkage</field>
     <field name="oil_product_id" ref="oil"/>
-    <field name="olive_shrinkage_oil_product_ids" eval="[(4, ref('olive_mill.oil'))]"/>
+    <field name="olive_shrinkage_oil_product_ids" eval="[(4, ref('olive_mill.oil')), (4, ref('olive_mill.oil_organic')), (4, ref('olive_mill.oil_conversion')), (4, ref('olive_mill.oil_aop_baux'))]"/>
     <field name="olive_season_id" ref="current_season"/>
     <field name="location_id" model="stock.location"
         search="[('usage', '=', 'view'), ('location_id', '=', ref('stock.stock_location_locations')), ('company_id', '=', ref('base.main_company'))]"/>

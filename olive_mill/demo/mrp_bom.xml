@@ -118,6 +118,33 @@
     <field name="bom_id" ref="bottle_conversion_bom"/>
 </record>
 
+<!-- AOP 75cl  -->
+<record id="aop_baux_de_provence_bom" model="mrp.bom">
+    <field name="product_tmpl_id" ref="aop_baux_de_provence_bottle_product_template"/>
+    <field name="product_qty">1</field>
+    <field name="product_uom_id" ref="uom.product_uom_unit"/>
+    <field name="type">normal</field>
+    <field name="consumption">strict</field>
+</record>
+
+<record id="aop_baux_de_provence_bom_line1" model="mrp.bom.line">
+    <field name="product_id" ref="empty_bottle"/>
+    <field name="product_qty">1</field>
+    <field name="product_uom_id" ref="uom.product_uom_unit"/>
+    <field name="bom_id" ref="aop_baux_de_provence_bom"/>
+</record>
+<record id="aop_baux_de_provence_bom_line2" model="mrp.bom.line">
+    <field name="product_id" ref="cap_bottle"/>
+    <field name="product_qty">1</field>
+    <field name="product_uom_id" ref="uom.product_uom_unit"/>
+    <field name="bom_id" ref="aop_baux_de_provence_bom"/>
+</record>
+<record id="aop_baux_de_provence_bom_line3" model="mrp.bom.line">
+    <field name="product_id" ref="oil_aop_baux"/>
+    <field name="product_qty">0.75</field>
+    <field name="product_uom_id" ref="uom.product_uom_litre"/>
+    <field name="bom_id" ref="aop_baux_de_provence_bom"/>
+</record>
 
 
 </odoo>

@@ -1062,18 +1062,43 @@ class OliveArrivalLine(models.Model):
         tax_product = company.olive_oil_tax_product_id
         if tax_product.uom_id != self.env.ref('uom.product_uom_kgm'):
             raise UserError(_(
-                "The unit of measure of the oil tax product '%s' should be in kg.")
+                "The unit of measure of the oil tax product '%s' should be kg.")
                 % tax_product.display_name)
         il_vals = self._pre_prepare_invoice_line(tax_product, vals)
         qty = totals['oil_qty_net']
         qty_kg = float_round(qty * company.olive_oil_density, precision_digits=pr_oil)
         il_vals['quantity'] = qty_kg
-        price_unit_kg = pricelist.get_product_price(tax_product, qty, partner)
+        price_unit_kg = pricelist.get_product_price(tax_product, qty_kg, partner)
         il_vals['price_unit'] = price_unit_kg
         il_vals['name'] += _(" (%s L = %s kg)") % (
             formatLang(self.env, qty, dp='Olive Oil Volume'),
             formatLang(self.env, qty_kg, dp='Olive Oil Volume'))
         vals['invoice_line_ids'].append((0, 0, il_vals))
+        # PGI tax
+        geo_tax_product2qty = defaultdict(float)
+        for line in self:
+            if line.oil_product_id.olive_geo_id:
+                geo_tax_product = line.oil_product_id.olive_geo_id.tax_product_id
+                if not geo_tax_product:
+                    raise UserError(_(
+                        "Tax product is not set on protected geogaphical "
+                        "indication '%s'.")
+                        % line.oil_product_id.olive_geo_id.display_name)
+                geo_tax_product2qty[geo_tax_product] += line.oil_qty_net
+        for geo_tax_product, qty in geo_tax_product2qty.items():
+            if geo_tax_product.uom_id != self.env.ref('uom.product_uom_kgm'):
+                raise UserError(_(
+                    "The unit of measure of the oil tax product '%s' should be kg.")
+                    % geo_tax_product.display_name)
+            qty_kg = float_round(qty * company.olive_oil_density, precision_digits=pr_oil)
+            il_vals = self._pre_prepare_invoice_line(geo_tax_product, vals)
+            il_vals['quantity'] = qty_kg
+            price_unit_kg = pricelist.get_product_price(geo_tax_product, qty_kg, partner)
+            il_vals['price_unit'] = price_unit_kg
+            il_vals['name'] += _(" (%s L = %s kg)") % (
+                formatLang(self.env, qty, dp='Olive Oil Volume'),
+                formatLang(self.env, qty_kg, dp='Olive Oil Volume'))
+            vals['invoice_line_ids'].append((0, 0, il_vals))
         # Extra items
         extra_totals = self.env['olive.arrival.line.extra'].read_group(
             [

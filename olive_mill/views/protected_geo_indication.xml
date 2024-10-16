@@ -38,7 +38,7 @@
                     </h1>
                 </div>
                                 <group name="main">
-                                        <field name="code"/>
+                                        <field name="tax_product_id" context="{'default_detailed_type': 'olive_tax'}"/>
                                         <field name="active" invisible="1"/>
                                         <field name="company_id" groups="base.group_multi_company"/>
                                 </group>
@@ -52,8 +52,8 @@
                 <field name="arch" type="xml">
                         <tree>
                                         <field name="sequence" widget="handle"/>
-                                        <field name="code"/>
                                         <field name="name" decoration-bf="1"/>
+                                        <field name="tax_product_id" optional="hide"/>
                                         <field name="active" invisible="1"/>
                                         <field name="company_id" groups="base.group_multi_company" optional="show"/>
                         </tree>
@@ -64,7 +64,7 @@
                 <field name="model">protected.geo.indication</field>
                 <field name="arch" type="xml">
                     <search>
-                            <field name="name" string="Name or Code" filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"/>
+                            <field name="name"/>
                             <separator/>
                             <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
                     </search>

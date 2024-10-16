@@ -43,7 +43,7 @@
     <field name="context">{'search_default_olive_products': True}</field>
 </record>
 
-<menuitem id="olive_stock_production_lot_menu" action="olive_stock_production_lot_action" parent="olive_data_menu" sequence="110"/>
+<menuitem id="olive_stock_production_lot_menu" action="olive_stock_production_lot_action" parent="olive_data_menu" sequence="120"/>
 
 
 </odoo>

@@ -71,7 +71,8 @@ class ResCompany(models.Model):
         domain=[('detailed_type', '=', 'olive_service')])
     olive_oil_tax_product_id = fields.Many2one(
         'product.product', string='AFIDOL Tax Product',
-        domain=[('detailed_type', '=', 'olive_tax')])
+        domain=[('detailed_type', '=', 'olive_tax')],
+        ondelete='restrict')
     olive_oil_production_result_uom = fields.Selection([
         ('kg', 'Kg'),
         ('liter', 'Liter'),

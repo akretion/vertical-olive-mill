@@ -12,30 +12,18 @@ class ProtectedGeoIndication(models.Model):
 
     name = fields.Char(required=True)
     company_id = fields.Many2one('res.company', required=False)
-    code = fields.Char()
+    tax_product_id = fields.Many2one(
+        'product.product', domain=[('detailed_type', '=', 'olive_tax')],
+        ondelete='restrict')
     active = fields.Boolean(default=True)
     sequence = fields.Integer(default=10)
     ochard_count = fields.Integer(compute="_compute_ochard_count")
     product_template_count = fields.Integer(compute="_compute_product_template_count")
 
     _sql_constraints = [(
-        'code_company_unique',
-        'unique(code, company_id)',
-        'This protected geographical indication already exists.'),
-        (
         'name_company_unique',
         'unique(name, company_id)',
-        'This protected geographical indication already exists.'),
-        ]
-
-    def name_get(self):
-        res = []
-        for rec in self:
-            name = rec.name
-            if rec.code:
-                name = f"[{rec.code}] {name}"
-            res.append((rec.id, name))
-        return res
+        'This protected geographical indication already exists.')]
 
     def _compute_ochard_count(self):
         rg_res = self.env['olive.ochard'].read_group(
@@ -54,16 +42,3 @@ class ProtectedGeoIndication(models.Model):
             [(x['olive_geo_id'][0], x['olive_geo_id_count']) for x in rg_res])
         for geo in self:
             geo.product_template_count = mapped_data.get(geo.id, 0)
-
-    @api.model
-    def name_search(self, name='', args=None, operator='ilike', limit=100):
-        if args is None:
-            args = []
-        if name and operator == 'ilike':
-            recs = self.search([('code', '=ilike', name)] + args, limit=limit)
-            if recs:
-                return recs.name_get()
-            recs = self.search(['|', ('code', '=ilike', f"{name}%"), ('name', 'ilike', name)] + args, limit=limit)
-            if recs:
-                return recs.name_get()
-        return super().name_search(name=name, args=args, operator=operator, limit=limit)

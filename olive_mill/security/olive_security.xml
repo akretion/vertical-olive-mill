@@ -23,6 +23,10 @@
     <field name="category_id" ref="base.module_category_hidden"/>
 </record>
 
+<record id="oil_ratio_modulation_per_olive_variant" model="res.groups">
+    <field name="name">Oil Ratio Modulation per Olive Variant</field>
+    <field name="category_id" ref="base.module_category_hidden"/>
+</record>
 
 </data>
 

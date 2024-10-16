@@ -49,6 +49,6 @@ class OliveOchard(models.Model):
             if ochard.city:
                 name = f'{name} ({ochard.city})'
             if ochard.geo_id:
-                name = f"{name} [{ochard.geo_id.code or ochard.geo_id.name}]"
+                name = f"{name} [{ochard.geo_id.name}]"
             res.append((ochard.id, name))
         return res

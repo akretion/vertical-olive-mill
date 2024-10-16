@@ -89,7 +89,7 @@
     <field name="olive_invoice_service_ids" eval="[(4, ref('organic_option_product'))]"/>
 </record>
 
-<record id="oil_pgi_baux" model="product.product">
+<record id="oil_aop_baux" model="product.product">
     <field name="name">AOP Baux de Provence - Fruité vert</field>
     <field name="default_code">AOP-VERT</field>
     <field name="categ_id" ref="product.product_category_5"/>
@@ -169,6 +169,21 @@
     <field name="purchase_ok" eval="False"/>
     <field name="detailed_type">olive_bottle_full</field>
     <field name="olive_culture_type">conversion</field>
+    <field name="uom_id" ref="uom.product_uom_unit"/>
+    <field name="uom_po_id" ref="uom.product_uom_unit"/>
+    <field name="tracking">lot</field>
+    <field name="route_ids" eval="[(6, 0, [ref('mrp.route_warehouse0_manufacture')])]"/>
+</record>
+
+<record id="aop_baux_de_provence_bottle" model="product.product">
+    <field name="name">AOP Baux-de-Provence 75cl Olive Oil Bottle</field>
+    <field name="default_code">AOP_BOTTLE</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="True"/>
+    <field name="purchase_ok" eval="False"/>
+    <field name="detailed_type">olive_bottle_full</field>
+    <field name="olive_culture_type">regular</field>
+    <field name="olive_geo_id" ref="olive_mill.aop_baux_de_provence"/>
     <field name="uom_id" ref="uom.product_uom_unit"/>
     <field name="uom_po_id" ref="uom.product_uom_unit"/>
     <field name="tracking">lot</field>
@@ -319,8 +334,174 @@
     <field name="uom_po_id" ref="uom.product_uom_kgm"/>
 </record>
 
-<!-- INVENTORY for bottles  -->
+<record id="aop_nyons_tax_product" model="product.product">
+    <field name="name">AOP Nyons Tax</field>
+    <field name="default_code">AOP-NYONS-TAX</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="False"/>
+    <field name="purchase_ok" eval="False"/>
+    <field name="detailed_type">olive_tax</field>
+    <field name="list_price">0.18</field>
+    <field name="uom_id" ref="uom.product_uom_kgm"/>
+    <field name="uom_po_id" ref="uom.product_uom_kgm"/>
+</record>
 
+<record id="aop_baux_de_provence_tax_product" model="product.product">
+    <field name="name">AOP Baux-de-Provence Tax</field>
+    <field name="default_code">AOP-BAUX-TAX</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="False"/>
+    <field name="purchase_ok" eval="False"/>
+    <field name="detailed_type">olive_tax</field>
+    <field name="list_price">0.19</field>
+    <field name="uom_id" ref="uom.product_uom_kgm"/>
+    <field name="uom_po_id" ref="uom.product_uom_kgm"/>
+</record>
+
+<record id="aop_aix_tax_product" model="product.product">
+    <field name="name">AOP Aix-en-Provence Tax</field>
+    <field name="default_code">AOP-AIX-TAX</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="False"/>
+    <field name="purchase_ok" eval="False"/>
+    <field name="detailed_type">olive_tax</field>
+    <field name="list_price">0.17</field>
+    <field name="uom_id" ref="uom.product_uom_kgm"/>
+    <field name="uom_po_id" ref="uom.product_uom_kgm"/>
+</record>
+
+<record id="aop_haute_provence_tax_product" model="product.product">
+    <field name="name">AOP Haute-Provence Tax</field>
+    <field name="default_code">AOP-HPROV-TAX</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="False"/>
+    <field name="purchase_ok" eval="False"/>
+    <field name="detailed_type">olive_tax</field>
+    <field name="list_price">0.16</field>
+    <field name="uom_id" ref="uom.product_uom_kgm"/>
+    <field name="uom_po_id" ref="uom.product_uom_kgm"/>
+</record>
+
+<record id="aop_nice_tax_product" model="product.product">
+    <field name="name">AOP Nice Tax</field>
+    <field name="default_code">AOP-NICE-TAX</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="False"/>
+    <field name="purchase_ok" eval="False"/>
+    <field name="detailed_type">olive_tax</field>
+    <field name="list_price">0.15</field>
+    <field name="uom_id" ref="uom.product_uom_kgm"/>
+    <field name="uom_po_id" ref="uom.product_uom_kgm"/>
+</record>
+
+<record id="aop_nimes_tax_product" model="product.product">
+    <field name="name">AOP Nîmes Tax</field>
+    <field name="default_code">AOP-NIMES-TAX</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="False"/>
+    <field name="purchase_ok" eval="False"/>
+    <field name="detailed_type">olive_tax</field>
+    <field name="list_price">0.14</field>
+    <field name="uom_id" ref="uom.product_uom_kgm"/>
+    <field name="uom_po_id" ref="uom.product_uom_kgm"/>
+</record>
+
+<record id="aop_corse_tax_product" model="product.product">
+    <field name="name">AOP Corse Tax</field>
+    <field name="default_code">AOP-CORSE-TAX</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="False"/>
+    <field name="purchase_ok" eval="False"/>
+    <field name="detailed_type">olive_tax</field>
+    <field name="list_price">0.13</field>
+    <field name="uom_id" ref="uom.product_uom_kgm"/>
+    <field name="uom_po_id" ref="uom.product_uom_kgm"/>
+</record>
+
+<record id="aop_provence_tax_product" model="product.product">
+    <field name="name">AOP Provence Tax</field>
+    <field name="default_code">AOP-PROV-TAX</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="False"/>
+    <field name="purchase_ok" eval="False"/>
+    <field name="detailed_type">olive_tax</field>
+    <field name="list_price">0.14</field>
+    <field name="uom_id" ref="uom.product_uom_kgm"/>
+    <field name="uom_po_id" ref="uom.product_uom_kgm"/>
+</record>
+
+<record id="aop_languedoc_tax_product" model="product.product">
+    <field name="name">AOP Languedoc Tax</field>
+    <field name="default_code">AOP-LGD-TAX</field>
+    <field name="categ_id" ref="product.product_category_5"/>
+    <field name="sale_ok" eval="False"/>
+    <field name="purchase_ok" eval="False"/>
+    <field name="detailed_type">olive_tax</field>
+    <field name="list_price">0.15</field>
+    <field name="uom_id" ref="uom.product_uom_kgm"/>
+    <field name="uom_po_id" ref="uom.product_uom_kgm"/>
+</record>
+
+<!-- INVENTORY for bottles  -->
+<record id="olive_stock_inventory" model="stock.inventory">
+    <field name="name">Olive Mill demo data inventory</field>
+</record>
+
+<record id="olive_stock_inventory_line1" model="stock.inventory.line">
+    <field name="product_id" ref="empty_bottle"/>
+    <field name="product_uom_id" ref="uom.product_uom_unit"/>
+    <field name="inventory_id" ref="olive_stock_inventory"/>
+    <field name="product_qty">1000.0</field>
+    <field name="location_id" model="stock.location" eval="obj().env.ref('stock.warehouse0').lot_stock_id.id"/>
+</record>
+
+<record id="olive_stock_inventory_line2" model="stock.inventory.line">
+    <field name="product_id" ref="cap_bottle"/>
+    <field name="product_uom_id" ref="uom.product_uom_unit"/>
+    <field name="inventory_id" ref="olive_stock_inventory"/>
+    <field name="product_qty">1000.0</field>
+    <field name="location_id" model="stock.location" eval="obj().env.ref('stock.warehouse0').lot_stock_id.id"/>
+</record>
+
+<record id="olive_stock_inventory_line3" model="stock.inventory.line">
+    <field name="product_id" ref="inox_can"/>
+    <field name="product_uom_id" ref="uom.product_uom_unit"/>
+    <field name="inventory_id" ref="olive_stock_inventory"/>
+    <field name="product_qty">1000.0</field>
+    <field name="location_id" model="stock.location" eval="obj().env.ref('stock.warehouse0').lot_stock_id.id"/>
+</record>
+
+<record id="olive_stock_inventory_line4" model="stock.inventory.line">
+    <field name="product_id" ref="can20l"/>
+    <field name="product_uom_id" ref="uom.product_uom_unit"/>
+    <field name="inventory_id" ref="olive_stock_inventory"/>
+    <field name="product_qty">1000.0</field>
+    <field name="location_id" model="stock.location" eval="obj().env.ref('stock.warehouse0').lot_stock_id.id"/>
+</record>
+
+<record id="olive_stock_inventory_line5" model="stock.inventory.line">
+    <field name="product_id" ref="can10l"/>
+    <field name="product_uom_id" ref="uom.product_uom_unit"/>
+    <field name="inventory_id" ref="olive_stock_inventory"/>
+    <field name="product_qty">1000.0</field>
+    <field name="location_id" model="stock.location" eval="obj().env.ref('stock.warehouse0').lot_stock_id.id"/>
+</record>
+
+<record id="olive_stock_inventory_line6" model="stock.inventory.line">
+    <field name="product_id" ref="can5l"/>
+    <field name="product_uom_id" ref="uom.product_uom_unit"/>
+    <field name="inventory_id" ref="olive_stock_inventory"/>
+    <field name="product_qty">1000.0</field>
+    <field name="location_id" model="stock.location" eval="obj().env.ref('stock.warehouse0').lot_stock_id.id"/>
+</record>
+
+<function model="stock.inventory" name="_action_start">
+    <function eval="[[('state', '=', 'draft'), ('id', '=', ref('olive_stock_inventory'))]]" model="stock.inventory" name="search"/>
+</function>
+
+<function model="stock.inventory" name="action_validate">
+    <function eval="[[('state', '=', 'confirm'), ('id', '=', ref('olive_stock_inventory'))]]" model="stock.inventory" name="search"/>
+</function>
 
 
 </odoo>

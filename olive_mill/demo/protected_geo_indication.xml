@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2024 Akretion France (https://www.akretion.com/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="aop_nyons" model="protected.geo.indication">
+    <field name="tax_product_id" ref="olive_mill.aop_nyons_tax_product"/>
+</record>
+
+<record id="aop_baux_de_provence" model="protected.geo.indication">
+    <field name="tax_product_id" ref="olive_mill.aop_baux_de_provence_tax_product"/>
+</record>
+
+<record id="aop_aix" model="protected.geo.indication">
+    <field name="tax_product_id" ref="olive_mill.aop_aix_tax_product"/>
+</record>
+
+<record id="aop_haute_provence" model="protected.geo.indication">
+    <field name="tax_product_id" ref="olive_mill.aop_haute_provence_tax_product"/>
+</record>
+
+<record id="aop_nice" model="protected.geo.indication">
+    <field name="tax_product_id" ref="olive_mill.aop_nice_tax_product"/>
+</record>
+
+<record id="aop_nimes" model="protected.geo.indication">
+    <field name="tax_product_id" ref="olive_mill.aop_nimes_tax_product"/>
+</record>
+
+<record id="aop_corse" model="protected.geo.indication">
+    <field name="tax_product_id" ref="olive_mill.aop_corse_tax_product"/>
+</record>
+
+<record id="aop_provence" model="protected.geo.indication">
+    <field name="tax_product_id" ref="olive_mill.aop_provence_tax_product"/>
+</record>
+
+<record id="aop_languedoc" model="protected.geo.indication">
+    <field name="tax_product_id" ref="olive_mill.aop_languedoc_tax_product"/>
+</record>
+
+</odoo>

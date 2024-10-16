@@ -39,6 +39,18 @@
                         </div>
                     </div>
                 </div>
+                <div class='col-12 col-lg-12 o_setting_box' id="option_oil_ratio_modulation_per_olive_variant">
+                    <div class="o_setting_left_pane" >
+                        <field name="group_oil_ratio_modulation_per_olive_variant"/>
+                    </div>
+                    <div class="o_setting_right_pane">
+                        <label for="group_oil_ratio_modulation_per_olive_variant"/>
+                        <div class="text-muted">
+                            Allow to modulate the olive oil ratio per olive variant. The modulation coefficient must be configured on each olive variant.
+                        </div>
+                    </div>
+                </div>
+
             </div>
                 <h2>Variables</h2>
             <div class="row mt16 o_settings_container" name="olive_variables_container">
