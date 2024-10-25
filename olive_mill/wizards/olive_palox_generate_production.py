@@ -14,36 +14,40 @@ class OlivePaloxGenerateProduction(models.TransientModel):
     company_id = fields.Many2one(
         'res.company', ondelete='cascade', required=True,
         default=lambda self: self.env.company)
-    palox_ids = fields.Many2many('olive.palox', string='Paloxes', check_company=True)
+    palox_ids = fields.Many2many('olive.palox', string='Paloxes', check_company=True,
+        default=lambda self: self._context.get('active_ids'))
     date = fields.Date(
         default=fields.Date.context_today, required=True)
     warehouse_id = fields.Many2one(
         'stock.warehouse', string='Warehouse', required=True, check_company=True,
         domain="[('olive_mill', '=', True), ('company_id', '=', company_id)]",
         default=lambda self: self.env.user._default_olive_mill_wh())
-
-    @api.model
-    def default_get(self, fields_list):
-        res = super().default_get(fields_list)
-        res['palox_ids'] = self.env.context.get('active_ids')
-        return res
+    prod_type = fields.Selection([
+        ('onebyone', 'One Oil Production per Palox'),
+        ('grouped', 'One Oil Production for All Paloxes'),
+        ], default='onebyone', string='Type', required=True)
 
     def generate(self):
         self.ensure_one()
         if not self.palox_ids:
             raise UserError(_("No palox selected."))
         oopo = self.env['olive.oil.production']
+        cvals = {
+            'date': self.date,
+            'company_id': self.company_id.id,
+            'warehouse_id': self.warehouse_id.id,
+            }
+        vals_list = []
         for palox in self.palox_ids:
             if not palox.oil_product_id:
                 raise UserError(_(
                     "Missing oil product on palox '%s'.") % palox.display_name)
-            vals = {
-                'date': self.date,
-                'palox_id': palox.id,
-                'company_id': self.company_id.id,
-                'warehouse_id': self.warehouse_id.id,
-                }
-            prod = oopo.create(vals)
+            if self.prod_type == 'onebyone':
+                vals_list.append(dict(cvals, palox_ids=[(6, 0, [palox.id])]))
+        if self.prod_type == 'grouped':
+            vals_list.append(dict(cvals, palox_ids=[(6, 0, self.palox_ids.ids)]))
+        prods = oopo.create(vals_list)
+        for prod in prods:
             prod.draft2ratio()
         action = self.env['ir.actions.actions']._for_xml_id(
             'olive_mill.olive_oil_production_action')

@@ -18,6 +18,7 @@
                 <field name="palox_ids" widget="many2many_tags"/>
                 <field name="warehouse_id"/>
                 <field name="date"/>
+                <field name="prod_type"/>
             </group>
             <footer>
                 <button name="generate" type="object" string="Generate" class="btn-primary"/>
@@ -32,8 +33,6 @@
     <field name="res_model">olive.palox.generate.production</field>
     <field name="view_mode">form</field>
     <field name="target">new</field>
-    <field name="binding_model_id" ref="olive_mill.model_olive_palox"/>
-    <field name="binding_view_types">list</field>
 </record>
 
 

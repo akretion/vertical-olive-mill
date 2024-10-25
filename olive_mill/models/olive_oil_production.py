@@ -43,11 +43,11 @@ class OliveOilProduction(models.Model):
         states={'done': [('readonly', True)]},
         domain="[('olive_tank_type', '=', 'regular'), ('oil_product_id', '=', oil_product_id), ('olive_season_id', '=', season_id), ('company_id', '=', company_id)]",
         tracking=True)
-    # not a pb to have withdrawal_location_id required because
-    # this field has a default value
+    # We would like to have withdrawal_location_id required, but it blocks the
+    # wizard olive.palox.generate.production
     withdrawal_location_id = fields.Many2one(
         'stock.location', compute="_compute_locations", store=True, readonly=False,
-        string='Withdrawal Location', required=True,
+        string='Withdrawal Location', required=False,
         states={'done': [('readonly', True)]}, check_company=True,
         domain="[('olive_tank_type', '=', False), ('usage', '=', 'internal'), ('company_id', '=', company_id)]")
     shrinkage_location_id = fields.Many2one(

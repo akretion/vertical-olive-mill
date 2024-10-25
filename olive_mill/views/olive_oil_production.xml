@@ -71,7 +71,7 @@
                         </div>
                         <field name="sale_location_id" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}"/>
                         <field name="shrinkage_location_id" />
-                        <field name="withdrawal_location_id" attrs="{'invisible': [('oil_destination', '=', 'sale')]}"/>
+                        <field name="withdrawal_location_id" attrs="{'invisible': [('oil_destination', '=', 'sale')], 'required': [('oil_destination', '!=', 'sale')]}"/>
                         <field name="oil_destination" widget="badge" decoration-danger="oil_destination == 'mix'" decoration-warning="oil_destination == 'sale'" decoration-info="oil_destination == 'withdrawal'"/>
                         <field name="sample"/>
                     </group>

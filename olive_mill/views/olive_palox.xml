@@ -75,6 +75,9 @@
     <field name="model">olive.palox</field>
     <field name="arch" type="xml">
         <tree>
+            <header>
+                <button type="action" name="%(olive_mill.olive_palox_generate_production_action)d" string="Generate Oil Productions"/>
+            </header>
             <field name="name"/>
             <field name="label" optional="show"/>
             <field name="weight"/>
