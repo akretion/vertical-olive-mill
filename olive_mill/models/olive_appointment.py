@@ -65,7 +65,7 @@ class OliveAppointment(models.Model):
         'olive.variant', string='Olive Variant', tracking=True)
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Type',
-        domain=[('detailed_type', '=', 'olive_oil')])
+        domain="[('detailed_type', '=', 'olive_oil'), ('olive_culture_type', '=', olive_culture_type)]")
     qty = fields.Integer(
         string='Quantity', help="Olive quantity in kg", tracking=True)
     start_datetime = fields.Datetime(

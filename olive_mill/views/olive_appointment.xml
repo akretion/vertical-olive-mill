@@ -93,7 +93,7 @@
                             <field name="qty" class="oe_inline"/> kg
                         </div>
                         <field name="palox_qty"/>
-                        <field name="oil_product_id" domain="[('detailed_type', '=', 'olive_oil'), ('olive_culture_type', '=', olive_culture_type)]" widget="selection"/>
+                        <field name="oil_product_id" widget="selection"/>
                         <field name="oil_destination"/>
                         <label for="withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}"/>
                         <div name="withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}">
