@@ -100,6 +100,7 @@ class OliveWithdrawal(models.TransientModel):
             'location_id': self.warehouse_id.olive_withdrawal_loc_id.id,
             'location_dest_id': self.partner_id.commercial_partner_id.property_stock_customer.id,
             'state': 'assigned',
+            'olive_withdrawal': True,
             }
         return vals
 

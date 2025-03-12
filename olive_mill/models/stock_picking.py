@@ -13,6 +13,7 @@ class StockPicking(models.Model):
     olive_oil_picking_wizard_next_move_id = fields.Many2one(
         'stock.move', compute='_compute_show_start_olive_oil_picking_wizard',
         string='Next Move for Olive Oil Picking Wizard')
+    olive_withdrawal = fields.Boolean()
 
     @api.depends('move_lines.product_id.detailed_type', 'move_lines.state')
     def _compute_show_start_olive_oil_picking_wizard(self):

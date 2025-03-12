@@ -18,7 +18,14 @@
         </button>
         <field name="priority" position="after">
             <field name="olive_oil_picking_wizard_next_move_id" invisible="1"/>
+            <field name="olive_withdrawal" invisible="1"/>
         </field>
+        <button name="%(stock.action_report_delivery)d" type="action" position="attributes">
+            <attribute name="attrs">{'invisible': ['|', ('olive_withdrawal', '=', True), ('state', '!=', 'done')]}</attribute>
+        </button>
+        <button name="%(stock.action_report_delivery)d" type="action" position="after">
+            <button name="%(olive_oil_delivery_report)d" string="Print Oil Withdrawal" attrs="{'invisible': ['|', ('olive_withdrawal', '=', False), ('state', '!=', 'done')]}" type="action" groups="base.group_user"/>
+        </button>
     </field>
 </record>
 
