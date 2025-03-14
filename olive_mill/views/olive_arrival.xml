@@ -230,6 +230,7 @@
 
 <menuitem id="olive_arrival_menu" action="olive_arrival_action" parent="olive_operations_menu" sequence="20"/>
 
+<!-- WARNING: there are 2 form views for olive.arrival.line -->
 <record id="olive_arrival_line_form" model="ir.ui.view">
     <field name="name">olive.arrival.line.form</field>
     <field name="model">olive.arrival.line</field>
@@ -238,6 +239,12 @@
             <header>
                 <field name="state" widget="statusbar" statusbar_visible="draft,weighted,done"/>
             </header>
+            <div class="alert alert-warning" role="alert" attrs="{'invisible': [('leaf_removal', '=', False)]}">
+                  Leaf removal is enabled
+            </div>
+            <div class="alert alert-info" role="alert" attrs="{'invisible': [('leaf_removal', '=', True)]}">
+                  Leaf removal is disabled
+            </div>
             <group name="main">
             <group name="main-left" string="Arrival">
                 <field name="name"/>
@@ -337,7 +344,7 @@
     </field>
 </record>
 
-
+<!-- WARNING: there are 2 form views for olive.arrival.line -->
 <record id="olive_arrival_line_arrival_form" model="ir.ui.view">
     <field name="name">olive.arrival.line.extra_only.form</field>
     <field name="model">olive.arrival.line</field>
@@ -347,6 +354,12 @@
             <header>
                 <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
             </header>
+            <div class="alert alert-warning" role="alert" attrs="{'invisible': [('leaf_removal', '=', False)]}">
+                  Leaf removal is enabled
+            </div>
+            <div class="alert alert-info" role="alert" attrs="{'invisible': [('leaf_removal', '=', True)]}">
+                  Leaf removal is disabled
+            </div>
             <group name="main">
                 <field name="name"/>
                 <field name="oil_destination"/>
