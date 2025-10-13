@@ -64,6 +64,8 @@ access_olive_oil_production_pack2check_user,Full access on olive.oil.production.
 access_olive_oil_production_product_swap_operator,Full access on olive.oil.production.product.swap,model_olive_oil_production_product_swap,stock.group_stock_user,1,1,1,1
 access_olive_oil_production_ratio2force_operator,Full access on olive.oil.production.ratio2force,model_olive_oil_production_ratio2force,olive_operator,1,1,1,1
 access_olive_oil_production_ratio2force_user,Full access on olive.oil.production.ratio2force,model_olive_oil_production_ratio2force,stock.group_stock_user,1,1,1,1
+access_olive_oil_production_ratio2force_line_operator,Full access on olive.oil.production.ratio2force.line,model_olive_oil_production_ratio2force_line,olive_operator,1,1,1,1
+access_olive_oil_production_ratio2force_line_user,Full access on olive.oil.production.ratio2force.line,model_olive_oil_production_ratio2force_line,stock.group_stock_user,1,1,1,1
 access_olive_oil_tank_transfer_operator,Full access on olive.oil.tank.transfer,model_olive_oil_tank_transfer,olive_operator,1,1,1,1
 access_olive_oil_tank_transfer_user,Full access on olive.oil.tank.transfer,model_olive_oil_tank_transfer,stock.group_stock_user,1,1,1,1
 access_olive_palox_case_lend_operator,Full access on olive.palox.case.lend,model_olive_palox_case_lend,olive_operator,1,1,1,1

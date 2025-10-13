@@ -16,7 +16,8 @@
                 <field name="production_id" invisible="1"/>
                 <field name="season_id" invisible="1"/>
                 <field name="company_id" invisible="1"/>
-                <field name="olive_oil_production_result_uom" invisible="1"/>
+                <field name="result_uom" invisible="1"/>
+                <field name="result_method" invisible="1"/>
                 <field name="palox_ids" widget="many2many_tags"/>
                 <field name="farmers"/>
                 <field name="oil_destination" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}"/>
@@ -36,17 +37,30 @@
                 </div>
                 <label for="oil_qty_kg" string="Oil Qty"/>
                 <div name="oil_qty_kg">
-                    <field name="oil_qty_kg" class="oe_inline" attrs="{'required': [('olive_oil_production_result_uom', '=', 'kg')], 'readonly': [('olive_oil_production_result_uom', '!=', 'kg')]}"/> kg
+                    <field name="oil_qty_kg" class="oe_inline" attrs="{'required': [('result_uom', '=', 'kg'), ('result_method', '!=', 'per_palox')], 'readonly': ['|', ('result_uom', '!=', 'kg'), ('result_method', '=', 'per_palox')]}"/> kg
                 </div>
                 <label for="oil_qty" string="Oil Qty"/>
                 <div name="oil_qty">
-                    <field name="oil_qty" class="oe_inline" attrs="{'required': [('olive_oil_production_result_uom', '=', 'liter')], 'readonly': [('olive_oil_production_result_uom', '!=', 'liter')]}"/> L
+                    <field name="oil_qty" class="oe_inline" attrs="{'required': [('result_uom', '=', 'liter'), ('result_method', '!=', 'per_palox')], 'readonly': ['|', ('result_uom', '!=', 'liter'), ('result_method', '=', 'per_palox')]}"/> L
                 </div>
 
                 <label for="ratio" string="Gross Ratio"/>
                 <div name="ratio">
                     <field name="ratio" class="oe_inline"/> % (L)
                 </div>
+            </group>
+            <group name="per_palox" attrs="{'invisible': [('result_method', '!=', 'per_palox')]}" string="Per Palox Results">
+                <field name="palox_result_ids" nolabel="1" colspan="2">
+                    <tree editable="bottom" create="0" delete="0">
+                        <field name="arrival_line_id"/>
+                        <field name="palox_id"/>
+                        <field name="olive_qty" sum="1"/>
+                        <field name="oil_qty_kg" sum="1" attrs="{'required': [('result_uom', '=', 'kg')], 'readonly': [('result_uom', '!=', 'kg')]}"/>
+                        <field name="oil_qty" sum="1" attrs="{'required': [('result_uom', '=', 'liter')], 'readonly': [('result_uom', '!=', 'liter')]}"/>
+                        <field name="ratio"/>
+                        <field name="result_uom" invisible="1"/>
+                    </tree>
+                </field>
             </group>
             <footer>
                 <button name="validate" type="object" string="Validate" class="btn-primary"/>

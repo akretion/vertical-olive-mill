@@ -148,6 +148,10 @@
                     <label for="olive_oil_production_result_uom" class="col-md-4"/>
                     <field name="olive_oil_production_result_uom" class="col-md-2"/>
                 </div>
+                <div class="row" id="olive_oil_production_multipalox_result">
+                    <label for="olive_oil_production_multipalox_result" class="col-md-4"/>
+                    <field name="olive_oil_production_multipalox_result" class="col-md-2"/>
+                </div>
                 <div class="row" id="olive_oil_production_start_hour">
                     <label for="olive_oil_production_start_hour" class="col-md-4"/>
                     <field name="olive_oil_production_start_hour" class="col-md-2"/> h

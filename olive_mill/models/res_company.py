@@ -77,6 +77,10 @@ class ResCompany(models.Model):
         ('kg', 'Kg'),
         ('liter', 'Liter'),
         ], default='kg', string='Enter Oil Production Result as')
+    olive_oil_production_multipalox_result = fields.Selection([
+        ('per_palox', 'Per Palox'),
+        ('global', 'Global'),
+        ], default='per_palox', string="Enter Multi-Palox Oil Production Result")
     olive_oil_production_start_hour = fields.Integer(
         string='Default Oil Production Start Hour', default=8)
     olive_oil_production_start_minute = fields.Integer(
