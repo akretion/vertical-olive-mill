@@ -41,10 +41,10 @@ class OlivePalox(models.Model):
         ('withdrawal', 'Withdrawal'),
         ('sale', 'Sale'),
         ('mix', 'Mix'),
-        ], string='Oil Destination', compute='_compute_other')
-    farmers = fields.Char(string='Farmers', compute='_compute_other')
+        ], string='Oil Destination', compute='_compute_other', store=True)
+    farmers = fields.Char(string='Farmers', compute='_compute_other', store=True)
     arrival_date = fields.Date(
-        string='Arrival Date', compute='_compute_other',
+        string='Arrival Date', compute='_compute_other', store=True,
         help="If there are multiple arrivals in this palox, this field contains "
         "the oldest arrival date.")
 
@@ -61,17 +61,27 @@ class OlivePalox(models.Model):
     # I don't put the 2 compute methods in the same,
     # because name_get() only uses weight, and computation of weight is
     # fast with read_group()
+    @api.depends(
+            "arrival_line_ids.oil_destination",
+            "arrival_line_ids.arrival_id.date",
+            "arrival_line_ids.arrival_id.partner_id",
+            "arrival_line_ids.state",
+            "arrival_line_ids.production_id",
+            )
     def _compute_other(self):
         for palox in self:
             oil_dests = []
-            farmers = []
+            farmers = set()
             arrival_dates = []
             for line in palox.line_ids:
                 oil_dests.append(line.oil_destination)
-                farmers.append(line.commercial_partner_id.name)
-                arrival_dates.append(line.arrival_date)
+                arrival = line.arrival_id
+                farmers.add(arrival.partner_id.commercial_partner_id.name)
+                arrival_dates.append(arrival.date)
             oil_destination = 'mix'
-            if all([dest == 'sale' for dest in oil_dests]):
+            if not oil_dests:
+                oil_destination = False
+            elif all([dest == 'sale' for dest in oil_dests]):
                 oil_destination = 'sale'
             elif all([dest == 'withdrawal' for dest in oil_dests]):
                 oil_destination = 'withdrawal'

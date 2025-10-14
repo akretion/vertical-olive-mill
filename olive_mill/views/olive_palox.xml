@@ -44,7 +44,7 @@
                             <field name="weight" class="oe_inline"/> kg
                         </div>
                         <field name="oil_product_id"/>
-                        <field name="oil_destination"/>
+                        <field name="oil_destination" widget="badge" decoration-danger="oil_destination == 'mix'" decoration-warning="oil_destination == 'sale'" decoration-info="oil_destination == 'withdrawal'"/>
                         <field name="arrival_date"/>
                         <field name="borrower_partner_id"/>
                         <field name="borrowed_date"/>
@@ -59,7 +59,24 @@
                 </group>
                 <notebook>
                     <page name="content" string="Current Content">
-                        <field name="line_ids" nolabel="1" colspan="2"/>
+                        <field name="line_ids" nolabel="1" colspan="2">
+                            <tree>
+                                <field name="name" decoration-bf="1"/>
+                                <field name="commercial_partner_id"/>
+                                <field name="arrival_date" optional="show"/>
+                                <field name="olive_qty" sum="1"/>
+                                <field name="leaf_removal" optional="hide"/>
+                                <field name="variant_id"/>
+                                <field name="ripeness" optional="show"/>
+                                <field name="sanitary_state" optional="show"/>
+                                <field name="oil_product_id"/>
+                                <field name="ochard_id" optional="hide"/>
+                                <field name="oil_destination" widget="badge" decoration-danger="oil_destination == 'mix'" decoration-warning="oil_destination == 'sale'" decoration-info="oil_destination == 'withdrawal'"/>
+                                <field name="mix_withdrawal_oil_qty" string="Withdrawal (L)" sum="1" attrs="{'invisible': [('oil_destination', '!=', 'mix')], 'column_invisible': [('parent.oil_destination', '!=', 'mix')]}"/>
+                                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'done'" decoration-muted="state == 'cancel'"/>
+                                <field name="arrival_state" widget="badge" optional="hide" decoration-info="state == 'draft'" decoration-warning="state == 'weighted'" decoration-success="state == 'done'" decoration-muted="state == 'cancel'"/>
+                            </tree>
+                        </field>
                     </page>
                     <page name="borrow_history" string="Borrow History">
                         <field name="borrow_history_ids" nolabel="1" colspan="2"/>
@@ -78,11 +95,11 @@
             <header>
                 <button type="action" name="%(olive_mill.olive_palox_generate_production_action)d" string="Generate Oil Productions"/>
             </header>
-            <field name="name"/>
+            <field name="name" decoration-bf="1"/>
             <field name="label" optional="show"/>
             <field name="weight"/>
             <field name="oil_product_id"/>
-            <field name="oil_destination" optional="show"/>
+            <field name="oil_destination" optional="show" widget="badge" decoration-danger="oil_destination == 'mix'" decoration-warning="oil_destination == 'sale'" decoration-info="oil_destination == 'withdrawal'"/>
             <field name="arrival_date" optional="show"/>
             <field name="farmers" optional="show"/>
             <field name="borrower_partner_id" optional="show"/>
@@ -98,6 +115,7 @@
     <field name="arch" type="xml">
         <search>
             <field name="name" filter_domain="['|', ('name', 'ilike', self), ('label', 'ilike', self)]" string="Number or Label"/>
+            <field name="farmers"/>
             <field name="borrower_partner_id"/>
             <separator/>
             <filter name="not_empty" string="Not Empty" domain="[('oil_product_id', '!=', False)]"/>
@@ -106,9 +124,15 @@
             <filter name="lended" domain="[('borrower_partner_id', '!=', False)]" string="Lended"/>
             <filter name="not_lended" domain="[('borrower_partner_id', '=', False)]" string="Not Lended"/>
             <separator/>
+            <filter name="oil_dest_withdrawal" string="Withdrawal" domain="[('oil_destination', '=', 'withdrawal')]"/>
+            <filter name="oil_dest_sale" string="Sale" domain="[('oil_destination', '=', 'sale')]"/>
+            <filter name="oil_dest_mix" string="Mix" domain="[('oil_destination', '=', 'mix')]"/>
+            <separator/>
             <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
             <group string="Group By" name="groupby">
                 <filter name="borrower_partner_groupby" string="Borrower" context="{'group_by': 'borrower_partner_id'}"/>
+                <filter name="arrival_date_groupby" string="Arrival Date" context="{'group_by': 'arrival_date:day'}"/>
+                <filter name="oil_destination_groupby" string="Oil Destination" context="{'group_by': 'oil_destination'}"/>
             </group>
         </search>
     </field>

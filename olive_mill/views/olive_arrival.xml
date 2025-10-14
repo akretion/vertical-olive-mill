@@ -103,9 +103,9 @@
                                 <field name="ochard_id" optional="show"/>
                                 <field name="palox_id"/>
                                 <field name="oil_destination" widget="badge" decoration-danger="oil_destination == 'mix'" decoration-warning="oil_destination == 'sale'" decoration-info="oil_destination == 'withdrawal'"/>
-                                <field name="mix_withdrawal_oil_qty" string="Withdrawal (L)" sum="1"/>
+                                <field name="mix_withdrawal_oil_qty" string="Withdrawal (L)" sum="1" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}"/>
                                 <field name="extra_count" string="Extras" optional="show"/>
-                                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'done'"/>
+                                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'done'" decoration-muted="state == 'cancel'"/>
                             </tree>
                         </field>
                     </page>
@@ -161,7 +161,7 @@
             <field name="partner_id"/>
             <field name="commercial_partner_id" invisible="1"/>
             <field name="olive_qty" sum="1"/>
-            <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-warning="state == 'weighted'" decoration-success="state == 'done'"/>
+            <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-warning="state == 'weighted'" decoration-success="state == 'done'" decoration-muted="state == 'cancel'"/>
             <field name="company_id" groups="base.group_multi_company" optional="hide"/>
         </tree>
     </field>
@@ -401,20 +401,23 @@
     <field name="model">olive.arrival.line</field>
     <field name="arch" type="xml">
         <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" edit="0" create="0">
-            <field name="name"/>
-            <field name="arrival_id"/>
+            <field name="name" decoration-bf="1"/>
+            <field name="arrival_date" optional="show"/>
             <field name="production_id"/>
             <field name="commercial_partner_id"/>
-            <field name="oil_destination"/>
+            <field name="oil_destination" widget="badge" decoration-danger="oil_destination == 'mix'" decoration-warning="oil_destination == 'sale'" decoration-info="oil_destination == 'withdrawal'"/>
             <field name="oil_product_id"/>
+            <field name="variant_id" optional="hide"/>
+            <field name="ripeness" optional="hide"/>
+            <field name="sanitary_state" optional="hide"/>
             <field name="olive_qty" sum="1"/>
             <field name="oil_qty_net" sum="1"/>
             <field name="withdrawal_oil_qty" sum="1"/>
             <field name="sale_oil_qty" sum="1"/>
             <field name="oil_ratio_net"/>
-            <field name="state"/>
-            <field name="arrival_state"/>
-            <field name="production_state"/>
+            <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" decoration-success="state == 'done'"/>
+            <field name="arrival_state" optional="hide" decoration-info="state == 'draft'" decoration-warning="state == 'weighted'" decoration-success="state == 'done'" decoration-muted="state == 'cancel'"/>
+            <field name="production_state" decoration-info="state in ('draft', 'ratio')" decoration-success="state == 'done'" decoration-warning="state == 'check'" decoration-danger="state in ('force', 'pack')" decoration-muted="state == 'cancel'"/>
         </tree>
     </field>
 </record>
