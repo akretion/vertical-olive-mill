@@ -4,6 +4,7 @@
 
 from odoo import models, fields, api, _
 from dateutil.relativedelta import relativedelta
+from odoo.tools.misc import format_datetime
 import math
 import pytz
 
@@ -151,11 +152,11 @@ class OliveAppointment(models.Model):
         'oil_product_id', 'withdrawal_invoice',
         'lend_palox_qty', 'lend_regular_case_qty', 'lend_organic_case_qty')
     def _compute_display_calendar_label(self):
+        olive_culture_type2label = dict(self.fields_get('olive_culture_type', 'selection')['olive_culture_type']['selection'])
         for app in self:
             label = app.partner_id.name
             if app.olive_culture_type and app.olive_culture_type != 'regular':
-                olive_culture_type_label = dict(app.fields_get('olive_culture_type', 'selection')['olive_culture_type']['selection'])[app.olive_culture_type]
-                label += ' [%s]' % olive_culture_type_label
+                label += ' [%s]' % olive_culture_type2label[app.olive_culture_type]
             if app.appointment_type in ARRIVAL_TYPES:
                 label += ', %d kg' % app.qty
                 if app.oil_destination == 'withdrawal':
@@ -214,15 +215,15 @@ class OliveAppointment(models.Model):
 
     @api.depends('partner_id', 'start_datetime')
     def name_get(self):
+        calendar = self._context.get('params', {}).get('view_type') in ("calendar", "calendar_list")
         res = []
-        # TODO finish port/test
         for app in self:
-            start_dt_in_tz = fields.Datetime.context_timestamp(
-                self, app.start_datetime)
-            start_in_tz = fields.Datetime.to_string(start_dt_in_tz)
-            res.append((
-                app.id,
-                '%s %s' % (app.partner_id.display_name, start_in_tz[:16])))
+            if calendar:
+                name = app.display_calendar_label
+            else:
+                start_in_tz = format_datetime(self.env, app.start_datetime)
+                name = '%s %s' % (app.partner_id.display_name, start_in_tz[:-3])
+            res.append((app.id, name))
         return res
 
     @api.onchange('start_datetime', 'appointment_type', 'qty')

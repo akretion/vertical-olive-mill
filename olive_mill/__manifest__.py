@@ -13,14 +13,15 @@
     'depends': [
         'mrp',
         'account',
-        'product_expiry_simple',
-        'stock_no_negative',
+        'product_expiry_simple',  # OCA/stock-logistics-workflow
+        'stock_no_negative',  # OCA/stock-logistics-workflow
         # 'stock_pack_operation_auto_fill',
-        'report_py3o',
-        'base_usability',  # for reports
-        'onchange_helper',
-        'base_view_inheritance_extension',
-        'product_detailed_type_stock',
+        'report_py3o',  # OCA/repoting-engine
+        'base_usability',  # akretion/odoo-usability, for reports
+        'onchange_helper',  # OCA/server-tools
+        'base_view_inheritance_extension',  # OCA/server-tools
+        'product_detailed_type_stock',  # akretion/odoo-usability
+        'web_view_calendar_list',  # OCA/web
         ],
     'data': [
         'security/olive_security.xml',

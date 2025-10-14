@@ -11,14 +11,14 @@
 <record id="olive_appointment_action" model="ir.actions.act_window">
     <field name="name">Appointments</field>
     <field name="res_model">olive.appointment</field>
-    <field name="view_mode">calendar,tree,form</field>
+    <field name="view_mode">calendar_list,calendar,tree,form</field>
     <field name="context">{'search_default_current_season': 1}</field>
 </record>
 
 <record id="olive_appointment_tree_action" model="ir.actions.act_window">
     <field name="name">Appointments</field>
     <field name="res_model">olive.appointment</field>
-    <field name="view_mode">tree,form,calendar</field>
+    <field name="view_mode">tree,form,calendar_list,calendar</field>
     <field name="context">{'search_default_current_season': 1}</field>
 </record>
 
@@ -143,11 +143,26 @@
     <field name="name">olive.appointment.calendar</field>
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
-        <calendar color="appointment_type" date_start="start_datetime" date_stop="end_datetime" mode="day" quick_add="false">
+        <!-- color="appointment_type" doesn't work on a selection field, only a M2O field -->
+        <calendar date_start="start_datetime" date_stop="end_datetime" mode="day" quick_add="false">
             <field name="display_calendar_label"/>
+            <field name="appointment_type" filters="1" invisible="1"/>
         </calendar>
     </field>
 </record>
+
+<!-- Uses OCA module web_view_calendar_list from OCA/web -->
+<record id="olive_appointment_calendar_list" model="ir.ui.view">
+    <field name="name">olive.appointment.calendar</field>
+    <field name="model">olive.appointment</field>
+    <field name="arch" type="xml">
+        <calendar_list date_start="start_datetime" date_stop="end_datetime" mode="day" quick_add="false">
+            <field name="display_calendar_label"/>
+            <field name="appointment_type" filters="1" invisible="1"/>
+        </calendar_list>
+    </field>
+</record>
+
 
 <record id="olive_appointment_search" model="ir.ui.view">
     <field name="name">olive.appointment.search</field>
