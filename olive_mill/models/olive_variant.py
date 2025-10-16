@@ -13,7 +13,7 @@ class OliveVariant(models.Model):
     name = fields.Char(string='Name', required=True)
     sequence = fields.Integer()
     active = fields.Boolean(default=True)
-    ratio_coef = fields.Integer(default=100, string="Ratio Modulation Coefficient")
+    ratio_coef = fields.Integer(default=100, string="Modulation Coefficient Ratio")
 
     _sql_constraints = [(
         'name_unique',
@@ -21,5 +21,5 @@ class OliveVariant(models.Model):
         'This olive variant already exists.'),
         ('ratio_coef_positive',
         'CHECK(ratio_coef > 0)',
-        'The ratio modulation coefficient must be strictly positive.'),
+        'The modulation coefficient ratio must be strictly positive.'),
         ]

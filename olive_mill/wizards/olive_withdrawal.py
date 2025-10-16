@@ -96,7 +96,7 @@ class OliveWithdrawal(models.TransientModel):
             'company_id': self.company_id.id,
             'partner_id': self.partner_id.id,
             'picking_type_id': self.warehouse_id.out_type_id.id,
-            'origin': _('Olive Withdrawal Wizard'),
+            'origin': _('Oil Withdrawal Wizard'),
             'location_id': self.warehouse_id.olive_withdrawal_loc_id.id,
             'location_dest_id': self.partner_id.commercial_partner_id.property_stock_customer.id,
             'state': 'assigned',
