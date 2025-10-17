@@ -144,7 +144,7 @@
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
         <!-- color="appointment_type" doesn't work on a selection field, only a M2O field -->
-        <calendar date_start="start_datetime" date_stop="end_datetime" mode="day" quick_add="false">
+        <calendar date_start="start_datetime" date_stop="end_datetime" mode="month" quick_add="false">
             <field name="display_calendar_label"/>
             <field name="appointment_type" filters="1" invisible="1"/>
         </calendar>
@@ -156,7 +156,7 @@
     <field name="name">olive.appointment.calendar</field>
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
-        <calendar_list date_start="start_datetime" date_stop="end_datetime" mode="day" quick_add="false">
+        <calendar_list date_start="start_datetime" date_stop="end_datetime" mode="month" quick_add="false">
             <field name="display_calendar_label"/>
             <field name="appointment_type" filters="1" invisible="1"/>
         </calendar_list>
