@@ -2,7 +2,7 @@
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl)
 
-from odoo import fields, models, tools, _
+from odoo import fields, models, _
 from odoo.exceptions import UserError
 
 
@@ -89,9 +89,6 @@ class ResPartner(models.Model):
         ('conversion', 'Conversion'),
         ], compute='_compute_organic_and_warnings',
         string='Olive Culture Type')
-    olive_organic_certified_logo = fields.Binary(
-        compute='_compute_organic_and_warnings',
-        string='Organic Certified Logo')
     olive_sale_pricelist_id = fields.Many2one(
         'olive.sale.pricelist', string='Sale Pricelist for Olive Mill',
         company_dependent=True)
@@ -216,8 +213,6 @@ class ResPartner(models.Model):
             company = self.env.company
             company_id = company.id
             culture_type = 'regular'
-            filename = False
-            logo = False
             cultivation_form_ko = True
             parcel_ko = True
             certif_ko = False
@@ -275,16 +270,10 @@ class ResPartner(models.Model):
                     if cert:
                         if cert.conversion:
                             culture_type = 'conversion'
-                            filename = 'organic_logo_conversion_done.png'
-                            if cert.state == 'draft':
-                                filename = 'organic_logo_conversion_draft.png'
                         else:
                             culture_type = 'organic'
-                            filename = 'organic_logo_done.png'
-                            if cert.state == 'draft':
-                                filename = 'organic_logo_draft.png'
-                    if cert.state == 'draft':
-                        certif_ko = True
+                        if cert.state == 'draft':
+                            certif_ko = True
 
                     cultivation_count = oco.search_count([
                         ('company_id', '=', company_id),
@@ -313,14 +302,7 @@ class ResPartner(models.Model):
                             ])
                         if lines_to_in_invoice:
                             invoicing_ko = True
-            if filename:
-                fname_path = 'olive_mill/static/image/%s' % filename
-                f = tools.file_open(fname_path, 'rb')
-                f_binary = f.read()
-                if f_binary:
-                    logo = f_binary.encode('base64')
             partner.olive_culture_type = culture_type
-            partner.olive_organic_certified_logo = logo
             partner.olive_cultivation_form_ko = cultivation_form_ko
             partner.olive_parcel_ko = parcel_ko
             partner.olive_organic_certif_ko = certif_ko

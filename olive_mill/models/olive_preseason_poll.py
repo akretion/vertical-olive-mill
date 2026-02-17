@@ -24,10 +24,10 @@ class OlivePreseasonPoll(models.Model):
         domain=[('parent_id', '=', False), ('olive_farmer', '=', True)])
     olive_culture_type = fields.Selection(
         related='partner_id.commercial_partner_id.olive_culture_type')
+    olive_organic_certif_ko = fields.Boolean(
+        related='partner_id.commercial_partner_id.olive_organic_certif_ko')
     commercial_partner_id = fields.Many2one(
         related='partner_id.commercial_partner_id', store=True)
-    olive_organic_certified_logo = fields.Binary(
-        related='partner_id.commercial_partner_id.olive_organic_certified_logo')
     line_ids = fields.One2many(
         'olive.preseason.poll.line', 'poll_id', string='Lines')
     past_data_ok = fields.Boolean(readonly=True)

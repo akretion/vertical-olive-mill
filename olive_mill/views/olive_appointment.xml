@@ -65,7 +65,10 @@
                     </button>
                     <button name="open_new_appointment_after_this" string="New After This" type="object" icon="fa-angle-double-right" class="oe_stat_button"/>
                 </div>
-                <field name="olive_organic_certified_logo" widget="image" class="oe_avatar" attrs="{'invisible': [('olive_organic_certified_logo', '=', False)]}"/>
+                <img src="/olive_mill/static/image/organic_logo_done.png" alt="Logo Organic" attrs="{'invisible': ['|', ('olive_culture_type', '!=', 'organic'), ('olive_organic_certif_ko', '=', True)]}" height="40"/>
+                <img src="/olive_mill/static/image/organic_logo_draft.png" alt="Logo Organic Draft" attrs="{'invisible': ['|', ('olive_culture_type', '!=', 'organic'), ('olive_organic_certif_ko', '=', False)]}" height="40"/>
+                <img src="/olive_mill/static/image/organic_logo_conversion_done.png" alt="Logo Conversion" attrs="{'invisible': ['|', ('olive_culture_type', '!=', 'conversion'), ('olive_organic_certif_ko', '=', True)]}" height="40"/>
+                <img src="/olive_mill/static/image/organic_logo_conversion_draft.png" alt="Logo Conversion Draft" attrs="{'invisible': ['|', ('olive_culture_type', '!=', 'conversion'), ('olive_organic_certif_ko', '=', False)]}" height="40"/>
                 <group name="main">
                     <group name="top-left">
                         <field name="partner_id"/>

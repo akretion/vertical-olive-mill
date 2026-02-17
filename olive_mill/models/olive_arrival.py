@@ -43,8 +43,6 @@ class OliveArrival(models.Model):
         tracking=True)
     commercial_partner_id = fields.Many2one(
         related='partner_id.commercial_partner_id', store=True)
-    olive_organic_certified_logo = fields.Binary(
-        related='partner_id.commercial_partner_id.olive_organic_certified_logo')
     olive_culture_type = fields.Selection(
         related='partner_id.commercial_partner_id.olive_culture_type')
     olive_cultivation_form_ko = fields.Boolean(

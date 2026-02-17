@@ -73,9 +73,10 @@
                     </button>
 
                 </div>
-                <div name="organic_logo" class="oe_inline" attrs="{'invisible': [('olive_culture_type', '=', 'regular')]}">
-                    <field name="olive_organic_certified_logo" widget="image"/>
-                </div>
+                    <img src="/olive_mill/static/image/organic_logo_done.png" alt="Logo Organic" attrs="{'invisible': ['|', ('olive_culture_type', '!=', 'organic'), ('olive_organic_certif_ko', '=', True)]}"/>
+                    <img src="/olive_mill/static/image/organic_logo_draft.png" alt="Logo Organic Draft" attrs="{'invisible': ['|', ('olive_culture_type', '!=', 'organic'), ('olive_organic_certif_ko', '=', False)]}"/>
+                    <img src="/olive_mill/static/image/organic_logo_conversion_done.png" alt="Logo Conversion" attrs="{'invisible': ['|', ('olive_culture_type', '!=', 'conversion'), ('olive_organic_certif_ko', '=', True)]}"/>
+                    <img src="/olive_mill/static/image/organic_logo_conversion_draft.png" alt="Logo Conversion Draft" attrs="{'invisible': ['|', ('olive_culture_type', '!=', 'conversion'), ('olive_organic_certif_ko', '=', False)]}"/>
                 <div class="oe_title">
                     <field name="olive_cultivation_form_ko" invisible="1"/>
                     <field name="olive_parcel_ko" invisible="1"/>
