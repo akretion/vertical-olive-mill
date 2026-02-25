@@ -1,10 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
-  @author: Alexis de Lattre <alexis.delattre@akretion.com>
-  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
--->
-
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
 
 <record id="olive_variant_form" model="ir.ui.view">
@@ -13,16 +7,11 @@
     <field name="arch" type="xml">
         <form>
             <sheet>
-            <widget
-                name="web_ribbon"
-                title="Archived"
-                bg_color="bg-danger"
-                attrs="{'invisible': [('active', '=', True)]}"
-            />
+            <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active"/>
                 <group name="main">
                         <field name="name"/>
                         <field name="ratio_coef" groups="olive_mill.oil_ratio_modulation_per_olive_variant"/>
-                    <field name="active" invisible="1" />
+                    <field name="active" invisible="1"/>
                 </group>
             </sheet>
         </form>
@@ -33,11 +22,11 @@
     <field name="name">olive.variant.tree</field>
     <field name="model">olive.variant</field>
     <field name="arch" type="xml">
-        <tree>
+        <list>
             <field name="sequence" widget="handle"/>
             <field name="name"/>
             <field name="ratio_coef" groups="olive_mill.oil_ratio_modulation_per_olive_variant" optional="show"/>
-        </tree>
+        </list>
     </field>
 </record>
 
@@ -56,7 +45,7 @@
 <record id="olive_variant_action" model="ir.actions.act_window">
     <field name="name">Olive Variants</field>
     <field name="res_model">olive.variant</field>
-    <field name="view_mode">tree,form</field>
+    <field name="view_mode">list,form</field>
 </record>
 
 <menuitem id="olive_variant_menu" action="olive_variant_action" parent="olive_config_menu" sequence="40"/>

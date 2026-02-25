@@ -2,7 +2,7 @@
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models, _, Command
 from odoo.tools import float_compare
 from odoo.exceptions import UserError
 
@@ -153,13 +153,15 @@ class OliveOilPicking(models.TransientModel):
                     'product_uom_qty': cline.qty,
                     'name': name,
                     'origin': origin,
-                    'move_line_ids': [(0, 0, {
+                    'picked': True,
+                    'move_line_ids': [Command.create({
+                        'company_id': self.company_id.id,
                         'picking_id': cpicking.id,
                         'product_id': cline.product_id.id,
                         'product_uom_id': cline.product_id.uom_id.id,
                         'location_id': self.container_src_location_id.id,
                         'location_dest_id': self.dest_location_id.id,
-                        'qty_done': cline.qty,
+                        'quantity': cline.qty,
                         })],
                     })
                 cmove._action_done()
@@ -214,7 +216,7 @@ class OliveOilPicking(models.TransientModel):
             'product_uom_id': self.oil_product_id.uom_id.id,
             'location_id': self.move_id.location_id.id,
             'location_dest_id': self.move_id.location_dest_id.id,
-            'qty_done': self.oil_qty,
+            'quantity': self.oil_qty,
             'lot_id': oil_lot.id,
             })
         if self.picking_id:
@@ -225,7 +227,7 @@ class OliveOilPicking(models.TransientModel):
                 ('state', 'not in', ('done', 'cancel')),
                 ])
             for cmline in cmlines:
-                cmline.write({'qty_done': cmline.product_qty})
+                cmline.write({'quantity': cmline.product_qty})
             if self.picking_id.olive_oil_picking_wizard_next_move_id:
                 action = self.picking_id.start_olive_oil_picking_wizard()
         return action

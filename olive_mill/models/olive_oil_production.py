@@ -2,7 +2,7 @@
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import api, fields, models, tools, _
+from odoo import api, fields, models, tools, Command, _
 from odoo.exceptions import UserError
 from odoo.tools import float_compare, float_round
 
@@ -18,13 +18,11 @@ class OliveOilProduction(models.Model):
         string='Production Number', required=True, default=lambda self: _('New'))
     company_id = fields.Many2one(
         'res.company', string='Company', ondelete='cascade', required=True,
-        states={'done': [('readonly', True)]},
         default=lambda self: self.env.company)
     season_id = fields.Many2one(
         'olive.season', string='Season', required=True, index=True,
         default=lambda self: self.env.company.current_season_id.id,
-        domain="[('company_id', '=', company_id)]",
-        states={'done': [('readonly', True)]}, check_company=True)
+        domain="[('company_id', '=', company_id)]", check_company=True)
     current_season = fields.Boolean(
         compute='_compute_current_season', search='_search_current_season')
     warehouse_id = fields.Many2one(
@@ -33,28 +31,24 @@ class OliveOilProduction(models.Model):
         default=lambda self: self.env.user._default_olive_mill_wh(),
         check_company=True, tracking=True)
     palox_ids = fields.Many2many(
-        'olive.palox', string='Paloxes', required=True, readonly=True,
-        ondelete='restrict', check_company=True,
-        states={'draft': [('readonly', False)]}, tracking=True)
+        'olive.palox', string='Paloxes', required=True,
+        ondelete='restrict', check_company=True, tracking=True)
     palox_ids_str = fields.Char(compute='_compute_palox_ids_str', store=True)
     # STOCK LOCATIONS
     sale_location_id = fields.Many2one(
         'stock.location', string='Sale Tank', check_company=True,
-        states={'done': [('readonly', True)]},
         domain="[('olive_tank_type', '=', 'regular'), ('oil_product_id', '=', oil_product_id), ('olive_season_id', '=', season_id), ('company_id', '=', company_id)]",
         tracking=True)
     # We would like to have withdrawal_location_id required, but it blocks the
     # wizard olive.palox.generate.production
     withdrawal_location_id = fields.Many2one(
         'stock.location', compute="_compute_locations", store=True, readonly=False,
-        string='Withdrawal Location', required=False,
-        states={'done': [('readonly', True)]}, check_company=True,
+        string='Withdrawal Location', required=False, check_company=True,
         domain="[('olive_tank_type', '=', False), ('usage', '=', 'internal'), ('company_id', '=', company_id)]")
     shrinkage_location_id = fields.Many2one(
         'stock.location', string='Shrinkage Tank',
         domain="[('olive_tank_type', '=', 'shrinkage'), ('olive_season_id', '=', season_id), ('company_id', '=', company_id)]",
-        states={'done': [('readonly', True)]}, check_company=True,
-        tracking=True)
+        check_company=True, tracking=True)
     olive_qty = fields.Float(
         string='Olive Qty', compute='_compute_lines',
         digits='Olive Weight', store=True, tracking=True,
@@ -83,20 +77,16 @@ class OliveOilProduction(models.Model):
         readonly=True, tracking=True)  # written by ratio2force wizard
     ratio = fields.Float(
         string='Gross Ratio (% L)', digits='Olive Oil Ratio',
-        readonly=True, group_operator='avg',
+        readonly=True, aggregator='avg',
         help="This ratio gives the number of liters of olive oil for "
         "100 kg of olives.")  # Yes, it's a ratio between liters and kg !!!
     date = fields.Date(
-        string='Date', default=fields.Date.context_today, required=True,
-        states={'done': [('readonly', True)]}, tracking=True)
+        string='Date', default=fields.Date.context_today, required=True, tracking=True)
     day_position = fields.Integer(
         compute='_compute_day_position', string='Order')
-    sample = fields.Boolean(
-        string='Sample', readonly=True,
-        states={'draft': [('readonly', False)], 'ratio': [('readonly', False)]})
-    farmers = fields.Char(string='Farmers', readonly=True)
-    decanter_speed = fields.Integer(
-        string='Decanter Speed', states={'done': [('readonly', True)]})
+    sample = fields.Boolean()
+    farmers = fields.Char(readonly=True)
+    decanter_speed = fields.Integer()
     sequence = fields.Integer(default=10)
     state = fields.Selection([
         ('draft', 'Palox Selection'),
@@ -150,14 +140,13 @@ class OliveOilProduction(models.Model):
         'line_ids.olive_qty', 'line_ids.to_sale_tank_oil_qty',
         'line_ids.oil_destination')
     def _compute_lines(self):
-        res = self.env['olive.arrival.line'].read_group(
+        res = self.env['olive.arrival.line']._read_group(
             [('production_id', 'in', self.ids)],
-            ['production_id', 'olive_qty', 'to_sale_tank_oil_qty'],
-            ['production_id'])
-        for re in res:
-            production = self.browse(re['production_id'][0])
-            production.olive_qty = re['olive_qty']
-            production.to_sale_tank_oil_qty = re['to_sale_tank_oil_qty']
+            groupby=['production_id'],
+            aggregates=['olive_qty:sum', 'to_sale_tank_oil_qty:sum'])
+        for production, olive_qty, to_sale_tank_oil_qty in res:
+            production.olive_qty = olive_qty
+            production.to_sale_tank_oil_qty = to_sale_tank_oil_qty
 
     @api.depends('line_ids.oil_destination')
     def _compute_oil_destination(self):
@@ -381,7 +370,6 @@ class OliveOilProduction(models.Model):
     def check2done(self):
         self.ensure_one()
         assert self.state == 'check'
-        splo = self.env['stock.production.lot']
         smo = self.env['stock.move']
         pr_oil = self.env['decimal.precision'].precision_get('Olive Oil Volume')
         wloc = self.warehouse_id.olive_withdrawal_loc_id
@@ -393,7 +381,7 @@ class OliveOilProduction(models.Model):
 
         # create prod lot
         # No expiry date on olive oil in tanks
-        prodlot = splo.create({
+        prodlot = self.env["stock.lot"].create({
             'olive_production_id': self.id,
             'product_id': oil_product.id,
             'name': self.name,
@@ -412,12 +400,14 @@ class OliveOilProduction(models.Model):
                     'location_dest_id': wloc.id,
                     'origin': self.name,
                     'product_uom_qty': line.withdrawal_oil_qty,
-                    'move_line_ids': [(0, 0, {
+                    'picked': True,
+                    'move_line_ids': [Command.create({
+                        'company_id': self.company_id.id,
                         'product_id': oil_product.id,
                         'product_uom_id': oil_product.uom_id.id,
                         'location_id': oil_product.property_stock_production.id,
                         'location_dest_id': wloc.id,
-                        'qty_done': line.withdrawal_oil_qty,
+                        'quantity': line.withdrawal_oil_qty,
                         'lot_id': prodlot.id,
                         'owner_id': line.commercial_partner_id.id,
                         })],
@@ -446,12 +436,14 @@ class OliveOilProduction(models.Model):
                         'location_dest_id': extra.product_id.property_stock_production.id,
                         'origin': self.name,
                         'product_uom_qty': extra.qty,
-                        'move_line_ids': [(0, 0, {
+                        'picked': True,
+                        'move_line_ids': [Command.create({
+                            'company_id': self.company_id.id,
                             'product_id': extra.product_id.id,
                             'product_uom_id': extra.product_id.uom_id.id,
                             'location_id': stock_loc.id,
                             'location_dest_id': extra.product_id.property_stock_production.id,
-                            'qty_done': extra.qty,
+                            'quantity': extra.qty,
                             })],
                         })
                     extra_move1._action_done()
@@ -466,12 +458,14 @@ class OliveOilProduction(models.Model):
                     'location_dest_id': wloc.id,
                     'origin': self.name,
                     'product_uom_qty': extra.qty,
-                    'move_line_ids': [(0, 0, {
+                    'picked': True,
+                    'move_line_ids': [Command.create({
+                        'company_id': self.company_id.id,
                         'product_id': extra.product_id.id,
                         'product_uom_id': extra.product_id.uom_id.id,
                         'location_id': extra.product_id.property_stock_production.id,
                         'location_dest_id': wloc.id,
-                        'qty_done': extra.qty,
+                        'quantity': extra.qty,
                         'owner_id': line.commercial_partner_id.id,
                         })],
                     })
@@ -501,12 +495,14 @@ class OliveOilProduction(models.Model):
                 'location_dest_id': sale_loc.id,
                 'origin': self.name,
                 'product_uom_qty': self.to_sale_tank_oil_qty,
-                'move_line_ids': [(0, 0, {
+                'picked': True,
+                'move_line_ids': [Command.create({
+                    'company_id': self.company_id.id,
                     'product_id': oil_product.id,
                     'product_uom_id': oil_product.uom_id.id,
                     'location_id': oil_product.property_stock_production.id,
                     'location_dest_id': sale_loc.id,
-                    'qty_done': self.to_sale_tank_oil_qty,
+                    'quantity': self.to_sale_tank_oil_qty,
                     'lot_id': prodlot.id,
                     })],
                 })
@@ -542,12 +538,14 @@ class OliveOilProduction(models.Model):
                 'location_dest_id': shrinkage_loc.id,
                 'origin': self.name,
                 'product_uom_qty': to_shrinkage_tank_oil_qty,
-                'move_line_ids': [(0, 0, {
+                'picked': True,
+                'move_line_ids': [Command.create({
+                    'company_id': self.company_id.id,
                     'product_id': shrinkage_product.id,
                     'product_uom_id': shrinkage_product.uom_id.id,
                     'location_id': shrinkage_product.property_stock_production.id,
                     'location_dest_id': shrinkage_loc.id,
-                    'qty_done': to_shrinkage_tank_oil_qty,
+                    'quantity': to_shrinkage_tank_oil_qty,
                     'lot_id': shrinkage_product.shrinkage_prodlot_id.id,
                     })],
                 })
@@ -565,14 +563,12 @@ class OliveOilProduction(models.Model):
         for line in self.line_ids:
             arrivals |= line.arrival_id
         assert arrivals
-        arrivals_res = oalo.read_group(
+        arrivals_res = oalo._read_group(
             [('production_state', '=', 'done'), ('arrival_id', 'in', arrivals.ids)],
-            ['oil_qty_net', 'olive_qty', 'arrival_id'],
-            ['arrival_id'])
-        for arrival_re in arrivals_res:
-            arrival = oao.browse(arrival_re['arrival_id'][0])
-            olive_qty_pressed = arrival_re['olive_qty']
-            oil_qty_net = arrival_re['oil_qty_net']
+            groupby=['arrival_id'],
+            aggregates=['oil_qty_net:sum', 'olive_qty:sum'])
+        for arrival, oil_qty_net, olive_qty in arrivals_res:
+            olive_qty_pressed = olive_qty
             oil_ratio_net = olive_ratio_net = 0.0
             if olive_qty_pressed:
                 oil_ratio_net = 100 * oil_qty_net / olive_qty_pressed

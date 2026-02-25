@@ -1,10 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
-  @author: Alexis de Lattre <alexis.delattre@akretion.com>
-  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
--->
-
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
 
 <record id="olive_arrival_warning_form" model="ir.ui.view">
@@ -24,7 +18,7 @@
             </group>
             <footer>
                 <button special="cancel" string="Close" class="btn-primary"/>
-                <button name="validate" type="object" string="Force Validation" class="btn-default" confirm="Are you sure you want to force validation?" attrs="{'invisible': [('show_validation_button', '=', False)]}"/>
+                <button name="validate" type="object" string="Force Validation" class="btn-default" confirm="Are you sure you want to force validation?" invisible="not show_validation_button"/>
             </footer>
         </form>
     </field>

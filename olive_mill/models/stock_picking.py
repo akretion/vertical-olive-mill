@@ -15,11 +15,11 @@ class StockPicking(models.Model):
         string='Next Move for Olive Oil Picking Wizard')
     olive_withdrawal = fields.Boolean()
 
-    @api.depends('move_lines.product_id.detailed_type', 'move_lines.state')
+    @api.depends('move_ids.product_id.detailed_type', 'move_ids.state')
     def _compute_show_start_olive_oil_picking_wizard(self):
         for pick in self:
             move_id = False
-            for move in pick.move_lines:
+            for move in pick.move_ids:
                 if (
                         move.state == 'confirmed' and
                         move.product_id.detailed_type == 'olive_oil'):

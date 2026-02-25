@@ -2,7 +2,7 @@
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import fields, models, _
+from odoo import Command, fields, models, _
 from odoo.exceptions import UserError
 
 
@@ -75,12 +75,12 @@ class OliveWithdrawal(models.TransientModel):
                 'product_uom_qty': quant.quantity,
                 'origin': picking.origin,
                 'state': 'assigned',
-                'move_line_ids': [(0, 0, {
+                'move_line_ids': [Command.create({
+                    'company_id': self.company_id.id,
                     'picking_id': picking.id,
                     'product_id': product.id,
                     'product_uom_id': product.uom_id.id,
-                    'product_uom_qty': quant.quantity,
-                    'qty_done': quant.quantity,
+                    'quantity': quant.quantity,
                     'location_id': src_loc.id,
                     'location_dest_id': location_dest_id,
                     'lot_id': quant.lot_id.id,
@@ -119,6 +119,6 @@ class OliveWithdrawal(models.TransientModel):
         action.update({
             'res_id': pick.id,
             'views': False,
-            'view_mode': 'form,tree,kanban,calendar',
+            'view_mode': 'form,list,kanban,calendar',
             })
         return action

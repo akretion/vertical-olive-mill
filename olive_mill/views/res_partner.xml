@@ -1,10 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
-  @author: Alexis de Lattre <alexis.delattre@akretion.com>
-  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
--->
-
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
 
 
@@ -20,7 +14,7 @@
             <field name="olive_farmer" invisible="1"/>
         </xpath>
         <field name="child_ids" position="attributes">
-            <attribute name="context" operation="python_dict" key="default_olive_farmer">olive_farmer</attribute>
+            <attribute name="context" operation="update">{"default_olive_farmer": olive_farmer}</attribute>
         </field>
     </field>
 </record>
@@ -29,54 +23,41 @@
     <field name="name">olive.mill.tab.button.partner.form</field>
     <field name="model">res.partner</field>
     <field name="inherit_id" ref="base.view_partner_form"/>
-    <field name="groups_id" eval="[(4, ref('stock.group_stock_user')), (4, ref('olive_operator'))]"/>
     <!-- Inherit before specific modules, to be sure Olive Mill is the first tab -->
     <field name="priority">5</field>
     <field name="arch" type="xml">
         <xpath expr="//field[@name='child_ids']/.." position="before">
-            <page string="Olive Mill" name="olive_disabled" attrs="{'invisible': ['|', ('parent_id', '=', False), ('olive_farmer', '=', False)]}">
+            <page string="Olive Mill" name="olive_disabled" invisible="not parent_id or not olive_farmer" groups="stock.group_stock_user,olive_mill.olive_operator">
                 <div>
                     <p>Olive mill related settings are managed on <button name="open_commercial_entity" type="object" string="the parent company" class="oe_link"/></p>
                 </div>
             </page>
-            <page name="olive" string="Olive Mill" attrs="{'invisible': ['|', ('parent_id', '!=', False), ('olive_farmer', '=', False)]}" autofocus="autofocus">
+            <page name="olive" string="Olive Mill" invisible="parent_id or not olive_farmer" autofocus="autofocus" groups="stock.group_stock_user,olive_mill.olive_operator">
                 <div name="olive_button_box" class="oe_button_box">
 
-                    <div name="olive_cultivation_form_ko" attrs="{'invisible': [('olive_cultivation_form_ko', '=', False)]}" class="badge badge-pill badge-danger font-weight-bold" colspan="2">Cultivation form missing</div>
-                    <div name="olive_parcel_ko" attrs="{'invisible': [('olive_parcel_ko', '=', False)]}" class="badge badge-pill badge-warning font-weight-bold">Parcel information incomplete</div>
-                    <div name="olive_organic_certif_ko" attrs="{'invisible': [('olive_organic_certif_ko', '=', False)]}" class="badge badge-pill badge-success font-weight-bold" groups="olive_mill.olive_organic">Organic certification missing</div>
-                    <div name="olive_invoicing_ko" attrs="{'invisible': [('olive_invoicing_ko', '=', False)]}" class="badge badge-pill badge-info font-weight-bold">Invoicing to do</div>
-                    <div name="olive_withdrawal_ko" attrs="{'invisible': [('olive_withdrawal_ko', '=', False)]}" class="badge badge-pill badge-dark font-weight-bold">Pending Withdrawal</div>
-                    <button class="oe_stat_button" type="action"
-                        name="%(olive_mill.olive_ochard_action)d"
-                        icon="fa-pagelines"
-                        context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}">
+                    <div name="olive_cultivation_form_ko" invisible="not olive_cultivation_form_ko" class="badge rounded-pill text-bg-danger font-weight-bold" colspan="2">Cultivation form missing</div>
+                    <div name="olive_parcel_ko" invisible="not olive_parcel_ko" class="badge rounded-pill text-bg-warning font-weight-bold">Parcel information incomplete</div>
+                    <div name="olive_organic_certif_ko" invisible="not olive_organic_certif_ko" class="badge rounded-pill text-bg-success font-weight-bold" groups="olive_mill.olive_organic">Organic certification missing</div>
+                    <div name="olive_invoicing_ko" invisible="not olive_invoicing_ko" class="badge rounded-pill text-bg-info font-weight-bold">Invoicing to do</div>
+                    <div name="olive_withdrawal_ko" invisible="not olive_withdrawal_ko" class="badge rounded-pill text-bg-dark font-weight-bold">Pending Withdrawal</div>
+                    <button class="oe_stat_button" type="action" name="%(olive_mill.olive_ochard_action)d" icon="fa-pagelines" context="{'default_partner_id': id, 'search_default_partner_id': id}">
                         <field string="Olive Trees" name="olive_tree_total" widget="statinfo"/>
                     </button>
-                    <button class="oe_stat_button" type="action"
-                        name="%(olive_mill.olive_palox_action)d"
-                        context="{'default_borrower_partner_id': active_id, 'search_default_borrower_partner_id': active_id, 'no_create': True}"
-                        icon="fa-inbox">  <!-- use fa-pallet when we'll have access to FA 5.0.7, which is not the case in v10 -->
+                    <button class="oe_stat_button" type="action" name="%(olive_mill.olive_palox_action)d" context="{'default_borrower_partner_id': id, 'search_default_borrower_partner_id': id, 'no_create': True}" icon="fa-inbox">  <!-- use fa-pallet when we'll have access to FA 5.0.7, which is not the case in v10 -->
                         <field string="Lended Palox" name="olive_lended_palox" widget="statinfo"/>
                     </button>
-                    <button class="oe_stat_button" type="action"
-                        name="%(olive_mill.olive_lended_case_action)d"
-                        context="{'default_partner_id': active_id, 'search_default_partner_id': active_id, 'olive_lended_case_main_view': 1}"
-                        icon="fa-codepen">
+                    <button class="oe_stat_button" type="action" name="%(olive_mill.olive_lended_case_action)d" context="{'default_partner_id': id, 'search_default_partner_id': id, 'olive_lended_case_main_view': 1}" icon="fa-codepen">
                         <field name="olive_lended_regular_case" widget="statinfo" string="Lended Cases"/>
                     </button>
-                    <button class="oe_stat_button" type="action"
-                        name="%(olive_mill.olive_lended_case_action)d"
-                        context="{'default_partner_id': active_id, 'search_default_partner_id': active_id, 'olive_lended_case_main_view': 1}"
-                        icon="fa-codepen" groups="olive_mill.olive_organic">
+                    <button class="oe_stat_button" type="action" name="%(olive_mill.olive_lended_case_action)d" context="{'default_partner_id': id, 'search_default_partner_id': id, 'olive_lended_case_main_view': 1}" icon="fa-codepen" groups="olive_mill.olive_organic">
                         <field name="olive_lended_organic_case" widget="statinfo" string="Lended Organic Cases"/>
                     </button>
 
                 </div>
-                    <img src="/olive_mill/static/image/organic_logo_done.png" alt="Logo Organic" attrs="{'invisible': ['|', ('olive_culture_type', '!=', 'organic'), ('olive_organic_certif_ko', '=', True)]}"/>
-                    <img src="/olive_mill/static/image/organic_logo_draft.png" alt="Logo Organic Draft" attrs="{'invisible': ['|', ('olive_culture_type', '!=', 'organic'), ('olive_organic_certif_ko', '=', False)]}"/>
-                    <img src="/olive_mill/static/image/organic_logo_conversion_done.png" alt="Logo Conversion" attrs="{'invisible': ['|', ('olive_culture_type', '!=', 'conversion'), ('olive_organic_certif_ko', '=', True)]}"/>
-                    <img src="/olive_mill/static/image/organic_logo_conversion_draft.png" alt="Logo Conversion Draft" attrs="{'invisible': ['|', ('olive_culture_type', '!=', 'conversion'), ('olive_organic_certif_ko', '=', False)]}"/>
+                    <img src="/olive_mill/static/image/organic_logo_done.png" alt="Logo Organic" invisible="olive_culture_type != 'organic' or olive_organic_certif_ko"/>
+                    <img src="/olive_mill/static/image/organic_logo_draft.png" alt="Logo Organic Draft" invisible="olive_culture_type != 'organic' or not olive_organic_certif_ko"/>
+                    <img src="/olive_mill/static/image/organic_logo_conversion_done.png" alt="Logo Conversion" invisible="olive_culture_type != 'conversion' or olive_organic_certif_ko"/>
+                    <img src="/olive_mill/static/image/organic_logo_conversion_draft.png" alt="Logo Conversion Draft" invisible="olive_culture_type != 'conversion' or not olive_organic_certif_ko"/>
                 <div class="oe_title">
                     <field name="olive_cultivation_form_ko" invisible="1"/>
                     <field name="olive_parcel_ko" invisible="1"/>
@@ -87,16 +68,16 @@
                 <group name="olive_main">
                     <group name="left">
                         <field name="olive_sale_pricelist_id" string="Sale Pricelist"/>
-                        <button type="action" name="%(olive_appointment_tree_action)d" string="Appointments" context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}" colspan="2"/>
-                        <button type="action" name="%(olive_palox_lend_action)d" string="Lend Palox and/or Cases" context="{'default_partner_id': active_id, 'default_way': 'lend'}" colspan="2"/>
-                        <button type="action" name="%(olive_palox_lend_action)d" string="Return Palox and/or Cases" context="{'default_partner_id': active_id, 'default_way': 'return'}" colspan="2" attrs="{'invisible': [('olive_lended_palox', '=', 0), ('olive_lended_regular_case', '=', 0), ('olive_lended_organic_case', '=', 0)]}"/>
-                        <button type="object" name="create_single_olive_ochard" string="Quick-create an ochard to update later" attrs="{'invisible': [('olive_ochard_ids', '!=', [])]}" colspan="2"/>
-                        <button type="action" name="%(olive_cultivation_action)d" string="Cultivation Form" context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}" colspan="2"/>
+                        <button type="action" name="%(olive_appointment_tree_action)d" string="Appointments" context="{'default_partner_id': id, 'search_default_partner_id': id}" colspan="2"/>
+                        <button type="action" name="%(olive_palox_lend_action)d" string="Lend Palox and/or Cases" context="{'default_partner_id': id, 'default_way': 'lend'}" colspan="2"/>
+                        <button type="action" name="%(olive_palox_lend_action)d" string="Return Palox and/or Cases" context="{'default_partner_id': id, 'default_way': 'return'}" colspan="2" invisible="olive_lended_palox == 0 and olive_lended_regular_case == 0 and olive_lended_organic_case == 0"/>
+                        <button type="object" name="create_single_olive_ochard" string="Quick-create an ochard to update later" invisible="olive_ochard_ids" colspan="2"/>
+                        <button type="action" name="%(olive_cultivation_action)d" string="Cultivation Form" context="{'default_partner_id': id, 'search_default_partner_id': id}" colspan="2"/>
                         <button name="update_organic_certif" string="Organic Certifications" type="object" groups="olive_mill.olive_organic"/>
-                        <button type="action" name="%(olive_arrival_action)d" string="Arrivals" context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}" colspan="2"/>
-                        <button type="action" name="%(olive_withdrawal_action)d" string="New Olive Oil Withdrawal" context="{'default_partner_id': active_id}" colspan="2" groups="stock.group_stock_user"/>
-                        <button type="action" name="%(olive_invoice_create_action)d" string="Create Invoice" context="{'default_partner_id': active_id}" colspan="2" groups="stock.group_stock_user"/>
-                        <button type="action" name="%(olive_arrival_line_action)d" string="Show statistics" colspan="2" context="{'search_default_commercial_partner_id': active_id, 'search_default_arrival_done': True}" groups="stock.group_stock_user"/>
+                        <button type="action" name="%(olive_arrival_action)d" string="Arrivals" context="{'default_partner_id': id, 'search_default_partner_id': id}" colspan="2"/>
+                        <button type="action" name="%(olive_withdrawal_action)d" string="New Olive Oil Withdrawal" context="{'default_partner_id': id}" colspan="2" groups="stock.group_stock_user"/>
+                        <button type="action" name="%(olive_invoice_create_action)d" string="Create Invoice" context="{'default_partner_id': id}" colspan="2" groups="stock.group_stock_user"/>
+                        <button type="action" name="%(olive_arrival_line_action)d" string="Show statistics" colspan="2" context="{'search_default_commercial_partner_id': id, 'search_default_arrival_done': True}" groups="stock.group_stock_user"/>
                     </group>
                     <group name="right">
                         <field name="olive_current_season_id"/>
@@ -165,7 +146,7 @@
 <record id="olive_farmer_partner_action" model="ir.actions.act_window">
     <field name="name">Farmers</field>
     <field name="res_model">res.partner</field>
-    <field name="view_mode">tree,form,kanban</field>
+    <field name="view_mode">list,form,kanban</field>
     <field name="context">{'search_default_olive_farmer': True, 'default_olive_farmer': True}</field>
 </record>
 

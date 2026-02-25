@@ -20,7 +20,7 @@
 </record>
 
 <record id="product_pricelist_view_tree" model="ir.ui.view">
-    <field name="name">fr.olive.mill.product.pricelist.tree</field>
+    <field name="name">fr.olive.mill.product.pricelist.list</field>
     <field name="model">product.pricelist</field>
     <field name="inherit_id" ref="product.product_pricelist_view_tree"/>
     <field name="arch" type="xml">

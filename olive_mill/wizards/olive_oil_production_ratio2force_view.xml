@@ -1,10 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright 2018-2024 Barroux Abbey (https://www.barroux.org/)
-  @author: Alexis de Lattre <alexis.delattre@akretion.com>
-  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
--->
-
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
 
 <record id="olive_oil_production_ratio2force_form" model="ir.ui.view">
@@ -20,9 +14,9 @@
                 <field name="result_method" invisible="1"/>
                 <field name="palox_ids" widget="many2many_tags"/>
                 <field name="farmers"/>
-                <field name="oil_destination" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}"/>
+                <field name="oil_destination" invisible="oil_destination == 'withdrawal'"/>
                 <field name="oil_product_id"/>
-                <field name="sale_location_id" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}"/>
+                <field name="sale_location_id" invisible="oil_destination == 'withdrawal'"/>
                 <label for="decanter_duration"/>
                 <div name="decanter_duration">
                     <field name="decanter_duration" class="oe_inline"/> minutes
@@ -37,11 +31,11 @@
                 </div>
                 <label for="oil_qty_kg" string="Oil Qty"/>
                 <div name="oil_qty_kg">
-                    <field name="oil_qty_kg" class="oe_inline" attrs="{'required': [('result_uom', '=', 'kg'), ('result_method', '!=', 'per_palox')], 'readonly': ['|', ('result_uom', '!=', 'kg'), ('result_method', '=', 'per_palox')]}"/> kg
+                    <field name="oil_qty_kg" class="oe_inline" required="result_uom == 'kg' and result_method != 'per_palox'" readonly="result_uom != 'kg' or result_method == 'per_palox'"/> kg
                 </div>
                 <label for="oil_qty" string="Oil Qty"/>
                 <div name="oil_qty">
-                    <field name="oil_qty" class="oe_inline" attrs="{'required': [('result_uom', '=', 'liter'), ('result_method', '!=', 'per_palox')], 'readonly': ['|', ('result_uom', '!=', 'liter'), ('result_method', '=', 'per_palox')]}"/> L
+                    <field name="oil_qty" class="oe_inline" required="result_uom == 'liter' and result_method != 'per_palox'" readonly="result_uom != 'liter' or result_method == 'per_palox'"/> L
                 </div>
 
                 <label for="ratio" string="Gross Ratio"/>
@@ -49,17 +43,17 @@
                     <field name="ratio" class="oe_inline"/> % (L)
                 </div>
             </group>
-            <group name="per_palox" attrs="{'invisible': [('result_method', '!=', 'per_palox')]}" string="Enter per Palox Oil Quantities">
+            <group name="per_palox" invisible="result_method != 'per_palox'" string="Enter per Palox Oil Quantities">
                 <field name="palox_result_ids" nolabel="1" colspan="2">
-                    <tree editable="bottom" create="0" delete="0">
+                    <list editable="bottom" create="0" delete="0">
                         <field name="arrival_line_id"/>
                         <field name="palox_id"/>
                         <field name="olive_qty" sum="1"/>
-                        <field name="oil_qty_kg" sum="1" attrs="{'required': [('result_uom', '=', 'kg')], 'readonly': [('result_uom', '!=', 'kg')]}"/>
-                        <field name="oil_qty" sum="1" attrs="{'required': [('result_uom', '=', 'liter')], 'readonly': [('result_uom', '!=', 'liter')]}"/>
+                        <field name="oil_qty_kg" sum="1" required="result_uom == 'kg'" readonly="result_uom != 'kg'"/>
+                        <field name="oil_qty" sum="1" required="result_uom == 'liter'" readonly="result_uom != 'liter'"/>
                         <field name="ratio"/>
                         <field name="result_uom" invisible="1"/>
-                    </tree>
+                    </list>
                 </field>
             </group>
             <footer>

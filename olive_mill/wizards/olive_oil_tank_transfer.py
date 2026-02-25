@@ -45,7 +45,7 @@ class OliveOilTankTransfer(models.TransientModel):
             action.update({
                 'res_id': pickings.id,
                 'views': False,
-                'view_mode': 'form,tree,kanban,calendar',
+                'view_mode': 'form,list,kanban,calendar',
                 })
         else:
             action['domain'] = [('id', 'in', pickings.ids)]

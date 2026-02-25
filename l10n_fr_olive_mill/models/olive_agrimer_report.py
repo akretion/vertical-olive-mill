@@ -18,19 +18,14 @@ class OliveAgrimerReport(models.Model):
     company_id = fields.Many2one(
         'res.company', string='Company',
         ondelete='cascade', required=True, index=True,
-        states={'done': [('readonly', True)]},
         default=lambda self: self.env.company)
-    date_range_id = fields.Many2one(
-        'date.range', string='Date Range',
-        states={'done': [('readonly', True)]})
+    date_range_id = fields.Many2one('date.range', string='Date Range')
     date_start = fields.Date(
         compute='_compute_dates', readonly=False, store=True,
-        string='Start Date', required=True, tracking=True,
-        states={'done': [('readonly', True)]})
+        string='Start Date', required=True, tracking=True)
     date_end = fields.Date(
         compute='_compute_dates', readonly=False, store=True,
-        string='End Date', tracking=True,
-        required=True, states={'done': [('readonly', True)]})
+        string='End Date', tracking=True, required=True)
     olive_arrival_qty = fields.Float(
         string='Olive Arrival (kg)', digits='Olive Weight', readonly=True)
     olive_pressed_qty = fields.Float(
@@ -155,14 +150,12 @@ class OliveAgrimerReport(models.Model):
                     % rec.display_name)
         return super().unlink()
 
-    def name_get(self):
-        res = []
+    def _compute_display_name(self):
         for rec in self:
             name = _('AgriMer Report')
             if rec.date_start and rec.date_end:
                 name += f' {format_date(self.env, rec.date_start)} → {format_date(self.env, rec.date_end)}'
-            res.append((rec.id, name))
-        return res
+            rec.display_name = name
 
     def _compute_olive_arrival_qty(self, vals):
         rg = self.env['olive.arrival.line'].read_group([

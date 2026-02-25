@@ -36,7 +36,7 @@
     <field name="name">olive.parcel.tree</field>
     <field name="model">olive.parcel</field>
     <field name="arch" type="xml">
-        <tree>
+        <list>
             <field name="ochard_id" invisible="not context.get('olive_parcel_main_view')"/>
             <field name="partner_id" invisible="not context.get('olive_parcel_main_view')"/>
             <field name="land_registry_ref" optional="show"/>
@@ -47,7 +47,7 @@
             <field name="planted_year" optional="show"/>
             <field name="irrigation" optional="show"/>
             <field name="cultivation_method" optional="show"/>
-        </tree>
+        </list>
     </field>
 </record>
 
@@ -70,7 +70,7 @@
 <record id="olive_parcel_action" model="ir.actions.act_window">
     <field name="name">Parcels</field>
     <field name="res_model">olive.parcel</field>
-    <field name="view_mode">tree,form</field>
+    <field name="view_mode">list,form</field>
     <field name="context">{'olive_parcel_main_view': True}</field>
 </record>
 

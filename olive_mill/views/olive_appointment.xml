@@ -1,24 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
-  @author: Alexis de Lattre <alexis.delattre@akretion.com>
-  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
--->
-
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
 
 
 <record id="olive_appointment_action" model="ir.actions.act_window">
     <field name="name">Appointments</field>
     <field name="res_model">olive.appointment</field>
-    <field name="view_mode">calendar_list,calendar,tree,form</field>
+    <field name="view_mode">calendar,list,form</field>
     <field name="context">{'search_default_current_season': 1}</field>
 </record>
 
 <record id="olive_appointment_tree_action" model="ir.actions.act_window">
     <field name="name">Appointments</field>
     <field name="res_model">olive.appointment</field>
-    <field name="view_mode">tree,form,calendar_list,calendar</field>
+    <field name="view_mode">list,form,calendar</field>
     <field name="context">{'search_default_current_season': 1}</field>
 </record>
 
@@ -29,22 +23,20 @@
     <field name="arch" type="xml">
         <form>
             <header>
-                <button name="%(olive_palox_lend_action)d" type="action" string="Lend Palox/Cases" attrs="{'invisible': [('appointment_type', '!=', 'lend')]}" context="{'default_partner_id': partner_id, 'default_regular_case_qty': lend_regular_case_qty, 'default_organic_case_qty': lend_organic_case_qty}" class="btn-primary"/>
-                <button name="open_arrival" class="btn-primary" attrs="{'invisible': [('appointment_type', 'not in', ('arrival_leaf_removal', 'arrival_no_leaf_removal'))]}" string="Arrival" type="object"/>
-                <button name="open_new_appointment" attrs="{'invisible': [('appointment_type', 'not in', ('arrival_leaf_removal', 'arrival_no_leaf_removal'))]}" string="New Appointment" type="object"/>
-                <button name="%(olive_withdrawal_action)d" type="action" string="New Withdrawal" attrs="{'invisible': [('appointment_type', '!=', 'withdrawal')]}" context="{'default_partner_id': partner_id}" class="btn-primary"/>
-                <button name="%(olive_invoice_create_action)d" type="action" string="Create Invoice" attrs="{'invisible': [('appointment_type', '!=', 'withdrawal')]}" context="{'default_partner_id': partner_id}"/>
+                <button name="%(olive_palox_lend_action)d" type="action" string="Lend Palox/Cases" invisible="appointment_type != 'lend'" context="{'default_partner_id': partner_id, 'default_regular_case_qty': lend_regular_case_qty, 'default_organic_case_qty': lend_organic_case_qty}" class="btn-primary"/>
+                <button name="open_arrival" class="btn-primary" invisible="appointment_type not in ('arrival_leaf_removal', 'arrival_no_leaf_removal')" string="Arrival" type="object"/>
+                <button name="open_new_appointment" invisible="appointment_type not in ('arrival_leaf_removal', 'arrival_no_leaf_removal')" string="New Appointment" type="object"/>
+                <button name="%(olive_withdrawal_action)d" type="action" string="New Withdrawal" invisible="appointment_type != 'withdrawal'" context="{'default_partner_id': partner_id}" class="btn-primary"/>
+                <button name="%(olive_invoice_create_action)d" type="action" string="Create Invoice" invisible="appointment_type != 'withdrawal'" context="{'default_partner_id': partner_id}"/>
             </header>
             <sheet>
                 <div name="button_box" class="oe_button_box">
-                    <span name="olive_cultivation_form_ko" attrs="{'invisible': ['|', ('olive_cultivation_form_ko', '=', False), ('partner_id', '=', False)]}" class="badge badge-pill badge-danger font-weight-bold">Cultivation form missing</span>
-                    <span name="olive_parcel_ko" attrs="{'invisible': ['|', ('olive_parcel_ko', '=', False), ('partner_id', '=', False)]}" class="badge badge-pill badge-warning font-weight-bold">Parcel information incomplete</span>
-                    <span name="olive_organic_certif_ko" attrs="{'invisible': ['|', ('olive_organic_certif_ko', '=', False), ('partner_id', '=', False)]}" class="badge badge-pill badge-success font-weight-bold" groups="olive_mill.olive_organic">Organic certification missing</span>
-                    <span name="olive_invoicing_ko" attrs="{'invisible': ['|', ('olive_invoicing_ko', '=', False), ('partner_id', '=', False)]}" class="badge badge-pill badge-info font-weight-bold">Invoicing to do</span>
-                    <span name="olive_withdrawal_ko" attrs="{'invisible': ['|', ('olive_withdrawal_ko', '=', False), ('partner_id', '=', False)]}" class="badge badge-pill badge-dark font-weight-bold">Pending Withdrawal</span>
-                    <button class="oe_stat_button" type="object"
-                        name="show_arrival_appointments_same_day"
-                        icon="fa-arrow-down">  <!-- use fa-tractor when we'll have access to FA 5.4 -->
+                    <span name="olive_cultivation_form_ko" invisible="not olive_cultivation_form_ko or not partner_id" class="badge rounded-pill text-bg-danger font-weight-bold">Cultivation form missing</span>
+                    <span name="olive_parcel_ko" invisible="not olive_parcel_ko or not partner_id" class="badge rounded-pill text-bg-warning font-weight-bold">Parcel information incomplete</span>
+                    <span name="olive_organic_certif_ko" invisible="not olive_organic_certif_ko or not partner_id" class="badge rounded-pill text-bg-success font-weight-bold" groups="olive_mill.olive_organic">Organic certification missing</span>
+                    <span name="olive_invoicing_ko" invisible="not olive_invoicing_ko or not partner_id" class="badge rounded-pill text-bg-info font-weight-bold">Invoicing to do</span>
+                    <span name="olive_withdrawal_ko" invisible="not olive_withdrawal_ko or not partner_id" class="badge rounded-pill text-bg-dark font-weight-bold">Pending Withdrawal</span>
+                    <button class="oe_stat_button" type="object" name="show_arrival_appointments_same_day" icon="fa-arrow-down">  <!-- use fa-tractor when we'll have access to FA 5.4 -->
                         <div class="o_form_field o_stat_info">
                             <span class="o_stat_value">
                                 <field name="total_qty_same_day" widget="statinfo" nolabel="1"/>
@@ -53,9 +45,7 @@
                             <span class="o_stat_text">Olives that day</span>
                         </div>
                     </button>
-                    <button class="oe_stat_button" type="object"
-                        name="show_arrival_appointments_same_day"
-                        icon="fa-stop">  <!-- use fa-tractor when we'll have access to FA 5.4 -->
+                    <button class="oe_stat_button" type="object" name="show_arrival_appointments_same_day" icon="fa-stop">  <!-- use fa-tractor when we'll have access to FA 5.4 -->
                         <div class="o_form_field o_stat_info">
                             <span class="o_stat_value">
                                 <field name="total_palox_same_day" widget="statinfo" nolabel="1"/>
@@ -65,10 +55,10 @@
                     </button>
                     <button name="open_new_appointment_after_this" string="New After This" type="object" icon="fa-angle-double-right" class="oe_stat_button"/>
                 </div>
-                <img src="/olive_mill/static/image/organic_logo_done.png" alt="Logo Organic" attrs="{'invisible': ['|', ('olive_culture_type', '!=', 'organic'), ('olive_organic_certif_ko', '=', True)]}" height="40"/>
-                <img src="/olive_mill/static/image/organic_logo_draft.png" alt="Logo Organic Draft" attrs="{'invisible': ['|', ('olive_culture_type', '!=', 'organic'), ('olive_organic_certif_ko', '=', False)]}" height="40"/>
-                <img src="/olive_mill/static/image/organic_logo_conversion_done.png" alt="Logo Conversion" attrs="{'invisible': ['|', ('olive_culture_type', '!=', 'conversion'), ('olive_organic_certif_ko', '=', True)]}" height="40"/>
-                <img src="/olive_mill/static/image/organic_logo_conversion_draft.png" alt="Logo Conversion Draft" attrs="{'invisible': ['|', ('olive_culture_type', '!=', 'conversion'), ('olive_organic_certif_ko', '=', False)]}" height="40"/>
+                <img src="/olive_mill/static/image/organic_logo_done.png" alt="Logo Organic" invisible="olive_culture_type != 'organic' or olive_organic_certif_ko" height="40"/>
+                <img src="/olive_mill/static/image/organic_logo_draft.png" alt="Logo Organic Draft" invisible="olive_culture_type != 'organic' or not olive_organic_certif_ko" height="40"/>
+                <img src="/olive_mill/static/image/organic_logo_conversion_done.png" alt="Logo Conversion" invisible="olive_culture_type != 'conversion' or olive_organic_certif_ko" height="40"/>
+                <img src="/olive_mill/static/image/organic_logo_conversion_draft.png" alt="Logo Conversion Draft" invisible="olive_culture_type != 'conversion' or not olive_organic_certif_ko" height="40"/>
                 <group name="main">
                     <group name="top-left">
                         <field name="partner_id"/>
@@ -89,35 +79,31 @@
                         <field name="company_id" groups="base.group_multi_company"/>
                         <field name="date" invisible="1"/>
                     </group>
-                    <group name="arrival" attrs="{'invisible': [('appointment_type', 'not in', ('arrival_leaf_removal', 'arrival_no_leaf_removal'))]}">
+                    <group name="arrival" invisible="appointment_type not in ('arrival_leaf_removal', 'arrival_no_leaf_removal')">
                         <field name="variant_id" widget="selection"/>
-                        <label for="qty" />
+                        <label for="qty"/>
                         <div name="qty">
                             <field name="qty" class="oe_inline"/> kg
                         </div>
                         <field name="palox_qty"/>
                         <field name="oil_product_id" widget="selection"/>
                         <field name="oil_destination"/>
-                        <label for="withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}"/>
-                        <div name="withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}">
+                        <label for="withdrawal_oil_qty" invisible="oil_destination != 'mix'"/>
+                        <div name="withdrawal_oil_qty" invisible="oil_destination != 'mix'">
                             <field name="withdrawal_oil_qty" class="oe_inline"/> L
                         </div>
                     </group>
-                    <group name="withdrawal" attrs="{'invisible': [('appointment_type', '!=', 'withdrawal')]}">
+                    <group name="withdrawal" invisible="appointment_type != 'withdrawal'">
                         <field name="withdrawal_invoice" widget="radio" string="Withdrawal"/>
                     </group>
-                    <group name="lend" attrs="{'invisible': [('appointment_type', '!=', 'lend')]}">
-                        <field name="lend_palox_qty" />
-                        <field name="lend_regular_case_qty" attrs="{'readonly': [('olive_culture_type', 'in', ('organic', 'conversion'))]}"/>
-                        <field name="lend_organic_case_qty" attrs="{'readonly': [('olive_culture_type', '=', 'regular')]}" groups="olive_mill.olive_organic"/>
+                    <group name="lend" invisible="appointment_type != 'lend'">
+                        <field name="lend_palox_qty"/>
+                        <field name="lend_regular_case_qty" readonly="olive_culture_type in ('organic', 'conversion')"/>
+                        <field name="lend_organic_case_qty" readonly="olive_culture_type == 'regular'" groups="olive_mill.olive_organic"/>
                     </group>
                 </group>
             </sheet>
-            <div class="oe_chatter">
-                <field name="message_follower_ids" widget="mail_followers"/>
-                <field name="activity_ids" widget="mail_activity"/>
-                <field name="message_ids" widget="mail_thread"/>
-            </div>
+            <chatter/>
         </form>
     </field>
 </record>
@@ -126,7 +112,7 @@
     <field name="name">olive.appointment.tree</field>
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
-        <tree>
+        <list>
             <field name="day_of_week_sel"/>
             <field name="start_datetime"/>
             <field name="end_datetime"/>
@@ -138,7 +124,7 @@
             <field name="palox_qty" sum="1"/>
             <field name="oil_destination" optional="show"/>
             <field name="withdrawal_oil_qty" optional="hide"/>
-        </tree>
+        </list>
     </field>
 </record>
 
@@ -147,7 +133,7 @@
     <field name="model">olive.appointment</field>
     <field name="arch" type="xml">
         <!-- color="appointment_type" doesn't work on a selection field, only a M2O field -->
-        <calendar date_start="start_datetime" date_stop="end_datetime" mode="month" quick_add="false">
+        <calendar date_start="start_datetime" date_stop="end_datetime" mode="month">
             <field name="display_calendar_label"/>
             <field name="appointment_type" filters="1" invisible="1"/>
         </calendar>
@@ -155,6 +141,7 @@
 </record>
 
 <!-- Uses OCA module web_view_calendar_list from OCA/web -->
+<!--
 <record id="olive_appointment_calendar_list" model="ir.ui.view">
     <field name="name">olive.appointment.calendar</field>
     <field name="model">olive.appointment</field>
@@ -165,7 +152,7 @@
         </calendar_list>
     </field>
 </record>
-
+-->
 
 <record id="olive_appointment_search" model="ir.ui.view">
     <field name="name">olive.appointment.search</field>

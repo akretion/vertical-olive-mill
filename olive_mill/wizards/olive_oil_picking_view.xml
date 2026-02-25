@@ -1,10 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
-  @author: Alexis de Lattre <alexis.delattre@akretion.com>
-  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
--->
-
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
 
 <record id="olive_oil_picking_form" model="ir.ui.view">
@@ -15,7 +9,7 @@
             <group name="main">
                 <field name="move_id" invisible="1"/>
                 <field name="company_id" invisible="1"/>
-                <field name="picking_id" attrs="{'invisible': [('picking_id', '=', False)]}"/>
+                <field name="picking_id" invisible="not picking_id"/>
                 <field name="oil_product_id"/>
                 <field name="warehouse_id"/>
                 <label for="oil_qty"/>
@@ -28,11 +22,11 @@
             </group>
             <group name="container_lines" string="Containers Used">
                 <field name="container_ids" nolabel="1">
-                    <tree editable="bottom">
+                    <list editable="bottom">
                         <field name="product_id"/>
                         <field name="qty"/>
                         <field name="uom_id"/>
-                    </tree>
+                    </list>
                 </field>
             </group>
             <footer>

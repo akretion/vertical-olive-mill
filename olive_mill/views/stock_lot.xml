@@ -1,32 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
-  @author: Alexis de Lattre <alexis.delattre@akretion.com>
-  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl)
--->
-
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
 
 <record id="view_production_lot_form" model="ir.ui.view">
-    <field name="name">oil_mill_stock_production_lot_form</field>
-    <field name="model">stock.production.lot</field>
+    <field name="name">oil_mill_stock_lot_form</field>
+    <field name="model">stock.lot</field>
     <field name="inherit_id" ref="stock.view_production_lot_form"/>
     <field name="arch" type="xml">
         <field name="product_id" position="after">
-            <field name="olive_production_id" attrs="{'invisible': [('product_detailed_type', '!=', 'olive_oil')]}"/>
+            <field name="olive_production_id" invisible="product_detailed_type != 'olive_oil'"/>
             <field name="product_detailed_type" invisible="1"/>
         </field>
         <sheet position="before">
             <header>
-                <button type="action" name="%(olive_prodlot_tracability_report)d" string="Olive Oil Tracability Report" attrs="{'invisible': [('product_detailed_type', '!=', 'olive_oil')]}"/>
+                <button type="action" name="%(olive_prodlot_tracability_report)d" string="Olive Oil Tracability Report" invisible="product_detailed_type != 'olive_oil'"/>
             </header>
         </sheet>
     </field>
 </record>
 
 <record id="search_product_lot_filter" model="ir.ui.view">
-    <field name="name">olive.stock.production.lot.search</field>
-    <field name="model">stock.production.lot</field>
+    <field name="name">olive.stock.lot.search</field>
+    <field name="model">stock.lot</field>
     <field name="inherit_id" ref="stock.search_product_lot_filter"/>
     <field name="arch" type="xml">
         <field name="product_id" position="after">
@@ -38,8 +32,8 @@
 
 <record id="olive_stock_production_lot_action" model="ir.actions.act_window">
     <field name="name">Lots</field>
-    <field name="res_model">stock.production.lot</field>
-    <field name="view_mode">tree,form</field>
+    <field name="res_model">stock.lot</field>
+    <field name="view_mode">list,form</field>
     <field name="context">{'search_default_olive_products': True}</field>
 </record>
 
@@ -47,4 +41,3 @@
 
 
 </odoo>
-

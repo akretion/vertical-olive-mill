@@ -13,12 +13,10 @@ class PartnerOrganicCertification(models.Model):
 
     partner_id = fields.Many2one(
         'res.partner', string='Farmer', ondelete='cascade', index=True,
-        domain=[('parent_id', '=', False), ('olive_farmer', '=', True)],
-        states={'done': [('readonly', True)]})
+        domain=[('parent_id', '=', False), ('olive_farmer', '=', True)])
     season_id = fields.Many2one(
         'olive.season', required=True, index=True, check_company=True,
         default=lambda self: self.env.company.current_season_id.id,
-        states={'done': [('readonly', True)]},
         domain="[('company_id', '=', company_id)]")
     current_season = fields.Boolean(
         compute='_compute_current_season', search='_search_current_season')
@@ -26,10 +24,9 @@ class PartnerOrganicCertification(models.Model):
         'res.company', default=lambda self: self.env.company, required=True)
     certifying_entity_id = fields.Many2one(
         'organic.certifying.entity', string='Certifying Entity', required=True,
-        ondelete='restrict', states={'done': [('readonly', True)]},
+        ondelete='restrict',
         help="Default value: same as previous season.")
-    conversion = fields.Boolean(
-        string='Conversion', states={'done': [('readonly', True)]})
+    conversion = fields.Boolean()
     state = fields.Selection([
         ('draft', 'Draft'),
         ('done', 'Valid'),

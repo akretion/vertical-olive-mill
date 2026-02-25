@@ -1,10 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
-  @author: Alexis de Lattre <alexis.delattre@akretion.com>
-  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
--->
-
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
 
 
@@ -14,17 +8,20 @@
     <field name="inherit_id" ref="stock.view_picking_form"/>
     <field name="arch" type="xml">
         <button name="action_cancel" position="before">
-            <button name="start_olive_oil_picking_wizard" string="Get Loose Olive Oil" type="object" attrs="{'invisible': [('olive_oil_picking_wizard_next_move_id', '=', False)]}" />
+            <button name="start_olive_oil_picking_wizard" string="Get Loose Olive Oil" type="object" invisible="not olive_oil_picking_wizard_next_move_id"/>
         </button>
         <field name="priority" position="after">
             <field name="olive_oil_picking_wizard_next_move_id" invisible="1"/>
             <field name="olive_withdrawal" invisible="1"/>
         </field>
         <button name="%(stock.action_report_delivery)d" type="action" position="attributes">
-            <attribute name="attrs">{'invisible': ['|', ('olive_withdrawal', '=', True), ('state', '!=', 'done')]}</attribute>
+            <!--TODO: Result from 'attrs' -> 'invisible' conversion without also overriding 'states' attribute
+                 Check if this button tag contained a states attribute in any of the parent views, in which case it should be combined into this 'invisible' attribute
+                 (If any states attributes existed in parent views, they'll also be marked with a TODO)-->
+            <attribute name="invisible">olive_withdrawal or state != 'done'</attribute>
         </button>
         <button name="%(stock.action_report_delivery)d" type="action" position="after">
-            <button name="%(olive_oil_delivery_report)d" string="Print Oil Withdrawal" attrs="{'invisible': ['|', ('olive_withdrawal', '=', False), ('state', '!=', 'done')]}" type="action" groups="base.group_user"/>
+            <button name="%(olive_oil_delivery_report)d" string="Print Oil Withdrawal" invisible="not olive_withdrawal or state != 'done'" type="action" groups="base.group_user"/>
         </button>
     </field>
 </record>

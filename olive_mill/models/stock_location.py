@@ -2,7 +2,7 @@
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl)
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models, _, Command
 from odoo.exceptions import UserError
 from odoo.tools import float_compare
 from collections import defaultdict
@@ -95,7 +95,6 @@ class StockLocation(models.Model):
         # because we don't have a BOM (a constraint blocks BOM with product used both as finished product and raw material)
         # and mrp.production also blocks when the finished product is used in raw move lines
         origin = _('Olive oil tank merge')
-        splo = self.env['stock.production.lot']
         sqo = self.env['stock.quant']
         mpo = self.env['mrp.production']
         liter_uom = self.env.ref('uom.product_uom_litre')
@@ -114,7 +113,7 @@ class StockLocation(models.Model):
 
         # Create finished lot
         merge_lot_name = self.env['ir.sequence'].next_by_code('olive.oil.merge.lot')
-        new_lot = splo.create({
+        new_lot = self.env["stock.lot"].create({
             'product_id': fin_product.id,
             'name': merge_lot_name,
             })
@@ -147,10 +146,12 @@ class StockLocation(models.Model):
                 'product_uom_qty': quant.quantity,
                 'location_id': self.id,
                 'location_dest_id': virtualprod_loc_id,
-                'move_line_ids': [(0, 0, {
+                'picked': True,
+                'move_line_ids': [Command.create({
+                    'company_id': company_id,
                     'product_id': product.id,
                     'product_uom_id': product.uom_id.id,
-                    'qty_done': quant.quantity,
+                    'quantity': quant.quantity,
                     'location_id': self.id,
                     'location_dest_id': virtualprod_loc_id,
                     'lot_id': quant.lot_id.id,
@@ -172,10 +173,12 @@ class StockLocation(models.Model):
             'product_uom_qty': total_qty,
             'location_id': virtualprod_loc_id,
             'location_dest_id': self.id,
-            'move_line_ids': [(0, 0, {
+            'picked': True,
+            'move_line_ids': [Command.create({
+                'company_id': company_id,
                 'product_id': fin_product.id,
                 'product_uom_id': fin_product.uom_id.id,
-                'qty_done': total_qty,
+                'quantity': total_qty,
                 'location_id': virtualprod_loc_id,
                 'location_dest_id': self.id,
                 'lot_id': new_lot.id,
@@ -240,12 +243,11 @@ class StockLocation(models.Model):
             return 0  # WARN : no further checks if empty
 
         # raise if there are reservations
-        mlines_count = smlo.search([
-            ('location_id', '=', self.id), ('state', 'not in', ('draft', 'done'))],
-            count=True)
+        mlines_count = smlo.search_count([
+            ('location_id', '=', self.id), ('state', 'not in', ('draft', 'done'))])
         if mlines_count:
             raise UserError(_(
-                "There are %d reservations in tank '%s'.")
+                "There are %d reservation(s) in tank '%s'.")
                 % (mlines_count, self.name))
 
         if merge_if_not_merged:
@@ -290,6 +292,7 @@ class StockLocation(models.Model):
         spo = self.env['stock.picking']
         smo = self.env['stock.move']
         sqo = self.env['stock.quant']
+        company_id = warehouse.company_id.id
         pr_oil = self.env['decimal.precision'].precision_get('Olive Oil Volume')
         src_loc = self
         merge_if_not_merged = False
@@ -310,6 +313,7 @@ class StockLocation(models.Model):
         virtual_prod_loc_id = src_loc.oil_product_id.property_stock_production.id
         location_dest_id1 = dest_partner and virtual_prod_loc_id or dest_loc.id
         pvals1 = {
+            'company_id': company_id,
             'picking_type_id': warehouse.int_type_id.id,
             'origin': origin,
             'location_id': src_loc.id,
@@ -319,6 +323,7 @@ class StockLocation(models.Model):
         pickings = pick1
         if dest_partner:
             pvals2 = {
+                'company_id': company_id,
                 'picking_type_id': warehouse.int_type_id.id,
                 'origin': origin,
                 'location_id': virtual_prod_loc_id,
@@ -344,6 +349,7 @@ class StockLocation(models.Model):
             for product, quant_list in product2quants.items():
                 mvals1 = {
                     'olive_oil_production_id': olive_oil_production_id,
+                    'company_id': company_id,
                     'name': _('Full oil tank transfer'),
                     'origin': origin,
                     'product_id': product.id,
@@ -352,14 +358,16 @@ class StockLocation(models.Model):
                     'product_uom': product.uom_id.id,
                     'product_uom_qty': product2qty[product.id],
                     'picking_id': pick1.id,
+                    'picked': True,
                     'move_line_ids': [],
                     }
                 for quant in quant_list:
-                    mvals1['move_line_ids'].append((0, 0, {
+                    mvals1['move_line_ids'].append(Command.create({
+                        'company_id': company_id,
                         'picking_id': pick1.id,
                         'product_id': product.id,
                         'product_uom_id': product.uom_id.id,
-                        'qty_done': quant.quantity,
+                        'quantity': quant.quantity,
                         'location_id': src_loc.id,
                         'location_dest_id': location_dest_id1,
                         'lot_id': quant.lot_id.id,
@@ -370,6 +378,7 @@ class StockLocation(models.Model):
                 if dest_partner:
                     mvals2 = {
                         'olive_oil_production_id': olive_oil_production_id,
+                        'company_id': company_id,
                         'name': _('Full oil tank transfer'),
                         'origin': origin,
                         'product_id': product.id,
@@ -379,15 +388,17 @@ class StockLocation(models.Model):
                         'product_uom_qty': product2qty[product.id],
                         'picking_id': pick2.id,
                         'restrict_partner_id': dest_partner.id,
-                        'move_orig_ids': [(6, 0, [move1.id])],
+                        'move_orig_ids': [Command.set([move1.id])],
                         'move_line_ids': [],
+                        'picked': True,
                         }
                     for quant in quant_list:
-                        mvals2['move_line_ids'].append((0, 0, {
+                        mvals2['move_line_ids'].append(Command.create({
+                            'company_id': company_id,
                             'picking_id': pick2.id,
                             'product_id': product.id,
                             'product_uom_id': product.uom_id.id,
-                            'qty_done': quant.quantity,
+                            'quantity': quant.quantity,
                             'location_id': virtual_prod_loc_id,
                             'location_dest_id': dest_loc.id,
                             'lot_id': quant.lot_id.id,
@@ -412,6 +423,7 @@ class StockLocation(models.Model):
             uom_id = quant.product_id.uom_id.id
             mvals1 = {
                 'olive_oil_production_id': olive_oil_production_id,
+                'company_id': company_id,
                 'name': _('Partial oil tank transfer'),
                 'origin': origin,
                 'product_id': product_id,
@@ -420,11 +432,13 @@ class StockLocation(models.Model):
                 'product_uom': uom_id,
                 'product_uom_qty': partial_transfer_qty,
                 'picking_id': pick1.id,
-                'move_line_ids': [(0, 0, {
+                'picked': True,
+                'move_line_ids': [Command.create({
+                    'company_id': company_id,
                     'picking_id': pick1.id,
                     'product_id': product_id,
                     'product_uom_id': uom_id,
-                    'qty_done': partial_transfer_qty,
+                    'quantity': partial_transfer_qty,
                     'location_id': src_loc.id,
                     'location_dest_id': location_dest_id1,
                     'lot_id': quant.lot_id.id,
@@ -434,6 +448,7 @@ class StockLocation(models.Model):
             if dest_partner:
                 mvals2 = {
                     'olive_oil_production_id': olive_oil_production_id,
+                    'company_id': company_id,
                     'name': _('Partial oil tank transfer'),
                     'origin': origin,
                     'product_id': product_id,
@@ -443,12 +458,14 @@ class StockLocation(models.Model):
                     'product_uom_qty': partial_transfer_qty,
                     'picking_id': pick2.id,
                     'restrict_partner_id': dest_partner.id,
-                    'move_orig_ids': [(6, 0, [move1.id])],
-                    'move_line_ids': [(0, 0, {
+                    'move_orig_ids': [Command.set([move1.id])],
+                    'picked': True,
+                    'move_line_ids': [Command.create({
+                        'company_id': company_id,
                         'picking_id': pick2.id,
                         'product_id': product_id,
                         'product_uom_id': uom_id,
-                        'qty_done': partial_transfer_qty,
+                        'quantity': partial_transfer_qty,
                         'location_id': virtual_prod_loc_id,
                         'location_dest_id': dest_loc.id,
                         'lot_id': quant.lot_id.id,

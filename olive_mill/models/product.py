@@ -39,10 +39,12 @@ class ProductTemplate(models.Model):
         ('regular', 'Regular'),
         ('organic', 'Organic'),
         ('conversion', 'Conversion'),
-        ], string='Culture Type')
+        ], string='Culture Type', compute="_compute_olive_culture_type", store=True,
+        readonly=False, precompute=True)
     olive_geo_id = fields.Many2one(
         "protected.geo.indication", string="Protected Geographical Indication",
-        ondelete='restrict')
+        ondelete='restrict', compute="_compute_olive_geo_id", store=True,
+        readonly=False, precompute=True)
     olive_bottle_free_full = fields.Boolean(
         string="Not Invoiced when Full")
     olive_invoice_service_ids = fields.Many2many(
@@ -60,7 +62,7 @@ class ProductTemplate(models.Model):
     olive_analysis_precision = fields.Char(
         string='Precision of the Olive Oil Analysis')
     shrinkage_prodlot_id = fields.Many2one(
-        'stock.production.lot', string='Shrinkage Production Lot',
+        'stock.lot', string='Shrinkage Production Lot',
         copy=False, compute="_compute_shrinkage_prodlot_id",
         inverse='_set_shrinkage_prodlot_id')
 
@@ -69,23 +71,33 @@ class ProductTemplate(models.Model):
         'CHECK(olive_analysis_decimal_precision >= 0)',
         'The decimal precision of the olive oil analysis must be positive.')]
 
-    def _detailed_type_mapping(self):
-        res = super()._detailed_type_mapping()
+    def _detailed_type_mapping_props(self):
+        res = super()._detailed_type_mapping_props()
+        liter_uom_id = self.env.ref('uom.product_uom_litre').id
+        pce_uom_id = self.env.ref('uom.product_uom_unit').id
         res.update({
-            'olive_oil': 'product',
-            'olive_bottle_empty': 'product',
+            'olive_oil': {'type': 'consu', 'is_storable': True, 'tracking': 'lot', 'uom_id': liter_uom_id, 'use_expiry_date': False},
+            'olive_bottle_empty': {'type': 'consu', 'is_storable': True, 'uom_id': pce_uom_id},
             # olive_barrel_farmer must be a product (not consu),
             # to have a quant on withdrawal location
-            'olive_barrel_farmer': 'product',
-            'olive_bottle_full': 'product',
-            'olive_bottle_full_pack': 'product',
-            'olive_bottle_full_pack_phantom': 'consu',
-            'olive_analysis': 'consu',  # TODO find why analysis are consu and not services
-            'olive_extra_service': 'service',
-            'olive_service': 'service',
-            'olive_tax': 'service',
+            'olive_barrel_farmer': {'type': 'consu', 'is_storable': True, 'uom_id': pce_uom_id},
+            'olive_bottle_full': {'type': 'consu', 'is_storable': True, 'tracking': 'lot', 'uom_id': pce_uom_id, 'use_expiry_date': True},
+            'olive_bottle_full_pack': {'type': 'consu', 'is_storable': True, 'uom_id': pce_uom_id},
+            'olive_bottle_full_pack_phantom': {'type': 'consu', 'is_storable': False, 'uom_id': pce_uom_id},
+            'olive_analysis': {'type': 'consu', 'is_storable': False, 'uom_id': pce_uom_id},  # TODO find why analysis are consu and not services
+            'olive_extra_service': {'type': 'service'},
+            'olive_service': {'type': 'service'},
+            'olive_tax': {'type': 'service'},
             })
         return res
+
+    @api.depends('detailed_type')
+    def _compute_use_expiry_date(self):
+        super()._compute_use_expiry_date()
+        type_mapping = self._detailed_type_mapping_props()
+        for template in self:
+            if template.detailed_type and template.detailed_type in type_mapping and 'use_expiry_date' in type_mapping[template.detailed_type]:
+                template.use_expiry_date = type_mapping[template.detailed_type]['use_expiry_date']
 
     @api.depends('product_variant_ids', 'product_variant_ids.shrinkage_prodlot_id')
     def _compute_shrinkage_prodlot_id(self):
@@ -100,60 +112,40 @@ class ProductTemplate(models.Model):
             if len(template.product_variant_ids) == 1:
                 template.product_variant_ids.shrinkage_prodlot_id = template.shrinkage_prodlot_id
 
-    @api.onchange('detailed_type')
-    def olive_detailed_type_change(self):
-        liter_uom = self.env.ref('uom.product_uom_litre')
-        if self.detailed_type == 'olive_oil':
-            if self.uom_id != liter_uom:
-                self.uom_id = liter_uom
-                self.uom_po_id = liter_uom
-            self.tracking = 'lot'
-        elif self.detailed_type == 'olive_bottle_full':
-            self.tracking = 'lot'
-        if self.detailed_type and not self.detailed_type.startswith('olive_'):
-            self.olive_culture_type = False
-            self.olive_geo_id = False
+    @api.depends('detailed_type')
+    def _compute_olive_culture_type(self):
+        for template in self:
+            if template.detailed_type and not template.detailed_type.startswith('olive_'):
+                template.olive_culture_type = False
 
-    @api.constrains('detailed_type', 'uom_id', 'olive_culture_type')
+    @api.depends('detailed_type')
+    def _compute_olive_geo_id(self):
+        for template in self:
+            if template.detailed_type and not template.detailed_type.startswith('olive_'):
+                template.olive_geo_id = False
+
+    @api.constrains('detailed_type', 'uom_id', 'olive_culture_type', 'tracking', 'is_storable', 'use_expiry_date')
     def _check_olive_product(self):
-        liter_uom = self.env.ref('uom.product_uom_litre')
-        unit_categ_uom = self.env.ref('uom.product_uom_categ_unit')
+        type_mapping_props = self._detailed_type_mapping_props()
+        detail_type2label = dict(self.fields_get('detailed_type', 'selection')['detailed_type']['selection'])
         for pt in self:
+            if pt.detailed_type:
+                props = type_mapping_props[pt.detailed_type]
+                if 'use_expiry_date' in props and props['use_expiry_date'] != pt.use_expiry_date:
+                    raise ValidationError(self.env._("Product '%(product)s' is configured with Product Type '%(detailed_type)s', so the option Use Expiry Date must be set to %(use_expiry_date)s.", product=pt.display_name, detailed_type=detail_type2label[pt.detailed_type], use_expiry_date=props['use_expiry_date']))
             if pt.detailed_type == 'olive_oil':
                 if not pt.olive_culture_type:
                     raise ValidationError(_(
                         "Product '%s' is an 'Olive Oil', so a "
-                        "culture type must also be configured.")
-                        % pt.display_name)
-                if pt.uom_id != liter_uom:
-                    raise ValidationError(_(
-                        "Product '%s' is an 'Olive Oil' that "
-                        "require 'Liter' as it's unit of measure "
-                        "(current unit of measure is %s).")
-                        % (pt.display_name, pt.uom_id.display_name))
-                if pt.tracking != 'lot':
-                    raise ValidationError(_(
-                        "Product '%s' is an 'Olive Oil' that require "
-                        "tracking by lots.") % pt.display_name)
-            if pt.detailed_type == 'olive_bottle_full' and pt.tracking != 'lot':
-                raise ValidationError(_(
-                    "Product '%s' is a 'Full Oil Bottle' "
-                    "that require tracking by lots.") % pt.display_name)
-            if (
-                    pt.detailed_type in ('olive_bottle_empty', 'olive_bottle_full', 'olive_analysis') and
-                    pt.uom_id.category_id != unit_categ_uom):
-                raise ValidationError(_(
-                    "Product '%s' is an 'Oil Bottle' or an 'Olive Analysis' "
-                    "that require a unit of measure that belong to the "
-                    "'Unit' category (current unit of measure: %s).")
-                    % (pt.display_name, pt.uom_id.display_name))
+                        "culture type must also be configured.",
+                        pt.display_name))
 
 
 class ProductProduct(models.Model):
     _inherit = 'product.product'
 
     shrinkage_prodlot_id = fields.Many2one(
-        'stock.production.lot', string='Shrinkage Production Lot',
+        'stock.lot', string='Shrinkage Lot',
         copy=False,
         help="Select the generic production lot that will be used for all "
         "moves of this olive oil product to the shrinkage tank.")

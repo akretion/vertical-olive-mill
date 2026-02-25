@@ -1,10 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
-  @author: Alexis de Lattre <alexis.delattre@akretion.com>
-  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
--->
-
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
 
 
@@ -14,49 +8,37 @@
     <field name="arch" type="xml">
         <form>
             <header>
-                <button name="check" string="Check" states="draft,weighted" type="object"/>
-                <button name="weighted" string="Weighted" class="btn-primary" states="draft" type="object"/>
-                <button name="validate" string="Validate" class="btn-primary" states="draft,weighted" type="object"/>
+                <button name="check" string="Check" invisible="state not in ('draft', 'weighted')" type="object"/>
+                <button name="weighted" string="Weighted" class="btn-primary" invisible="state != 'draft'" type="object"/>
+                <button name="validate" string="Validate" class="btn-primary" invisible="state not in ('draft', 'weighted')" type="object"/>
                 <button name="%(olive_arrival_report)d" string="Show Report" type="action"/>
-                <button name="cancel" string="Cancel" class="btn-default" states="draft,weighted,done" confirm="Are you sure you want to cancel this arrival ?" type="object"/>
-                <button name="back2draft" string="Back to Draft" class="btn-default" states="cancel" type="object"/>
-                <button type="action" name="%(olive_palox_lend_action)d" string="Lend Palox and/or Cases" context="{'default_partner_id': commercial_partner_id, 'default_arrival_id': active_id}" attrs="{'invisible': [('hide_lend_palox_case_button', '=', True)]}"/>
+                <button name="cancel" string="Cancel" class="btn-default" invisible="state not in ('draft', 'weighted', 'done')" confirm="Are you sure you want to cancel this arrival ?" type="object"/>
+                <button name="back2draft" string="Back to Draft" class="btn-default" invisible="state != 'cancel'" type="object"/>
+                <button type="action" name="%(olive_palox_lend_action)d" string="Lend Palox and/or Cases" context="{'default_partner_id': commercial_partner_id, 'default_arrival_id': id}" invisible="hide_lend_palox_case_button"/>
                 <field name="state" widget="statusbar" statusbar_visible="draft,weighted,done"/>
             </header>
             <sheet>
                 <div name="button_box" class="oe_button_box">
-                    <span name="olive_cultivation_form_ko" attrs="{'invisible': ['|', ('olive_cultivation_form_ko', '=', False), ('partner_id', '=', False)]}" class="badge badge-pill badge-danger font-weight-bold">Cultivation form missing</span>
-                    <span name="olive_parcel_ko" attrs="{'invisible': ['|', ('olive_parcel_ko', '=', False), ('partner_id', '=', False)]}" class="badge badge-pill badge-warning font-weight-bold">Parcel information incomplete</span>
-                    <span name="olive_organic_certif_ko" attrs="{'invisible': ['|', ('olive_organic_certif_ko', '=', False), ('partner_id', '=', False)]}" class="badge badge-pill badge-success font-weight-bold" groups="olive_mill.olive_organic">Organic certification missing</span>
-                    <button class="oe_stat_button" type="action"
-                        name="%(olive_mill.olive_palox_action)d"
-                        context="{'default_borrower_partner_id': commercial_partner_id, 'search_default_borrower_partner_id': commercial_partner_id, 'no_create': True}"
-                        icon="fa-inbox">  <!-- use fa-pallet when we'll have access to FA 5.0.7, which is not the case in v10 -->
+                    <span name="olive_cultivation_form_ko" invisible="not olive_cultivation_form_ko or not partner_id" class="badge rounded-pill text-bg-danger font-weight-bold">Cultivation form missing</span>
+                    <span name="olive_parcel_ko" invisible="not olive_parcel_ko or not partner_id" class="badge rounded-pill text-bg-warning font-weight-bold">Parcel information incomplete</span>
+                    <span name="olive_organic_certif_ko" invisible="not olive_organic_certif_ko or not partner_id" class="badge rounded-pill text-bg-success font-weight-bold" groups="olive_mill.olive_organic">Organic certification missing</span>
+                    <button class="oe_stat_button" type="action" name="%(olive_mill.olive_palox_action)d" context="{'default_borrower_partner_id': commercial_partner_id, 'search_default_borrower_partner_id': commercial_partner_id, 'no_create': True}" icon="fa-inbox">  <!-- use fa-pallet when we'll have access to FA 5.0.7, which is not the case in v10 -->
                         <field string="Lended Palox" name="lended_palox" widget="statinfo"/>
                     </button>
-                    <button class="oe_stat_button" type="action"
-                        name="%(olive_mill.olive_lended_case_action)d"
-                        context="{'default_partner_id': commercial_partner_id, 'search_default_partner_id': commercial_partner_id, 'olive_lended_case_main_view': 1}"
-                        icon="fa-codepen">
+                    <button class="oe_stat_button" type="action" name="%(olive_mill.olive_lended_case_action)d" context="{'default_partner_id': commercial_partner_id, 'search_default_partner_id': commercial_partner_id, 'olive_lended_case_main_view': 1}" icon="fa-codepen">
                         <field name="lended_regular_case" widget="statinfo" string="Lended Cases"/>
                     </button>
-                    <button class="oe_stat_button" type="action"
-                        name="%(olive_mill.olive_lended_case_action)d"
-                        context="{'default_partner_id': commercial_partner_id, 'search_default_partner_id': commercial_partner_id, 'olive_lended_case_main_view': 1}"
-                        icon="fa-codepen" groups="olive_mill.olive_organic">
+                    <button class="oe_stat_button" type="action" name="%(olive_mill.olive_lended_case_action)d" context="{'default_partner_id': commercial_partner_id, 'search_default_partner_id': commercial_partner_id, 'olive_lended_case_main_view': 1}" icon="fa-codepen" groups="olive_mill.olive_organic">
                         <field name="lended_organic_case" widget="statinfo" string="Lended Organic Cases"/>
                     </button>
-                    <button class="oe_stat_button" type="action"
-                        name="%(olive_mill.olive_ochard_action)d"
-                        icon="fa-pagelines"
-                        context="{'default_partner_id': commercial_partner_id, 'search_default_partner_id': commercial_partner_id}">
+                    <button class="oe_stat_button" type="action" name="%(olive_mill.olive_ochard_action)d" icon="fa-pagelines" context="{'default_partner_id': commercial_partner_id, 'search_default_partner_id': commercial_partner_id}">
                         <field string="Olive Trees" name="partner_olive_tree_total" widget="statinfo"/>
                     </button>
                 </div>
-                <img src="/olive_mill/static/image/organic_logo_done.png" alt="Logo Organic" attrs="{'invisible': ['|', ('olive_culture_type', '!=', 'organic'), ('olive_organic_certif_ko', '=', True)]}" class="oe_right"/>
-                <img src="/olive_mill/static/image/organic_logo_draft.png" alt="Logo Organic Draft" attrs="{'invisible': ['|', ('olive_culture_type', '!=', 'organic'), ('olive_organic_certif_ko', '=', False)]}" class="oe_right"/>
-                <img src="/olive_mill/static/image/organic_logo_conversion_done.png" alt="Logo Conversion" attrs="{'invisible': ['|', ('olive_culture_type', '!=', 'conversion'), ('olive_organic_certif_ko', '=', True)]}" class="oe_right"/>
-                <img src="/olive_mill/static/image/organic_logo_conversion_draft.png" alt="Logo Conversion Draft" attrs="{'invisible': ['|', ('olive_culture_type', '!=', 'conversion'), ('olive_organic_certif_ko', '=', False)]}" class="oe_right"/>
+                <img src="/olive_mill/static/image/organic_logo_done.png" alt="Logo Organic" invisible="olive_culture_type != 'organic' or olive_organic_certif_ko" class="oe_right"/>
+                <img src="/olive_mill/static/image/organic_logo_draft.png" alt="Logo Organic Draft" invisible="olive_culture_type != 'organic' or not olive_organic_certif_ko" class="oe_right"/>
+                <img src="/olive_mill/static/image/organic_logo_conversion_done.png" alt="Logo Conversion" invisible="olive_culture_type != 'conversion' or olive_organic_certif_ko" class="oe_right"/>
+                <img src="/olive_mill/static/image/organic_logo_conversion_draft.png" alt="Logo Conversion Draft" invisible="olive_culture_type != 'conversion' or not olive_organic_certif_ko" class="oe_right"/>
 
                 <div class="oe_title">
                     <label for="name"/>
@@ -67,37 +49,35 @@
 
                 <group name="main">
                     <group name="left">
-                        <field name="partner_id"/>
+                        <field name="partner_id" readonly="state == 'done'"/>
                         <field name="olive_culture_type" invisible="0" groups="olive_mill.olive_organic"/>
-                        <field name="harvest_start_date"/>
-                        <field name="default_ochard_id" domain="[('partner_id', '=', commercial_partner_id)]" context="{'default_partner_id': commercial_partner_id}"/>
-                        <field name="default_variant_id" widget="selection"/>
-                        <field name="default_oil_product_id" domain="[('detailed_type', '=', 'olive_oil'), ('olive_culture_type', '=', olive_culture_type)]" widget="selection"/>
-                        <field name="default_oil_destination"/>
-                        <field name="default_leaf_removal"/>
+                        <field name="harvest_start_date" readonly="state == 'done'"/>
+                        <field name="default_ochard_id" domain="[('partner_id', '=', commercial_partner_id)]" context="{'default_partner_id': commercial_partner_id}" readonly="state == 'done'"/>
+                        <field name="default_variant_id" widget="selection" readonly="state == 'done'"/>
+                        <field name="default_oil_product_id" domain="[('detailed_type', '=', 'olive_oil'), ('olive_culture_type', '=', olive_culture_type)]" widget="selection" readonly="state == 'done'"/>
+                        <field name="default_oil_destination" readonly="state == 'done'"/>
+                        <field name="default_leaf_removal" readonly="state == 'done'"/>
                         <field name="commercial_partner_id" invisible="1"/>
                         <field name="olive_cultivation_form_ko" invisible="1"/>
                         <field name="olive_parcel_ko" invisible="1"/>
                         <field name="olive_organic_certif_ko" invisible="1"/>
                     </group>
                     <group name="right">
-                        <field name="date"/>
+                        <field name="date" readonly="state == 'done'"/>
                         <label for="olive_qty" string="Total Quantity"/>
                         <div name="olive_qty">
                             <field name="olive_qty" class="oe_inline"/> kg
                         </div>
-                        <field name="returned_regular_case" attrs="{'readonly': ['|', ('olive_culture_type', 'in', ('organic', 'conversion')), ('state', '=', 'done')]}"/>
-                        <field name="returned_organic_case" attrs="{'readonly': ['|', ('olive_culture_type', '=', 'regular'), ('state', '=', 'done')]}" groups="olive_mill.olive_organic"/>
-                        <field name="returned_palox_ids" widget="many2many_tags"
-                            domain="[('borrower_partner_id', '=', commercial_partner_id)]"/>
+                        <field name="returned_regular_case" readonly="olive_culture_type in ('organic', 'conversion') or state == 'done'"/>
+                        <field name="returned_organic_case" readonly="olive_culture_type == 'regular' or state == 'done'" groups="olive_mill.olive_organic"/>
+                        <field name="returned_palox_ids" widget="many2many_tags" domain="[('borrower_partner_id', '=', commercial_partner_id)]" readonly="state == 'done'"/>
                         <field name="operator_user_id" widget="selection"/>
                     </group>
                 </group>
                 <notebook>
                     <page name="lines" string="Arrival Lines">
-                        <field name="line_ids" nolabel="1" colspan="2"
-                            context="{'default_leaf_removal': default_leaf_removal, 'default_variant_id': default_variant_id, 'default_oil_product_id': default_oil_product_id, 'default_ochard_id': default_ochard_id, 'default_commercial_partner_id': commercial_partner_id, 'default_oil_destination': default_oil_destination, 'default_olive_culture_type': olive_culture_type, 'form_view_ref': 'olive_mill.olive_arrival_line_arrival_form'}">
-                            <tree>
+                        <field name="line_ids" readonly="state == 'done'" nolabel="1" colspan="2" context="{'default_leaf_removal': default_leaf_removal, 'default_variant_id': default_variant_id, 'default_oil_product_id': default_oil_product_id, 'default_ochard_id': default_ochard_id, 'default_commercial_partner_id': commercial_partner_id, 'default_oil_destination': default_oil_destination, 'default_olive_culture_type': olive_culture_type, 'form_view_ref': 'olive_mill.olive_arrival_line_arrival_form'}">
+                            <list>
                                 <field name="name" decoration-bf="1"/>
                                 <field name="olive_qty" sum="1"/>
                                 <field name="leaf_removal" optional="show"/>
@@ -108,10 +88,10 @@
                                 <field name="ochard_id" optional="show"/>
                                 <field name="palox_id"/>
                                 <field name="oil_destination" widget="badge" decoration-danger="oil_destination == 'mix'" decoration-warning="oil_destination == 'sale'" decoration-info="oil_destination == 'withdrawal'"/>
-                                <field name="mix_withdrawal_oil_qty" string="Withdrawal (L)" sum="1" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}"/>
+                                <field name="mix_withdrawal_oil_qty" string="Withdrawal (L)" sum="1" invisible="oil_destination != 'mix'"/>
                                 <field name="extra_count" string="Extras" optional="show"/>
                                 <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'done'" decoration-muted="state == 'cancel'"/>
-                            </tree>
+                            </list>
                         </field>
                     </page>
                     <page name="additional" string="Results and Additional Info">
@@ -135,22 +115,20 @@
                                 </div>
                             </group>
                             <group name="tech" string="Additional Info">
-                                <field name="warehouse_id"/>
-                                <field name="season_id"/>
+                                <field name="warehouse_id" readonly="state == 'done'"/>
+                                <field name="season_id" readonly="state == 'done'"/>
                                 <field name="lended_case_id" context="{'olive_lended_case_main_view': True}"/>
-                                <field name="done_datetime" states="done"/>
-                                <field name="company_id" groups="base.group_multi_company"/>
+                                <!--TODO: Result from converting "states='done'" attribute into an 'invisible' attribute
+                                     Manually combine states condition into any 'invisible' overrides in inheriting views as well-->
+                                <field name="done_datetime" invisible="state not in ['done']"/>
+                                <field name="company_id" groups="base.group_multi_company" readonly="state != 'draft'"/>
                                 <field name="hide_lend_palox_case_button" invisible="1"/>
                             </group>
                         </group>
                     </page>
                 </notebook>
             </sheet>
-            <div class="oe_chatter">
-                <field name="message_follower_ids" widget="mail_followers"/>
-                <field name="activity_ids" widget="mail_activity"/>
-                <field name="message_ids" widget="mail_thread"/>
-            </div>
+            <chatter/>
         </form>
     </field>
 </record>
@@ -159,7 +137,7 @@
     <field name="name">olive.arrival.tree</field>
     <field name="model">olive.arrival</field>
     <field name="arch" type="xml">
-        <tree>
+        <list>
             <field name="name" decoration-bf="1"/>
             <field name="date"/>
             <field name="harvest_start_date" optional="show"/>
@@ -168,7 +146,7 @@
             <field name="olive_qty" sum="1"/>
             <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-warning="state == 'weighted'" decoration-success="state == 'done'" decoration-muted="state == 'cancel'"/>
             <field name="company_id" groups="base.group_multi_company" optional="hide"/>
-        </tree>
+        </list>
     </field>
 </record>
 
@@ -229,7 +207,7 @@
 <record id="olive_arrival_action" model="ir.actions.act_window">
     <field name="name">Arrivals</field>
     <field name="res_model">olive.arrival</field>
-    <field name="view_mode">tree,form,pivot,graph</field>
+    <field name="view_mode">list,form,pivot,graph</field>
     <field name="context">{'search_default_not_cancelled': 1, 'search_default_current_season': 1}</field>
 </record>
 
@@ -244,36 +222,34 @@
             <header>
                 <field name="state" widget="statusbar" statusbar_visible="draft,weighted,done"/>
             </header>
-            <div class="alert alert-warning" role="alert" attrs="{'invisible': [('leaf_removal', '=', False)]}">
+            <div class="alert alert-warning" role="alert" invisible="not leaf_removal">
                   Leaf removal is enabled
             </div>
-            <div class="alert alert-info" role="alert" attrs="{'invisible': [('leaf_removal', '=', True)]}">
+            <div class="alert alert-info" role="alert" invisible="leaf_removal">
                   Leaf removal is disabled
             </div>
             <group name="main">
             <group name="main-left" string="Arrival">
                 <field name="name"/>
-                <field name="arrival_id"/>
+                <field name="arrival_id" readonly="state == 'done'"/>
                 <field name="arrival_date"/>
                 <field name="commercial_partner_id"/>
                 <field name="olive_culture_type" groups="olive_mill.olive_organic"/>
                 <label for="olive_qty" string="Olive Qty"/>
                 <div name="olive_qty">
-                    <field name="olive_qty" class="oe_inline"/> kg
+                    <field name="olive_qty" class="oe_inline" readonly="state == 'done'"/> kg
                 </div>
-                <field name="leaf_removal"/>
-                <field name="variant_id" widget="selection"/>
-                <field name="ripeness"/>
-                <field name="sanitary_state"/>
-                <field name="oil_product_id"
-                   domain="[('detailed_type', '=', 'olive_oil'), ('olive_culture_type', '=', olive_culture_type)]" widget="selection"/>
-                <field name="ochard_id" domain="[('partner_id', '=', commercial_partner_id)]" context="{'default_partner_id': commercial_partner_id}"/>
-                <field name="palox_id" domain="['|', ('oil_product_id', '=', False), ('oil_product_id', '=', oil_product_id), '|', ('borrower_partner_id', '=', False), ('borrower_partner_id', '=', commercial_partner_id)]"/>
-                <field name="oil_destination"/>
-                <label for="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}" string="Requested Withdrawal Qty"/>
-                <div name="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}">
-                    <field name="mix_withdrawal_oil_qty"
-                        attrs="{'required': [('oil_destination', '=', 'mix')]}" class="oe_inline"/> L
+                <field name="leaf_removal" readonly="state == 'done'"/>
+                <field name="variant_id" widget="selection" readonly="state == 'done'"/>
+                <field name="ripeness" readonly="state == 'done'"/>
+                <field name="sanitary_state" readonly="state == 'done'"/>
+                <field name="oil_product_id" domain="[('detailed_type', '=', 'olive_oil'), ('olive_culture_type', '=', olive_culture_type)]" widget="selection" readonly="state == 'done'"/>
+                <field name="ochard_id" domain="[('partner_id', '=', commercial_partner_id)]" context="{'default_partner_id': commercial_partner_id}" readonly="state == 'done'"/>
+                <field name="palox_id" domain="['|', ('oil_product_id', '=', False), ('oil_product_id', '=', oil_product_id), '|', ('borrower_partner_id', '=', False), ('borrower_partner_id', '=', commercial_partner_id)]" readonly="state == 'done'"/>
+                <field name="oil_destination" readonly="state == 'done'"/>
+                <label for="mix_withdrawal_oil_qty" invisible="oil_destination != 'mix'" string="Requested Withdrawal Qty"/>
+                <div name="mix_withdrawal_oil_qty" invisible="oil_destination != 'mix'">
+                    <field name="mix_withdrawal_oil_qty" required="oil_destination == 'mix'" readonly="state == 'done'" class="oe_inline"/> L
                 </div>
             </group>
             <group name="main-right" string="Production">
@@ -290,21 +266,21 @@
                     <field name="shrinkage_oil_qty" class="oe_inline"/> L /
                     <field name="shrinkage_oil_qty_kg" class="oe_inline"/> kg
                 </div>
-                <label for="withdrawal_oil_qty" string="Withdrawal Oil Qty" attrs="{'invisible': [('oil_destination', 'not in', ('withdrawal', 'mix'))]}"/>
-                <div name="withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', 'not in', ('withdrawal', 'mix'))]}">
+                <label for="withdrawal_oil_qty" string="Withdrawal Oil Qty" invisible="oil_destination not in ('withdrawal', 'mix')"/>
+                <div name="withdrawal_oil_qty" invisible="oil_destination not in ('withdrawal', 'mix')">
                     <field name="withdrawal_oil_qty" class="oe_inline"/> L /
                     <field name="withdrawal_oil_qty_kg" class="oe_inline"/> kg
                 </div>
-                <label for="filter_loss_oil_qty" string="Oil Qty Lost in Filter" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}"/>
-                <div name="filter_loss_oil_qty" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}">
+                <label for="filter_loss_oil_qty" string="Oil Qty Lost in Filter" invisible="oil_destination not in ('sale', 'mix')"/>
+                <div name="filter_loss_oil_qty" invisible="oil_destination not in ('sale', 'mix')">
                     <field name="filter_loss_oil_qty" class="oe_inline"/> L
                 </div>
-                <label for="to_sale_tank_oil_qty" string="Oil Qty to Sale Tank" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}"/>
-                <div name="to_sale_tank_oil_qty" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}">
+                <label for="to_sale_tank_oil_qty" string="Oil Qty to Sale Tank" invisible="oil_destination not in ('sale', 'mix')"/>
+                <div name="to_sale_tank_oil_qty" invisible="oil_destination not in ('sale', 'mix')">
                     <field name="to_sale_tank_oil_qty" class="oe_inline"/> L
                 </div>
-                <label for="sale_oil_qty" string="Oil Qty Sold" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}"/>
-                <div name="sale_oil_qty" attrs="{'invisible': [('oil_destination', 'not in', ('sale', 'mix'))]}">
+                <label for="sale_oil_qty" string="Oil Qty Sold" invisible="oil_destination not in ('sale', 'mix')"/>
+                <div name="sale_oil_qty" invisible="oil_destination not in ('sale', 'mix')">
                     <field name="sale_oil_qty" class="oe_inline"/> L
                 </div>
                 <label for="oil_qty_net" string="Net Oil Qty"/>
@@ -359,37 +335,35 @@
             <header>
                 <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
             </header>
-            <div class="alert alert-warning" role="alert" attrs="{'invisible': [('leaf_removal', '=', False)]}">
+            <div class="alert alert-warning" role="alert" invisible="not leaf_removal">
                   Leaf removal is enabled
             </div>
-            <div class="alert alert-info" role="alert" attrs="{'invisible': [('leaf_removal', '=', True)]}">
+            <div class="alert alert-info" role="alert" invisible="leaf_removal">
                   Leaf removal is disabled
             </div>
             <group name="main">
                 <field name="name"/>
-                <field name="oil_destination"/>
-                <label for="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}" string="Requested Withdrawal Qty"/>
-                <div name="mix_withdrawal_oil_qty" attrs="{'invisible': [('oil_destination', '!=', 'mix')]}">
-                    <field name="mix_withdrawal_oil_qty"
-                        attrs="{'required': [('oil_destination', '=', 'mix')]}" class="oe_inline"/> L
+                <field name="oil_destination" readonly="state == 'done'"/>
+                <label for="mix_withdrawal_oil_qty" invisible="oil_destination != 'mix'" string="Requested Withdrawal Qty"/>
+                <div name="mix_withdrawal_oil_qty" invisible="oil_destination != 'mix'">
+                    <field name="mix_withdrawal_oil_qty" required="oil_destination == 'mix'" readonly="state == 'done'" class="oe_inline"/> L
                 </div>
 
-                <field name="oil_product_id"
-                   domain="[('detailed_type', '=', 'olive_oil'), ('olive_culture_type', '=', olive_culture_type)]" widget="selection"/>
-                <field name="palox_id" domain="['|', ('oil_product_id', '=', False), ('oil_product_id', '=', oil_product_id), '|', ('borrower_partner_id', '=', False), ('borrower_partner_id', '=', commercial_partner_id)]"/>
+                <field name="oil_product_id" domain="[('detailed_type', '=', 'olive_oil'), ('olive_culture_type', '=', olive_culture_type)]" widget="selection" readonly="state == 'done'"/>
+                <field name="palox_id" domain="['|', ('oil_product_id', '=', False), ('oil_product_id', '=', oil_product_id), '|', ('borrower_partner_id', '=', False), ('borrower_partner_id', '=', commercial_partner_id)]" readonly="state == 'done'"/>
                 <label for="palox_weight" string="Palox Weight"/>
                 <div name="palox_weight">
-                    <field name="palox_weight" class="oe_inline"/> kg
+                    <field name="palox_weight" class="oe_inline" readonly="state == 'done'"/> kg
                 </div>
                 <label for="olive_qty" string="Olive Qty"/>
                 <div name="olive_qty">
-                    <field name="olive_qty" class="oe_inline"/> kg
+                    <field name="olive_qty" class="oe_inline" readonly="state == 'done'"/> kg
                 </div>
-                <field name="variant_id" widget="selection"/>
-                <field name="ripeness"/>
-                <field name="sanitary_state"/>
-                <field name="leaf_removal"/>
-                <field name="ochard_id" domain="[('partner_id', '=', commercial_partner_id)]" context="{'default_partner_id': commercial_partner_id}"/>
+                <field name="variant_id" widget="selection" readonly="state == 'done'"/>
+                <field name="ripeness" readonly="state == 'done'"/>
+                <field name="sanitary_state" readonly="state == 'done'"/>
+                <field name="leaf_removal" readonly="state == 'done'"/>
+                <field name="ochard_id" domain="[('partner_id', '=', commercial_partner_id)]" context="{'default_partner_id': commercial_partner_id}" readonly="state == 'done'"/>
                 <field name="commercial_partner_id" invisible="1"/>
                 <field name="olive_culture_type" invisible="1"/>
             </group>
@@ -405,7 +379,7 @@
     <field name="name">olive.arrival.line.tree</field>
     <field name="model">olive.arrival.line</field>
     <field name="arch" type="xml">
-        <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" edit="0" create="0">
+        <list decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" edit="0" create="0">
             <field name="name" decoration-bf="1"/>
             <field name="arrival_date" optional="show"/>
             <field name="production_id"/>
@@ -423,7 +397,7 @@
             <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" decoration-success="state == 'done'"/>
             <field name="arrival_state" optional="hide" decoration-info="state == 'draft'" decoration-warning="state == 'weighted'" decoration-success="state == 'done'" decoration-muted="state == 'cancel'"/>
             <field name="production_state" decoration-info="state in ('draft', 'ratio')" decoration-success="state == 'done'" decoration-warning="state == 'check'" decoration-danger="state in ('force', 'pack')" decoration-muted="state == 'cancel'"/>
-        </tree>
+        </list>
     </field>
 </record>
 
@@ -518,11 +492,11 @@
 <record id="olive_arrival_line_action" model="ir.actions.act_window">
     <field name="name">Arrival Lines</field>
     <field name="res_model">olive.arrival.line</field>
-    <field name="view_mode">pivot,tree,form,graph</field>
+    <field name="view_mode">pivot,list,form,graph</field>
     <field name="context">{'search_default_current_season': True, 'search_default_arrival_done': True}</field>
 </record>
 
-<menuitem id="olive_arrival_line_menu" action="olive_arrival_line_action" parent="olive_report_menu" sequence="10" groups="stock.group_stock_manager"/>  <!-- maybe we will remove group once appropriate protections are setup -->
+<menuitem id="olive_arrival_line_menu" action="olive_arrival_line_action" parent="olive_report_menu" sequence="40" groups="stock.group_stock_manager"/>  <!-- maybe we will remove group once appropriate protections are setup -->
 
 <record id="olive_arrival_line_extra_form" model="ir.ui.view">
     <field name="name">olive.arrival.line.extra.form</field>
@@ -537,7 +511,7 @@
                     <field name="qty" class="oe_inline"/>
                     <field name="uom_id" class="oe_inline"/>
                 </div>
-                <field name="fillup" attrs="{'invisible': [('product_detailed_type', 'not in', ('olive_bottle_empty', 'olive_barrel_farmer'))]}"/>
+                <field name="fillup" invisible="product_detailed_type not in ('olive_bottle_empty', 'olive_barrel_farmer')"/>
             </group>
         </form>
     </field>
@@ -547,13 +521,13 @@
     <field name="name">olive.arrival.line.extra.tree</field>
     <field name="model">olive.arrival.line.extra</field>
     <field name="arch" type="xml">
-        <tree editable="bottom">
+        <list editable="bottom">
             <field name="product_id"/>
             <field name="product_detailed_type" invisible="1"/>
             <field name="qty"/>
             <field name="uom_id" groups="uom.group_uom"/>
-            <field name="fillup" attrs="{'invisible': [('product_detailed_type', 'not in', ('olive_bottle_empty', 'olive_barrel_farmer'))]}"/>
-        </tree>
+            <field name="fillup" invisible="product_detailed_type not in ('olive_bottle_empty', 'olive_barrel_farmer')"/>
+        </list>
     </field>
 </record>
 

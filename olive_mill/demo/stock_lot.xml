@@ -7,25 +7,25 @@
 
 <odoo noupdate="1">
 
-<record id="oil_shrinkage_lot" model="stock.production.lot">
+<record id="oil_shrinkage_lot" model="stock.lot">
     <field name="name">OOIL-SHRINK</field>
     <field name="product_id" ref="oil"/>
     <field name="company_id" ref="base.main_company"/>
 </record>
 
-<record id="black_oil_shrinkage_lot" model="stock.production.lot">
+<record id="black_oil_shrinkage_lot" model="stock.lot">
     <field name="name">OOILBLACK-SHRINK</field>
     <field name="product_id" ref="black_oil"/>
     <field name="company_id" ref="base.main_company"/>
 </record>
 
-<record id="oil_organic_shrinkage_lot" model="stock.production.lot">
+<record id="oil_organic_shrinkage_lot" model="stock.lot">
     <field name="name">ORG_OOIL-SHRINK</field>
     <field name="product_id" ref="oil_organic"/>
     <field name="company_id" ref="base.main_company"/>
 </record>
 
-<record id="oil_conversion_shrinkage_lot" model="stock.production.lot">
+<record id="oil_conversion_shrinkage_lot" model="stock.lot">
     <field name="name">CONV_OOIL-SHRINK</field>
     <field name="product_id" ref="oil_conversion"/>
     <field name="company_id" ref="base.main_company"/>

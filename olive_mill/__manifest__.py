@@ -4,7 +4,7 @@
 
 {
     'name': 'Olive Mill',
-    'version': "14.0.3.0.0",
+    'version': "18.0.1.0.0",
     'category': 'Manufacturing',
     'license': 'AGPL-3',
     'summary': 'Manage an olive mill',
@@ -17,11 +17,10 @@
         'stock_no_negative',  # OCA/stock-logistics-workflow
         # 'stock_pack_operation_auto_fill',
         'report_py3o',  # OCA/repoting-engine
-        'base_usability',  # akretion/odoo-usability, for reports
-        'onchange_helper',  # OCA/server-tools
+        'base_usability_akretion',  # akretion/odoo-usability, for reports
         'base_view_inheritance_extension',  # OCA/server-tools
         'product_detailed_type_stock',  # akretion/odoo-usability
-        'web_view_calendar_list',  # OCA/web
+        # 'web_view_calendar_list',  # OCA/web  not migrated to 18.0 yet
         ],
     'data': [
         'security/olive_security.xml',
@@ -72,7 +71,7 @@
         'views/res_users.xml',
         'views/product.xml',
         'views/protected_geo_indication.xml',
-        'views/stock_production_lot.xml',
+        'views/stock_lot.xml',
         'views/olive_oil_analysis.xml',
         'views/mrp_bom.xml',
     ],
@@ -85,7 +84,7 @@
         'demo/olive_sale_pricelist.xml',
         'demo/res_partner.xml',
         'demo/olive_season.xml',
-        'demo/stock_production_lot.xml',
+        'demo/stock_lot.xml',
         'demo/stock_location.xml',
         'demo/stock_warehouse.xml',
         'demo/olive_ochard.xml',

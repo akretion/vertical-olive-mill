@@ -1,16 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
-  @author: Alexis de Lattre <alexis.delattre@akretion.com>
-  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
--->
-
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
 
 <record id="new_olive_oil_production_action" model="ir.actions.act_window">
     <field name="name">Oil Productions</field>
     <field name="res_model">olive.oil.production</field>
-    <field name="view_mode">form,tree,pivot,graph</field>
+    <field name="view_mode">form,list,pivot,graph</field>
 </record>
 
 <record id="olive_palox_form" model="ir.ui.view">
@@ -19,16 +13,11 @@
     <field name="arch" type="xml">
         <form>
             <header>
-                <button name="%(new_olive_oil_production_action)d" type="action" string="Create Oil Production" context="{'default_palox_id': active_id}" attrs="{'invisible': [('weight', '&lt;=', 0)]}"/>
-                <button name="return_borrowed_palox" type="object" string="Return Palox" attrs="{'invisible': ['|', ('borrower_partner_id', '=', False), ('borrowed_date', '=', False)]}"/>
+                <button name="%(new_olive_oil_production_action)d" type="action" string="Create Oil Production" context="{'default_palox_id': id}" invisible="weight &lt;= 0"/>
+                <button name="return_borrowed_palox" type="object" string="Return Palox" invisible="not borrower_partner_id or not borrowed_date"/>
             </header>
             <sheet>
-                <widget
-                    name="web_ribbon"
-                    title="Archived"
-                    bg_color="bg-danger"
-                    attrs="{'invisible': [('active', '=', True)]}"
-                />
+                <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active"/>
                 <div class="oe_title">
                     <label for="name" string="Palox Number"/>
                     <h1>
@@ -37,7 +26,7 @@
                 </div>
                 <group name="main">
                     <group name="main-left">
-                        <field name="active" invisible="1" />
+                        <field name="active" invisible="1"/>
                         <field name="label"/>
                         <label for="weight" string="Current Net Weight"/>
                         <div name="weight">
@@ -60,7 +49,7 @@
                 <notebook>
                     <page name="content" string="Current Content">
                         <field name="line_ids" nolabel="1" colspan="2">
-                            <tree>
+                            <list>
                                 <field name="name" decoration-bf="1"/>
                                 <field name="commercial_partner_id"/>
                                 <field name="arrival_date" optional="show"/>
@@ -72,10 +61,10 @@
                                 <field name="oil_product_id"/>
                                 <field name="ochard_id" optional="hide"/>
                                 <field name="oil_destination" widget="badge" decoration-danger="oil_destination == 'mix'" decoration-warning="oil_destination == 'sale'" decoration-info="oil_destination == 'withdrawal'"/>
-                                <field name="mix_withdrawal_oil_qty" string="Withdrawal (L)" sum="1" attrs="{'invisible': [('oil_destination', '!=', 'mix')], 'column_invisible': [('parent.oil_destination', '!=', 'mix')]}"/>
+                                <field name="mix_withdrawal_oil_qty" string="Withdrawal (L)" sum="1" invisible="oil_destination != 'mix'" column_invisible="parent.oil_destination != 'mix'"/>
                                 <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'done'" decoration-muted="state == 'cancel'"/>
                                 <field name="arrival_state" widget="badge" optional="hide" decoration-info="state == 'draft'" decoration-warning="state == 'weighted'" decoration-success="state == 'done'" decoration-muted="state == 'cancel'"/>
-                            </tree>
+                            </list>
                         </field>
                     </page>
                     <page name="borrow_history" string="Borrow History">
@@ -91,7 +80,7 @@
     <field name="name">olive.palox.tree</field>
     <field name="model">olive.palox</field>
     <field name="arch" type="xml">
-        <tree>
+        <list>
             <header>
                 <button type="action" name="%(olive_mill.olive_palox_generate_production_action)d" string="Generate Oil Productions"/>
             </header>
@@ -105,7 +94,7 @@
             <field name="borrower_partner_id" optional="show"/>
             <field name="borrowed_date" optional="show"/>
             <field name="empty_weight" optional="show"/>
-        </tree>
+        </list>
     </field>
 </record>
 
@@ -141,7 +130,7 @@
 <record id="olive_palox_action" model="ir.actions.act_window">
     <field name="name">Palox</field>
     <field name="res_model">olive.palox</field>
-    <field name="view_mode">tree,form</field>
+    <field name="view_mode">list,form</field>
 </record>
 
 <menuitem id="olive_palox_menu" action="olive_palox_action" parent="olive_data_menu" sequence="70"/>
@@ -150,14 +139,14 @@
     <field name="name">olive.palox.borrow.history.tree</field>
     <field name="model">olive.palox.borrow.history</field>
     <field name="arch" type="xml">
-        <tree>
+        <list>
             <field name="palox_id" invisible="not context.get('borrow_history_main_view')"/>
             <field name="partner_id"/>
             <field name="start_date"/>
             <field name="end_date"/>
             <field name="season_id" invisible="not context.get('borrow_history_main_view')" optional="show"/>
             <field name="company_id" invisible="not context.get('borrow_history_main_view')" groups="base.group_multi_company" optional="show"/>
-        </tree>
+        </list>
     </field>
 </record>
 
@@ -178,7 +167,7 @@
 <record id="olive_palox_borrow_history_action" model="ir.actions.act_window">
     <field name="name">Palox Borrow History</field>
     <field name="res_model">olive.palox.borrow.history</field>
-    <field name="view_mode">tree</field>
+    <field name="view_mode">list</field>
     <field name="context">{'borrow_history_main_view': True}</field>
 </record>
 

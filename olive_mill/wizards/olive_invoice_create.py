@@ -86,12 +86,12 @@ class OliveInvoiceCreate(models.TransientModel):
             }
         if len(move_ids) == 1:
             action.update({
-                'view_mode': 'form,tree,kanban',
+                'view_mode': 'form,list,kanban',
                 'res_id': move_ids[0],
                 })
         else:
             action.update({
                 'domain': [('id', 'in', move_ids)],
-                'view_mode': 'tree,kanban,form',
+                'view_mode': 'list,kanban,form',
                 })
         return action

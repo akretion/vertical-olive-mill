@@ -338,7 +338,7 @@ class ResPartner(models.Model):
             }
         if cert:
             action.update({
-                'view_mode': 'form,tree',
+                'view_mode': 'form,list',
                 'res_id': cert.id,
                 'views': False,
                 })

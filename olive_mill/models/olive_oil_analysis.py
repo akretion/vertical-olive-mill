@@ -20,20 +20,18 @@ class OliveOilAnalysis(models.Model):
         ('arrival', 'Arrival'),
         ('tank', 'Tank'),
         ], default='arrival', string='Oil Source Type', required=True,
-        tracking=True, states={'done': [('readonly', True)]})
+        tracking=True)
     arrival_line_id = fields.Many2one(
         'olive.arrival.line', string='Arrival Line',
-        states={'done': [('readonly', True)]}, tracking=True, check_company=True)
+        tracking=True, check_company=True)
     partner_id = fields.Many2one(
         related='arrival_line_id.arrival_id.partner_id.commercial_partner_id',
         store=True, index=True, string='Olive Farmer')
     oil_product_id = fields.Many2one(
         'product.product', string='Oil Type', required=True, index=True,
-        domain=[('detailed_type', '=', 'olive_oil')],
-        tracking=True, states={'done': [('readonly', True)]})
+        domain=[('detailed_type', '=', 'olive_oil')], tracking=True)
     lot_id = fields.Many2one(
-        'stock.production.lot', string='Oil Lot',
-        tracking=True, states={'done': [('readonly', True)]},
+        'stock.lot', string='Oil Lot', tracking=True,
         domain="[('product_id', '=', oil_product_id), ('company_id', '=', company_id)]",
         check_company=True)
     production_id = fields.Many2one(
@@ -45,14 +43,13 @@ class OliveOilAnalysis(models.Model):
         related='arrival_line_id.arrival_id.date', store=True)
     season_id = fields.Many2one(
         'olive.season', string='Season', required=True, index=True,
-        domain="[('company_id', '=', company_id)]",
-        states={'done': [('readonly', True)]}, check_company=True)
+        domain="[('company_id', '=', company_id)]", check_company=True)
     current_season = fields.Boolean(
         compute='_compute_current_season', search='_search_current_season')
     location_id = fields.Many2one(
         'stock.location', string='Oil Tank',
         domain="[('olive_tank_type', '!=', False), ('company_id', '=', company_id)]",
-        states={'done': [('readonly', True)]}, tracking=True, check_company=True)
+        tracking=True, check_company=True)
     state = fields.Selection([
         ('draft', 'Draft'),
         ('done', 'Done'),
@@ -60,29 +57,24 @@ class OliveOilAnalysis(models.Model):
         ], string='State', readonly=True, default='draft', copy=False,
         tracking=True)
     date = fields.Date(
-        string='Analysis Date', states={'done': [('readonly', True)]},
-        copy=False, tracking=True)
+        string='Analysis Date', copy=False, tracking=True)
     execution_mode = fields.Selection([
         ('internal', 'Internal'),
         ('external', 'External'),
         ], default='internal', string='Execution Mode', required=True,
-        states={'done': [('readonly', True)]}, tracking=True)
+        tracking=True)
     execution_user_id = fields.Many2one(
-        'res.users', string='Analysis Made by',
-        states={'done': [('readonly', True)]}, tracking=True,
+        'res.users', string='Analysis Made by', tracking=True,
         default=lambda self: self.env.company.olive_oil_analysis_default_user_id.id or False)
     execution_partner_id = fields.Many2one(
-        'res.partner', string='Analysis Made by (Partner)',
-        states={'done': [('readonly', True)]}, tracking=True,
+        'res.partner', string='Analysis Made by (Partner)', tracking=True,
         domain=[('supplier', '=', True)])
     company_id = fields.Many2one(
         'res.company', string='Company',
         ondelete='cascade', required=True,
-        states={'done': [('readonly', True)]},
         default=lambda self: self.env.company)
     line_ids = fields.One2many(
-        'olive.oil.analysis.line', 'analysis_id', string='Analysis Lines',
-        states={'done': [('readonly', True)]})
+        'olive.oil.analysis.line', 'analysis_id', string='Analysis Lines')
 
     def _compute_current_season(self):
         for ana in self:
@@ -184,29 +176,25 @@ class OliveOilAnalysisLine(models.Model):
     analysis_id = fields.Many2one(
         'olive.oil.analysis', ondelete='cascade', string='Analysis')
     product_id = fields.Many2one(
-        'product.product', string='Analysis Type',
-        required=True, states={'done': [('readonly', True)]},
+        'product.product', string='Analysis Type', required=True,
         domain=[('detailed_type', '=', 'olive_analysis')])
     decimal_precision = fields.Integer(
         compute='_compute_params', readonly=False, store=True,
-        string='Decimal Precision', states={'done': [('readonly', True)]})
+        string='Decimal Precision')
     result_p1 = fields.Float(
-        string='Result (1 decimal)', digits=(16, 1),
-        states={'done': [('readonly', True)]}, group_operator='avg')
+        string='Result (1 decimal)', digits=(16, 1), aggregator='avg')
     result_p2 = fields.Float(
-        string='Result (2 decimals)', digits=(16, 2),
-        states={'done': [('readonly', True)]}, group_operator='avg')
+        string='Result (2 decimals)', digits=(16, 2), aggregator='avg')
     result_int = fields.Integer(
-        string='Result (integer)',
-        states={'done': [('readonly', True)]}, group_operator='avg')
+        string='Result (integer)', aggregator='avg')
     result_string = fields.Char(
-        string='Result', compute='_compute_result_string', readonly=True)
+        string='Result', compute='_compute_result_string')
     precision = fields.Char(
         compute='_compute_params', readonly=False, store=True,
-        string='Precision', states={'done': [('readonly', True)]})
+        string='Precision')
     instrument = fields.Char(
         compute='_compute_params', readonly=False, store=True,
-        string='Instrument', states={'done': [('readonly', True)]})
+        string='Instrument')
     uom = fields.Char(related='product_id.olive_analysis_uom', string='Unit of Measure')
     oil_source_type = fields.Selection(
         related='analysis_id.oil_source_type', store=True)

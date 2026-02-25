@@ -269,7 +269,7 @@ class OliveAppointment(models.Model):
         action = self.env['ir.actions.actions']._for_xml_id(
             'olive_mill.olive_arrival_action')
         action.update({
-            'view_mode': 'form,tree',
+            'view_mode': 'form,list',
             'views': False,
             'context': context,
             })
@@ -290,7 +290,7 @@ class OliveAppointment(models.Model):
         action = self.env['ir.actions.actions']._for_xml_id(
             'olive_mill.olive_appointment_action')
         action.update({
-            'view_mode': 'form,tree,calendar',
+            'view_mode': 'form,list,calendar',
             'views': False,
             'context': context,
             })
@@ -314,7 +314,7 @@ class OliveAppointment(models.Model):
         action = self.env['ir.actions.actions']._for_xml_id(
             'olive_mill.olive_appointment_action')
         action.update({
-            'view_mode': 'form,tree,calendar',
+            'view_mode': 'form,list,calendar',
             'views': False,
             # TODO check it's not a pb to have datetime obj in ctx
             'context': {'default_start_datetime': self.end_datetime},

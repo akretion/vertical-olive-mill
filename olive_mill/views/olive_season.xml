@@ -1,10 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
-  @author: Alexis de Lattre <alexis.delattre@akretion.com>
-  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
--->
-
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
 
 <record id="olive_season_form" model="ir.ui.view">
@@ -13,7 +7,7 @@
     <field name="arch" type="xml">
         <form>
             <header>
-                <button class="btn-primary" string="Generate Partner Organic Certification" type="object" name="generate_partner_organic_certif" attrs="{'invisible': [('partner_organic_certif_generated', '=', True)]}" groups="olive_mill.olive_organic"/>
+                <button class="btn-primary" string="Generate Partner Organic Certification" type="object" name="generate_partner_organic_certif" invisible="partner_organic_certif_generated" groups="olive_mill.olive_organic"/>
             </header>
             <group name="main">
                 <field name="name"/>
@@ -33,13 +27,13 @@
     <field name="name">olive.season.tree</field>
     <field name="model">olive.season</field>
     <field name="arch" type="xml">
-        <tree>
-            <field name="name"/>
+        <list>
+            <field name="name" decoration-bf="1"/>
             <field name="start_date"/>
             <field name="end_date"/>
             <field name="default_expiry_date" optional="show"/>
             <field name="company_id" groups="base.group_multi_company" optional="hide"/>
-        </tree>
+        </list>
     </field>
 </record>
 
@@ -58,7 +52,7 @@
 <record id="olive_season_action" model="ir.actions.act_window">
     <field name="name">Seasons</field>
     <field name="res_model">olive.season</field>
-    <field name="view_mode">tree,form</field>
+    <field name="view_mode">list,form</field>
 </record>
 
 <menuitem id="olive_season_menu" action="olive_season_action" parent="olive_config_menu" sequence="20"/>
@@ -78,7 +72,7 @@
             <field name="sale_oil_qty"/>
             <field name="withdrawal_oil_qty"/>
             <templates>
-                <t t-name="kanban-box">
+                <t t-name="card">
                     <div t-attf-class="#{kanban_color(0)}">
                         <t t-call="SeasonTop"/>
                         <div class="container o_kanban_card_content o_visible">

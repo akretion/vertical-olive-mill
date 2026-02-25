@@ -61,14 +61,14 @@
 
 <record id="olive_prodlot_tracability_report" model="ir.actions.report">
     <field name="name">Olive Oil Tracability</field>
-    <field name="model">stock.production.lot</field>
+    <field name="model">stock.lot</field>
     <field name="report_name">olive.prodlot.tracability</field>
     <field name="report_type">py3o</field>
     <field name="py3o_filetype">odt</field>
     <field name="module">olive_mill</field>
     <field name="py3o_template_fallback">report/prodlot_tracability.odt</field>
     <field name="print_report_name">'Olive_oil_tracability-Lot_%s' % object.name</field>
-    <field name="binding_model_id" ref="stock.model_stock_production_lot"/>
+    <field name="binding_model_id" ref="stock.model_stock_lot"/>
 </record>
 
 <record id="olive_oil_analysis_report" model="ir.actions.report">

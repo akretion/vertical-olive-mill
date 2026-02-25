@@ -32,13 +32,13 @@
                     <field name="target">new</field>
             </record>
 
-            <menuitem id="olive_oil_sale_report_menu" action="olive_oil_sale_report_action" sequence="8" parent="olive_report_menu"/>
+            <menuitem id="olive_oil_sale_report_menu" action="olive_oil_sale_report_action" sequence="30" parent="olive_report_menu"/>
 
             <!-- LINES -->
             <record id="olive_oil_sale_report_line_tree" model="ir.ui.view">
                 <field name="model">olive.oil.sale.report.line</field>
                 <field name="arch" type="xml">
-                        <tree>
+                        <list>
                                 <field name="parent_id" invisible="1"/>
                                 <field name="date"/>
                                 <field name="oil_product_id"/>
@@ -46,7 +46,7 @@
                                 <field name="loose_qty" sum="1" optional="show"/>
                                 <field name="in_bottle_qty" sum="1" optional="show"/>
                                 <field name="total_qty" sum="1"/>
-                        </tree>
+                        </list>
                     </field>
             </record>
 
@@ -91,7 +91,7 @@
             <record id="olive_oil_sale_report_line_action" model="ir.actions.act_window">
                     <field name="name">Olive Oil Sale Statistics</field>
                     <field name="res_model">olive.oil.sale.report.line</field>
-                    <field name="view_mode">pivot,graph,tree</field>
+                    <field name="view_mode">pivot,graph,list</field>
                     <!-- domain to filter on the result of a specific wizard is added by code -->
             </record>
 

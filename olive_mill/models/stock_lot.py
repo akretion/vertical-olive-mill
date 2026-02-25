@@ -7,8 +7,8 @@ from odoo.exceptions import UserError
 from odoo.tools.misc import format_date
 
 
-class StockProductionLot(models.Model):
-    _inherit = 'stock.production.lot'
+class StockLot(models.Model):
+    _inherit = 'stock.lot'
 
     olive_production_id = fields.Many2one(
         'olive.oil.production', string='Olive Oil Production', ondelete='restrict',

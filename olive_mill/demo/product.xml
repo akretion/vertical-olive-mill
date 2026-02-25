@@ -41,6 +41,7 @@
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="True"/>
     <field name="detailed_type">olive_oil</field>
+    <field name="is_storable" eval="True"/>
     <field name="olive_culture_type">regular</field>
     <field name="uom_id" ref="uom.product_uom_litre"/>
     <field name="uom_po_id" ref="uom.product_uom_litre"/>
@@ -54,6 +55,7 @@
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="True"/>
     <field name="detailed_type">olive_oil</field>
+    <field name="is_storable" eval="True"/>
     <field name="olive_culture_type">regular</field>
     <field name="uom_id" ref="uom.product_uom_litre"/>
     <field name="uom_po_id" ref="uom.product_uom_litre"/>
@@ -68,6 +70,7 @@
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="True"/>
     <field name="detailed_type">olive_oil</field>
+    <field name="is_storable" eval="True"/>
     <field name="olive_culture_type">organic</field>
     <field name="uom_id" ref="uom.product_uom_litre"/>
     <field name="uom_po_id" ref="uom.product_uom_litre"/>
@@ -82,6 +85,7 @@
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="True"/>
     <field name="detailed_type">olive_oil</field>
+    <field name="is_storable" eval="True"/>
     <field name="olive_culture_type">conversion</field>
     <field name="uom_id" ref="uom.product_uom_litre"/>
     <field name="uom_po_id" ref="uom.product_uom_litre"/>
@@ -96,6 +100,7 @@
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="True"/>
     <field name="detailed_type">olive_oil</field>
+    <field name="is_storable" eval="True"/>
     <field name="olive_culture_type">regular</field>
     <field name="olive_geo_id" ref="olive_mill.aop_baux_de_provence"/>
     <field name="uom_id" ref="uom.product_uom_litre"/>
@@ -110,6 +115,7 @@
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="True"/>
     <field name="detailed_type">olive_oil</field>
+    <field name="is_storable" eval="True"/>
     <field name="olive_culture_type">regular</field>
     <field name="olive_geo_id" ref="olive_mill.aop_baux_de_provence"/>
     <field name="uom_id" ref="uom.product_uom_litre"/>
@@ -126,6 +132,7 @@
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="False"/>
     <field name="detailed_type">olive_bottle_full</field>
+    <field name="is_storable" eval="True"/>
     <field name="olive_culture_type">regular</field>
     <field name="uom_id" ref="uom.product_uom_unit"/>
     <field name="uom_po_id" ref="uom.product_uom_unit"/>
@@ -140,6 +147,7 @@
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="False"/>
     <field name="detailed_type">olive_bottle_full</field>
+    <field name="is_storable" eval="True"/>
     <field name="olive_culture_type">regular</field>
     <field name="uom_id" ref="uom.product_uom_unit"/>
     <field name="uom_po_id" ref="uom.product_uom_unit"/>
@@ -154,6 +162,7 @@
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="False"/>
     <field name="detailed_type">olive_bottle_full</field>
+    <field name="is_storable" eval="True"/>
     <field name="olive_culture_type">organic</field>
     <field name="uom_id" ref="uom.product_uom_unit"/>
     <field name="uom_po_id" ref="uom.product_uom_unit"/>
@@ -168,6 +177,7 @@
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="False"/>
     <field name="detailed_type">olive_bottle_full</field>
+    <field name="is_storable" eval="True"/>
     <field name="olive_culture_type">conversion</field>
     <field name="uom_id" ref="uom.product_uom_unit"/>
     <field name="uom_po_id" ref="uom.product_uom_unit"/>
@@ -182,6 +192,7 @@
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="False"/>
     <field name="detailed_type">olive_bottle_full</field>
+    <field name="is_storable" eval="True"/>
     <field name="olive_culture_type">regular</field>
     <field name="olive_geo_id" ref="olive_mill.aop_baux_de_provence"/>
     <field name="uom_id" ref="uom.product_uom_unit"/>
@@ -197,6 +208,7 @@
     <field name="sale_ok" eval="False"/>
     <field name="purchase_ok" eval="True"/>
     <field name="detailed_type">olive_bottle_empty</field>
+    <field name="is_storable" eval="True"/>
     <field name="uom_id" ref="uom.product_uom_unit"/>
     <field name="uom_po_id" ref="uom.product_uom_unit"/>
 </record>
@@ -207,7 +219,8 @@
     <field name="categ_id" ref="product.product_category_5"/>
     <field name="sale_ok" eval="False"/>
     <field name="purchase_ok" eval="True"/>
-    <field name="detailed_type">product</field>
+    <field name="type">consu</field>
+    <field name="is_storable" eval="True"/>
     <field name="uom_id" ref="uom.product_uom_unit"/>
     <field name="uom_po_id" ref="uom.product_uom_unit"/>
 </record>
@@ -219,6 +232,7 @@
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="True"/>
     <field name="detailed_type">olive_bottle_empty</field>
+    <field name="is_storable" eval="True"/>
     <field name="uom_id" ref="uom.product_uom_unit"/>
     <field name="uom_po_id" ref="uom.product_uom_unit"/>
 </record>
@@ -230,6 +244,7 @@
     <field name="sale_ok" eval="False"/>
     <field name="purchase_ok" eval="False"/>
     <field name="detailed_type">olive_barrel_farmer</field>
+    <field name="is_storable" eval="True"/>
     <field name="olive_bottle_free_full" eval="True"/>
     <field name="uom_id" ref="uom.product_uom_unit"/>
     <field name="uom_po_id" ref="uom.product_uom_unit"/>
@@ -242,6 +257,7 @@
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="True"/>
     <field name="detailed_type">olive_bottle_empty</field>
+    <field name="is_storable" eval="True"/>
     <field name="olive_bottle_free_full" eval="True"/>
     <field name="uom_id" ref="uom.product_uom_unit"/>
     <field name="uom_po_id" ref="uom.product_uom_unit"/>
@@ -254,6 +270,7 @@
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="True"/>
     <field name="detailed_type">olive_bottle_empty</field>
+    <field name="is_storable" eval="True"/>
     <field name="olive_bottle_free_full" eval="True"/>
     <field name="uom_id" ref="uom.product_uom_unit"/>
     <field name="uom_po_id" ref="uom.product_uom_unit"/>
@@ -266,6 +283,7 @@
     <field name="sale_ok" eval="True"/>
     <field name="purchase_ok" eval="True"/>
     <field name="detailed_type">olive_bottle_empty</field>
+    <field name="is_storable" eval="True"/>
     <field name="olive_bottle_free_full" eval="True"/>
     <field name="uom_id" ref="uom.product_uom_unit"/>
     <field name="uom_po_id" ref="uom.product_uom_unit"/>
@@ -443,65 +461,44 @@
 </record>
 
 <!-- INVENTORY for bottles  -->
-<record id="olive_stock_inventory" model="stock.inventory">
-    <field name="name">Olive Mill demo data inventory</field>
-</record>
-
-<record id="olive_stock_inventory_line1" model="stock.inventory.line">
+<record id="olive_stock_inventory1" model="stock.quant">
     <field name="product_id" ref="empty_bottle"/>
-    <field name="product_uom_id" ref="uom.product_uom_unit"/>
-    <field name="inventory_id" ref="olive_stock_inventory"/>
-    <field name="product_qty">1000.0</field>
+    <field name="inventory_quantity">1000.0</field>
     <field name="location_id" model="stock.location" eval="obj().env.ref('stock.warehouse0').lot_stock_id.id"/>
 </record>
 
-<record id="olive_stock_inventory_line2" model="stock.inventory.line">
+<record id="olive_stock_inventory2" model="stock.quant">
     <field name="product_id" ref="cap_bottle"/>
-    <field name="product_uom_id" ref="uom.product_uom_unit"/>
-    <field name="inventory_id" ref="olive_stock_inventory"/>
-    <field name="product_qty">1000.0</field>
+    <field name="inventory_quantity">1000.0</field>
     <field name="location_id" model="stock.location" eval="obj().env.ref('stock.warehouse0').lot_stock_id.id"/>
 </record>
 
-<record id="olive_stock_inventory_line3" model="stock.inventory.line">
+<record id="olive_stock_inventory3" model="stock.quant">
     <field name="product_id" ref="inox_can"/>
-    <field name="product_uom_id" ref="uom.product_uom_unit"/>
-    <field name="inventory_id" ref="olive_stock_inventory"/>
-    <field name="product_qty">1000.0</field>
+    <field name="inventory_quantity">1000.0</field>
     <field name="location_id" model="stock.location" eval="obj().env.ref('stock.warehouse0').lot_stock_id.id"/>
 </record>
 
-<record id="olive_stock_inventory_line4" model="stock.inventory.line">
+<record id="olive_stock_inventory4" model="stock.quant">
     <field name="product_id" ref="can20l"/>
-    <field name="product_uom_id" ref="uom.product_uom_unit"/>
-    <field name="inventory_id" ref="olive_stock_inventory"/>
-    <field name="product_qty">1000.0</field>
+    <field name="inventory_quantity">1000.0</field>
     <field name="location_id" model="stock.location" eval="obj().env.ref('stock.warehouse0').lot_stock_id.id"/>
 </record>
 
-<record id="olive_stock_inventory_line5" model="stock.inventory.line">
+<record id="olive_stock_inventory5" model="stock.quant">
     <field name="product_id" ref="can10l"/>
-    <field name="product_uom_id" ref="uom.product_uom_unit"/>
-    <field name="inventory_id" ref="olive_stock_inventory"/>
-    <field name="product_qty">1000.0</field>
+    <field name="inventory_quantity">1000.0</field>
     <field name="location_id" model="stock.location" eval="obj().env.ref('stock.warehouse0').lot_stock_id.id"/>
 </record>
 
-<record id="olive_stock_inventory_line6" model="stock.inventory.line">
+<record id="olive_stock_inventory6" model="stock.quant">
     <field name="product_id" ref="can5l"/>
-    <field name="product_uom_id" ref="uom.product_uom_unit"/>
-    <field name="inventory_id" ref="olive_stock_inventory"/>
-    <field name="product_qty">1000.0</field>
+    <field name="inventory_quantity">1000.0</field>
     <field name="location_id" model="stock.location" eval="obj().env.ref('stock.warehouse0').lot_stock_id.id"/>
 </record>
 
-<function model="stock.inventory" name="_action_start">
-    <function eval="[[('state', '=', 'draft'), ('id', '=', ref('olive_stock_inventory'))]]" model="stock.inventory" name="search"/>
+<function model="stock.quant" name="action_apply_inventory">
+    <function eval="[[('id', 'in', (ref('olive_stock_inventory1'), ref('olive_stock_inventory2'), ref('olive_stock_inventory3'), ref('olive_stock_inventory4'), ref('olive_stock_inventory5'), ref('olive_stock_inventory6')))]]" model="stock.quant" name="search"/>
 </function>
-
-<function model="stock.inventory" name="action_validate">
-    <function eval="[[('state', '=', 'confirm'), ('id', '=', ref('olive_stock_inventory'))]]" model="stock.inventory" name="search"/>
-</function>
-
 
 </odoo>

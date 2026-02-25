@@ -20,18 +20,15 @@ class OliveOilBottling(models.TransientModel):
         default=lambda self: self.env.company)
     bottle_product_id = fields.Many2one(
         'product.product', string='Oil Bottle to Produce',
-        domain=[('detailed_type', '=', 'olive_bottle_full')], required=True,
-        readonly=True, states={'select': [('readonly', False)]})
+        domain=[('detailed_type', '=', 'olive_bottle_full')], required=True)
     warehouse_id = fields.Many2one(
         'stock.warehouse', string='Warehouse', required=True, check_company=True,
         domain="[('olive_mill', '=', True), ('company_id', '=', company_id)]",
-        default=lambda self: self.env.user._default_olive_mill_wh(),
-        readonly=True, states={'select': [('readonly', False)]})
+        default=lambda self: self.env.user._default_olive_mill_wh())
     season_id = fields.Many2one(
         'olive.season', string='Season', required=True, check_company=True,
         domain="[('company_id', '=', company_id)]",
-        default=lambda self: self.env.company.current_season_id.id,
-        readonly=True, states={'select': [('readonly', False)]})
+        default=lambda self: self.env.company.current_season_id.id)
 
     # START fields 2nd step (qty)
     bottle_volume = fields.Float(
@@ -41,26 +38,22 @@ class OliveOilBottling(models.TransientModel):
         'product.product', string='Oil Type', readonly=True)
     bom_id = fields.Many2one(
         'mrp.bom', string='Bill of Material', readonly=True)
-    bottle_qty = fields.Integer(
-        string='Produced Bottles Qty',
-        readonly=True, states={'qty': [('readonly', False)]})
+    bottle_qty = fields.Integer(string='Produced Bottles Qty')
     src_location_id = fields.Many2one(
         'stock.location', string='Oil Tank', check_company=True,
-        domain="[('olive_tank_type', '!=', False), ('usage', '=', 'internal'), ('oil_product_id', '=', oil_product_id), ('olive_season_id', '=', season_id), ('company_id', '=', company_id)]",
-        readonly=True, states={'qty': [('readonly', False)]})
+        domain="[('olive_tank_type', '!=', False), ('usage', '=', 'internal'), ('oil_product_id', '=', oil_product_id), ('olive_season_id', '=', season_id), ('company_id', '=', company_id)]")
     src_location_end_status = fields.Selection([
         ('empty', 'Empty Tank'),
         ('not_empty', 'Tank not Empty'),
-        ], default='not_empty', string='Oil Tank Status at End of Bottling',
-        readonly=True, states={'qty': [('readonly', False)]})
+        ], default='not_empty', string='Oil Tank Status at End of Bottling')
     other_src_location_id = fields.Many2one(
         'stock.location', string='Source Location for Empty Bottles',
         domain="[('olive_tank_type', '=', False), ('usage', '=', 'internal'), ('company_id', '=', company_id)]",
-        readonly=True, states={'qty': [('readonly', False)]}, check_company=True)
+        check_company=True)
     dest_location_id = fields.Many2one(
         'stock.location', string='Destination Location for Full Bottles',
         domain="[('olive_tank_type', '=', False), ('usage', '=', 'internal'), ('company_id', '=', company_id)]",
-        readonly=True, states={'qty': [('readonly', False)]}, check_company=True)
+        check_company=True)
 
     # Start fields last step (produce)
     src_location_start_qty = fields.Float(
@@ -90,7 +83,7 @@ class OliveOilBottling(models.TransientModel):
         ], string='Lot Type', default='new')
     lot_name = fields.Char(string='Lot')
     lot_id = fields.Many2one(
-        'stock.production.lot', string='Existing Lot',
+        'stock.lot', string='Existing Lot',
         domain="[('company_id', '=', company_id), ('product_id', '=', bottle_product_id), ('expiry_date', '=', expiry_date)]", check_company=True)
     state = fields.Selection([
         ('select', 'Select Oil Bottle'),
@@ -169,7 +162,7 @@ class OliveOilBottling(models.TransientModel):
         prec = self.env['decimal.precision'].precision_get('Product Unit of Measure')
         origin = _('Olive oil bottling wizard')
         mpo = self.env['mrp.production']
-        splo = self.env['stock.production.lot']
+        slo = self.env['stock.lot']
         sqo = self.env['stock.quant']
         smo = self.env['stock.move']
         mblo = self.env['mrp.bom.line']
@@ -220,23 +213,9 @@ class OliveOilBottling(models.TransientModel):
             assert len(tank_quants) == 1
             assert tank_quants.product_id == oil_product
             assert tank_quants.lot_id
-            oil_lot_id = tank_quants.lot_id.id
-            inv_line_vals = {
-                'product_id': oil_product.id,
-                'product_uom_id': oil_product.uom_id.id,
-                'location_id': self.src_location_id.id,
-                'prod_lot_id': oil_lot_id,
-                'product_qty': self.inventory_start_qty,
-                'theoretical_qty': src_location_start_qty,
-                }
-            inventory = self.env['stock.inventory'].create({
-                'name': _('Oil bottling %s from %s') % (self.bottle_product_id.name, self.src_location_id.name),
-                'location_ids': [(6, 0, [self.src_location_id.id])],
-                'product_ids': [(6, 0, [oil_product.id])],
-                'line_ids': [(0, 0, inv_line_vals)],
-                })
-            inventory.action_start()  # it won't create inventory lines because there is already a line
-            inventory.action_validate()
+            tank_quants_ctx = tank_quants.with_context(inventory_mode=True)
+            tank_quants_ctx.write({"inventory_quantity": self.inventory_start_qty})
+            tank_quants_ctx._apply_inventory()
             src_location_start_qty = self.src_location_id.olive_oil_tank_check()
             if float_compare(src_location_start_qty, self.inventory_start_qty, precision_digits=prec):
                 raise UserError(_(
@@ -244,14 +223,14 @@ class OliveOilBottling(models.TransientModel):
 
         # Get/Create finished lot
         if self.lot_type == 'new':
-            existing_lots = splo.search([
+            existing_lots = slo.search([
                 ('product_id', '=', bottle_product.id),
                 ('name', '=', self.lot_name)])
             if existing_lots:
                 raise UserError(_(
                     "Lot '%s' already exists for the same product '%s'.")
                     % (self.lot_name, bottle_product.display_name))
-            bottle_lot = splo.create({
+            bottle_lot = slo.create({
                 'product_id': bottle_product.id,
                 'name': self.lot_name,
                 'expiry_date': self.expiry_date,
@@ -273,8 +252,8 @@ class OliveOilBottling(models.TransientModel):
             'picking_type_id': self.warehouse_id.manu_type_id.id,
             'company_id': self.company_id.id,
         })
-        smo.create(mo._get_moves_raw_values())
-        smo.create(mo._get_moves_finished_values())
+#        smo.create(mo._get_moves_raw_values())
+#        smo.create(mo._get_moves_finished_values())
         oil_raw_move = smo.search([
             ('product_id.detailed_type', '=', 'olive_oil'),
             ('raw_material_production_id', '=', mo.id)])
@@ -282,6 +261,7 @@ class OliveOilBottling(models.TransientModel):
             ('product_id.detailed_type', '!=', 'olive_oil'),
             ('raw_material_production_id', '=', mo.id)])
         # BOM has already been checked, so this should really never happen
+        print('oil_raw_move====', oil_raw_move)
         assert len(oil_raw_move) == 1, 'Wrong number of oil raw moves'
         # HACK change source location for other raw moves
         other_raw_moves.write({'location_id': self.other_src_location_id.id})
@@ -313,8 +293,9 @@ class OliveOilBottling(models.TransientModel):
             for ml in raw_move.move_line_ids:
                 if ml.product_id.detailed_type == 'olive_oil':
                     assert ml.lot_id
-                assert ml.product_uom_qty > 0
-                ml.write({'qty_done': ml.product_uom_qty})
+                assert ml.quantity > 0
+#                ml.write({'quantity': ml.product_uom_qty})
+                ml.write({'picked': True})
         mo.button_mark_done()
 
         # Check oil end qty
@@ -336,6 +317,6 @@ class OliveOilBottling(models.TransientModel):
         action.update({
             'res_id': mo.id,
             'views': False,
-            'view_mode': 'form,tree,kanban,calendar',
+            'view_mode': 'form,list,kanban,calendar',
             })
         return action

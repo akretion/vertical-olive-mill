@@ -1,10 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
-  @author: Alexis de Lattre <alexis.delattre@akretion.com>
-  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
--->
-
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
 
 
@@ -14,10 +8,10 @@
     <field name="inherit_id" ref="stock.view_warehouse"/>
     <field name="arch" type="xml">
         <field name="code" position="after">
-            <field name="olive_mill" />
+            <field name="olive_mill"/>
         </field>
         <page name="warehouse_config" position="before">
-            <page name="olive_mill" string="Olive Mill" attrs="{'invisible': [('olive_mill', '=', False)]}">
+            <page name="olive_mill" string="Olive Mill" invisible="not olive_mill">
                 <group name="olive_mill">
                 <group name="olive_lended_cases" string="Lended Cases">
                     <field name="olive_regular_case_total"/>
@@ -27,7 +21,7 @@
                 </group>
 
                 <group name="olive_mill_left" string="Locations">
-                    <field name="olive_withdrawal_loc_id" attrs="{'required': [('olive_mill', '=', True)]}"/>
+                    <field name="olive_withdrawal_loc_id" required="olive_mill"/>
                 </group>
 
                 </group>
@@ -51,7 +45,7 @@
 <record id="stock_warehouse_olive_mill_action" model="ir.actions.act_window">
     <field name="name">Warehouse</field>
     <field name="res_model">stock.warehouse</field>
-    <field name="view_mode">tree,form</field>
+    <field name="view_mode">list,form</field>
     <field name="context">{'default_olive_mill': True, 'search_default_olive_mill': True}</field>
 </record>
 

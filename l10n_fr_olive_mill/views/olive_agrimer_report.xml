@@ -1,10 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright 2019-2023 Barroux Abbey (https://www.barroux.org/)
-  @author: Alexis de Lattre <alexis.delattre@akretion.com>
-  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
--->
-
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
 
 
@@ -14,19 +8,19 @@
     <field name="arch" type="xml">
         <form>
             <header>
-                <button name="draft2done" string="Generate Report" class="btn-primary" states="draft" type="object"/>
-                <button name="back2draft" string="Back to Draft" class="btn-default" states="done" type="object" confirm="Are you sure you want to go back to draft?"/>
+                <button name="draft2done" string="Generate Report" class="btn-primary" invisible="state != 'draft'" type="object"/>
+                <button name="back2draft" string="Back to Draft" class="btn-default" invisible="state != 'done'" type="object" confirm="Are you sure you want to go back to draft?"/>
                 <field name="state" widget="statusbar"/>
             </header>
             <sheet>
                 <group name="main">
                 <group name="dates">
-                    <field name="date_range_id"/>
-                    <field name="date_start"/>
-                    <field name="date_end"/>
+                    <field name="date_range_id" readonly="state != 'draft'"/>
+                    <field name="date_start" readonly="state != 'draft'"/>
+                    <field name="date_end" readonly="state != 'draft'"/>
                 </group>
                 <group name="company">
-                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="company_id" groups="base.group_multi_company" readonly="state != 'draft'"/>
                 </group>
                 <group name="olive_in" string="Olive In">
                     <label for="olive_arrival_qty" string="Olive Arrival"/>
@@ -150,20 +144,16 @@
                 </group>
             </group>
             </sheet>
-            <div class="oe_chatter">
-                <field name="message_follower_ids" widget="mail_followers"/>
-                <field name="activity_ids" widget="mail_activity"/>
-                <field name="message_ids" widget="mail_thread"/>
-            </div>
+            <chatter/>
         </form>
     </field>
 </record>
 
 <record id="olive_agrimer_report_tree" model="ir.ui.view">
-    <field name="name">olive.agrimer.report.tree</field>
+    <field name="name">olive.agrimer.report.list</field>
     <field name="model">olive.agrimer.report</field>
     <field name="arch" type="xml">
-        <tree>
+        <list>
             <field name="date_range_id" optional="hide"/>
             <field name="date_start" decoration-bf="1"/>
             <field name="date_end"/>
@@ -171,7 +161,7 @@
             <field name="olive_pressed_qty" optional="show"/>
             <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'done'"/>
             <field name="company_id" groups="base.group_multi_company" optional="hide"/>
-        </tree>
+        </list>
     </field>
 </record>
 
@@ -196,10 +186,10 @@
 <record id="olive_agrimer_report_action" model="ir.actions.act_window">
     <field name="name">AgriMer</field>
     <field name="res_model">olive.agrimer.report</field>
-    <field name="view_mode">tree,form</field>
+    <field name="view_mode">list,form</field>
 </record>
 
-<menuitem id="olive_agrimer_report_menu" action="olive_agrimer_report_action" parent="olive_mill.olive_report_menu" sequence="50"/>
+<menuitem id="olive_agrimer_report_menu" action="olive_agrimer_report_action" parent="olive_mill.olive_report_menu" sequence="10"/>
 
 
 </odoo>

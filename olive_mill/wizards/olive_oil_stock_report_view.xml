@@ -18,12 +18,12 @@
                             </group>
                                 <group name="lines">
                                         <field name="line_ids" nolabel="1" colspan="2">
-                                                <tree>
+                                                <list>
                                                         <field name="oil_product_id"/>
                                                         <field name="loose_qty" sum="1" optional="show"/>
                                                         <field name="in_bottle_qty" sum="1" optional="show"/>
                                                         <field name="total_qty" sum="1"/>
-                                                </tree>
+                                                </list>
                                             </field>
                                     </group>
                                     <footer>
@@ -40,6 +40,6 @@
                     <field name="target">new</field>
             </record>
 
-            <menuitem id="olive_oil_stock_report_menu" action="olive_oil_stock_report_action" sequence="5" parent="olive_report_menu"/>
+            <menuitem id="olive_oil_stock_report_menu" action="olive_oil_stock_report_action" sequence="20" parent="olive_report_menu"/>
 
 </odoo>

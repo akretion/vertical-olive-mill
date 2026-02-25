@@ -1,10 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
-  @author: Alexis de Lattre <alexis.delattre@akretion.com>
-  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
--->
-
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
 
 <record id="olive_oil_production_form" model="ir.ui.view">
@@ -13,26 +7,24 @@
     <field name="arch" type="xml">
         <form>
             <header>
-                <button name="draft2ratio" string="Get Arrival Lines" class="btn-primary" states="draft" type="object"/>
-                <button name="detach_lines" string="Detach Arrival Lines" type="object" attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('line_ids', '=', [])]}"/>
-                <button name="%(olive_oil_production_ratio2force_action)d" string="Enter Result" class="btn-primary" states="ratio" type="action"/>
-                <button name="%(olive_oil_production_force_ratio_action)d" string="Force a Ratio" class="btn-primary" states="force" type="action"/>
-                <button name="force2pack" string="Go to Next Step" class="btn-primary" states="force" type="object"/>
-                <button name="%(olive_oil_production_pack2check_action)d" string="Pack" class="btn-primary" states="pack" type="action"/>
-                <button name="check2done" string="Mark as Done" class="btn-primary" states="check" type="object" confirm="You are about to terminate and lock this oil production. Are you sure?" groups="stock.group_stock_user"/>
-                <button name="back2draft" string="Back to Draft" class="btn-default" states="cancel" type="object"/>
-                <button name="%(olive_oil_production_product_swap_action)d" string="Swap Oil Type" type="action" states="ratio,force,pack,check"/>
-                <button name="%(olive_oil_production_report)d" string="Print" type="action" states="ratio,force,pack,check,done"/>
-                <button name="cancel" string="Cancel" class="btn-default" states="draft,ratio,force,pack,check" confirm="Are you sure you want to cancel this oil production ?" type="object"/>
+                <button name="draft2ratio" string="Get Arrival Lines" class="btn-primary" invisible="state != 'draft'" type="object"/>
+                <button name="detach_lines" string="Detach Arrival Lines" type="object" invisible="state != 'draft' or not line_ids"/>
+                <button name="%(olive_oil_production_ratio2force_action)d" string="Enter Result" class="btn-primary" invisible="state != 'ratio'" type="action"/>
+                <button name="%(olive_oil_production_force_ratio_action)d" string="Force a Ratio" class="btn-primary" invisible="state != 'force'" type="action"/>
+                <button name="force2pack" string="Go to Next Step" class="btn-primary" invisible="state != 'force'" type="object"/>
+                <button name="%(olive_oil_production_pack2check_action)d" string="Pack" class="btn-primary" invisible="state != 'pack'" type="action"/>
+                <button name="check2done" string="Mark as Done" class="btn-primary" invisible="state != 'check'" type="object" confirm="You are about to terminate and lock this oil production. Are you sure?" groups="stock.group_stock_user"/>
+                <button name="back2draft" string="Back to Draft" class="btn-default" invisible="state != 'cancel'" type="object"/>
+                <button name="%(olive_oil_production_product_swap_action)d" string="Swap Oil Type" type="action" invisible="state not in ('ratio', 'force', 'pack', 'check')"/>
+                <button name="%(olive_oil_production_report)d" string="Print" type="action" invisible="state not in ('ratio', 'force', 'pack', 'check', 'done')"/>
+                <button name="cancel" string="Cancel" class="btn-default" invisible="state not in ('draft', 'ratio', 'force', 'pack', 'check')" confirm="Are you sure you want to cancel this oil production ?" type="object"/>
                 <field name="state" widget="statusbar" statusbar_visible="draft,ratio,force,pack,check,done"/>
             </header>
             <sheet>
                 <div name="button_box" class="oe_button_box">
-                    <button class="oe_stat_button" type="object"
-                        name="open_move_lines" string="Product Moves"
-                        icon="fa-exchange" states="done"/>
+                    <button class="oe_stat_button" type="object" name="open_move_lines" string="Product Moves" icon="fa-exchange" invisible="state != 'done'"/>
                 </div>
-                <field name="olive_culture_type_logo" widget="image" class="oe_avatar" attrs="{'invisible': [('olive_culture_type_logo', '=', False)]}"/>
+                <field name="olive_culture_type_logo" widget="image" class="oe_avatar" invisible="not olive_culture_type_logo"/>
                 <div class="oe_title">
                     <label for="name"/>
                     <h1>
@@ -41,8 +33,8 @@
                 </div>
                 <group name="main">
                     <group name="left">
-                        <field name="palox_ids" domain="[('oil_product_id', '!=', False)]" widget="many2many_tags"/>
-                        <field name="date"/>
+                        <field name="palox_ids" domain="[('oil_product_id', '!=', False)]" widget="many2many_tags" readonly="state != 'draft'"/>
+                        <field name="date" readonly="state == 'done'"/>
                         <field name="day_position"/>
                         <field name="oil_product_id"/>
                         <field name="olive_culture_type" invisible="1"/>
@@ -52,7 +44,7 @@
                         </div>
                         <label for="decanter_speed"/>
                         <div name="decanter_speed">
-                            <field name="decanter_speed" class="oe_inline"/> kg / h
+                            <field name="decanter_speed" readonly="state == 'done'" class="oe_inline"/> kg / h
                         </div>
                     </group>
                     <group name="right">
@@ -69,52 +61,48 @@
                         <div name="to_sale_tank_oil_qty">
                             <field name="to_sale_tank_oil_qty" class="oe_inline"/> L
                         </div>
-                        <field name="sale_location_id" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')]}"/>
-                        <field name="shrinkage_location_id" />
-                        <field name="withdrawal_location_id" attrs="{'invisible': [('oil_destination', '=', 'sale')], 'required': [('oil_destination', '!=', 'sale')]}"/>
+                        <field name="sale_location_id" invisible="oil_destination == 'withdrawal'" readonly="state == 'done'"/>
+                        <field name="shrinkage_location_id" readonly="state == 'done'"/>
+                        <field name="withdrawal_location_id" invisible="oil_destination == 'sale'" required="oil_destination != 'sale'" readonly="state == 'done'"/>
                         <field name="oil_destination" widget="badge" decoration-danger="oil_destination == 'mix'" decoration-warning="oil_destination == 'sale'" decoration-info="oil_destination == 'withdrawal'"/>
-                        <field name="sample"/>
+                        <field name="sample" readonly="state not in ('draft', 'ratio')"/>
                     </group>
                 </group>
                 <notebook>
                     <page name="lines" string="Arrival Lines">
                         <group name="lines">
                             <field name="line_ids" nolabel="1">
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field name="name" decoration-bf="1" optional="show"/>
                                     <field name="commercial_partner_id" optional="show"/>
                                     <field name="variant_id" optional="hide"/>
                                     <field name="olive_qty" sum="1"/>
-                                    <field name="oil_destination" widget="badge" decoration-danger="oil_destination == 'mix'" decoration-warning="oil_destination == 'sale'" decoration-info="oil_destination == 'withdrawal'" attrs="{'column_invisible': [('parent.oil_destination', '!=', 'mix')]}"/>
+                                    <field name="oil_destination" widget="badge" decoration-danger="oil_destination == 'mix'" decoration-warning="oil_destination == 'sale'" decoration-info="oil_destination == 'withdrawal'" column_invisible="parent.oil_destination != 'mix'"/>
                                     <field name="shrinkage_oil_qty" sum="1" optional="show"/>
-                                    <field name="filter_loss_oil_qty" sum="1" optional="show" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')], 'column_invisible': [('parent.oil_destination', '=', 'withdrawal')]}"/>
+                                    <field name="filter_loss_oil_qty" sum="1" optional="show" invisible="oil_destination == 'withdrawal'" column_invisible="parent.oil_destination == 'withdrawal'"/>
                                     <field name="withdrawal_oil_qty_kg" sum="1"/>
-                                    <field name="withdrawal_oil_qty" sum="1" attrs="{'invisible': [('oil_destination', '=', 'sale')], 'column_invisible': [('parent.oil_destination', '=', 'sale')]}"/>
-                                    <field name="to_sale_tank_oil_qty" sum="1" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')], 'column_invisible': [('parent.oil_destination', '=', 'withdrawal')]}"/>
-                                    <field name="sale_oil_qty" sum="1" attrs="{'invisible': [('oil_destination', '=', 'withdrawal')], 'column_invisible': [('parent.oil_destination', '=', 'withdrawal')]}"/>
+                                    <field name="withdrawal_oil_qty" sum="1" invisible="oil_destination == 'sale'" column_invisible="parent.oil_destination == 'sale'"/>
+                                    <field name="to_sale_tank_oil_qty" sum="1" invisible="oil_destination == 'withdrawal'" column_invisible="parent.oil_destination == 'withdrawal'"/>
+                                    <field name="sale_oil_qty" sum="1" invisible="oil_destination == 'withdrawal'" column_invisible="parent.oil_destination == 'withdrawal'"/>
                                     <field name="oil_ratio_net" optional="show"/>
                                     <field name="state" invisible="1"/>
-                                </tree>
+                                </list>
                             </field>
                         </group>
                     </page>
                     <page name="additional" string="Additional Info">
                         <group name="tech">
-                            <field name="warehouse_id"/>
-                            <field name="season_id"/>
-                            <field name="company_id" groups="base.group_multi_company"/>
-                            <field name="done_datetime" states="done"/>
-                            <field name="shrinkage_move_id" states="done"/>
-                            <field name="sale_move_id" attrs="{'invisible': ['|', ('state', '!=', 'done'), ('oil_destination', '=', 'withdrawal')]}"/>
+                            <field name="warehouse_id" readonly="state != 'draft'"/>
+                            <field name="season_id" readonly="state != 'draft'"/>
+                            <field name="company_id" groups="base.group_multi_company" readonly="state != 'draft'"/>
+                            <field name="done_datetime" invisible="state != 'done'"/>
+                            <field name="shrinkage_move_id" invisible="state != 'done'"/>
+                            <field name="sale_move_id" invisible="state != 'done' or oil_destination == 'withdrawal'"/>
                         </group>
                     </page>
                 </notebook>
             </sheet>
-            <div class="oe_chatter">
-                <field name="message_follower_ids" widget="mail_followers"/>
-                <field name="activity_ids" widget="mail_activity"/>
-                <field name="message_ids" widget="mail_thread"/>
-            </div>
+            <chatter/>
         </form>
     </field>
 </record>
@@ -123,7 +111,7 @@
     <field name="name">olive.oil.production.tree</field>
     <field name="model">olive.oil.production</field>
     <field name="arch" type="xml">
-        <tree decoration-info="state not in ('cancel', 'done')" decoration-muted="state == 'cancel'">
+        <list decoration-info="state not in ('cancel', 'done')" decoration-muted="state == 'cancel'">
             <field name="sequence" widget="handle"/>
             <field name="name" decoration-bf="1"/>
             <field name="date"/>
@@ -135,7 +123,7 @@
             <!--  <field name="ratio"/> -->
             <field name="sale_location_id"/>
             <field name="state" widget="badge" decoration-info="state in ('draft', 'ratio')" decoration-success="state == 'done'" decoration-warning="state == 'check'" decoration-danger="state in ('force', 'pack')" decoration-muted="state == 'cancel'"/>
-        </tree>
+        </list>
     </field>
 </record>
 
@@ -190,7 +178,7 @@
 <record id="olive_oil_production_action" model="ir.actions.act_window">
     <field name="name">Oil Productions</field>
     <field name="res_model">olive.oil.production</field>
-    <field name="view_mode">tree,form,pivot,graph</field>
+    <field name="view_mode">list,form,pivot,graph</field>
     <field name="context">{'search_default_current_season': True, 'search_default_progress': True}</field>
 </record>
 

@@ -22,6 +22,6 @@ from . import olive_oil_analysis
 from . import olive_sale_pricelist
 from . import stock_location
 from . import stock_move
-from . import stock_production_lot
+from . import stock_lot
 from . import stock_picking
 from . import account_move

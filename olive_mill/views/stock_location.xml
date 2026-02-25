@@ -1,10 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright 2018 Barroux Abbey (https://www.barroux.org/)
-  @author: Alexis de Lattre <alexis.delattre@akretion.com>
-  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
--->
-
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
 
 <record id="view_location_form" model="ir.ui.view">
@@ -15,11 +9,11 @@
         <group groups="stock.group_adv_location" position="after">
             <group name="olive" string="Olive Oil">
                 <field name="olive_tank_type"/>
-                <field name="oil_product_id" attrs="{'required': [('olive_tank_type', 'in', ('shrinkage', 'risouletto'))], 'invisible': [('olive_tank_type', '=', False)]}"/>
-                <field name="olive_shrinkage_oil_product_ids" attrs="{'invisible': [('olive_tank_type', '!=', 'shrinkage')]}" widget="many2many_tags"/>
-                <field name="olive_season_id" attrs="{'invisible': [('olive_tank_type', '=', False)]}"/>
-                <label for="olive_oil_qty" string="Olive Oil Qty" attrs="{'invisible': [('olive_tank_type', '=', False)]}"/>
-                <div name="olive_oil_qty" attrs="{'invisible': [('olive_tank_type', '=', False)]}">
+                <field name="oil_product_id" required="olive_tank_type in ('shrinkage', 'risouletto')" invisible="not olive_tank_type"/>
+                <field name="olive_shrinkage_oil_product_ids" invisible="olive_tank_type != 'shrinkage'" widget="many2many_tags"/>
+                <field name="olive_season_id" invisible="not olive_tank_type"/>
+                <label for="olive_oil_qty" string="Olive Oil Qty" invisible="not olive_tank_type"/>
+                <div name="olive_oil_qty" invisible="not olive_tank_type">
                     <field name="olive_oil_qty" class="oe_inline"/> L
                 </div>
             </group>
@@ -45,7 +39,7 @@
     <field name="model">stock.location</field>
     <field name="priority">200</field>
     <field name="arch" type="xml">
-        <tree string="Stock Location" decoration-info="usage=='view'" decoration-danger="usage=='internal'">
+        <list string="Stock Location" decoration-info="usage=='view'" decoration-danger="usage=='internal'">
             <field name="active" invisible="1"/>
             <field name="display_name"/>
             <field name="olive_oil_qty"/>
@@ -54,7 +48,7 @@
             <field name="olive_season_id"/>
             <field name="usage"/>
             <field name="company_id" groups="base.group_multi_company"/>
-        </tree>
+        </list>
     </field>
 </record>
 
@@ -78,7 +72,7 @@
 <record id="tank_stock_location_action" model="ir.actions.act_window">
     <field name="name">Tanks</field>
     <field name="res_model">stock.location</field>
-    <field name="view_mode">tree,form</field>
+    <field name="view_mode">list,form</field>
     <field name="context">{'default_olive_tank': 'regular', 'search_default_olive_tank': True, 'default_usage': 'internal'}</field>
     <field name="view_id" ref="olive_stock_location_with_qty_tree"/>
 </record>

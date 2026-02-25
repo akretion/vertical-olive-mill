@@ -1,10 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright 2018-2023 Barroux Abbey (https://www.barroux.org/)
-  @author: Alexis de Lattre <alexis.delattre@akretion.com>
-  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
--->
-
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
 
 <record id="olive_palox_lend_form" model="ir.ui.view">
@@ -18,10 +12,10 @@
                 <field name="way"/>
                 <field name="partner_id"/>
                 <field name="olive_culture_type" invisible="1"/>
-                <field name="lend_palox_ids" widget="many2many_tags" attrs="{'invisible': [('way', '!=', 'lend')]}"/>
-                <field name="return_palox_ids" widget="many2many_tags" attrs="{'invisible': [('way', '!=', 'return')]}"/>
-                <field name="regular_case_qty" attrs="{'readonly': [('olive_culture_type', 'in', ('organic', 'conversion'))]}"/>
-                <field name="organic_case_qty" attrs="{'readonly': [('olive_culture_type', '=', 'regular')]}" groups="olive_mill.olive_organic"/>
+                <field name="lend_palox_ids" widget="many2many_tags" invisible="way != 'lend'"/>
+                <field name="return_palox_ids" widget="many2many_tags" invisible="way != 'return'"/>
+                <field name="regular_case_qty" readonly="olive_culture_type in ('organic', 'conversion')"/>
+                <field name="organic_case_qty" readonly="olive_culture_type == 'regular'" groups="olive_mill.olive_organic"/>
             </group>
             <footer>
                 <button name="validate" type="object" string="Validate" class="btn-primary"/>
