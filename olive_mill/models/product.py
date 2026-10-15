@@ -114,7 +114,7 @@ class ProductTemplate(models.Model):
             self.olive_culture_type = False
             self.olive_geo_id = False
 
-    @api.constrains('detailed_type', 'uom_id', 'olive_culture_type')
+    @api.constrains('detailed_type', 'uom_id', 'olive_culture_type', 'tracking')
     def _check_olive_product(self):
         liter_uom = self.env.ref('uom.product_uom_litre')
         unit_categ_uom = self.env.ref('uom.product_uom_categ_unit')

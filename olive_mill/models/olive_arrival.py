@@ -5,9 +5,9 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import float_compare, float_is_zero, float_round
-from odoo.tools.misc import formatLang
+from odoo.tools.misc import formatLang, format_date
 from dateutil.relativedelta import relativedelta
-from babel.dates import format_date
+from babel.dates import format_date as babel_format_date
 from collections import defaultdict
 import logging
 logger = logging.getLogger(__name__)
@@ -95,7 +95,7 @@ class OliveArrival(models.Model):
         default=fields.Date.context_today, required=True,
         states={'done': [('readonly', True)]})
     harvest_start_date = fields.Date(
-        string='Harvest Start Date', required=True,
+        string='Harvest Start Date', required=False,
         states={'done': [('readonly', True)]})
     done_datetime = fields.Datetime(string='Date Done', readonly=True)
     line_ids = fields.One2many(
@@ -200,12 +200,12 @@ class OliveArrival(models.Model):
     @api.constrains('date', 'harvest_start_date')
     def arrival_check(self):
         for arrival in self:
-            if arrival.harvest_start_date > arrival.date:
+            if arrival.harvest_start_date and arrival.harvest_start_date > arrival.date:
                 raise ValidationError(_(
                     "On arrival %s, the harvest start date (%s) cannot be "
                     "after the arrival date (%s)!") % (
-                        arrival.name, arrival.harvest_start_date,
-                        arrival.date))
+                        arrival.name, format_date(self.env, arrival.harvest_start_date),
+                        format_date(self.env, arrival.date)))
 
     @api.onchange('partner_id')
     def partner_id_change(self):
@@ -252,12 +252,16 @@ class OliveArrival(models.Model):
         self.write({'state': 'draft'})
 
     def check_arrival(self):
+        self.ensure_one()
         warn_msgs = []
         oalo = self.env['olive.arrival.line']
         pr_oli = self.env['decimal.precision'].precision_get('Olive Weight')
         pr_oil = self.env['decimal.precision'].precision_get(
             'Olive Oil Volume')
         olive_culture_type = self.commercial_partner_id.olive_culture_type
+        if not self.harvest_start_date:
+            raise UserError(_(
+                "Harvest start date is not set on arrival %s.", self.display_name))
         if self.returned_regular_case or self.returned_organic_case:
             if (
                     not self.lended_case_id and
@@ -970,7 +974,7 @@ class OliveArrivalLine(models.Model):
                 total_oil_qty += quantity
                 il_vals = self._pre_prepare_invoice_line(product, vals)
                 # TODO: translate in right language
-                arrival_date_formatted = format_date(
+                arrival_date_formatted = babel_format_date(
                     arrival.date, format='short', locale=lang or 'en_US')
                 il_vals['name'] = _('%s (Arrival %s dated %s)') % (
                     product.with_context(lang=lang).name,
