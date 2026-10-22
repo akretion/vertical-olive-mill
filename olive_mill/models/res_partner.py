@@ -2,8 +2,10 @@
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl)
 
-from odoo import fields, models, _
+from odoo import api, fields, models, _
 from odoo.exceptions import UserError
+from odoo.tools import file_open
+import base64
 
 
 class ResPartner(models.Model):
@@ -89,6 +91,9 @@ class ResPartner(models.Model):
         ('conversion', 'Conversion'),
         ], compute='_compute_organic_and_warnings',
         string='Olive Culture Type')
+    olive_organic_certified_logo = fields.Binary(
+        compute='_compute_organic_and_warnings',
+        string='Organic Certified Logo')
     olive_sale_pricelist_id = fields.Many2one(
         'olive.sale.pricelist', string='Sale Pricelist for Olive Mill',
         company_dependent=True)
@@ -192,6 +197,7 @@ class ResPartner(models.Model):
             partner.olive_oil_qty_to_withdraw = olive_oil_qty_to_withdraw
             partner.olive_oil_qty_withdrawn_current_season = olive_oil_qty_withdrawn_current_season
 
+    @api.depends_context("season_id")
     def _compute_organic_and_warnings(self):
         poco = self.env['partner.organic.certification']
         oco = self.env['olive.cultivation']
@@ -213,6 +219,8 @@ class ResPartner(models.Model):
             company = self.env.company
             company_id = company.id
             culture_type = 'regular'
+            filename = False
+            logo = False
             cultivation_form_ko = True
             parcel_ko = True
             certif_ko = False
@@ -270,8 +278,14 @@ class ResPartner(models.Model):
                     if cert:
                         if cert.conversion:
                             culture_type = 'conversion'
+                            filename = 'organic_logo_conversion_done.png'
+                            if cert.state == 'draft':
+                                filename = 'organic_logo_conversion_draft.png'
                         else:
                             culture_type = 'organic'
+                            filename = 'organic_logo_done.png'
+                            if cert.state == 'draft':
+                                filename = 'organic_logo_draft.png'
                         if cert.state == 'draft':
                             certif_ko = True
 
@@ -302,7 +316,13 @@ class ResPartner(models.Model):
                             ])
                         if lines_to_in_invoice:
                             invoicing_ko = True
+            if filename:
+                fname_path = f"olive_mill/static/image/{filename}"
+                with file_open(fname_path, 'rb') as flogo:
+                    logo_bin = flogo.read()
+                logo = base64.b64encode(logo_bin)
             partner.olive_culture_type = culture_type
+            partner.olive_organic_certified_logo = logo
             partner.olive_cultivation_form_ko = cultivation_form_ko
             partner.olive_parcel_ko = parcel_ko
             partner.olive_organic_certif_ko = certif_ko
