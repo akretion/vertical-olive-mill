@@ -4,7 +4,7 @@
 
 from odoo import api, fields, models, tools, _
 from odoo.exceptions import UserError
-from odoo.tools import float_compare, float_round
+from odoo.tools import float_compare, float_is_zero, float_round
 
 
 class OliveOilProduction(models.Model):
@@ -384,6 +384,7 @@ class OliveOilProduction(models.Model):
         splo = self.env['stock.production.lot']
         smo = self.env['stock.move']
         pr_oil = self.env['decimal.precision'].precision_get('Olive Oil Volume')
+        pr_qty = self.env['decimal.precision'].precision_get('Product Unit of Measure')
         wloc = self.warehouse_id.olive_withdrawal_loc_id
         stock_loc = self.warehouse_id.lot_stock_id
         sale_loc = self.sale_location_id
@@ -425,7 +426,7 @@ class OliveOilProduction(models.Model):
                 wmove._action_done()
                 assert wmove.state == 'done'
                 line.write({'withdrawal_move_id': wmove.id})
-            for extra in line.extra_ids.filtered(lambda x: x.product_id.detailed_type in ('olive_bottle_empty', 'olive_barrel_farmer')):
+            for extra in line.extra_ids.filtered(lambda x: x.product_id.detailed_type in ('olive_bottle_empty', 'olive_barrel_farmer') and not float_is_zero(x.qty, precision_digits=pr_qty)):
                 if extra.product_id.tracking and extra.product_id.tracking != 'none':
                     raise UserError(_(
                         "Can't select the product '%s' in extra items of "

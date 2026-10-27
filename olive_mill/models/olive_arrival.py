@@ -1158,6 +1158,12 @@ class OliveArrivalLineExtra(models.Model):
     olive_bottle_free_full = fields.Boolean(
         related='product_id.olive_bottle_free_full', store=True)
 
+    _sql_constraints = [(
+        'qty_positive',
+        'CHECK(qty >= 0)',
+        'The quantity must be positive.'
+        )]
+
     @api.depends('product_id')
     def _compute_fillup(self):
         for extra in self:
