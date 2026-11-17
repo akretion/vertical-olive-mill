@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-07 19:37+0000\n"
-"PO-Revision-Date: 2024-09-07 19:37+0000\n"
+"POT-Creation-Date: 2026-11-17 22:03+0000\n"
+"PO-Revision-Date: 2026-11-17 22:03+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,6 +16,25 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: olive_mill
+#: model:mail.template,body_html:olive_mill.olive_arrival_mail_template
+msgid ""
+"\n"
+"    <p>Dear ${object.partner_id.name}\n"
+"    % if object.partner_id.parent_id:\n"
+"        (<i>${object.partner_id.parent_id.name}</i>)\n"
+"    % endif\n"
+"    ,</p>\n"
+"\n"
+"    <p>Please find enclosed your olive arrival <strong>${object.name}</strong>\n"
+"    dated ${format_date(object.date)} for a total quantity of ${object.olive_qty} kg.\n"
+"    </p>\n"
+"\n"
+"    <p>Thank you for your trust and for choosing ${object.company_id.name}.</p>\n"
+"    "
+msgstr ""
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:0
 #: code:addons/olive_mill/models/olive_arrival.py:0
 #, python-format
 msgid " (%s L = %s kg)"
@@ -31,6 +50,11 @@ msgstr ""
 #: code:addons/olive_mill/models/olive_appointment.py:0
 #, python-format
 msgid " (Withdrawal)"
+msgstr ""
+
+#. module: olive_mill
+#: model:mail.template,subject:olive_mill.olive_arrival_mail_template
+msgid "${object.company_id.name} - Olive Arrival ${object.name}"
 msgstr ""
 
 #. module: olive_mill
@@ -181,6 +205,78 @@ msgid "AFIDOL Tax Product"
 msgstr ""
 
 #. module: olive_mill
+#: model:product.product,name:olive_mill.aop_aix_tax_product
+#: model:product.template,name:olive_mill.aop_aix_tax_product_product_template
+msgid "AOP Aix-en-Provence Tax"
+msgstr ""
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.black_oil_pgi_baux
+#: model:product.template,name:olive_mill.black_oil_pgi_baux_product_template
+msgid "AOP Baux de Provence - Fruité noir"
+msgstr ""
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.oil_aop_baux
+#: model:product.template,name:olive_mill.oil_aop_baux_product_template
+msgid "AOP Baux de Provence - Fruité vert"
+msgstr ""
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.aop_baux_de_provence_bottle
+#: model:product.template,name:olive_mill.aop_baux_de_provence_bottle_product_template
+msgid "AOP Baux-de-Provence 75cl Olive Oil Bottle"
+msgstr ""
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.aop_baux_de_provence_tax_product
+#: model:product.template,name:olive_mill.aop_baux_de_provence_tax_product_product_template
+msgid "AOP Baux-de-Provence Tax"
+msgstr ""
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.aop_corse_tax_product
+#: model:product.template,name:olive_mill.aop_corse_tax_product_product_template
+msgid "AOP Corse Tax"
+msgstr ""
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.aop_haute_provence_tax_product
+#: model:product.template,name:olive_mill.aop_haute_provence_tax_product_product_template
+msgid "AOP Haute-Provence Tax"
+msgstr ""
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.aop_languedoc_tax_product
+#: model:product.template,name:olive_mill.aop_languedoc_tax_product_product_template
+msgid "AOP Languedoc Tax"
+msgstr ""
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.aop_nice_tax_product
+#: model:product.template,name:olive_mill.aop_nice_tax_product_product_template
+msgid "AOP Nice Tax"
+msgstr ""
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.aop_nyons_tax_product
+#: model:product.template,name:olive_mill.aop_nyons_tax_product_product_template
+msgid "AOP Nyons Tax"
+msgstr ""
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.aop_nimes_tax_product
+#: model:product.template,name:olive_mill.aop_nimes_tax_product_product_template
+msgid "AOP Nîmes Tax"
+msgstr ""
+
+#. module: olive_mill
+#: model:product.product,name:olive_mill.aop_provence_tax_product
+#: model:product.template,name:olive_mill.aop_provence_tax_product_product_template
+msgid "AOP Provence Tax"
+msgstr ""
+
+#. module: olive_mill
 #: model:product.product,name:olive_mill.acidity_analysis
 #: model:product.template,name:olive_mill.acidity_analysis_product_template
 msgid "Acidity Analysis"
@@ -202,6 +298,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:olive_mill.field_olive_treatment__active
 #: model:ir.model.fields,field_description:olive_mill.field_olive_variant__active
 #: model:ir.model.fields,field_description:olive_mill.field_organic_certifying_entity__active
+#: model:ir.model.fields,field_description:olive_mill.field_protected_geo_indication__active
 msgid "Active"
 msgstr ""
 
@@ -255,6 +352,13 @@ msgstr ""
 #. module: olive_mill
 #: model_terms:ir.ui.view,arch_db:olive_mill.product_template_search_view
 msgid "All Olive Products"
+msgstr ""
+
+#. module: olive_mill
+#: model_terms:ir.ui.view,arch_db:olive_mill.res_config_settings_view_form
+msgid ""
+"Allow to modulate the olive oil ratio per olive variant. The modulation "
+"coefficient must be configured on each olive variant."
 msgstr ""
 
 #. module: olive_mill
@@ -334,6 +438,8 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:olive_mill.olive_variant_search
 #: model_terms:ir.ui.view,arch_db:olive_mill.organic_certifying_entity_form
 #: model_terms:ir.ui.view,arch_db:olive_mill.organic_certifying_entity_search
+#: model_terms:ir.ui.view,arch_db:olive_mill.protected_geo_indication_form
+#: model_terms:ir.ui.view,arch_db:olive_mill.protected_geo_indication_search
 msgid "Archived"
 msgstr ""
 
@@ -420,12 +526,14 @@ msgstr ""
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line__arrival_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_analysis__arrival_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_palox__arrival_date
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_palox_search
 msgid "Arrival Date"
 msgstr ""
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_extra__line_id
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_analysis__arrival_line_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_line__arrival_line_id
 msgid "Arrival Line"
 msgstr ""
 
@@ -551,6 +659,12 @@ msgstr ""
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_bottling__bom_id
 msgid "Bill of Material"
+msgstr ""
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.olive_mrp_bom_action
+#: model:ir.ui.menu,name:olive_mill.olive_mrp_bom_menu
+msgid "Bills of Materials"
 msgstr ""
 
 #. module: olive_mill
@@ -784,7 +898,14 @@ msgstr ""
 #: model:ir.model.fields,field_description:olive_mill.field_olive_season__company_id
 #: model:ir.model.fields,field_description:olive_mill.field_olive_withdrawal__company_id
 #: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification__company_id
+#: model:ir.model.fields,field_description:olive_mill.field_protected_geo_indication__company_id
 msgid "Company"
+msgstr ""
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:0
+#, python-format
+msgid "Compose Email"
 msgstr ""
 
 #. module: olive_mill
@@ -889,12 +1010,12 @@ msgstr ""
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_picking__create_uid
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_picking_container__create_uid
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production__create_uid
-#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_compensation__create_uid
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_day_print__create_uid
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force_ratio__create_uid
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check__create_uid
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_product_swap__create_uid
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force__create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_line__create_uid
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_sale_report__create_uid
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_sale_report_line__create_uid
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_stock_report__create_uid
@@ -916,6 +1037,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:olive_mill.field_olive_withdrawal__create_uid
 #: model:ir.model.fields,field_description:olive_mill.field_organic_certifying_entity__create_uid
 #: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification__create_uid
+#: model:ir.model.fields,field_description:olive_mill.field_protected_geo_indication__create_uid
 msgid "Created by"
 msgstr ""
 
@@ -936,12 +1058,12 @@ msgstr ""
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_picking__create_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_picking_container__create_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production__create_date
-#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_compensation__create_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_day_print__create_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force_ratio__create_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check__create_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_product_swap__create_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force__create_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_line__create_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_sale_report__create_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_sale_report_line__create_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_stock_report__create_date
@@ -963,6 +1085,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:olive_mill.field_olive_withdrawal__create_date
 #: model:ir.model.fields,field_description:olive_mill.field_organic_certifying_entity__create_date
 #: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification__create_date
+#: model:ir.model.fields,field_description:olive_mill.field_protected_geo_indication__create_date
 msgid "Created on"
 msgstr ""
 
@@ -1294,12 +1417,12 @@ msgstr ""
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_picking__display_name
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_picking_container__display_name
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production__display_name
-#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_compensation__display_name
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_day_print__display_name
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force_ratio__display_name
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check__display_name
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_product_swap__display_name
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force__display_name
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_line__display_name
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_sale_report__display_name
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_sale_report_line__display_name
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_stock_report__display_name
@@ -1323,6 +1446,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification__display_name
 #: model:ir.model.fields,field_description:olive_mill.field_product_product__display_name
 #: model:ir.model.fields,field_description:olive_mill.field_product_template__display_name
+#: model:ir.model.fields,field_description:olive_mill.field_protected_geo_indication__display_name
 #: model:ir.model.fields,field_description:olive_mill.field_res_company__display_name
 #: model:ir.model.fields,field_description:olive_mill.field_res_config_settings__display_name
 #: model:ir.model.fields,field_description:olive_mill.field_res_partner__display_name
@@ -1396,9 +1520,8 @@ msgid "Duration of one Oil Production"
 msgstr ""
 
 #. module: olive_mill
-#: model:product.product,name:olive_mill.early_bird_discount_product
-#: model:product.template,name:olive_mill.early_bird_discount_product_product_template
-msgid "Early Bird Discount"
+#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival__partner_email
+msgid "Email"
 msgstr ""
 
 #. module: olive_mill
@@ -1446,7 +1569,14 @@ msgid "End Date must be after Start Date on season '%s'"
 msgstr ""
 
 #. module: olive_mill
-#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force__olive_oil_production_result_uom
+#: model:ir.model.fields,field_description:olive_mill.field_res_company__olive_oil_production_multipalox_result
+#: model:ir.model.fields,field_description:olive_mill.field_res_config_settings__olive_oil_production_multipalox_result
+msgid "Enter Multi-Palox Oil Production Result"
+msgstr ""
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force__result_uom
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_line__result_uom
 #: model:ir.model.fields,field_description:olive_mill.field_res_company__olive_oil_production_result_uom
 #: model:ir.model.fields,field_description:olive_mill.field_res_config_settings__olive_oil_production_result_uom
 msgid "Enter Oil Production Result as"
@@ -1468,6 +1598,11 @@ msgid "Enter Result"
 msgstr ""
 
 #. module: olive_mill
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_oil_production_ratio2force_form
+msgid "Enter per Palox Oil Quantities"
+msgstr ""
+
+#. module: olive_mill
 #: model:ir.model.fields,help:olive_mill.field_res_partner__olive_qty_sale_current_season
 #: model:ir.model.fields,help:olive_mill.field_res_users__olive_qty_sale_current_season
 msgid ""
@@ -1485,7 +1620,7 @@ msgstr ""
 #. module: olive_mill
 #: model:ir.model.fields,help:olive_mill.field_olive_arrival_line__sale_olive_qty
 msgid ""
-"Equivalent in olive quantity (in Kg) of the oil sold.This field is for "
+"Equivalent in olive quantity (in Kg) of the oil sold. This field is for "
 "reporting purposes, it is not very accurate."
 msgstr ""
 
@@ -1701,6 +1836,13 @@ msgid ""
 msgstr ""
 
 #. module: olive_mill
+#: model_terms:ir.ui.view,arch_db:olive_mill.res_config_settings_view_form
+msgid ""
+"For olive mills that produce olive oil for a protected geographical "
+"indication (or several)."
+msgstr ""
+
+#. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force_ratio__force_ratio
 #: model:ir.model.fields.selection,name:olive_mill.selection__olive_oil_production__state__force
 msgid "Force Ratio"
@@ -1745,6 +1887,7 @@ msgstr ""
 
 #. module: olive_mill
 #: model:ir.actions.act_window,name:olive_mill.olive_palox_generate_production_action
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_palox_tree
 msgid "Generate Oil Productions"
 msgstr ""
 
@@ -1766,6 +1909,12 @@ msgstr ""
 #. module: olive_mill
 #: model_terms:ir.ui.view,arch_db:olive_mill.olive_preseason_poll_form
 msgid "Get Past Data"
+msgstr ""
+
+#. module: olive_mill
+#: model:ir.model.fields.selection,name:olive_mill.selection__olive_oil_production_ratio2force__result_method__global
+#: model:ir.model.fields.selection,name:olive_mill.selection__res_company__olive_oil_production_multipalox_result__global
+msgid "Global"
 msgstr ""
 
 #. module: olive_mill
@@ -1802,6 +1951,7 @@ msgstr ""
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production__ratio
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force__ratio
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_line__ratio
 msgid "Gross Ratio (% L)"
 msgstr ""
 
@@ -1830,6 +1980,12 @@ msgstr ""
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival__harvest_start_date
 msgid "Harvest Start Date"
+msgstr ""
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:0
+#, python-format
+msgid "Harvest start date is not set on arrival %s."
 msgstr ""
 
 #. module: olive_mill
@@ -1862,12 +2018,12 @@ msgstr ""
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_picking__id
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_picking_container__id
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production__id
-#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_compensation__id
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_day_print__id
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force_ratio__id
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check__id
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_product_swap__id
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force__id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_line__id
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_sale_report__id
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_sale_report_line__id
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_stock_report__id
@@ -1891,6 +2047,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification__id
 #: model:ir.model.fields,field_description:olive_mill.field_product_product__id
 #: model:ir.model.fields,field_description:olive_mill.field_product_template__id
+#: model:ir.model.fields,field_description:olive_mill.field_protected_geo_indication__id
 #: model:ir.model.fields,field_description:olive_mill.field_res_company__id
 #: model:ir.model.fields,field_description:olive_mill.field_res_config_settings__id
 #: model:ir.model.fields,field_description:olive_mill.field_res_partner__id
@@ -2175,12 +2332,12 @@ msgstr ""
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_picking____last_update
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_picking_container____last_update
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production____last_update
-#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_compensation____last_update
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_day_print____last_update
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force_ratio____last_update
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check____last_update
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_product_swap____last_update
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force____last_update
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_line____last_update
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_sale_report____last_update
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_sale_report_line____last_update
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_stock_report____last_update
@@ -2204,6 +2361,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification____last_update
 #: model:ir.model.fields,field_description:olive_mill.field_product_product____last_update
 #: model:ir.model.fields,field_description:olive_mill.field_product_template____last_update
+#: model:ir.model.fields,field_description:olive_mill.field_protected_geo_indication____last_update
 #: model:ir.model.fields,field_description:olive_mill.field_res_company____last_update
 #: model:ir.model.fields,field_description:olive_mill.field_res_config_settings____last_update
 #: model:ir.model.fields,field_description:olive_mill.field_res_partner____last_update
@@ -2234,12 +2392,12 @@ msgstr ""
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_picking__write_uid
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_picking_container__write_uid
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production__write_uid
-#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_compensation__write_uid
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_day_print__write_uid
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force_ratio__write_uid
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check__write_uid
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_product_swap__write_uid
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force__write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_line__write_uid
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_sale_report__write_uid
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_sale_report_line__write_uid
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_stock_report__write_uid
@@ -2261,6 +2419,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:olive_mill.field_olive_withdrawal__write_uid
 #: model:ir.model.fields,field_description:olive_mill.field_organic_certifying_entity__write_uid
 #: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification__write_uid
+#: model:ir.model.fields,field_description:olive_mill.field_protected_geo_indication__write_uid
 msgid "Last Updated by"
 msgstr ""
 
@@ -2281,12 +2440,12 @@ msgstr ""
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_picking__write_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_picking_container__write_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production__write_date
-#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_compensation__write_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_day_print__write_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_force_ratio__write_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_pack2check__write_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_product_swap__write_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force__write_date
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_line__write_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_sale_report__write_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_sale_report_line__write_date
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_stock_report__write_date
@@ -2308,6 +2467,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:olive_mill.field_olive_withdrawal__write_date
 #: model:ir.model.fields,field_description:olive_mill.field_organic_certifying_entity__write_date
 #: model:ir.model.fields,field_description:olive_mill.field_partner_organic_certification__write_date
+#: model:ir.model.fields,field_description:olive_mill.field_protected_geo_indication__write_date
 msgid "Last Updated on"
 msgstr ""
 
@@ -2322,6 +2482,18 @@ msgstr ""
 #: model:ir.model.fields,field_description:olive_mill.field_res_company__olive_oil_leaf_removal_product_id
 #: model:ir.model.fields,field_description:olive_mill.field_res_config_settings__olive_oil_leaf_removal_product_id
 msgid "Leaf Removal Product"
+msgstr ""
+
+#. module: olive_mill
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_arrival_line_arrival_form
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_arrival_line_form
+msgid "Leaf removal is disabled"
+msgstr ""
+
+#. module: olive_mill
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_arrival_line_arrival_form
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_arrival_line_form
+msgid "Leaf removal is enabled"
 msgstr ""
 
 #. module: olive_mill
@@ -2412,6 +2584,38 @@ msgstr ""
 #. module: olive_mill
 #: model_terms:ir.ui.view,arch_db:olive_mill.view_warehouse
 msgid "Locations"
+msgstr ""
+
+#. module: olive_mill
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_appointment_form
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_arrival_form
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_preseason_poll_form
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_tab_button_partner_form
+msgid "Logo Conversion"
+msgstr ""
+
+#. module: olive_mill
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_appointment_form
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_arrival_form
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_preseason_poll_form
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_tab_button_partner_form
+msgid "Logo Conversion Draft"
+msgstr ""
+
+#. module: olive_mill
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_appointment_form
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_arrival_form
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_preseason_poll_form
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_tab_button_partner_form
+msgid "Logo Organic"
+msgstr ""
+
+#. module: olive_mill
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_appointment_form
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_arrival_form
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_preseason_poll_form
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_tab_button_partner_form
+msgid "Logo Organic Draft"
 msgstr ""
 
 #. module: olive_mill
@@ -2555,6 +2759,12 @@ msgstr ""
 #. module: olive_mill
 #: code:addons/olive_mill/models/olive_arrival.py:0
 #, python-format
+msgid "Missing email on partner '%s'."
+msgstr ""
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:0
+#, python-format
 msgid ""
 "Missing empty weight on palox '%s'. The gross palox weight has been reset to"
 " 0 kg."
@@ -2614,7 +2824,13 @@ msgstr ""
 #: model:ir.model.fields.selection,name:olive_mill.selection__olive_arrival_line__oil_destination__mix
 #: model:ir.model.fields.selection,name:olive_mill.selection__olive_oil_production__oil_destination__mix
 #: model:ir.model.fields.selection,name:olive_mill.selection__olive_palox__oil_destination__mix
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_palox_search
 msgid "Mix"
+msgstr ""
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_variant__ratio_coef
+msgid "Modulation Coefficient Ratio"
 msgstr ""
 
 #. module: olive_mill
@@ -2740,6 +2956,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:olive_mill.field_olive_treatment__name
 #: model:ir.model.fields,field_description:olive_mill.field_olive_variant__name
 #: model:ir.model.fields,field_description:olive_mill.field_organic_certifying_entity__name
+#: model:ir.model.fields,field_description:olive_mill.field_protected_geo_indication__name
 msgid "Name"
 msgstr ""
 
@@ -3049,6 +3266,11 @@ msgid "Ochard"
 msgstr ""
 
 #. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_protected_geo_indication__ochard_count
+msgid "Ochard Count"
+msgstr ""
+
+#. module: olive_mill
 #: model_terms:ir.ui.view,arch_db:olive_mill.olive_ochard_form
 msgid "Ochard Name"
 msgstr ""
@@ -3057,6 +3279,7 @@ msgstr ""
 #: model:ir.actions.act_window,name:olive_mill.olive_ochard_action
 #: model:ir.model.fields,field_description:olive_mill.field_olive_cultivation__ochard_ids
 #: model:ir.ui.menu,name:olive_mill.olive_ochard_menu
+#: model_terms:ir.ui.view,arch_db:olive_mill.protected_geo_indication_form
 msgid "Ochards"
 msgstr ""
 
@@ -3098,6 +3321,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force__oil_destination
 #: model:ir.model.fields,field_description:olive_mill.field_olive_palox__oil_destination
 #: model_terms:ir.ui.view,arch_db:olive_mill.olive_arrival_line_search
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_palox_search
 msgid "Oil Destination"
 msgstr ""
 
@@ -3195,6 +3419,7 @@ msgstr ""
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line__oil_qty
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force__oil_qty
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_line__oil_qty
 #: model:ir.model.fields,field_description:olive_mill.field_olive_preseason_poll_line__oil_qty
 #: model:ir.model.fields,field_description:olive_mill.field_olive_season__oil_qty
 #: model_terms:ir.ui.view,arch_db:olive_mill.olive_oil_production_tree
@@ -3204,6 +3429,7 @@ msgstr ""
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line__oil_qty_kg
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force__oil_qty_kg
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_line__oil_qty_kg
 msgid "Oil Qty (kg)"
 msgstr ""
 
@@ -3279,6 +3505,12 @@ msgstr ""
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_tank_transfer__quantity
 msgid "Oil Quantity to Transfer (L)"
+msgstr ""
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_res_config_settings__group_oil_ratio_modulation_per_olive_variant
+#: model:res.groups,name:olive_mill.oil_ratio_modulation_per_olive_variant
+msgid "Oil Ratio Modulation per Olive Variant"
 msgstr ""
 
 #. module: olive_mill
@@ -3359,6 +3591,12 @@ msgstr ""
 #: model:ir.actions.act_window,name:olive_mill.olive_withdrawal_action
 #: model:ir.ui.menu,name:olive_mill.olive_withdrawal_menu
 msgid "Oil Withdrawal"
+msgstr ""
+
+#. module: olive_mill
+#: code:addons/olive_mill/wizards/olive_withdrawal.py:0
+#, python-format
+msgid "Oil Withdrawal Wizard"
 msgstr ""
 
 #. module: olive_mill
@@ -3449,13 +3687,9 @@ msgid "Olive Arrival Line"
 msgstr ""
 
 #. module: olive_mill
+#: model:ir.actions.report,name:olive_mill.olive_culture_report
 #: model:ir.model,name:olive_mill.model_olive_cultivation
 msgid "Olive Cultivation Form"
-msgstr ""
-
-#. module: olive_mill
-#: model:ir.actions.report,name:olive_mill.olive_culture_report
-msgid "Olive Culture Form"
 msgstr ""
 
 #. module: olive_mill
@@ -3634,6 +3868,11 @@ msgid "Olive Oil Production Ratio2force"
 msgstr ""
 
 #. module: olive_mill
+#: model:ir.model,name:olive_mill.model_olive_oil_production_ratio2force_line
+msgid "Olive Oil Production Ratio2force Arrival Line"
+msgstr ""
+
+#. module: olive_mill
 #: model:ir.actions.act_window,name:olive_mill.olive_oil_production_pack2check_action
 msgid "Olive Oil Production pack2check"
 msgstr ""
@@ -3718,6 +3957,7 @@ msgstr ""
 
 #. module: olive_mill
 #: model_terms:ir.ui.view,arch_db:olive_mill.search_product_lot_filter
+#: model_terms:ir.ui.view,arch_db:olive_mill.view_mrp_bom_filter
 msgid "Olive Products"
 msgstr ""
 
@@ -3732,6 +3972,7 @@ msgstr ""
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line__olive_qty
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_line__olive_qty
 #: model:ir.model.fields,field_description:olive_mill.field_olive_preseason_poll_line__olive_qty
 msgid "Olive Qty (kg)"
 msgstr ""
@@ -3831,9 +4072,8 @@ msgid "Olive Variants"
 msgstr ""
 
 #. module: olive_mill
-#: code:addons/olive_mill/wizards/olive_withdrawal.py:0
-#, python-format
-msgid "Olive Withdrawal Wizard"
+#: model:ir.model.fields,field_description:olive_mill.field_stock_picking__olive_withdrawal
+msgid "Olive Withdrawal"
 msgstr ""
 
 #. module: olive_mill
@@ -3902,6 +4142,7 @@ msgstr ""
 
 #. module: olive_mill
 #: model:ir.model.fields,help:olive_mill.field_olive_arrival_line__olive_qty
+#: model:ir.model.fields,help:olive_mill.field_olive_oil_production_ratio2force_line__olive_qty
 msgid "Olive quantity in kg."
 msgstr ""
 
@@ -3959,6 +4200,15 @@ msgstr ""
 msgid ""
 "On arrival %s, the harvest start date (%s) cannot be after the arrival date "
 "(%s)!"
+msgstr ""
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:0
+#, python-format
+msgid ""
+"On arrival line number %(line)s, the oil '%(oil)s' has the protected "
+"geographical indication '%(pgi)s' but the ochard %(ochard)s doesn't have "
+"this protected geographical indication."
 msgstr ""
 
 #. module: olive_mill
@@ -4025,6 +4275,16 @@ msgstr ""
 #, python-format
 msgid ""
 "On the cultivation form of ochard '%s', the date (%s) is in the future!"
+msgstr ""
+
+#. module: olive_mill
+#: model:ir.model.fields.selection,name:olive_mill.selection__olive_palox_generate_production__prod_type__grouped
+msgid "One Oil Production for All Paloxes"
+msgstr ""
+
+#. module: olive_mill
+#: model:ir.model.fields.selection,name:olive_mill.selection__olive_palox_generate_production__prod_type__onebyone
+msgid "One Oil Production per Palox"
 msgstr ""
 
 #. module: olive_mill
@@ -4104,6 +4364,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:olive_mill.field_olive_appointment__olive_organic_certif_ko
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival__olive_organic_certif_ko
 #: model:ir.model.fields,field_description:olive_mill.field_olive_invoice_create__olive_organic_certif_ko
+#: model:ir.model.fields,field_description:olive_mill.field_olive_preseason_poll__olive_organic_certif_ko
 #: model:ir.model.fields,field_description:olive_mill.field_olive_withdrawal__olive_organic_certif_ko
 #: model:ir.model.fields,field_description:olive_mill.field_res_partner__olive_organic_certif_ko
 #: model:ir.model.fields,field_description:olive_mill.field_res_users__olive_organic_certif_ko
@@ -4120,9 +4381,6 @@ msgid "Organic Certifications"
 msgstr ""
 
 #. module: olive_mill
-#: model:ir.model.fields,field_description:olive_mill.field_olive_appointment__olive_organic_certified_logo
-#: model:ir.model.fields,field_description:olive_mill.field_olive_arrival__olive_organic_certified_logo
-#: model:ir.model.fields,field_description:olive_mill.field_olive_preseason_poll__olive_organic_certified_logo
 #: model:ir.model.fields,field_description:olive_mill.field_res_partner__olive_organic_certified_logo
 #: model:ir.model.fields,field_description:olive_mill.field_res_users__olive_organic_certified_logo
 msgid "Organic Certified Logo"
@@ -4197,9 +4455,17 @@ msgstr ""
 #. module: olive_mill
 #: model:ir.actions.act_window,name:olive_mill.olive_palox_action
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line__palox_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_line__palox_id
 #: model:ir.model.fields,field_description:olive_mill.field_olive_palox_borrow_history__palox_id
 #: model:ir.ui.menu,name:olive_mill.olive_palox_menu
 msgid "Palox"
+msgstr ""
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:0
+#, python-format
+msgid ""
+"Palox '%(palox)s' is used on lines %(first_palox_line)s and %(cur_line)s."
 msgstr ""
 
 #. module: olive_mill
@@ -4364,6 +4630,17 @@ msgid "Pending Withdrawal"
 msgstr ""
 
 #. module: olive_mill
+#: model:ir.model.fields.selection,name:olive_mill.selection__olive_oil_production_ratio2force__result_method__per_palox
+#: model:ir.model.fields.selection,name:olive_mill.selection__res_company__olive_oil_production_multipalox_result__per_palox
+msgid "Per Palox"
+msgstr ""
+
+#. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force__palox_result_ids
+msgid "Per Palox Results"
+msgstr ""
+
+#. module: olive_mill
 #: model:product.product,name:olive_mill.peroxide_analysis
 #: model:product.template,name:olive_mill.peroxide_analysis_product_template
 msgid "Peroxide Analysis"
@@ -4458,6 +4735,11 @@ msgid "Print Farmer Warnings"
 msgstr ""
 
 #. module: olive_mill
+#: model_terms:ir.ui.view,arch_db:olive_mill.view_picking_form
+msgid "Print Oil Withdrawal"
+msgstr ""
+
+#. module: olive_mill
 #: model:ir.actions.report,name:olive_mill.olive_oil_production_day_report
 msgid "Print Olive Oil Production"
 msgstr ""
@@ -4539,6 +4821,11 @@ msgid "Product Template"
 msgstr ""
 
 #. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_protected_geo_indication__product_template_count
+msgid "Product Template Count"
+msgstr ""
+
+#. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_arrival_line_extra__product_detailed_type
 #: model:ir.model.fields,field_description:olive_mill.field_product_product__detailed_type
 #: model:ir.model.fields,field_description:olive_mill.field_product_template__detailed_type
@@ -4596,7 +4883,21 @@ msgstr ""
 #. module: olive_mill
 #: model:ir.actions.act_window,name:olive_mill.olive_product_template_action
 #: model:ir.ui.menu,name:olive_mill.olive_product_menu
+#: model_terms:ir.ui.view,arch_db:olive_mill.protected_geo_indication_form
 msgid "Products"
+msgstr ""
+
+#. module: olive_mill
+#: model:ir.actions.act_window,name:olive_mill.protected_geo_indication_action
+#: model:ir.model,name:olive_mill.model_protected_geo_indication
+#: model:ir.model.fields,field_description:olive_mill.field_olive_ochard__geo_id
+#: model:ir.model.fields,field_description:olive_mill.field_product_product__olive_geo_id
+#: model:ir.model.fields,field_description:olive_mill.field_product_template__olive_geo_id
+#: model:ir.model.fields,field_description:olive_mill.field_res_config_settings__group_olive_protected_geo_indication
+#: model:ir.ui.menu,name:olive_mill.protected_geo_indication_menu
+#: model:res.groups,name:olive_mill.olive_protected_geo_indication
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_ochard_search
+msgid "Protected Geographical Indication"
 msgstr ""
 
 #. module: olive_mill
@@ -4711,6 +5012,11 @@ msgid "Result (integer)"
 msgstr ""
 
 #. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force__result_method
+msgid "Result Method"
+msgstr ""
+
+#. module: olive_mill
 #: model_terms:ir.ui.view,arch_db:olive_mill.olive_oil_analysis_form
 msgid "Results"
 msgstr ""
@@ -4771,6 +5077,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:olive_mill.selection__olive_arrival_line__oil_destination__sale
 #: model:ir.model.fields.selection,name:olive_mill.selection__olive_oil_production__oil_destination__sale
 #: model:ir.model.fields.selection,name:olive_mill.selection__olive_palox__oil_destination__sale
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_palox_search
 msgid "Sale"
 msgstr ""
 
@@ -4932,11 +5239,17 @@ msgid ""
 msgstr ""
 
 #. module: olive_mill
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_arrival_form
+msgid "Send Report by Email"
+msgstr ""
+
+#. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production__sequence
 #: model:ir.model.fields,field_description:olive_mill.field_olive_sale_pricelist__sequence
 #: model:ir.model.fields,field_description:olive_mill.field_olive_treatment__sequence
 #: model:ir.model.fields,field_description:olive_mill.field_olive_variant__sequence
 #: model:ir.model.fields,field_description:olive_mill.field_organic_certifying_entity__sequence
+#: model:ir.model.fields,field_description:olive_mill.field_protected_geo_indication__sequence
 msgid "Sequence"
 msgstr ""
 
@@ -5204,6 +5517,17 @@ msgid "Tanks"
 msgstr ""
 
 #. module: olive_mill
+#: model:ir.model.fields,field_description:olive_mill.field_protected_geo_indication__tax_product_id
+msgid "Tax Product"
+msgstr ""
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/olive_arrival.py:0
+#, python-format
+msgid "Tax product is not set on protected geogaphical indication '%s'."
+msgstr ""
+
+#. module: olive_mill
 #: model:ir.model.constraint,message:olive_mill.constraint_res_company_olive_appointment_qty_per_palox_positive
 msgid "The Quantity of Olives per Palox must be positive."
 msgstr ""
@@ -5293,8 +5617,22 @@ msgid ""
 msgstr ""
 
 #. module: olive_mill
+#: model:ir.model.constraint,message:olive_mill.constraint_olive_variant_ratio_coef_positive
+msgid "The modulation coefficient ratio must be strictly positive."
+msgstr ""
+
+#. module: olive_mill
 #: model:ir.model.constraint,message:olive_mill.constraint_olive_parcel_tree_qty_positive
 msgid "The number of trees must be positive or null."
+msgstr ""
+
+#. module: olive_mill
+#: code:addons/olive_mill/models/product.py:0
+#, python-format
+msgid ""
+"The oil bottle '%(oil_bottle)s' has the protected geographical indication "
+"'%(pgi)s' but the oil product '%(oil_product)s' of this bottle doesn't have "
+"this protected geographical indication."
 msgstr ""
 
 #. module: olive_mill
@@ -5313,7 +5651,8 @@ msgstr ""
 #. module: olive_mill
 #: code:addons/olive_mill/models/product.py:0
 #, python-format
-msgid "The oil volume (%s) can't negative on bill of material '%s' (ID %d)."
+msgid ""
+"The oil volume (%s) cannot be negative on bill of material '%s' (ID %d)."
 msgstr ""
 
 #. module: olive_mill
@@ -5368,6 +5707,11 @@ msgstr ""
 #. module: olive_mill
 #: model:ir.model.constraint,message:olive_mill.constraint_olive_appointment_qty_positive
 msgid "The quantity must be positive or null."
+msgstr ""
+
+#. module: olive_mill
+#: model:ir.model.constraint,message:olive_mill.constraint_olive_arrival_line_extra_qty_positive
+msgid "The quantity must be positive."
 msgstr ""
 
 #. module: olive_mill
@@ -5538,8 +5882,9 @@ msgstr ""
 
 #. module: olive_mill
 #: code:addons/olive_mill/models/olive_arrival.py:0
+#: code:addons/olive_mill/models/olive_arrival.py:0
 #, python-format
-msgid "The unit of measure of the oil tax product '%s' should be in kg."
+msgid "The unit of measure of the oil tax product '%s' should be kg."
 msgstr ""
 
 #. module: olive_mill
@@ -5647,6 +5992,11 @@ msgid "This profile already exists."
 msgstr ""
 
 #. module: olive_mill
+#: model:ir.model.constraint,message:olive_mill.constraint_protected_geo_indication_name_company_unique
+msgid "This protected geographical indication already exists."
+msgstr ""
+
+#. module: olive_mill
 #: model:ir.model.fields,help:olive_mill.field_olive_oil_production__ratio
 #: model:ir.model.fields,help:olive_mill.field_olive_oil_production_force_ratio__global_ratio
 msgid ""
@@ -5684,11 +6034,6 @@ msgstr ""
 #. module: olive_mill
 #: model_terms:ir.ui.view,arch_db:olive_mill.olive_oil_production_form
 msgid "To Sale Tank Oil Qty"
-msgstr ""
-
-#. module: olive_mill
-#: model:ir.model,name:olive_mill.model_olive_oil_production_compensation
-msgid "To remove"
 msgstr ""
 
 #. module: olive_mill
@@ -5811,6 +6156,7 @@ msgstr ""
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_palox_case_lend__way
+#: model:ir.model.fields,field_description:olive_mill.field_olive_palox_generate_production__prod_type
 msgid "Type"
 msgstr ""
 
@@ -5838,6 +6184,7 @@ msgstr ""
 
 #. module: olive_mill
 #: model:product.product,uom_name:olive_mill.acidity_analysis
+#: model:product.product,uom_name:olive_mill.aop_baux_de_provence_bottle
 #: model:product.product,uom_name:olive_mill.bottle
 #: model:product.product,uom_name:olive_mill.bottle_black
 #: model:product.product,uom_name:olive_mill.bottle_conversion
@@ -5851,6 +6198,7 @@ msgstr ""
 #: model:product.product,uom_name:olive_mill.inox_can
 #: model:product.product,uom_name:olive_mill.peroxide_analysis
 #: model:product.template,uom_name:olive_mill.acidity_analysis_product_template
+#: model:product.template,uom_name:olive_mill.aop_baux_de_provence_bottle_product_template
 #: model:product.template,uom_name:olive_mill.bottle_black_product_template
 #: model:product.template,uom_name:olive_mill.bottle_conversion_product_template
 #: model:product.template,uom_name:olive_mill.bottle_organic_product_template
@@ -6024,11 +6372,13 @@ msgstr ""
 #: model:ir.model.fields.selection,name:olive_mill.selection__olive_palox__oil_destination__withdrawal
 #: model_terms:ir.ui.view,arch_db:olive_mill.olive_appointment_form
 #: model_terms:ir.ui.view,arch_db:olive_mill.olive_appointment_search
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_palox_search
 msgid "Withdrawal"
 msgstr ""
 
 #. module: olive_mill
 #: model_terms:ir.ui.view,arch_db:olive_mill.olive_arrival_form
+#: model_terms:ir.ui.view,arch_db:olive_mill.olive_palox_form
 msgid "Withdrawal (L)"
 msgstr ""
 
@@ -6134,6 +6484,7 @@ msgstr ""
 
 #. module: olive_mill
 #: model:ir.model.fields,field_description:olive_mill.field_olive_oil_picking_container__wizard_id
+#: model:ir.model.fields,field_description:olive_mill.field_olive_oil_production_ratio2force_line__wizard_id
 msgid "Wizard"
 msgstr ""
 
@@ -6302,6 +6653,14 @@ msgid ""
 msgstr ""
 
 #. module: olive_mill
+#: code:addons/olive_mill/wizards/olive_oil_production_product_swap.py:0
+#, python-format
+msgid ""
+"You cannot swap oil type from protected geographical indication "
+"'%(cur_geo)s' to '%(new_geo)s'."
+msgstr ""
+
+#. module: olive_mill
 #: code:addons/olive_mill/models/olive_arrival.py:0
 #, python-format
 msgid ""
@@ -6361,14 +6720,30 @@ msgid "ha"
 msgstr ""
 
 #. module: olive_mill
+#: model:product.product,uom_name:olive_mill.aop_aix_tax_product
+#: model:product.product,uom_name:olive_mill.aop_baux_de_provence_tax_product
+#: model:product.product,uom_name:olive_mill.aop_corse_tax_product
+#: model:product.product,uom_name:olive_mill.aop_haute_provence_tax_product
+#: model:product.product,uom_name:olive_mill.aop_languedoc_tax_product
+#: model:product.product,uom_name:olive_mill.aop_nice_tax_product
+#: model:product.product,uom_name:olive_mill.aop_nimes_tax_product
+#: model:product.product,uom_name:olive_mill.aop_nyons_tax_product
+#: model:product.product,uom_name:olive_mill.aop_provence_tax_product
 #: model:product.product,uom_name:olive_mill.black_option_product
-#: model:product.product,uom_name:olive_mill.early_bird_discount_product
 #: model:product.product,uom_name:olive_mill.leaf_remove_product
 #: model:product.product,uom_name:olive_mill.organic_option_product
 #: model:product.product,uom_name:olive_mill.production_product
 #: model:product.product,uom_name:olive_mill.tax_product
+#: model:product.template,uom_name:olive_mill.aop_aix_tax_product_product_template
+#: model:product.template,uom_name:olive_mill.aop_baux_de_provence_tax_product_product_template
+#: model:product.template,uom_name:olive_mill.aop_corse_tax_product_product_template
+#: model:product.template,uom_name:olive_mill.aop_haute_provence_tax_product_product_template
+#: model:product.template,uom_name:olive_mill.aop_languedoc_tax_product_product_template
+#: model:product.template,uom_name:olive_mill.aop_nice_tax_product_product_template
+#: model:product.template,uom_name:olive_mill.aop_nimes_tax_product_product_template
+#: model:product.template,uom_name:olive_mill.aop_nyons_tax_product_product_template
+#: model:product.template,uom_name:olive_mill.aop_provence_tax_product_product_template
 #: model:product.template,uom_name:olive_mill.black_option_product_product_template
-#: model:product.template,uom_name:olive_mill.early_bird_discount_product_product_template
 #: model:product.template,uom_name:olive_mill.leaf_remove_product_product_template
 #: model:product.template,uom_name:olive_mill.organic_option_product_product_template
 #: model:product.template,uom_name:olive_mill.production_product_product_template
@@ -6415,6 +6790,11 @@ msgstr ""
 #. module: olive_mill
 #: model_terms:ir.ui.view,arch_db:olive_mill.res_config_settings_view_form
 msgid "minutes / 100 kg of olive"
+msgstr ""
+
+#. module: olive_mill
+#: model:mail.template,report_name:olive_mill.olive_arrival_mail_template
+msgid "olive_arrival_${(object.name).replace('/','_')}"
 msgstr ""
 
 #. module: olive_mill

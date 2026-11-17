@@ -41,6 +41,7 @@ class OliveArrival(models.Model):
         domain=[('parent_id', '=', False), ('olive_farmer', '=', True)],
         states={'done': [('readonly', True)]}, ondelete='restrict',
         tracking=True)
+    partner_email = fields.Char(related="partner_id.email")
     commercial_partner_id = fields.Many2one(
         related='partner_id.commercial_partner_id', store=True)
     olive_culture_type = fields.Selection(
@@ -529,6 +530,32 @@ class OliveArrival(models.Model):
                     "Cannot delete arrival %s which has some lines in 'Done' state.")
                     % arrival.name)
         return super().unlink()
+
+    def open_send_by_email_wizard(self):
+        self.ensure_one()
+        if not self.partner_id.email:
+            raise UserError(
+                _("Missing email on partner '%s'.", self.partner_id.display_name)
+            )
+        template = self.env.ref("olive_mill.olive_arrival_mail_template")
+        compose_form = self.env.ref("mail.email_compose_message_wizard_form")
+        ctx = dict(
+            default_model="olive.arrival",
+            default_res_id=self.id,
+            default_use_template=bool(template),
+            default_template_id=template.id,
+            default_composition_mode="comment",
+        )
+        action = {
+            "name": _("Compose Email"),
+            "type": "ir.actions.act_window",
+            "view_mode": "form",
+            "res_model": "mail.compose.message",
+            "view_id": compose_form.id,
+            "target": "new",
+            "context": ctx,
+        }
+        return action
 
 
 class OliveArrivalLine(models.Model):

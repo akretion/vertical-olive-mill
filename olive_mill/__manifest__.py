@@ -30,6 +30,7 @@
         'data/sequence.xml',
         'data/organic_certifying_entity.xml',
         'data/protected_geo_indication.xml',
+        'data/mail_template.xml',
         'report/report.xml',
         'views/menu.xml',
         'wizards/olive_palox_case_lend_view.xml',
