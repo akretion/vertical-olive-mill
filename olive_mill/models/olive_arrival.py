@@ -306,6 +306,7 @@ class OliveArrival(models.Model):
 
         palox_max_weight = self.company_id.olive_max_qty_per_palox
         has_sale_or_mix = False
+        paloxid2line = {}
         i = 0
         for line in self.line_ids:
             i += 1
@@ -356,6 +357,16 @@ class OliveArrival(models.Model):
                     line=i, oil=line.oil_product_id.display_name,
                     pgi=line.oil_product_id.olive_geo_id.display_name,
                     ochard=line.ochard_id.display_name))
+
+            # Warn if same palox selected on 2 different lines
+            if line.palox_id.id in paloxid2line:
+                raise UserError(_(
+                    "Palox '%(palox)s' is used on lines %(first_palox_line)s and %(cur_line)s.",
+                    palox=line.palox_id.display_name,
+                    first_palox_line=paloxid2line[line.palox_id.id],
+                    cur_line=i,
+                    ))
+            paloxid2line[line.palox_id.id] = i
 
             # Warn palox max qty
             new_weight = line.palox_id.weight + line.olive_qty
